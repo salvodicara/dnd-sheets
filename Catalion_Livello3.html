@@ -1,0 +1,1344 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <title>Catalion di Sancaldo – Bardo Livello 3</title>
+  <style>
+    * { box-sizing: border-box; }
+
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      line-height: 1.7;
+      color: #1a1a1a;
+      background: #fafafa;
+    }
+
+    /* ── SIDEBAR ── */
+    #sidebar {
+      position: fixed;
+      left: 0;
+      top: 0;
+      width: 195px;
+      height: 100vh;
+      overflow-y: auto;
+      background: #1e1e2e;
+      padding: 16px 0 24px;
+      z-index: 100;
+    }
+    #sidebar .nav-title {
+      color: #888;
+      font-size: 0.7em;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      padding: 0 14px 10px;
+      border-bottom: 1px solid #333;
+      margin-bottom: 6px;
+    }
+    #sidebar a {
+      display: block;
+      color: #bbb;
+      text-decoration: none;
+      padding: 5px 14px;
+      font-size: 0.82em;
+      border-left: 3px solid transparent;
+      transition: all 0.15s;
+    }
+    #sidebar a:hover {
+      background: #2d2d42;
+      color: #fff;
+      border-left-color: #7c7cf0;
+    }
+    #sidebar .nav-sep {
+      border-top: 1px solid #2d2d42;
+      margin: 6px 0;
+    }
+
+    /* ── MAIN CONTENT ── */
+    #main {
+      margin-left: 195px;
+      max-width: 900px;
+      padding: 36px 32px 60px;
+    }
+
+    h1 { font-size: 1.9em; margin-bottom: 2px; }
+    h2 {
+      font-size: 1.2em;
+      border-bottom: 2px solid #333;
+      padding-bottom: 4px;
+      margin-top: 40px;
+      margin-bottom: 12px;
+      scroll-margin-top: 20px;
+    }
+    h3 { font-size: 1.02em; margin-top: 18px; margin-bottom: 4px; }
+    p { margin: 4px 0; }
+    .subtitle { color: #555; font-style: italic; margin-top: 0; font-size: 0.95em; }
+
+    table { border-collapse: collapse; margin: 10px 0; }
+    td, th { border: 1px solid #bbb; padding: 6px 14px; text-align: left; }
+    th { background: #eee; font-weight: bold; }
+
+    ul { margin: 6px 0 10px 0; padding-left: 22px; }
+    li { margin: 3px 0; }
+
+    .note { color: #444; font-size: 0.92em; }
+    hr { border: none; border-top: 1px solid #ddd; margin: 28px 0; }
+
+    .algo {
+      background: #eef2ff;
+      border: 1px solid #99a;
+      border-radius: 4px;
+      padding: 14px 18px;
+      margin: 10px 0;
+    }
+    .algo-step {
+      background: #dde3f5;
+      border-left: 4px solid #446;
+      padding: 8px 12px;
+      margin: 8px 0;
+    }
+
+    .tag-new {
+      display: inline-block;
+      background: #1a6e1a;
+      color: white;
+      font-size: 0.75em;
+      padding: 1px 6px;
+      border-radius: 3px;
+      vertical-align: middle;
+      margin-left: 4px;
+    }
+    .tag-secret {
+      display: inline-block;
+      background: #6a1a7a;
+      color: white;
+      font-size: 0.75em;
+      padding: 1px 6px;
+      border-radius: 3px;
+      vertical-align: middle;
+      margin-left: 4px;
+    }
+
+    /* ══════════════════════════════════
+       PANNELLO DI GIOCO INTERATTIVO
+    ══════════════════════════════════ */
+    #pannello {
+      background: #1e1e2e;
+      color: #e0e0f0;
+      border-radius: 12px;
+      padding: 22px 26px 26px;
+      margin-bottom: 32px;
+      box-shadow: 0 4px 18px rgba(0,0,0,0.18);
+    }
+    #pannello h2 {
+      color: #a0a0ff;
+      border-bottom: 2px solid #3a3a5a;
+      font-size: 1.1em;
+      margin-top: 0;
+      padding-bottom: 8px;
+    }
+
+    .pn-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+      gap: 14px;
+      margin-bottom: 16px;
+    }
+
+    .pn-card {
+      background: #2a2a3e;
+      border-radius: 8px;
+      padding: 10px 14px 12px;
+      border: 1px solid #3a3a5a;
+    }
+    .pn-card .label {
+      font-size: 0.7em;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: #888;
+      margin-bottom: 6px;
+    }
+    .pn-card .value-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .pn-card .big-val {
+      font-size: 1.8em;
+      font-weight: bold;
+      color: #fff;
+      min-width: 36px;
+      text-align: center;
+      line-height: 1;
+    }
+    .pn-card .max-val {
+      font-size: 0.85em;
+      color: #888;
+    }
+
+    /* HP bar */
+    .hp-bar-wrap {
+      margin-top: 8px;
+      background: #111;
+      border-radius: 4px;
+      height: 8px;
+      overflow: hidden;
+    }
+    .hp-bar {
+      height: 100%;
+      border-radius: 4px;
+      transition: width 0.3s, background 0.3s;
+    }
+
+    /* Pip trackers (circles) */
+    .pips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+      margin-top: 6px;
+    }
+    .pip {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      border: 2px solid #555;
+      background: #4a4a7a;
+      cursor: pointer;
+      transition: background 0.15s, border-color 0.15s;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.65em;
+    }
+    .pip.used {
+      background: #222;
+      border-color: #333;
+    }
+    .pip:hover { border-color: #aaa; }
+
+    /* Slot pip colors */
+    .pip.lv1 { border-color: #6a9eff; }
+    .pip.lv1:not(.used) { background: #1a4a8a; }
+    .pip.lv2 { border-color: #a06aff; }
+    .pip.lv2:not(.used) { background: #4a1a8a; }
+
+    /* Buttons */
+    .btn-row {
+      display: flex;
+      gap: 6px;
+      margin-top: 6px;
+      flex-wrap: wrap;
+    }
+    .btn {
+      background: #3a3a5a;
+      border: 1px solid #555;
+      color: #ddd;
+      border-radius: 5px;
+      padding: 4px 10px;
+      font-size: 0.8em;
+      cursor: pointer;
+      transition: background 0.12s;
+    }
+    .btn:hover { background: #5a5a8a; color: #fff; }
+    .btn.danger { border-color: #a04040; }
+    .btn.danger:hover { background: #7a1a1a; }
+    .btn.heal { border-color: #4a9a4a; }
+    .btn.heal:hover { background: #1a5a1a; }
+    .btn.long-rest { background: #2a4a2a; border-color: #4a8a4a; color: #afa; font-weight: bold; }
+    .btn.long-rest:hover { background: #1a6a1a; }
+    .btn.short-rest { background: #2a3a4a; border-color: #4a6a8a; color: #adf; font-weight: bold; }
+    .btn.short-rest:hover { background: #1a4a6a; }
+
+    /* HP input row */
+    .hp-input-row {
+      display: flex;
+      gap: 5px;
+      align-items: center;
+      margin-top: 8px;
+    }
+    .hp-input-row input[type=number] {
+      width: 52px;
+      background: #111;
+      border: 1px solid #555;
+      color: #fff;
+      border-radius: 4px;
+      padding: 4px 6px;
+      font-size: 0.9em;
+      text-align: center;
+    }
+    /* hide arrows on number input */
+    input[type=number]::-webkit-inner-spin-button,
+    input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; }
+
+    /* Condizioni */
+    .cond-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 6px;
+    }
+    .cond-btn {
+      background: #2a2a3e;
+      border: 1.5px solid #555;
+      color: #aaa;
+      border-radius: 14px;
+      padding: 3px 10px;
+      font-size: 0.78em;
+      cursor: pointer;
+      transition: all 0.15s;
+      user-select: none;
+    }
+    .cond-btn.active {
+      background: #6a1a1a;
+      border-color: #cc4444;
+      color: #ffaaaa;
+      font-weight: bold;
+    }
+    .cond-btn:hover { border-color: #aaa; color: #fff; }
+
+    /* Initiative / concentrazione */
+    .inline-field {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 6px;
+      font-size: 0.85em;
+      color: #bbb;
+    }
+    .inline-field input[type=text], .inline-field input[type=number] {
+      background: #111;
+      border: 1px solid #555;
+      color: #fff;
+      border-radius: 4px;
+      padding: 3px 8px;
+      font-size: 0.95em;
+      width: 90px;
+    }
+
+    /* Note rapide */
+    #note-rapide {
+      width: 100%;
+      background: #111;
+      border: 1px solid #3a3a5a;
+      color: #ddd;
+      border-radius: 6px;
+      padding: 8px 10px;
+      font-size: 0.85em;
+      resize: vertical;
+      min-height: 60px;
+      margin-top: 8px;
+      font-family: Arial, sans-serif;
+    }
+
+    /* Death saves */
+    .death-row { display: flex; gap: 12px; align-items: center; margin-top: 6px; }
+    .death-pips { display: flex; gap: 4px; }
+    .death-pip {
+      width: 18px; height: 18px;
+      border-radius: 50%;
+      border: 2px solid #555;
+      background: #222;
+      cursor: pointer;
+    }
+    .death-pip.succ:not(.used) { border-color: #4a9a4a; }
+    .death-pip.fail:not(.used) { border-color: #9a4a4a; }
+    .death-pip.succ.used { background: #4a9a4a; border-color: #4a9a4a; }
+    .death-pip.fail.used { background: #9a4a4a; border-color: #9a4a4a; }
+
+    /* Log danni */
+    #log-wrap {
+      background: #111;
+      border: 1px solid #333;
+      border-radius: 6px;
+      padding: 6px 10px;
+      max-height: 90px;
+      overflow-y: auto;
+      margin-top: 6px;
+      font-size: 0.78em;
+      color: #aaa;
+    }
+    #log-wrap p { margin: 2px 0; }
+    .log-damage { color: #ff8888; }
+    .log-heal { color: #88ff88; }
+
+    /* Oro */
+    .oro-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 6px;
+    }
+    .oro-row input[type=number] {
+      width: 80px;
+      background: #111;
+      border: 1px solid #555;
+      color: #ffd700;
+      border-radius: 4px;
+      padding: 4px 8px;
+      font-size: 1em;
+      font-weight: bold;
+      text-align: center;
+    }
+
+    /* Concentrazione */
+    #conc-spell {
+      background: #111;
+      border: 1px solid #555;
+      color: #ddf;
+      border-radius: 4px;
+      padding: 3px 8px;
+      font-size: 0.85em;
+      width: 160px;
+    }
+    .conc-active { color: #ffdd66; font-weight: bold; }
+
+    /* Pozione tracker */
+    .poz-row { display: flex; align-items: center; gap: 8px; margin-top: 6px; }
+
+    /* Round tracker */
+    .round-row { display: flex; align-items: center; gap: 8px; margin-top: 6px; font-size: 0.85em; }
+    .round-val { font-size: 1.5em; font-weight: bold; color: #fff; min-width: 30px; text-align: center; }
+  </style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════
+     SIDEBAR — INDICE DI NAVIGAZIONE
+═══════════════════════════════════════ -->
+<nav id="sidebar">
+  <div class="nav-title">📜 Indice</div>
+  <a href="#pannello">🎮 Pannello di Gioco</a>
+  <div class="nav-sep"></div>
+  <a href="#dati-base">🧬 Dati Base</a>
+  <a href="#abilita">🎯 Abilità</a>
+  <div class="nav-sep"></div>
+  <a href="#ispirazione">🎵 Ispirazione Bardica</a>
+  <a href="#expertise">🎓 Expertise</a>
+  <a href="#jack">🃏 Jack of All Trades</a>
+  <div class="nav-sep"></div>
+  <a href="#college-lore">🎓 College of Lore</a>
+  <a href="#feat">🎭 Feat Origin</a>
+  <div class="nav-sep"></div>
+  <a href="#incantesimi">✨ Incantesimi</a>
+  <a href="#trucchetti">🔮 Trucchetti</a>
+  <a href="#lv1">✨ Spell Liv. 1</a>
+  <a href="#lv2">✨ Spell Liv. 2</a>
+  <div class="nav-sep"></div>
+  <a href="#armi">🗡️ Armi</a>
+  <a href="#equipaggiamento">🎒 Equipaggiamento</a>
+  <div class="nav-sep"></div>
+  <a href="#algoritmo">⚔️ Algoritmo</a>
+</nav>
+
+<!-- ══════════════════════════════════════
+     CONTENUTO PRINCIPALE
+═══════════════════════════════════════ -->
+<div id="main">
+
+<h1>⚔️ Bardo – Catalion di Sancaldo</h1>
+<p class="subtitle">Livello 3 – D&amp;D 2024 | College of Lore<br>
+Scheda rapida completa, pensata per giocare senza consultare altri manuali.</p>
+
+<hr>
+
+<!-- ══════════════════════════════════════
+     PANNELLO DI GIOCO INTERATTIVO
+═══════════════════════════════════════ -->
+<div id="pannello">
+  <h2 id="pannello">🎮 Pannello di Gioco</h2>
+
+  <div class="pn-grid">
+
+    <!-- PUNTI FERITA -->
+    <div class="pn-card" style="grid-column: span 2;">
+      <div class="label">❤️ Punti Ferita</div>
+      <div class="value-row">
+        <div class="big-val" id="hp-curr">24</div>
+        <div class="max-val">/ <span id="hp-max-disp">24</span></div>
+      </div>
+      <div class="hp-bar-wrap"><div class="hp-bar" id="hp-bar" style="width:100%; background:#4a9a4a;"></div></div>
+      <div class="hp-input-row">
+        <input type="number" id="hp-amount" placeholder="val" min="1">
+        <button class="btn danger" onclick="applyDamage()">💥 Danno</button>
+        <button class="btn heal" onclick="applyHeal()">💚 Cura</button>
+        <button class="btn heal" onclick="applyTempHP()">🛡️ PF Temp</button>
+      </div>
+      <div style="margin-top:6px; font-size:0.8em; color:#888;">
+        PF temp: <span id="temp-hp-disp" style="color:#aaddff; font-weight:bold;">0</span>
+        &nbsp;|&nbsp; PF max (aid): <span id="aid-disp" style="color:#ffdd66;">+0</span>
+      </div>
+    </div>
+
+    <!-- DADI VITA -->
+    <div class="pn-card">
+      <div class="label">🎲 Dadi Vita (d8)</div>
+      <div class="pips" id="hd-pips"></div>
+      <div class="btn-row">
+        <button class="btn heal" onclick="spendHD()">Spendi 1 HD</button>
+        <button class="btn" onclick="resetHD()">Reset</button>
+      </div>
+      <div style="margin-top:4px; font-size:0.75em; color:#888;">Recuperi ½ con riposo breve</div>
+    </div>
+
+    <!-- DEATH SAVES -->
+    <div class="pn-card">
+      <div class="label">💀 Tiri Salvezza Morte</div>
+      <div class="death-row">
+        <span style="font-size:0.8em; color:#4a9a4a;">✅</span>
+        <div class="death-pips" id="death-succ">
+          <div class="death-pip succ" onclick="toggleDeathPip(this,'succ')"></div>
+          <div class="death-pip succ" onclick="toggleDeathPip(this,'succ')"></div>
+          <div class="death-pip succ" onclick="toggleDeathPip(this,'succ')"></div>
+        </div>
+      </div>
+      <div class="death-row">
+        <span style="font-size:0.8em; color:#9a4a4a;">❌</span>
+        <div class="death-pips" id="death-fail">
+          <div class="death-pip fail" onclick="toggleDeathPip(this,'fail')"></div>
+          <div class="death-pip fail" onclick="toggleDeathPip(this,'fail')"></div>
+          <div class="death-pip fail" onclick="toggleDeathPip(this,'fail')"></div>
+        </div>
+      </div>
+      <div class="btn-row"><button class="btn" onclick="resetDeathSaves()">Reset</button></div>
+    </div>
+
+  </div><!-- fine prima riga grid -->
+
+  <div class="pn-grid">
+
+    <!-- ISPIRAZIONE BARDICA -->
+    <div class="pn-card">
+      <div class="label">🎵 Ispirazione Bardica (d6)</div>
+      <div class="pips" id="insp-pips"></div>
+      <div class="btn-row">
+        <button class="btn danger" onclick="useInsp()">Usa 1</button>
+        <button class="btn" onclick="resetInsp()">Reset (3)</button>
+      </div>
+    </div>
+
+    <!-- SLOT LV1 -->
+    <div class="pn-card">
+      <div class="label">✨ Slot Incantesimo Lv1</div>
+      <div class="pips" id="slot1-pips"></div>
+      <div class="btn-row">
+        <button class="btn danger" onclick="useSlot(1)">Usa 1</button>
+        <button class="btn" onclick="resetSlot(1)">Reset (4)</button>
+      </div>
+    </div>
+
+    <!-- SLOT LV2 -->
+    <div class="pn-card">
+      <div class="label">✨ Slot Incantesimo Lv2</div>
+      <div class="pips" id="slot2-pips"></div>
+      <div class="btn-row">
+        <button class="btn danger" onclick="useSlot(2)">Usa 1</button>
+        <button class="btn" onclick="resetSlot(2)">Reset (2)</button>
+      </div>
+    </div>
+
+    <!-- FORTUNA (Lucky) -->
+    <div class="pn-card">
+      <div class="label">🍀 Punti Fortuna (Lucky)</div>
+      <div class="pips" id="luck-pips"></div>
+      <div class="btn-row">
+        <button class="btn danger" onclick="useLuck()">Usa 1</button>
+        <button class="btn" onclick="resetLuck()">Reset (2)</button>
+      </div>
+    </div>
+
+  </div><!-- fine seconda riga grid -->
+
+  <div class="pn-grid">
+
+    <!-- CONCENTRAZIONE -->
+    <div class="pn-card">
+      <div class="label">🔮 Concentrazione</div>
+      <div class="inline-field" style="margin-top:8px;">
+        <input type="text" id="conc-spell" placeholder="nessuna…">
+        <button class="btn danger" onclick="dropConc()">❌</button>
+      </div>
+      <div id="conc-status" style="margin-top:4px; font-size:0.8em; color:#888;">Nessuna concentrazione attiva.</div>
+    </div>
+
+    <!-- ROUND COMBAT -->
+    <div class="pn-card">
+      <div class="label">⚔️ Round di Combattimento</div>
+      <div class="round-row">
+        <button class="btn" onclick="changeRound(-1)">−</button>
+        <div class="round-val" id="round-val">1</div>
+        <button class="btn" onclick="changeRound(+1)">+</button>
+        <button class="btn" onclick="resetRound()">Reset</button>
+      </div>
+      <div class="inline-field" style="margin-top:8px;">
+        <span>Iniziativa:</span>
+        <input type="number" id="init-val" placeholder="—" style="width:60px;">
+      </div>
+    </div>
+
+    <!-- ORO -->
+    <div class="pn-card">
+      <div class="label">🪙 Oro (GP)</div>
+      <div class="oro-row">
+        <input type="number" id="gold-val" value="137">
+        <button class="btn" onclick="changeGold(-1)">−1</button>
+        <button class="btn" onclick="changeGold(+1)">+1</button>
+        <button class="btn" onclick="changeGold(-10)">−10</button>
+        <button class="btn" onclick="changeGold(+10)">+10</button>
+      </div>
+    </div>
+
+    <!-- POZIONE -->
+    <div class="pn-card">
+      <div class="label">🧪 Pozione Curativa</div>
+      <div class="pips" id="pot-pips"></div>
+      <div class="btn-row">
+        <button class="btn danger" onclick="usePot()">Usa (2d4+2)</button>
+        <button class="btn" onclick="resetPot()">Reset (1)</button>
+      </div>
+      <div style="font-size:0.75em; color:#888; margin-top:4px;">Azione Bonus</div>
+    </div>
+
+  </div><!-- fine terza riga grid -->
+
+  <!-- CONDIZIONI -->
+  <div class="pn-card" style="margin-bottom:14px;">
+    <div class="label">⚠️ Condizioni Attive</div>
+    <div class="cond-grid" id="cond-grid">
+      <div class="cond-btn" onclick="toggleCond(this)">Avvelenato</div>
+      <div class="cond-btn" onclick="toggleCond(this)">Incapacitato</div>
+      <div class="cond-btn" onclick="toggleCond(this)">Paralizzato</div>
+      <div class="cond-btn" onclick="toggleCond(this)">Prono</div>
+      <div class="cond-btn" onclick="toggleCond(this)">Charmed</div>
+      <div class="cond-btn" onclick="toggleCond(this)">Spaventato</div>
+      <div class="cond-btn" onclick="toggleCond(this)">Accecato</div>
+      <div class="cond-btn" onclick="toggleCond(this)">Trattenuto</div>
+      <div class="cond-btn" onclick="toggleCond(this)">Stordito</div>
+      <div class="cond-btn" onclick="toggleCond(this)">Invisibile</div>
+      <div class="cond-btn" onclick="toggleCond(this)">Aid attivo (+5 PF)</div>
+      <div class="cond-btn" onclick="toggleCond(this)">Concentrazione</div>
+    </div>
+  </div>
+
+  <!-- RIPOSI + LOG -->
+  <div class="pn-grid">
+    <div class="pn-card">
+      <div class="label">😴 Riposi</div>
+      <div class="btn-row" style="margin-top:8px;">
+        <button class="btn long-rest" onclick="longRest()">🌙 Riposo Lungo</button>
+        <button class="btn short-rest" onclick="shortRest()">☕ Riposo Breve</button>
+      </div>
+      <div style="font-size:0.75em; color:#888; margin-top:6px;">
+        Lungo: tutto si recupera.<br>Breve: spendi Dadi Vita.
+      </div>
+    </div>
+
+    <div class="pn-card" style="grid-column: span 2;">
+      <div class="label">📋 Log Azioni</div>
+      <div id="log-wrap"><p style="color:#555; font-style:italic;">Nessuna azione ancora...</p></div>
+    </div>
+  </div>
+
+  <!-- NOTE RAPIDE -->
+  <div class="pn-card" style="margin-top:14px;">
+    <div class="label">📝 Note Rapide (si salvano automaticamente)</div>
+    <textarea id="note-rapide" placeholder="Scrivi qui condizioni particolari, nemici importanti, piani, etc..."></textarea>
+  </div>
+
+</div><!-- fine #pannello -->
+
+<hr>
+
+<!-- DATI BASE -->
+<h2 id="dati-base">🧬 Dati Base</h2>
+
+<table>
+  <tr><td><strong>Razza</strong></td><td>Umano</td></tr>
+  <tr><td><strong>Classe</strong></td><td>Bardo 3 — College of Lore</td></tr>
+  <tr><td><strong>Background</strong></td><td>Intrattenitore</td></tr>
+  <tr><td><strong>Allineamento</strong></td><td>Neutrale Buono</td></tr>
+  <tr><td><strong>Bonus di Competenza</strong></td><td>+2</td></tr>
+  <tr><td><strong>Velocità</strong></td><td>9 m</td></tr>
+  <tr><td><strong>PF Massimi</strong></td><td>24</td></tr>
+  <tr><td><strong>Dadi Vita</strong></td><td>3d8</td></tr>
+  <tr><td><strong>CA</strong></td><td>14 (Armatura di cuoio 11 + DES)</td></tr>
+  <tr><td><strong>Linguaggi</strong></td><td>Comune, Nanico</td></tr>
+</table>
+
+<h3>Caratteristiche</h3>
+<table>
+  <tr><th>FOR</th><th>DES</th><th>COS</th><th>INT</th><th>SAG</th><th>CAR</th></tr>
+  <tr><td>8 (–1)</td><td>16 (+3)</td><td>14 (+2)</td><td>8 (–1)</td><td>10 (+0)</td><td>17 (+3)</td></tr>
+</table>
+
+<h3>🛡️ Tiri Salvezza</h3>
+<table>
+  <tr><th>Caratteristica</th><th>Bonus</th><th>Nota</th></tr>
+  <tr><td>FOR</td><td>–1</td><td></td></tr>
+  <tr><td>DES</td><td><strong>+5</strong></td><td>✅ competente</td></tr>
+  <tr><td>COS</td><td>+2</td><td></td></tr>
+  <tr><td>INT</td><td>–1</td><td></td></tr>
+  <tr><td>SAG</td><td>+0</td><td></td></tr>
+  <tr><td>CAR</td><td><strong>+5</strong></td><td>✅ competente</td></tr>
+</table>
+
+<hr>
+
+<!-- ABILITÀ -->
+<h2 id="abilita">🎯 Abilità (Bonus Finali Pronti)</h2>
+<p class="note">Jack of All Trades già incluso</p>
+
+<table>
+  <tr><th>Abilità</th><th>Bonus</th><th>Nota</th></tr>
+  <tr><td>Acrobazia (DES)</td><td>+5</td><td>✅ competente</td></tr>
+  <tr><td>Furtività (DES)</td><td>+7</td><td>⭐ Expertise</td></tr>
+  <tr><td>Rapidità di Mano (DES)</td><td>+5</td><td>✅ competente</td></tr>
+  <tr><td>Intrattenere (CAR)</td><td>+5</td><td>✅ competente</td></tr>
+  <tr><td>Persuasione (CAR)</td><td>+7</td><td>⭐ Expertise</td></tr>
+  <tr><td>Inganno (CAR)</td><td>+3</td><td>🃏 Jack of All Trades</td></tr>
+  <tr><td>Intimidire (CAR)</td><td>+3</td><td>🃏 Jack of All Trades</td></tr>
+  <tr><td>Percezione (SAG)</td><td>+1</td><td>🃏 Jack of All Trades</td></tr>
+  <tr><td>Intuizione (SAG)</td><td>+1</td><td>🃏 Jack of All Trades</td></tr>
+  <tr><td>Medicina (SAG)</td><td>+1</td><td>🃏 Jack of All Trades</td></tr>
+  <tr><td>Sopravvivenza (SAG)</td><td>+1</td><td>🃏 Jack of All Trades</td></tr>
+  <tr><td>Addestrare Animali (SAG)</td><td>+1</td><td>🃏 Jack of All Trades</td></tr>
+  <tr><td>Atletica (FOR)</td><td>+0</td><td>🃏 Jack of All Trades</td></tr>
+  <tr><td>Arcano (INT)</td><td>+0</td><td>🃏 Jack of All Trades</td></tr>
+  <tr><td>Indagare (INT)</td><td>+0</td><td>🃏 Jack of All Trades</td></tr>
+  <tr><td>Natura (INT)</td><td>+0</td><td>🃏 Jack of All Trades</td></tr>
+  <tr><td>Religione (INT)</td><td>+0</td><td>🃏 Jack of All Trades</td></tr>
+  <tr><td>Storia (INT)</td><td>+0</td><td>🃏 Jack of All Trades</td></tr>
+</table>
+
+<hr>
+
+<!-- ISPIRAZIONE BARDICA -->
+<h2 id="ispirazione">🎵 Ispirazione Bardica</h2>
+
+<table>
+  <tr><td><strong>Dado</strong></td><td>d6</td></tr>
+  <tr><td><strong>Uso</strong></td><td>Azione Bonus</td></tr>
+  <tr><td><strong>Raggio</strong></td><td>18 m (60 ft)</td></tr>
+  <tr><td><strong>Durata</strong></td><td>1 ora</td></tr>
+  <tr><td><strong>Usi Totali</strong></td><td>3 (pari al modificatore di Carisma)</td></tr>
+  <tr><td><strong>Recupero</strong></td><td>Riposo Lungo</td></tr>
+</table>
+
+<p><strong>Effetto:</strong> una creatura che ti vede o sente ottiene 1 dado di Ispirazione Bardica.
+Può spenderlo dopo aver fallito un tiro su d20 — aggiunge 1d6 al risultato.
+Una creatura può avere 1 solo dado alla volta.</p>
+
+<p class="note">📈 Progressione: Liv 5 → d8 &nbsp;|&nbsp; Liv 10 → d10 &nbsp;|&nbsp; Liv 15 → d12</p>
+
+<hr>
+
+<!-- EXPERTISE -->
+<h2 id="expertise">🎓 Expertise (Perizia)</h2>
+
+<p>Raddoppi il Bonus di Competenza in 2 abilità scelte.</p>
+<p><strong>Scelte di Catalion:</strong> Furtività → +7 &nbsp;|&nbsp; Persuasione → +7</p>
+<p class="note">📌 Calcolo: Modificatore + (Bonus Competenza 2 × 2) = +7</p>
+
+<hr>
+
+<!-- JACK OF ALL TRADES -->
+<h2 id="jack">🃏 Jack of All Trades</h2>
+
+<p>Aggiungi <strong>+1</strong> a tutte le prove abilità in cui NON sei competente.<br>
+Con Bonus di Competenza +2 → metà = +1</p>
+<p class="note">👉 Non si applica a tiri salvezza o attacchi.</p>
+
+<hr>
+
+<!-- COLLEGE OF LORE -->
+<h2 id="college-lore">🎓 College of Lore</h2>
+
+<h3>🗡️ Parole Taglienti (Cutting Words) <span class="tag-new">NUOVO</span></h3>
+<p><strong>REAZIONE | Raggio 18 m</strong></p>
+<p>Quando una creatura entro 18 m fa un <strong>tiro d'attacco</strong>, una <strong>prova di caratteristica</strong>
+o un <strong>tiro danni</strong>:<br>
+→ Spendi 1 Ispirazione Bardica: il bersaglio <strong>sottrae 1d6 al risultato</strong>.</p>
+<ul>
+  <li>📌 Puoi usarlo <strong>dopo</strong> aver visto il tiro, ma <strong>prima</strong> che abbia effetto.</li>
+  <li>📌 Ottimo per proteggere il Barbaro o il Monaco quando stanno per ricevere un colpo grosso.</li>
+  <li>📌 Non funziona se il bersaglio è immune a essere affascinato.</li>
+</ul>
+
+<h3>🔮 Segreti Magici Bonus (Bonus Magical Secrets) <span class="tag-new">NUOVO</span></h3>
+<p>Apprendi <strong>2 incantesimi da qualsiasi lista di classe</strong>. Non contano nel limite degli incantesimi preparati.</p>
+<p><strong>Scelte di Catalion:</strong></p>
+<ul>
+  <li>Ferma Persona — lista Chierico/Druido</li>
+  <li>Aiuto — lista Chierico/Paladino</li>
+</ul>
+
+<hr>
+
+<!-- FEAT ORIGIN -->
+<h2 id="feat">🎭 Feat Origin</h2>
+
+<h3>🎶 Musicista</h3>
+<p>Competenza in 3 strumenti musicali (es. liuto, flauto, tamburo)</p>
+<p><strong>Canzone Incoraggiante:</strong> al termine di un Riposo Breve o Lungo, scegli un numero di alleati pari
+al Bonus di Competenza (2). Ogni alleato ottiene <strong>Ispirazione Eroica</strong> (1 Vantaggio su D20).</p>
+
+<h3>🍀 Lucky</h3>
+<table>
+  <tr><td><strong>Punti Fortuna</strong></td><td>2 (pari al Bonus di Competenza)</td></tr>
+  <tr><td><strong>Recupero</strong></td><td>Riposo Lungo</td></tr>
+</table>
+<ul>
+  <li><strong>Vantaggio:</strong> spendi 1 punto → rilanci un d20 con vantaggio</li>
+  <li><strong>Svantaggio:</strong> spendi 1 punto → imponi svantaggio a un nemico che ti colpisce</li>
+  <li>Usabile su: attacchi, tiri salvezza, prove abilità</li>
+</ul>
+
+<hr>
+
+<!-- INCANTESIMI -->
+<h2 id="incantesimi">✨ Incantesimi</h2>
+
+<table>
+  <tr><td><strong>Caratteristica Incantesimi</strong></td><td>Carisma</td></tr>
+  <tr><td><strong>CD Tiro Salvezza</strong></td><td>13</td></tr>
+  <tr><td><strong>Bonus Attacco Incantesimi</strong></td><td>+5</td></tr>
+  <tr><td><strong>Focus</strong></td><td>Strumento musicale</td></tr>
+</table>
+
+<h3>Slot Incantesimi</h3>
+<table>
+  <tr><th>Livello</th><th>Slot</th><th>Note</th></tr>
+  <tr><td>Livello 1</td><td>4 slot</td><td></td></tr>
+  <tr><td>Livello 2</td><td>2 slot</td><td><span class="tag-new">NUOVO</span></td></tr>
+</table>
+
+<p class="note">📌 Recuperi tutti gli slot con Riposo Lungo.<br>
+📌 Puoi cambiare gli incantesimi preparati dopo ogni Riposo Lungo.</p>
+
+<hr>
+
+<!-- TRUCCHETTI -->
+<h2 id="trucchetti">🔮 Trucchetti</h2>
+
+<h3>🗣️ Beffa Crudele (Vicious Mockery)</h3>
+<p><strong>Azione | Raggio 18 m | TS Saggezza</strong></p>
+<ul>
+  <li>1d6 danni psichici</li>
+  <li>Svantaggio al prossimo attacco del bersaglio</li>
+</ul>
+<p class="note">📈 Liv 5 → 2d6 &nbsp;|&nbsp; Liv 11 → 3d6 &nbsp;|&nbsp; Liv 17 → 4d6</p>
+
+<h3>🙂 Amicizia (Friends)</h3>
+<p><strong>Azione | Raggio 3 m | Concentrazione, 1 minuto</strong></p>
+<ul>
+  <li>TS Saggezza o il bersaglio è Charmed</li>
+  <li>Alla fine della concentrazione, il bersaglio sa che l'hai influenzato</li>
+</ul>
+
+<h3>🌫️ Illusione Minore (Minor Illusion) <span class="tag-new">NUOVO</span></h3>
+<p><strong>Azione | Raggio 9 m | Durata 1 minuto</strong></p>
+<p>Crea <strong>un suono</strong> oppure <strong>un'immagine visiva</strong> entro raggio:</p>
+<ul>
+  <li><strong>Suono:</strong> qualsiasi suono, da un sussurro a una voce alta</li>
+  <li><strong>Immagine:</strong> un oggetto fisso (max 1,5 m di lato), senza suono né odore</li>
+</ul>
+<p class="note">📌 Chi interagisce può smascherarla con INT (Arcano) CD 13.<br>
+📌 Ottima per distrarre nemici o creare diversivi.</p>
+
+<hr>
+
+<!-- INCANTESIMI 1° LIVELLO -->
+<h2 id="lv1">✨ Incantesimi di 1° Livello</h2>
+
+<h3>❤️ Parola Curativa (Healing Word)</h3>
+<p><strong>Azione Bonus | Raggio 18 m</strong></p>
+<p>Cura <strong>1d4 + CAR PF</strong>. Perfetta per rialzare alleati a 0 PF.</p>
+
+<h3>😈 Sussurri Dissonanti (Dissonant Whispers)</h3>
+<p><strong>Azione | Raggio 18 m | TS Saggezza</strong></p>
+<ul>
+  <li>3d6 danni psichici</li>
+  <li>Il bersaglio usa la reazione per fuggire → provoca Attacchi di Opportunità</li>
+</ul>
+
+<h3>😂 Risata Incontenibile di Tasha (Tasha's Hideous Laughter)</h3>
+<p><strong>Azione | Raggio 9 m | Concentrazione | TS Saggezza</strong></p>
+<p>Bersaglio <strong>Prono e Incapacitato</strong> finché dura.</p>
+
+<h3>💕 Charme su Persone (Charm Person)</h3>
+<p><strong>Azione | Raggio 9 m | TS Saggezza</strong></p>
+<p>Bersaglio Charmed per 1 ora. Ha vantaggio se siete in combattimento.</p>
+
+<hr>
+
+<!-- INCANTESIMI 2° LIVELLO -->
+<h2 id="lv2">✨ Incantesimi di 2° Livello</h2>
+
+<h3>💥 Frantuma (Shatter) <span class="tag-new">NUOVO</span></h3>
+<p><strong>Azione | Raggio 18 m | Sfera 3 m di raggio | TS Costituzione</strong></p>
+<ul>
+  <li>3d8 danni tuono (metà se salva)</li>
+  <li>Oggetti inorganici e nemici in armatura metallica hanno svantaggio al TS</li>
+</ul>
+<p class="note">📈 +1d8 per ogni slot sopra il 2°<br>
+📌 Usa su gruppi di nemici vicini tra loro.</p>
+
+<h3>👁️ Invisibilità (Invisibility) <span class="tag-new">NUOVO</span></h3>
+<p><strong>Azione | Tocco | Concentrazione, fino a 1 ora</strong></p>
+<p>Una creatura diventa <strong>invisibile</strong>. Termina se la creatura attacca o lancia un incantesimo.</p>
+<ul>
+  <li>📌 Usa su te stesso se sei in pericolo grave.</li>
+  <li>📌 Usala sul Ladro per dargli vantaggio sugli attacchi.</li>
+</ul>
+
+<h3>❤️‍🩹 Aiuto (Aid) <span class="tag-secret">SEGRETO MAGICO</span></h3>
+<p><strong>Azione | Raggio 9 m | Nessuna concentrazione | Durata 8 ore</strong></p>
+<p>Fino a 3 creature: <strong>+5 PF massimi e PF attuali</strong> per 8 ore.</p>
+<ul>
+  <li>📈 +5 PF per ogni slot sopra il 2°</li>
+  <li>📌 Lancia <strong>prima del combattimento</strong> su Barbaro, Monaco, Paladino.</li>
+  <li>📌 Dura tutto il giorno. Non spreca concentrazione.</li>
+</ul>
+
+<h3>🔒 Ferma Persona (Hold Person) <span class="tag-secret">SEGRETO MAGICO</span></h3>
+<p><strong>Azione | Raggio 18 m | Concentrazione, fino a 1 minuto | TS Saggezza</strong></p>
+<p>⚠️ <strong>Solo su UMANOIDI</strong> (umani, elfi, nani, orchi, ecc.)</p>
+<p>Se fallisce, il bersaglio è <strong>Paralizzato</strong>:</p>
+<ul>
+  <li>Non può muoversi né parlare</li>
+  <li>Fallisce automaticamente TS su FOR e DES</li>
+  <li>Tutti gli attacchi contro di lui hanno <strong>Vantaggio</strong></li>
+  <li>Attacchi in mischia entro 1,5 m sono <strong>CRITICI AUTOMATICI</strong></li>
+</ul>
+<ul>
+  <li>📌 Usa sul nemico umanoide più pericoloso del combattimento.</li>
+  <li>📌 Il Barbaro, il Monaco e il Paladino faranno danni enormi.</li>
+</ul>
+
+<hr>
+
+<!-- ARMI -->
+<h2 id="armi">🗡️ Armi</h2>
+
+<h3>Pugnale (×2)</h3>
+<table>
+  <tr><td><strong>Danno</strong></td><td>1d4 + 3 perforante</td></tr>
+  <tr><td><strong>Attacco</strong></td><td>+5 (DES)</td></tr>
+  <tr><td><strong>Proprietà</strong></td><td>Finesse, Leggera, Lanciabile (6/18 m)</td></tr>
+</table>
+<p class="note">📌 Con 2 pugnali puoi usare l'Azione Bonus per attaccare con il secondo (Lotta con due armi).</p>
+
+<h3>Lancia <span class="tag-new">NUOVO</span></h3>
+<table>
+  <tr><td><strong>Danno</strong></td><td>1d6 – 1 perforante (Versatile: 1d8 – 1)</td></tr>
+  <tr><td><strong>Attacco</strong></td><td>+1 (FOR)</td></tr>
+  <tr><td><strong>Proprietà</strong></td><td>Versatile, Lanciabile (6/18 m)</td></tr>
+</table>
+<p class="note">📌 Arma semplice, sei competente. Statistiche basse perché FOR è –1. Meglio come arma di riserva o da lancio situazionale.</p>
+
+<h3>Spada Bella <span class="tag-new">NUOVO</span></h3>
+<table>
+  <tr><td><strong>Tipo</strong></td><td>Da definire con il DM</td></tr>
+  <tr><td><strong>Nota</strong></td><td>Se è uno spadino/rapier (Finesse): Attacco +5, Danno 1d8+3</td></tr>
+</table>
+<p class="note">📌 Chiedi al DM di che arma si tratta esattamente. Se è un rapier (Finesse) è ottima in mano a Catalion.</p>
+
+<hr>
+
+<!-- EQUIPAGGIAMENTO -->
+<h2 id="equipaggiamento">🎒 Equipaggiamento</h2>
+
+<table>
+  <tr><th>Oggetto</th><th>Note</th></tr>
+  <tr><td>Armatura di cuoio</td><td>Indossata — CA 14</td></tr>
+  <tr><td>2 Pugnali</td><td>Armi principali — vedi sezione Armi</td></tr>
+  <tr><td>Lancia</td><td>Arma di riserva</td></tr>
+  <tr><td>Spada Bella</td><td>Tipo da definire con il DM</td></tr>
+  <tr><td>Liuto</td><td>Focus per gli incantesimi</td></tr>
+  <tr><td>1 Pozione Curativa</td><td>Azione Bonus: cura 2d4+2 PF</td></tr>
+  <tr><td>Abiti da intrattenitore</td><td></td></tr>
+  <tr><td>2 Costumi</td><td></td></tr>
+  <tr><td>Profumo</td><td></td></tr>
+  <tr><td>Specchio</td><td></td></tr>
+  <tr><td>Vestiti da viaggiatore</td><td></td></tr>
+  <tr><td><strong>Oro totale</strong></td><td><strong>137 GP</strong> (30 + 25 + 80 + 2)</td></tr>
+</table>
+
+<hr>
+
+<!-- ALGORITMO DI COMBATTIMENTO -->
+<h2 id="algoritmo">⚔️ Algoritmo di Combattimento</h2>
+
+<div class="algo">
+
+  <div class="algo-step">
+    <strong>🔷 PRIMA DEL COMBATTIMENTO (se hai qualche secondo)</strong><br>
+    → Lancia <strong>Aiuto</strong> su Barbaro + Monaco + Paladino<br>
+    &nbsp;&nbsp;&nbsp;Tutti e tre guadagnano +5 PF per 8 ore. Non costa concentrazione.
+  </div>
+
+  <div class="algo-step">
+    <strong>🔷 TURNO 1</strong><br><br>
+    C'è un <strong>nemico umanoide pericoloso</strong>?<br>
+    &nbsp;&nbsp;&nbsp;→ <strong>SÌ:</strong> lancia <strong>Ferma Persona</strong> (usa concentrazione)<br><br>
+    &nbsp;&nbsp;&nbsp;→ <strong>NO:</strong> ci sono almeno 2 nemici vicini tra loro?<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;→ <strong>SÌ:</strong> lancia <strong>Risata di Tasha</strong> oppure <strong>Sussurri Dissonanti</strong><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;→ <strong>NO:</strong> dai <strong>Ispirazione Bardica</strong> al Barbaro o a chi attacca di più
+  </div>
+
+  <div class="algo-step">
+    <strong>🔷 TURNO 2 IN POI</strong><br><br>
+    Hai una <strong>concentrazione attiva</strong>?<br>
+    &nbsp;&nbsp;&nbsp;→ <strong>SÌ:</strong> mantienila + usa <strong>Beffa Crudele</strong> (gratis, nessun slot)<br>
+    &nbsp;&nbsp;&nbsp;→ <strong>NO:</strong> dai <strong>Ispirazione Bardica</strong> all'alleato più efficace,<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;poi usa <strong>Beffa Crudele</strong>
+  </div>
+
+  <div class="algo-step">
+    <strong>🔷 REAZIONE — controlla ogni round</strong><br><br>
+    Un alleato sta per essere <strong>colpito duramente</strong>?<br>
+    &nbsp;&nbsp;&nbsp;→ <strong>Parole Taglienti:</strong> spendi 1 Ispirazione Bardica.<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Il nemico sottrae 1d6 dal suo tiro d'attacco o danni.<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Puoi trasformare un colpo in un mancato.
+  </div>
+
+  <div class="algo-step">
+    <strong>🔷 SLOT ESAURITI (succede spesso senza riposi)</strong><br>
+    → <strong>Beffa Crudele</strong> ogni turno — è gratis, sempre disponibile<br>
+    → <strong>Ispirazione Bardica</strong> agli alleati<br>
+    → <strong>Parola Curativa</strong> SOLO se qualcuno va a 0 PF<br>
+    → <strong>Pozione Curativa</strong> su te stesso se sei sotto il 30% dei PF (meno di 8 PF)
+  </div>
+
+  <div class="algo-step">
+    <strong>🔷 POSIZIONAMENTO — sempre</strong><br>
+    → Mantieni <strong>18 m di distanza</strong> dai nemici<br>
+    → Stai <strong>dietro</strong> ai personaggi in mischia<br>
+    → Se sei in pericolo: <strong>Invisibilità</strong> su te stesso (Azione), poi allontanati
+  </div>
+
+</div>
+
+<hr>
+
+<p style="text-align:center; font-style:italic; font-size:1.1em; margin-top:32px;">
+  🎭 «Le storie cambiano il mondo. Le spade lo feriscono soltanto.»
+</p>
+
+</div><!-- fine #main -->
+
+<script>
+// ═══════════════════════════════════════════
+//  STATO DEL PANNELLO — tutto in memoria
+// ═══════════════════════════════════════════
+
+const STATE = {
+  hp: { curr: 24, max: 24, temp: 0, aidBonus: 0 },
+  hd: { total: 3, used: 0 },
+  insp: { total: 3, used: 0 },
+  slots: { 1: { total: 4, used: 0 }, 2: { total: 2, used: 0 } },
+  luck: { total: 2, used: 0 },
+  pot: { total: 1, used: 0 },
+  round: 1,
+  deathSucc: 0,
+  deathFail: 0,
+};
+
+// ─── LOG ───
+function addLog(msg, type='') {
+  const wrap = document.getElementById('log-wrap');
+  if (wrap.querySelector('p[style*="555"]')) wrap.innerHTML = '';
+  const p = document.createElement('p');
+  p.className = type;
+  p.textContent = msg;
+  wrap.prepend(p);
+  // keep max 30 entries
+  while (wrap.children.length > 30) wrap.removeChild(wrap.lastChild);
+}
+
+// ─── HP ───
+function renderHP() {
+  const s = STATE.hp;
+  const effectiveMax = s.max + s.aidBonus;
+  document.getElementById('hp-curr').textContent = s.curr;
+  document.getElementById('hp-max-disp').textContent = effectiveMax;
+  document.getElementById('temp-hp-disp').textContent = s.temp;
+  document.getElementById('aid-disp').textContent = (s.aidBonus >= 0 ? '+' : '') + s.aidBonus;
+  const pct = Math.max(0, Math.min(100, (s.curr / effectiveMax) * 100));
+  const bar = document.getElementById('hp-bar');
+  bar.style.width = pct + '%';
+  bar.style.background = pct > 50 ? '#4a9a4a' : pct > 25 ? '#c8a020' : '#9a2a2a';
+}
+
+function applyDamage() {
+  let amt = parseInt(document.getElementById('hp-amount').value) || 0;
+  if (amt <= 0) return;
+  // absorb temp hp first
+  if (STATE.hp.temp > 0) {
+    const absorbed = Math.min(STATE.hp.temp, amt);
+    STATE.hp.temp -= absorbed;
+    amt -= absorbed;
+    if (absorbed > 0) addLog(`🛡️ PF temporanei assorbono ${absorbed} danni.`, 'log-heal');
+  }
+  STATE.hp.curr = Math.max(0, STATE.hp.curr - amt);
+  if (amt > 0) addLog(`💥 Subiti ${amt} danni → PF: ${STATE.hp.curr}`, 'log-damage');
+  document.getElementById('hp-amount').value = '';
+  renderHP();
+}
+
+function applyHeal() {
+  const amt = parseInt(document.getElementById('hp-amount').value) || 0;
+  if (amt <= 0) return;
+  const effectiveMax = STATE.hp.max + STATE.hp.aidBonus;
+  STATE.hp.curr = Math.min(effectiveMax, STATE.hp.curr + amt);
+  addLog(`💚 Curati ${amt} PF → PF: ${STATE.hp.curr}`, 'log-heal');
+  document.getElementById('hp-amount').value = '';
+  renderHP();
+}
+
+function applyTempHP() {
+  const amt = parseInt(document.getElementById('hp-amount').value) || 0;
+  if (amt <= 0) return;
+  STATE.hp.temp = Math.max(STATE.hp.temp, amt); // don't stack, take highest
+  addLog(`🛡️ +${amt} PF temporanei.`, 'log-heal');
+  document.getElementById('hp-amount').value = '';
+  renderHP();
+}
+
+// ─── HD ───
+function renderHD() {
+  const el = document.getElementById('hd-pips');
+  el.innerHTML = '';
+  for (let i = 0; i < STATE.hd.total; i++) {
+    const d = document.createElement('div');
+    d.className = 'pip' + (i < STATE.hd.used ? ' used' : '');
+    d.textContent = 'd8';
+    el.appendChild(d);
+  }
+}
+
+function spendHD() {
+  if (STATE.hd.used >= STATE.hd.total) { addLog('❌ Nessun dado vita rimasto.'); return; }
+  // roll d8 + CON (+2)
+  const roll = Math.floor(Math.random() * 8) + 1 + 2;
+  const effectiveMax = STATE.hp.max + STATE.hp.aidBonus;
+  STATE.hp.curr = Math.min(effectiveMax, STATE.hp.curr + roll);
+  STATE.hd.used++;
+  addLog(`🎲 Dado vita: d8+2 = ${roll} PF recuperati → PF: ${STATE.hp.curr}`, 'log-heal');
+  renderHD(); renderHP();
+}
+
+function resetHD() { STATE.hd.used = 0; renderHD(); addLog('🎲 Dadi vita ripristinati.'); }
+
+// ─── ISPIRAZIONE ───
+function renderInsp() {
+  const el = document.getElementById('insp-pips');
+  el.innerHTML = '';
+  for (let i = 0; i < STATE.insp.total; i++) {
+    const d = document.createElement('div');
+    d.className = 'pip' + (i < STATE.insp.used ? ' used' : '');
+    d.textContent = 'd6';
+    el.appendChild(d);
+  }
+}
+
+function useInsp() {
+  const avail = STATE.insp.total - STATE.insp.used;
+  if (avail <= 0) { addLog('❌ Nessuna Ispirazione Bardica rimasta.'); return; }
+  STATE.insp.used++;
+  addLog(`🎵 Ispirazione Bardica usata. Rimaste: ${STATE.insp.total - STATE.insp.used}`, 'log-damage');
+  renderInsp();
+}
+
+function resetInsp() { STATE.insp.used = 0; renderInsp(); addLog('🎵 Ispirazioni Bardiche ripristinate (3).'); }
+
+// ─── SLOT ───
+function renderSlot(lv) {
+  const el = document.getElementById('slot'+lv+'-pips');
+  el.innerHTML = '';
+  const s = STATE.slots[lv];
+  for (let i = 0; i < s.total; i++) {
+    const d = document.createElement('div');
+    d.className = 'pip lv'+lv + (i < s.used ? ' used' : '');
+    d.textContent = lv;
+    el.appendChild(d);
+  }
+}
+
+function useSlot(lv) {
+  const s = STATE.slots[lv];
+  if (s.used >= s.total) { addLog(`❌ Nessun slot Lv${lv} rimasto.`); return; }
+  s.used++;
+  addLog(`✨ Slot Lv${lv} usato. Rimasti: ${s.total - s.used}`, 'log-damage');
+  renderSlot(lv);
+}
+
+function resetSlot(lv) {
+  STATE.slots[lv].used = 0;
+  renderSlot(lv);
+  addLog(`✨ Slot Lv${lv} ripristinati.`);
+}
+
+// ─── FORTUNA ───
+function renderLuck() {
+  const el = document.getElementById('luck-pips');
+  el.innerHTML = '';
+  for (let i = 0; i < STATE.luck.total; i++) {
+    const d = document.createElement('div');
+    d.className = 'pip' + (i < STATE.luck.used ? ' used' : '');
+    d.textContent = '🍀';
+    el.appendChild(d);
+  }
+}
+
+function useLuck() {
+  if (STATE.luck.used >= STATE.luck.total) { addLog('❌ Nessun punto Fortuna rimasto.'); return; }
+  STATE.luck.used++;
+  addLog(`🍀 Punto Fortuna usato. Rimasti: ${STATE.luck.total - STATE.luck.used}`, 'log-damage');
+  renderLuck();
+}
+
+function resetLuck() { STATE.luck.used = 0; renderLuck(); addLog('🍀 Punti Fortuna ripristinati (2).'); }
+
+// ─── POZIONE ───
+function renderPot() {
+  const el = document.getElementById('pot-pips');
+  el.innerHTML = '';
+  for (let i = 0; i < STATE.pot.total; i++) {
+    const d = document.createElement('div');
+    d.className = 'pip' + (i < STATE.pot.used ? ' used' : '');
+    d.textContent = '🧪';
+    el.appendChild(d);
+  }
+}
+
+function usePot() {
+  if (STATE.pot.used >= STATE.pot.total) { addLog('❌ Nessuna pozione rimasta.'); return; }
+  const roll = Math.floor(Math.random()*4)+1 + Math.floor(Math.random()*4)+1 + 2;
+  const effectiveMax = STATE.hp.max + STATE.hp.aidBonus;
+  STATE.hp.curr = Math.min(effectiveMax, STATE.hp.curr + roll);
+  STATE.pot.used++;
+  addLog(`🧪 Pozione usata: 2d4+2 = ${roll} PF curati → PF: ${STATE.hp.curr}`, 'log-heal');
+  renderPot(); renderHP();
+}
+
+function resetPot() { STATE.pot.used = 0; renderPot(); addLog('🧪 Pozione ripristinata (1).'); }
+
+// ─── ROUND ───
+function renderRound() {
+  document.getElementById('round-val').textContent = STATE.round;
+}
+function changeRound(d) { STATE.round = Math.max(1, STATE.round + d); renderRound(); }
+function resetRound() { STATE.round = 1; renderRound(); addLog('⚔️ Round di combattimento resettato.'); }
+
+// ─── ORO ───
+function changeGold(d) {
+  const el = document.getElementById('gold-val');
+  el.value = Math.max(0, (parseInt(el.value) || 0) + d);
+}
+
+// ─── CONCENTRAZIONE ───
+function dropConc() {
+  const el = document.getElementById('conc-spell');
+  if (el.value) addLog(`🔮 Concentrazione su "${el.value}" interrotta.`, 'log-damage');
+  el.value = '';
+  document.getElementById('conc-status').textContent = 'Nessuna concentrazione attiva.';
+  document.getElementById('conc-status').className = '';
+}
+
+document.addEventListener('input', function(e) {
+  if (e.target.id === 'conc-spell') {
+    const st = document.getElementById('conc-status');
+    if (e.target.value) {
+      st.textContent = '⚡ In concentrazione: ' + e.target.value;
+      st.className = 'conc-active';
+    } else {
+      st.textContent = 'Nessuna concentrazione attiva.';
+      st.className = '';
+    }
+  }
+});
+
+// ─── CONDIZIONI ───
+function toggleCond(el) {
+  el.classList.toggle('active');
+  const name = el.textContent;
+  if (el.classList.contains('active')) {
+    addLog(`⚠️ Condizione attiva: ${name}`, 'log-damage');
+  } else {
+    addLog(`✅ Condizione rimossa: ${name}`, 'log-heal');
+  }
+}
+
+// ─── DEATH SAVES ───
+function toggleDeathPip(pip, type) {
+  pip.classList.toggle('used');
+  checkDeathStatus();
+}
+
+function resetDeathSaves() {
+  document.querySelectorAll('.death-pip').forEach(p => p.classList.remove('used'));
+  addLog('💀 Tiri salvezza morte resettati.');
+}
+
+function checkDeathStatus() {
+  const succs = document.querySelectorAll('.death-pip.succ.used').length;
+  const fails = document.querySelectorAll('.death-pip.fail.used').length;
+  if (succs >= 3) addLog('✅ Stabilizzato! 3 successi.', 'log-heal');
+  if (fails >= 3) addLog('💀 MORTO. 3 fallimenti.', 'log-damage');
+}
+
+// ─── RIPOSI ───
+function longRest() {
+  STATE.hp.curr = STATE.hp.max + STATE.hp.aidBonus;
+  STATE.hp.temp = 0;
+  STATE.hd.used = 0;
+  STATE.insp.used = 0;
+  STATE.slots[1].used = 0;
+  STATE.slots[2].used = 0;
+  STATE.luck.used = 0;
+  STATE.round = 1;
+  STATE.hp.aidBonus = 0;
+  document.getElementById('conc-spell').value = '';
+  document.getElementById('conc-status').textContent = 'Nessuna concentrazione attiva.';
+  document.getElementById('conc-status').className = '';
+  document.querySelectorAll('.cond-btn.active').forEach(c => c.classList.remove('active'));
+  document.querySelectorAll('.death-pip').forEach(p => p.classList.remove('used'));
+  renderAll();
+  addLog('🌙 Riposo Lungo completato. Tutto ripristinato.', 'log-heal');
+}
+
+function shortRest() {
+  // Just remind; actual HP recovery is via HD buttons
+  addLog('☕ Riposo Breve. Spendi i Dadi Vita per recuperare PF.', 'log-heal');
+  // Ispirazione bardica NON si recupera con riposo breve in 2024
+}
+
+// ─── RENDER ALL ───
+function renderAll() {
+  renderHP();
+  renderHD();
+  renderInsp();
+  renderSlot(1);
+  renderSlot(2);
+  renderLuck();
+  renderPot();
+  renderRound();
+}
+
+// ─── NOTE SALVATE IN SESSION STORAGE (best effort) ───
+const noteEl = document.getElementById('note-rapide');
+try {
+  const saved = sessionStorage.getItem('catalion_note');
+  if (saved) noteEl.value = saved;
+} catch(e) {}
+noteEl.addEventListener('input', () => {
+  try { sessionStorage.setItem('catalion_note', noteEl.value); } catch(e) {}
+});
+
+// ─── INIT ───
+renderAll();
+</script>
+
+</body>
+</html>
