@@ -110,32 +110,34 @@ Tasks:
 5. Consistent treatment across all pip types
 
 ### Phase 5: Button Overflow & Panel Polish
-**Status:** NOT STARTED
+**Status:** ✅ COMPLETE
 **Goal:** No overflows, polished panel at all widths.
 
-Tasks:
-1. Gold card: replace 4 buttons with +/− only
-2. flex-wrap:wrap on .oro-row
-3. Move hardcoded colors to CSS variables (gold #d4aa30, pip text #fff)
-4. Audit all btn-row containers for overflow
+Done:
+- Gold card: replaced 4 fixed buttons with custom amount input + −/+ buttons
+- CSS class renamed oro-row → gold-row
+- Hardcoded colors moved to CSS variables
 
 ### Phase 6: Algorithm/Wizard UX
-**Status:** IN PROGRESS (~40%)
+**Status:** IN PROGRESS (~80%)
 **Goal:** Contextual labels, in-modal editing, usability first.
 
 Done:
-- Content block inline editor: editBlock/saveBlockEdit/cancelBlockEdit/cbeCollectFromDOM written
+- Content block inline editor: editBlock/saveBlockEdit/cancelBlockEdit/cbeCollectFromDOM
 - Paragraph, note, header, bullets block types have working inline editors
+- cbeRenderTable() — table key-value pair editor implemented
+- cbeRenderSubfeature() — subfeature editor implemented
+- Feature wizard step 3: page-replacement UX for tracker/action editing
+- Live preview in feature, spell, weapon, and algorithm wizards
+- Hints converted to hover tooltips (title attribute + ⓘ icon)
+- Tag system replaces isNew/isSecret/secretLabel
 
 Remaining:
-- cbeRenderTable() — table key-value pair editor (called but not defined yet)
-- cbeRenderSubfeature() — subfeature editor (called but not defined yet)
-- cbeAddTableRow/cbeDeleteTableRow, cbeAddSubBlock/cbeDeleteSubBlock helpers
 - Replace prompt() in algo step editor with inline editing
 - Algo step indent flag not settable via UI
 
 ### Phase 7: Feature + Tracker + Action Integration
-**Status:** IN PROGRESS (~50%)
+**Status:** ✅ COMPLETE
 **Goal:** Features are the single source of truth for trackers and actions.
 
 Architecture:
@@ -150,16 +152,13 @@ Architecture:
 - Panel renders trackers/actions by scanning features + standalone trackers
 
 Done:
-- Features embed singular tracker/action (working but wrong labels + only 1 per feature)
-- Feature wizard step 3 has tracker+action fields (flat, singular)
-- editFeature() flattens tracker/action for prefill
+- Features embed plural trackers[]/actions[] arrays
+- Feature wizard step 3 rewritten as list editor (add/edit/delete)
+- Tracker/action editing uses page-replacement UX (replaces wizard body)
+- editFeature() flattens trackers/actions for prefill
 - Standalone trackers fully working
-
-Remaining (next implementation phase):
-- Refactor singular tracker/action → plural trackers[]/actions[] arrays
-- Feature wizard step 3: rewrite as list editor (add/edit/delete pattern)
-- Update syncSession, findTrackerById, longRest, tracker rendering, action rendering
-- Update catalion.json to use new array format with labels
+- syncSession, findTrackerById, longRest, tracker rendering, action rendering updated
+- catalion.json updated with new array format
 
 ### Phase 8: Spell Preparation & Ritual
 **Status:** NOT STARTED
@@ -286,7 +285,7 @@ Menu items:
 ```
 {
   name, quote, race, class, subclass, level, background, alignment,
-  playerName, emoji, speed, ac, armorNote, hp: {max},
+  playerName, speed, ac, armorNote, hp: {max},
   hitDieType, initiativeBonus, languages, toolProficiencies,
 
   abilityScores: { STR, DEX, CON, INT, WIS, CHA },
@@ -309,7 +308,8 @@ Menu items:
     level, name, originalName, emoji, actionType, school,
     range, duration, concentration?, saveAbility?,
     description, scaling?, notes?,
-    prepared?, ritual?, isNew?, isSecret?, secretLabel?
+    prepared?, ritual?,
+    tags?: [{ label, color }]  // 0-3 tags (green/blue/purple/red/orange)
   }],
 
   weapons: [{
@@ -319,14 +319,16 @@ Menu items:
     magicBonus?,               // optional +1/+2/+3
     attackBonusOverride?,      // null = auto-calc
     damageOverride?,           // null = auto-calc
-    properties?, notes?
+    properties?, notes?,
+    tags?: [{ label, color }]
   }],
 
   equipment: [{ name, notes? }],
 
   features: [{
     title, emoji, source?,
-    subtitle?, isNew?, isSecret?, secretLabel?,
+    subtitle?,
+    tags?: [{ label, color }],  // 0-3 tags (green/blue/purple/red/orange)
     contentBlocks: [{ type, text?, title?, emoji?, bullets?, rows?, ... }],
     // Embedded trackers (plural — a feature can have multiple)
     trackers?: [{ label?, emoji?, total, recovery, die?, showDie? }],
@@ -449,6 +451,13 @@ Menu items:
 | 54 | Feature trackers/actions | Arrays (plural) with per-entry label+emoji, not singular |
 | 55 | Content block inline editing | Replace all prompt() with in-modal editing |
 | 56 | Sidebar reorder | Needs arrows or drag-drop wired + renderSections() sync |
+| 57 | Tag system | tags:[{label,color}] replaces isNew/isSecret/secretLabel |
+| 58 | Live wizard preview | Feature/spell/weapon/algo wizards show live preview at bottom |
+| 59 | Field hints | Hover tooltips (title attr + ⓘ icon), not visible divs |
+| 60 | Tracker/action editing | Page-replacement UX (replaces wiz-body, not inline row edit) |
+| 61 | Character emoji | Removed (dead data — stored but never displayed) |
+| 62 | Skill proficiency levels | none/proficient/expertise/halfProficiency (renamed from jackOfAllTrades) |
+| 63 | Skills display | Always show all 18, non-proficient at 55% opacity |
 
 ---
 
@@ -468,11 +477,11 @@ Menu items:
 | Death save colors hardcoded | CSS | CSS variables (Phase 4) |
 | Gold input color hardcoded | CSS | CSS variable (Phase 5) |
 | Pip text color hardcoded | CSS | CSS variable (Phase 4) |
-| **Tracker label shows parent title** | buildPanelRow2 | **trackers[] with label field** |
-| **Action label shows parent title** | quick actions | **actions[] with label field** |
-| **Only 1 tracker/action per feature** | data model | **trackers[]/actions[] arrays** |
-| **cbeRenderTable() not defined** | editBlock() | Implement function |
-| **cbeRenderSubfeature() not defined** | editBlock() | Implement function |
+| **~~Tracker label shows parent title~~** | ~~buildPanelRow2~~ | ✅ Fixed (trackers[] with label) |
+| **~~Action label shows parent title~~** | ~~quick actions~~ | ✅ Fixed (actions[] with label) |
+| **~~Only 1 tracker/action per feature~~** | ~~data model~~ | ✅ Fixed (trackers[]/actions[] arrays) |
+| **~~cbeRenderTable() not defined~~** | ~~editBlock()~~ | ✅ Fixed |
+| **~~cbeRenderSubfeature() not defined~~** | ~~editBlock()~~ | ✅ Fixed |
 | **Sidebar reorder not wired** | renderSidebar | Wire arrows + renderSections sync |
 | **Algo step editor uses prompt()** | addAlgoStep | Inline editing |
 

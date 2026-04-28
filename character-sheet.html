@@ -15,7 +15,7 @@
   --sidebar-bg:#16162a; --sidebar-text:#b0b0cc; --sidebar-hover:#26264a;
   --shadow:0 4px 24px rgba(0,0,0,.4); --shadow-sm:0 2px 8px rgba(0,0,0,.25);
   --hp-green:#48a848; --hp-yellow:#c8a030; --hp-red:#b83030;
-  --tag-new-bg:#2a7a2a; --tag-sec-bg:#7a2a8a;
+  --tag-green:#2a7a2a; --tag-purple:#7a2a8a; --tag-blue:#2a5a9a; --tag-red:#9a2a2a; --tag-orange:#8a6a1a;
   --algo-bg:#1e1e34; --algo-step-bg:#262642; --algo-step-border:#3a3a58;
   --log-damage:#e88888; --log-heal:#88d888;
   --modal-bg:#222238; --overlay:rgba(10,10,20,.85);
@@ -46,7 +46,7 @@
   --sidebar-bg:#e8e7e0; --sidebar-text:#3a3a4a; --sidebar-hover:#dcdad0;
   --shadow:0 2px 16px rgba(40,40,60,.10); --shadow-sm:0 1px 6px rgba(40,40,60,.06);
   --hp-green:#2e8e2e; --hp-yellow:#9a8818; --hp-red:#a02020;
-  --tag-new-bg:#2a7a2a; --tag-sec-bg:#7a2a8a;
+  --tag-green:#2a7a2a; --tag-purple:#7a2a8a; --tag-blue:#2a5a9a; --tag-red:#9a2a2a; --tag-orange:#8a6a1a;
   --algo-bg:#f0efe8; --algo-step-bg:#fafaf6; --algo-step-border:#c8c6b8;
   --log-damage:#b82020; --log-heal:#2a8a2a;
   --modal-bg:#fafaf6; --overlay:rgba(20,20,30,.55);
@@ -91,12 +91,19 @@ a{color:var(--accent);text-decoration:none;}
 ::-webkit-scrollbar{width:6px;height:6px;}
 ::-webkit-scrollbar-track{background:var(--scrollbar-track);}
 ::-webkit-scrollbar-thumb{background:var(--scrollbar-thumb);border-radius:3px;}
-.tag-new{display:inline-block;background:var(--tag-new-bg);color:#fff;
+.feature-tag{display:inline-block;color:#fff;
   font-size:.72em;padding:1px 7px;border-radius:3px;vertical-align:middle;margin-left:5px;}
-.tag-secret{display:inline-block;background:var(--tag-sec-bg);color:#fff;
-  font-size:.72em;padding:1px 7px;border-radius:3px;vertical-align:middle;margin-left:5px;}
+.feature-tag.tag-green{background:var(--tag-green);}
+.feature-tag.tag-purple{background:var(--tag-purple);}
+.feature-tag.tag-blue{background:var(--tag-blue);}
+.feature-tag.tag-red{background:var(--tag-red);}
+.feature-tag.tag-orange{background:var(--tag-orange);}
+.feature-source{display:inline-block;color:var(--text-muted);font-size:.7em;
+  padding:1px 7px;border:1px solid var(--border-light);border-radius:3px;vertical-align:middle;margin-left:5px;}
+.feature-subtitle{color:var(--text-muted);font-size:.9em;margin:2px 0 8px;}
 .empty-state{color:var(--text-muted);font-style:italic;padding:18px 0;text-align:center;
   border:2px dashed var(--border-light);border-radius:8px;margin:10px 0;}
+tr.skill-none{opacity:.55;}
 .section-header{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px;}
 .section-header h2{margin-top:0;border-bottom:none;padding-bottom:0;flex:1;}
 .section-header-line{border-bottom:2px solid var(--border);margin-bottom:14px;padding-bottom:4px;}
@@ -199,8 +206,8 @@ input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;}
 .inline-field{display:flex;align-items:center;gap:8px;margin-top:7px;font-size:.85em;color:var(--text-muted);}
 .inline-field input{background:var(--bg-input);border:1px solid var(--border-light);color:var(--text);
   border-radius:5px;padding:3px 8px;font-size:.95em;}
-.oro-row{display:flex;align-items:center;gap:7px;margin-top:7px;}
-.oro-row input[type=number]{width:82px;background:var(--bg-input);border:1px solid var(--border-light);
+.gold-row{display:flex;align-items:center;gap:7px;margin-top:7px;}
+.gold-row input[type=number]{width:82px;background:var(--bg-input);border:1px solid var(--border-light);
   color:#d4aa30;border-radius:5px;padding:5px 8px;font-size:1em;font-weight:600;text-align:center;}
 #log-wrap{background:var(--bg-card2);border:1px solid var(--border-light);border-radius:7px;
   padding:7px 10px;max-height:95px;overflow-y:auto;margin-top:7px;font-size:.78em;color:var(--text-muted);}
@@ -297,6 +304,13 @@ input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;}
 .wiz-step-label{font-size:.75em;color:var(--text-muted);}
 .wiz-progress-bar{height:3px;background:var(--border);border-radius:2px;margin:10px 0 0;}
 #wiz-progress{height:100%;background:var(--accent);border-radius:2px;transition:width .3s;width:0%;}
+.wiz-hint{font-size:.82em;color:var(--text-muted);margin:2px 0 8px;line-height:1.4;}
+.wiz-preview{margin-top:18px;padding:14px;background:var(--bg-card2);border:1px dashed var(--border);border-radius:8px;}
+.wiz-preview-label{font-size:.78em;color:var(--text-muted);margin-bottom:10px;text-transform:uppercase;letter-spacing:1px;}
+.wiz-preview-content{pointer-events:none;}
+.wiz-preview-content h2{font-size:1.1em;margin-top:0;}
+.wiz-preview-content .section-header-line{margin-bottom:6px;}
+.preview-meta{font-size:.88em;color:var(--text-muted);margin-top:6px;}
 .modal-body{padding:20px 22px;overflow-y:auto;flex:1;}
 /* Sidebar buttons always use sidebar palette regardless of theme */
 #sidebar .btn-edit-sm{background:var(--sidebar-hover);border-color:var(--border-light);color:var(--sidebar-text);}
@@ -374,6 +388,9 @@ body.edit-mode .edit-only-block{display:block!important;}
 .btn-del-sm{background:none;border:1px solid transparent;color:var(--text-faint);
   border-radius:5px;padding:2px 6px;font-size:.75em;cursor:pointer;transition:all .13s;}
 .btn-del-sm:hover{border-color:#aa4444;color:#ff8888;}
+.cb-row{display:flex;align-items:center;justify-content:space-between;padding:4px 8px;
+  border:1px solid var(--border-light);border-radius:5px;margin-bottom:4px;transition:opacity .2s;}
+.cb-row.cb-dimmed{display:none;}
 .item-edit-row{display:flex;align-items:center;gap:5px;flex-wrap:wrap;}
 /* ── Sidebar edit-mode item row ── */
 .sb-item-edit{display:flex;align-items:center;gap:2px;padding:1px 4px 1px 6px;
@@ -719,11 +736,11 @@ const BASE = {
   spend:'Use 1', reset:'Reset', spendFull:'Spend 1 HD',
   hdNote:'Recover ½ on short rest',
   potionUseNote:'Bonus Action',
-  abilitiesTitle:'Ability Scores', tsTitle:'🛡️ Saving Throws', skillNote:'Jack of All Trades already included',
-  proficient:'✅ proficient', expertise:'⭐ Expertise', jack:'🃏 Jack of All Trades',
+  abilitiesTitle:'Ability Scores', tsTitle:'🛡️ Saving Throws',
+  proficient:'✅ Proficient', expertise:'⭐ Expertise', halfProf:'½ Half Proficiency',
   spellTitle:'Spells', spellDC:'Spell Save DC', spellAttackBonus:'Spell Attack Bonus',
   focus:'Focus', slotTitle:'Spell Slots', slotLevel:'Level', slotTot:'Slots', slotNote:'Notes',
-  slotNew:'NEW', longRestRecovery:'Recover on Long Rest',
+  longRestRecovery:'Recover on Long Rest',
   cantrips:'Cantrips', spellLvPrefix:'Level',
   lvSuffix:' Spells',
   range:'Range', duration:'Duration', school:'School', actionType:'Action',
@@ -734,7 +751,10 @@ const BASE = {
    addWeapon:'＋ Add Weapon', addItem:'＋ Add Item', addSkill:'＋ Add Skill',
    addSpell:'＋ Add Spell', addFeature:'＋ Add Section',
    addSlot:'＋ Add Slot',
-   addTracker:'＋ Add Tracker', addCondition:'＋ Add Condition',
+   addTracker:'＋ Add Tracker', addAction:'＋ Add Action', addCondition:'＋ Add Condition',
+   tracker:'Tracker', action:'Action', trackers:'Trackers',
+   trackerHint:'Resource counters shown in the game panel (e.g. Bardic Inspiration 3/3). They refill on rest.',
+   actionHint:'Quick-reference buttons in the game panel for actions you use often in combat.',
    addAlgoBlock:'＋ Add Block',
    custom:'Custom…', customPh:'Type a custom value',
    sidebarEmpty:'Sidebar is empty. Enable edit mode (✏️) to add sections.',
@@ -754,8 +774,9 @@ const BASE = {
   f_emoji:'Emoji', f_actionType:'Action Type', f_school:'Magic School',
   f_range:'Range', f_concentration:'Concentration', f_duration:'Duration',
   f_saveAbility:'Saving Throw (ability)', f_desc:'Description',
-  f_scaling:'Scaling', f_notes:'Notes', f_isNew:'Mark as NEW',
-  f_isSecret:'Magical Secret / Special', f_secretLabel:'Secret Label',
+  f_scaling:'Scaling', f_notes:'Notes',
+  tags:'Tags', addTag:'＋ Add Tag', tagLabel:'Label', tagColor:'Color',
+  tagColor_green:'Green', tagColor_blue:'Blue', tagColor_purple:'Purple', tagColor_red:'Red', tagColor_orange:'Orange',
   f_wName:'Weapon Name', f_quantity:'Quantity', f_damage:'Damage Formula',
   f_damageType:'Damage Type', f_attackBonus:'Attack Bonus', f_attackStat:'Attack Ability',
   f_properties:'Properties', f_label:'Label', f_die:'Die (optional)',
@@ -766,7 +787,7 @@ const BASE = {
   f_linkLabel:'Link Label', f_question:'Question (optional)', f_bullets:'Bullet points',
   required:'(required)', optional:'(optional)',
   profType_none:'None', profType_proficient:'Proficient', profType_expertise:'Expertise',
-  profType_jackOfAllTrades:'Jack of All Trades',
+    profType_halfProficiency:'Mezza Competenza',
   hasSpellcasting:'Does this character use magic?',
   abilityMethod:'Score assignment method',
   method_manual:'Manual', method_standard:'Standard Array (15,14,13,12,10,8)',
@@ -805,22 +826,23 @@ const BASE = {
   noTracker:'No custom tracker.',
   noSpellcasting:'No spellcasting configured.',
   slotLvLabel:'Lv', level:'Level',
-  lbl_race:'Race', lbl_class:'Class', lbl_background:'Background',
+  lbl_race:'Race', lbl_class:'Class', lbl_subclass:'Subclass', lbl_background:'Background',
   lbl_alignment:'Alignment', lbl_profBonus:'Proficiency Bonus',
   lbl_speed:'Speed', lbl_hpMax:'Max HP', lbl_hitDice:'Hit Dice',
   lbl_ac:'AC', lbl_languages:'Languages', lbl_tsChar:'Ability',
   lbl_ability:'Ability', lbl_bonus:'Bonus', lbl_totalGold:'Total Gold',
   editBaseData:'Base Data', editSkills:'Skills', editMagic:'Magic',
   step:'Step', wizSave:'Save', wizNext:'Next →',
-  wizRequired:'Required field', wizSaved:'✅ Saved!', wizEdit:'edit',
+  wizRequired:'Required field', wizSaved:'✅ Saved!', wizEdit:'edit', wizPreview:'Preview',
   contentBlocks:'Content Blocks', addBlock:'＋ Block',
   addRow:'＋ Row', cbBulletsHint:'One bullet point per line',
   cbeKey:'Key', cbeValue:'Value',
-  cbSubTitle:'Subfeature title', cbSubEmoji:'Emoji', cbSubNew:'Mark as new',
+  cbSubTitle:'Subfeature title', cbSubEmoji:'Emoji',
   cbAddSubBlock:'＋ Sub-block',
   algoSteps:'Algorithm Steps', addStep:'＋ Step',
   algoStepQuestion:'Step question (optional):',
   algoStepBullets:'Bullet points (one per line):',
+  algoStepIndent:'Indent (sub-step)',
   // Point-buy ability keys (were IT-only)
   abBudget:'Budget', abRemaining:'Remaining', abCost:'cost', abPts:'pts',
   abFreeMode:'Free', abPointBuy:'Point Buy',
@@ -867,7 +889,7 @@ const BASE = {
   wiz_step_combat:'Combat',
   wiz_step_savingThrows:'Saving Throws',
   wiz_step_spellBase:'Base',
-  wiz_step_spellDetails:'Details',
+  wiz_step_spellDesc:'Description & Notes',
   wiz_step_header:'Header',
   wiz_step_content:'Content',
   wiz_step_trackerAction:'Tracker & Action',
@@ -875,25 +897,25 @@ const BASE = {
   wiz_step_algoSteps:'Steps',
   // Wizard field labels
   wiz_f_playerName:'Player Name',
-  wiz_f_emojiPG:'Character Emoji',
   wiz_f_subclass:'Subclass',
   wiz_f_tsProf:'ST proficient',
   wiz_f_spellNameIT:'Name',
   wiz_f_spellLevel:'Level (0=Cantrip)',
   wiz_f_concentrationCheck:'Requires concentration',
-  wiz_f_markNew:'Mark as NEW',
-  wiz_f_markSpecial:'Mark as SPECIAL',
-  wiz_f_specialLabel:'Special label',
   wiz_f_damageFull:'Damage (e.g. 1d8+3)',
   wiz_f_attackStatLabel:'Attack Ability',
   wiz_f_attackBonusTotal:'Total Attack Bonus',
+  wiz_f_magicBonus:'Magic Bonus (+1, +2…)',
   wiz_f_trackerID:'ID (unique, no spaces)',
   wiz_f_totalUses:'Total uses',
   wiz_f_hasTracker:'Has usage tracker',
+  wiz_f_trackerLabel:'Tracker display name (blank = feature title)',
   wiz_f_hasAction:'Has combat action',
+  wiz_f_actionLabel:'Action display name (blank = feature title)',
   wiz_f_actionDesc:'Action description',
   wiz_f_isPotionCheck:'Is a potion (use and heal HP)',
   wiz_f_potionFormula:'Potion formula (e.g. 2d4+2)',
+  wiz_f_potionNotes:'Potion notes',
   wiz_f_conditionName:'Condition name',
   wiz_f_slotLevel:'Slot Level',
   wiz_f_slotTotal:'Slot Count',
@@ -905,7 +927,11 @@ const BASE = {
   wiz_f_preparedCaster:'Prepared caster (prepares spells daily)',
   wiz_f_featureTitle:'Title',
   wiz_f_featureSubtitle:'Subtitle',
-  wiz_f_featureSource:'Source (e.g. Class Lv3)',
+  wiz_f_featureSource:'Source',
+  sourceFeat:'Feat',
+  sourceOriginFeat:'Origin Feat',
+  sourceMagicItem:'Magic Item',
+  sourceCombatRule:'Combat Rule',
   // Wizard placeholders
   wiz_ph_name:'E.g. Arannis',
   wiz_ph_race:'E.g. Elf, Human…',
@@ -914,9 +940,12 @@ const BASE = {
   wiz_ph_quote:'E.g. "The pen is mightier than the sword."',
   wiz_ph_armorNote:'E.g. Leather armor 11 + DEX',
   wiz_ph_languages:'E.g. Common, Dwarvish',
-  wiz_ph_special:'SPECIAL',
   wiz_ph_attackBonus:'+5',
   wiz_ph_trackerID:'bardic_inspiration',
+  hint_featureTitle:'The name shown as the section heading.',
+  hint_featureEmoji:'Shown before the title in the section heading.',
+  hint_featureSubtitle:'Short description shown below the title.',
+  hint_featureSource:'Where this feature comes from (class, race, feat, etc.).',
   // Spell level prefix for lvOpts
   lvPrefix:'Lv',
 };
@@ -945,11 +974,11 @@ const TRANSLATIONS = {
     spend:'Spendi 1', reset:'Reset', spendFull:'Spendi 1 HD',
     hdNote:'Recuperi ½ con riposo breve',
     potionUseNote:'Azione Bonus',
-    abilitiesTitle:'Caratteristiche', tsTitle:'🛡️ Tiri Salvezza', skillNote:'Jack of All Trades già incluso',
-    proficient:'✅ competente', expertise:'⭐ Expertise', jack:'🃏 Jack of All Trades',
+    abilitiesTitle:'Caratteristiche', tsTitle:'🛡️ Tiri Salvezza',
+    proficient:'✅ Competente', expertise:'⭐ Expertise', halfProf:'½ Mezza Competenza',
     spellTitle:'Incantesimi', spellDC:'CD Tiro Salvezza', spellAttackBonus:'Bonus Attacco Incantesimi',
     focus:'Focus', slotTitle:'Slot Incantesimi', slotLevel:'Livello', slotTot:'Slot', slotNote:'Note',
-    slotNew:'NUOVO', longRestRecovery:'Recupero con Riposo Lungo',
+    longRestRecovery:'Recupero con Riposo Lungo',
     cantrips:'Trucchetti', spellLvPrefix:'Incantesimi di',
     lvSuffix:'° Livello',
     range:'Raggio', duration:'Durata', school:'Scuola', actionType:'Azione',
@@ -960,7 +989,10 @@ const TRANSLATIONS = {
     addWeapon:'＋ Aggiungi arma', addItem:'＋ Aggiungi oggetto', addSkill:'＋ Aggiungi abilità',
     addSpell:'＋ Aggiungi incantesimo', addFeature:'＋ Aggiungi sezione',
     addSlot:'＋ Aggiungi slot',
-    addTracker:'＋ Aggiungi tracker', addCondition:'＋ Aggiungi condizione',
+    addTracker:'＋ Aggiungi tracker', addAction:'＋ Aggiungi azione', addCondition:'＋ Aggiungi condizione',
+    tracker:'Tracker', action:'Azione', trackers:'Tracker',
+    trackerHint:'Contatori risorse visibili nel pannello di gioco (es. Ispirazione Bardica 3/3). Si ricaricano al riposo.',
+    actionHint:'Pulsanti di riferimento rapido nel pannello di gioco per azioni usate spesso in combattimento.',
     addAlgoBlock:'＋ Aggiungi blocco',
     custom:'Personalizzato…', customPh:'Inserisci un valore personalizzato',
     sidebarEmpty:'Sidebar vuota. Abilita modalità modifica (✏️) per aggiungere sezioni.',
@@ -980,8 +1012,9 @@ const TRANSLATIONS = {
     f_emoji:'Emoji', f_actionType:'Tipo Azione', f_school:'Scuola Magia',
     f_range:'Raggio', f_concentration:'Concentrazione', f_duration:'Durata',
     f_saveAbility:'Tiro Salvezza (caratteristica)', f_desc:'Descrizione',
-    f_scaling:'Progressione (scaling)', f_notes:'Note', f_isNew:'Segnala come NUOVO',
-    f_isSecret:'Segreto Magico / Speciale', f_secretLabel:'Etichetta Segreto',
+    f_scaling:'Progressione (scaling)', f_notes:'Note',
+    tags:'Etichette', addTag:'＋ Aggiungi etichetta', tagLabel:'Nome', tagColor:'Colore',
+    tagColor_green:'Verde', tagColor_blue:'Blu', tagColor_purple:'Viola', tagColor_red:'Rosso', tagColor_orange:'Arancione',
     f_wName:'Nome Arma', f_quantity:'Quantità', f_damage:'Formula Danno',
     f_damageType:'Tipo Danno', f_attackBonus:'Bonus Attacco', f_attackStat:'Caratteristica Attacco',
     f_properties:'Proprietà', f_label:'Label', f_die:'Dado (opzionale)',
@@ -992,7 +1025,7 @@ const TRANSLATIONS = {
     f_linkLabel:'Label Link', f_question:'Domanda (opzionale)', f_bullets:'Punti elenco',
     required:'(obbligatorio)', optional:'(opzionale)',
     profType_none:'Nessuna', profType_proficient:'Competente', profType_expertise:'Expertise',
-    profType_jackOfAllTrades:'Jack of All Trades',
+  profType_halfProficiency:'Half Proficiency',
     hasSpellcasting:'Il personaggio usa magia?',
     abilityMethod:'Metodo assegnazione punteggi',
     method_manual:'Manuale', method_standard:'Array Standard (15,14,13,12,10,8)',
@@ -1035,22 +1068,23 @@ const TRANSLATIONS = {
     noTracker:'Nessun tracker custom.',
     noSpellcasting:'Nessun lancio di incantesimi configurato.',
     slotLvLabel:'Lv', level:'Livello',
-    lbl_race:'Razza', lbl_class:'Classe', lbl_background:'Background',
+    lbl_race:'Razza', lbl_class:'Classe', lbl_subclass:'Sottoclasse', lbl_background:'Background',
     lbl_alignment:'Allineamento', lbl_profBonus:'Bonus di Competenza',
     lbl_speed:'Velocità', lbl_hpMax:'PF Massimi', lbl_hitDice:'Dadi Vita',
     lbl_ac:'CA', lbl_languages:'Linguaggi', lbl_tsChar:'Car.',
     lbl_ability:'Caratteristica', lbl_bonus:'Bonus', lbl_totalGold:'Oro totale',
     editBaseData:'Dati Base', editSkills:'Abilità', editMagic:'Magia',
     step:'Passo', wizSave:'Salva', wizNext:'Avanti →',
-    wizRequired:'Campo obbligatorio', wizSaved:'✅ Salvato!', wizEdit:'modifica',
+    wizRequired:'Campo obbligatorio', wizSaved:'✅ Salvato!', wizEdit:'modifica', wizPreview:'Anteprima',
     contentBlocks:'Blocchi di Contenuto', addBlock:'＋ Blocco',
     addRow:'＋ Riga', cbBulletsHint:'Un punto elenco per riga',
     cbeKey:'Chiave', cbeValue:'Valore',
-    cbSubTitle:'Titolo sotto-capacità', cbSubEmoji:'Emoji', cbSubNew:'Segna come nuovo',
+    cbSubTitle:'Titolo sotto-capacità', cbSubEmoji:'Emoji',
     cbAddSubBlock:'＋ Sotto-blocco',
     algoSteps:'Passi Algoritmo', addStep:'＋ Passo',
     algoStepQuestion:'Domanda del passo (opzionale):',
     algoStepBullets:'Punti elenco (uno per riga):',
+    algoStepIndent:'Indenta (sotto-passo)',
     // Point-buy (already existed)
     toastNoteSaved:'📝 Note salvate!',
     hpAbbr:'PF',
@@ -1086,32 +1120,32 @@ const TRANSLATIONS = {
     wiz_step_combat:'Combattimento',
     wiz_step_savingThrows:'Tiri Salvezza',
     wiz_step_spellBase:'Base',
-    wiz_step_spellDetails:'Dettagli',
+    wiz_step_spellDesc:'Descrizione e Note',
     wiz_step_header:'Intestazione',
     wiz_step_content:'Contenuto',
     wiz_step_trackerAction:'Tracker e Azione',
     wiz_step_algoTitle:'Titolo',
     wiz_step_algoSteps:'Passi',
     wiz_f_playerName:'Nome Giocatore',
-    wiz_f_emojiPG:'Emoji PG',
     wiz_f_subclass:'Sottoclasse',
     wiz_f_tsProf:'TS competente',
     wiz_f_spellNameIT:'Nome (IT)',
     wiz_f_spellLevel:'Livello (0=Trucchetto)',
     wiz_f_concentrationCheck:'Richiede concentrazione',
-    wiz_f_markNew:'Segna come NUOVO',
-    wiz_f_markSpecial:'Segna come SPECIALE',
-    wiz_f_specialLabel:'Etichetta speciale',
     wiz_f_damageFull:'Danno (es. 1d8+3)',
     wiz_f_attackStatLabel:'Caratteristica Attacco',
     wiz_f_attackBonusTotal:'Bonus Attacco totale',
+    wiz_f_magicBonus:'Bonus Magico (+1, +2…)',
     wiz_f_trackerID:'ID (univoco, no spazi)',
     wiz_f_totalUses:'Totale usi',
     wiz_f_hasTracker:'Ha un tracker di utilizzo',
+    wiz_f_trackerLabel:'Nome visualizzato tracker (vuoto = titolo capacità)',
     wiz_f_hasAction:'Ha un\'azione di combattimento',
+    wiz_f_actionLabel:'Nome visualizzato azione (vuoto = titolo capacità)',
     wiz_f_actionDesc:'Descrizione azione',
     wiz_f_isPotionCheck:'È una pozione (usa e cura PF)',
     wiz_f_potionFormula:'Formula pozione (es. 2d4+2)',
+    wiz_f_potionNotes:'Note pozione',
     wiz_f_conditionName:'Nome condizione',
     wiz_f_slotLevel:'Livello Slot',
     wiz_f_slotTotal:'Totale Slot',
@@ -1123,7 +1157,11 @@ const TRANSLATIONS = {
     wiz_f_preparedCaster:'Incantatore preparato (prepara gli incantesimi giornalmente)',
     wiz_f_featureTitle:'Titolo',
     wiz_f_featureSubtitle:'Sottotitolo',
-    wiz_f_featureSource:'Fonte (es. Classe Lv3)',
+    wiz_f_featureSource:'Fonte',
+    sourceFeat:'Talento',
+    sourceOriginFeat:'Talento Origine',
+    sourceMagicItem:'Oggetto Magico',
+    sourceCombatRule:'Regola di Combattimento',
     wiz_ph_name:'Es. Arannis',
     wiz_ph_race:'Es. Elfo, Umano…',
     wiz_ph_class:'Es. Mago, Guerriero…',
@@ -1131,9 +1169,14 @@ const TRANSLATIONS = {
     wiz_ph_quote:'Es. "La penna è più potente della spada."',
     wiz_ph_armorNote:'Es. Armatura di cuoio 11 + DES',
     wiz_ph_languages:'Es. Comune, Nanico',
-    wiz_ph_special:'SPECIALE',
+    wiz_ph_armorNote:'Es. Armatura di cuoio 11 + DEX',
+    wiz_ph_languages:'Es. Comune, Nanico',
     wiz_ph_attackBonus:'+5',
     wiz_ph_trackerID:'bardic_inspiration',
+    hint_featureTitle:'Il nome mostrato come titolo della sezione.',
+    hint_featureEmoji:'Mostrata prima del titolo nella sezione.',
+    hint_featureSubtitle:'Breve descrizione sotto il titolo.',
+    hint_featureSource:'Da dove viene questa capacità (classe, razza, talento, ecc.).',
     lvPrefix:'Lv',
   }
   // To add Spanish: es:{ navTitle:'...', ... }
@@ -1192,8 +1235,8 @@ function syncSession(){
   if(!SESSION.trackers) SESSION.trackers={};
   if(!SESSION.spellSlots) SESSION.spellSlots={};
   (CHAR.trackers||[]).forEach(t=>{ const tid=t.id||slugify(t.label); if(tid && !SESSION.trackers[tid]) SESSION.trackers[tid]={used:0}; });
-  // Feature-embedded trackers
-  (CHAR.features||[]).forEach(f=>{ if(f.tracker){ const tid=slugify(f.title); if(tid && !SESSION.trackers[tid]) SESSION.trackers[tid]={used:0}; }});
+  // Feature-embedded trackers (plural array)
+  (CHAR.features||[]).forEach(f=>{ (f.trackers||[]).forEach(t=>{ const tid=slugify(t.label||f.title); if(tid && !SESSION.trackers[tid]) SESSION.trackers[tid]={used:0}; }); });
   (CHAR.spellSlots||[]).forEach(sl=>{ if(!SESSION.spellSlots[sl.level]) SESSION.spellSlots[sl.level]={used:0}; });
 }
 function saveAll(){
@@ -1261,7 +1304,7 @@ const SECTION_REGISTRY = {
   'base-data':  { label:()=>T('baseData'),   emoji:'🧬', deletable:false },
   'skills':     { label:()=>T('skills'),     emoji:'🎯', deletable:false },
   'spells':     { label:()=>T('spells'),     emoji:'✨', deletable:false,
-                  hiddenWhen:()=>!CHAR?.spellcasting&&!(CHAR?.spells?.length) },
+                  hiddenWhen:()=>!EDIT_MODE&&!CHAR?.spellcasting&&!(CHAR?.spells?.length) },
   'weapons':    { label:()=>T('weapons'),    emoji:'⚔️', deletable:false },
   'equipment':  { label:()=>T('equipment'),  emoji:'🎒', deletable:false },
   'algorithm':  { label:()=>T('algorithm'),  emoji:'⚡', deletable:false,
@@ -1462,7 +1505,7 @@ function buildPanel(){
       <button class="btn heal" onclick="applyTempHP()">${T('tempHPBtn')}</button>
     </div>
     <div class="temp-hp-info">${T('tempHP')}: <span id="temp-hp-disp" style="color:var(--accent);font-weight:bold;">${S.hp?.temp||0}</span>
-    &nbsp;|&nbsp;${T('aidBonus')}: <span id="aid-disp" style="color:var(--edit-mode-color);font-weight:600;">${modStr(S.hp?.aidBonus||0)}</span></div>
+    &nbsp;|&nbsp;${T('aidBonus')}: <span id="aid-disp" style="color:var(--edit-mode-color);font-weight:600;cursor:pointer;text-decoration:underline dotted;" onclick="setAidBonus()">${modStr(S.hp?.aidBonus||0)}</span></div>
   </div>`;
 
   // ── HD Card ──
@@ -1513,19 +1556,21 @@ function buildPanelRow2(){
       ${EDIT_MODE?`<div class="btn-row edit-only"><button class="btn-edit-sm" onclick="editTracker(${i})">✏️</button><button class="btn-del-sm" onclick="deleteTracker(${i})">🗑</button></div>`:''}
     </div>`;
   });
-  // Feature-embedded trackers (v3: trackers live inside features)
+  // Feature-embedded trackers (v3: plural trackers[] array)
   (CHAR.features||[]).forEach(f=>{
-    if(!f.tracker) return;
-    const t=f.tracker;
-    const tid=slugify(f.title);
-    const used=SESSION.trackers?.[tid]?.used||0;
-    const total=t.total||1;
-    let pips=''; for(let j=0;j<total;j++) pips+=`<div class="pip${j<used?' used':''}" onclick="clickTrackerPip('${tid}',${j})">${t.showDie&&t.die?t.die:(f.emoji||'●')}</div>`;
-    cards+=`<div class="pn-card" id="tracker-card-${tid}">
-      <div class="label">${f.emoji||''} ${f.title||''}</div>
-      <div class="pips" id="pips-${tid}">${pips}</div>
-      <div class="btn-row"><button class="btn danger" onclick="useTracker('${tid}')">${T('spend')}</button><button class="btn" onclick="resetTracker('${tid}')">${T('reset')} (${total})</button></div>
-    </div>`;
+    (f.trackers||[]).forEach(t=>{
+      const label=t.label||f.title;
+      const emoji=t.emoji||f.emoji;
+      const tid=slugify(label);
+      const used=SESSION.trackers?.[tid]?.used||0;
+      const total=t.total||1;
+      let pips=''; for(let j=0;j<total;j++) pips+=`<div class="pip${j<used?' used':''}" onclick="clickTrackerPip('${tid}',${j})">${t.showDie&&t.die?t.die:(emoji||'●')}</div>`;
+      cards+=`<div class="pn-card" id="tracker-card-${tid}">
+        <div class="label">${emoji||''} ${label||''}</div>
+        <div class="pips" id="pips-${tid}">${pips}</div>
+        <div class="btn-row"><button class="btn danger" onclick="useTracker('${tid}')">${T('spend')}</button><button class="btn" onclick="resetTracker('${tid}')">${T('reset')} (${total})</button></div>
+      </div>`;
+    });
   });
   // Spell slots
   (CHAR.spellSlots||[]).forEach(sl=>{
@@ -1575,12 +1620,13 @@ function buildPanelRow3(){
   </div>`;
   const goldCard=`<div class="pn-card">
     <div class="label">${T('gold')}</div>
-    <div class="oro-row">
+    <div class="gold-row">
       <input type="number" id="gold-input" value="${S.gold||0}" min="0">
-      <button class="btn" onclick="changeGold(-1)">−1</button>
-      <button class="btn" onclick="changeGold(1)">+1</button>
-      <button class="btn" onclick="changeGold(-10)">−10</button>
-      <button class="btn" onclick="changeGold(10)">+10</button>
+    </div>
+    <div class="gold-row" style="margin-top:4px;">
+      <button class="btn danger" onclick="changeGold(-1)">−</button>
+      <input type="number" id="gold-amt" value="1" min="1" style="width:60px;text-align:center;">
+      <button class="btn heal" onclick="changeGold(1)">+</button>
     </div>
   </div>`;
   return `<div class="pn-grid">${concCard}${roundCard}${goldCard}</div>`;
@@ -1657,15 +1703,20 @@ function buildPanelBottom(){
       <div class="action-entry-name">${w.emoji||''} ${w.name||''}</div>
       <div class="action-entry-note">${atk} | ${dmg} ${dndTr('damageTypes',w.damageType)||w.damageType||''}${w.properties?' | '+w.properties:''}</div>
     </div></div>`;}).join('');
-  // Feature-embedded actions (v3: actions live inside features)
-  const featureActionEntries=(C.features||[]).filter(f=>f.action).map(f=>{
-    const t=normalizeActionType(f.action.type||'action');
-    return `<div class="action-entry" data-type="${t}">
-    ${actionBadge(t)}
-    <div class="action-entry-body">
-      <div class="action-entry-name">${f.emoji||''} ${f.title||''}</div>
-      <div class="action-entry-note">${f.action.description||''}</div>
-    </div></div>`;}).join('');
+  // Feature-embedded actions (v3: plural actions[] array)
+  const featureActionEntries=(C.features||[]).flatMap(f=>
+    (f.actions||[]).map(a=>{
+      const t=normalizeActionType(a.type||'action');
+      const label=a.label||f.title;
+      const emoji=a.emoji||f.emoji;
+      return `<div class="action-entry" data-type="${t}">
+      ${actionBadge(t)}
+      <div class="action-entry-body">
+        <div class="action-entry-name">${emoji||''} ${label||''}</div>
+        <div class="action-entry-note">${a.description||''}</div>
+      </div></div>`;
+    })
+  ).join('');
   const allEntries=spellEntries+weaponEntries+featureActionEntries;
   const actionsCard=`<div class="pn-card" style="margin-top:14px;">
     <div class="label">${T('quickActions')}</div>
@@ -1712,15 +1763,14 @@ function renderSections(){
       if(fIdx>=0) html+=renderFeature(CHAR.features[fIdx],fIdx);
     }
   }
+  if(EDIT_MODE) html+=`<div style="text-align:center;margin:18px 0;"><button class="add-btn edit-only" onclick="addFeature()">${T('addFeature')}</button></div>`;
   el.innerHTML=html;
-  const fq=document.getElementById('footer-quote');
-  fq.innerHTML=CHAR.quote?'🎭 '+md(CHAR.quote):'';
 }
 function renderBaseData(){
   const C=CHAR;
   const pb=C.proficiencyBonus||computedPB(C.level||1);
   const rows=[
-    [T('lbl_race'),dndTr('races',C.race)],[T('lbl_class'),dndTr('classes',C.class)],[T('lbl_background'),dndTr('backgrounds',C.background)],
+    [T('lbl_race'),dndTr('races',C.race)],[T('lbl_class'),dndTr('classes',C.class)],[T('lbl_subclass'),C.subclass],[T('lbl_background'),dndTr('backgrounds',C.background)],
     [T('lbl_alignment'),alignmentName(C.alignment)],[T('lbl_profBonus'),'+'+pb],
     [T('lbl_speed'),C.speed],[T('lbl_hpMax'),`<span id="stat-hp-max">${(C.hp?.max||0)+(SESSION?.hp?.aidBonus||0)}</span>`],
     [T('lbl_hitDice'),`${C.level||1}d${C.hitDieType||8}`],
@@ -1740,9 +1790,8 @@ function renderBaseData(){
       <td>${prof?'<strong>'+modStr(bonus)+'</strong>':modStr(bonus)}</td>
       <td>${prof?T('proficient'):''}</td></tr>`;
   }).join('');
-  const eb=EDIT_MODE?`<div class="edit-only" style="display:flex!important;gap:6px;margin-bottom:8px;">
-    <button class="btn-edit-sm" onclick="editCharacter()">✏️ ${T('editBaseData')}</button></div>`:'';
-  return `${sectionHeader('base-data')}<div class="section-header-line"></div>${eb}
+  return `${sectionHeader('base-data',EDIT_MODE?`<button class="btn-edit-sm edit-only" style="margin-left:auto" onclick="editCharacter()">✏️</button>`:'')}
+    <div class="section-header-line"></div>
     <table>${rows.map(r=>`<tr><td><strong>${r[0]}</strong></td><td>${r[1]}</td></tr>`).join('')}</table>
     <h3>${T('abilitiesTitle')}</h3>
     <table><tr>${DND.abilities.map(a=>`<th>${abilityShortName(a)}</th>`).join('')}</tr><tr>${statsRow}</tr></table>
@@ -1756,25 +1805,29 @@ function renderSkills(){
     const base=abilityMod(scores[ability]||10);
     if(type==='expertise')       return base+pb*2;
     if(type==='proficient')      return base+pb;
-    if(type==='jackOfAllTrades') return base+Math.floor(pb/2);
+    if(type==='halfProficiency') return base+Math.floor(pb/2);
     return base;
   }
-  // v3: skills is a map {skillId: proficiencyLevel}. Only show skills with proficiency.
+  // v3: skills is a map {skillId: proficiencyLevel}. Show all standard skills.
   const entries=DND.standardSkills
-    .filter(sk=>skillsMap[sk.id] && skillsMap[sk.id]!=='none')
-    .map(sk=>({id:sk.id, name:skillName(sk), ability:sk.ability, type:skillsMap[sk.id]}));
-  const rows=entries.map(sk=>`<tr>
+    .map(sk=>({id:sk.id, name:skillName(sk), ability:sk.ability, type:skillsMap[sk.id]||'none'}));
+  const rows=entries.map(sk=>{
+    const isProficient=sk.type!=='none';
+    const bonusVal=skillBonus(sk.ability, sk.type);
+    const profLabel=sk.type==='expertise'?T('expertise'):sk.type==='proficient'?T('proficient'):sk.type==='halfProficiency'?T('halfProf'):'';
+    return `<tr class="${isProficient?'':'skill-none'}">
     <td>${sk.name} <span style="font-size:.75em;color:var(--text-muted);">(${abilityShortName(sk.ability)})</span></td>
-    <td><strong>${modStr(skillBonus(sk.ability, sk.type))}</strong></td>
-    <td style="font-size:.8em;">${sk.type==='expertise'?T('expertise'):sk.type==='proficient'?T('proficient'):sk.type==='jackOfAllTrades'?T('jack'):''}</td>
-    ${EDIT_MODE?`<td><button class="btn-del-sm" onclick="deleteSkill('${sk.id}')">🗑</button></td>`:''}</tr>`).join('');
-  const body=rows?`<p class="note">${T('skillNote')}</p>
-    <table><tr><th>${T('skills')}</th><th>${T('lbl_bonus')}</th><th></th>${EDIT_MODE?'<th></th>':''}</tr>${rows}</table>`
-    :`<p class="empty-state">${T('noSkills')}</p>`;
+    <td><strong>${modStr(bonusVal)}</strong></td>
+    <td style="font-size:.8em;">${profLabel}</td></tr>`;
+  }).join('');
+  const body=`<table><tr><th>${T('skills')}</th><th>${T('lbl_bonus')}</th><th></th></tr>${rows}</table>`;
   return `${sectionHeader('skills',EDIT_MODE?`<button class="btn-edit-sm edit-only" style="margin-left:auto" onclick="editSkills()">✏️</button>`:'')}
     <div class="section-header-line"></div>${body}
-    ${EDIT_MODE?`<button class="add-btn edit-only" onclick="addSkillItem()">${T('addSkill')}</button>`:''}
     <hr>`;
+}
+function renderTags(tags){
+  if(!tags||!tags.length) return '';
+  return tags.map(t=>`<span class="feature-tag tag-${t.color||'green'}">${t.label||''}</span>`).join('');
 }
 function renderFeature(f,i){
   // support both canonical (title/contentBlocks) and legacy (name/content)
@@ -1783,10 +1836,11 @@ function renderFeature(f,i){
   const blocks=(f.contentBlocks||f.content||[]).map(b=>renderContentBlock(b)).join('');
   const eb=EDIT_MODE?`<button class="btn-edit-sm edit-only" onclick="editFeature(${i})">✏️</button>
     <button class="btn-del-sm edit-only" onclick="deleteFeature(${i})">🗑</button>`:'';
-  const tags=(f.isNew?`<span class="tag-new">${T('slotNew')}</span>`:'')+
-             (f.isSecret?`<span class="tag-secret">${f.secretLabel||T('f_isSecret')}</span>`:'');
-  return `<h2 id="${sectionId}">${f.emoji||''} ${title} ${tags} ${eb}</h2>
-    <div class="section-header-line"></div>${blocks}<hr>`;
+  const tags=renderTags(f.tags);
+  const srcTag=f.source?`<span class="feature-source">${translateSource(f.source)}</span>`:'';
+  const subLine=f.subtitle?`<div class="feature-subtitle">${md(f.subtitle)}</div>`:'';
+  return `<h2 id="${sectionId}">${f.emoji||''} ${title} ${tags} ${srcTag} ${eb}</h2>
+    <div class="section-header-line"></div>${subLine}${blocks}<hr>`;
 }
 function renderContentBlock(b){
   if(!b) return '';
@@ -1801,21 +1855,37 @@ function renderContentBlock(b){
       const stitle=b.title||b.name||'';
       const sblocks=(b.contentBlocks||b.content||[]).map(renderContentBlock).join('');
       return `<div class="subfeature-block">
-        <div class="subfeature-header"><span>${b.emoji||''}</span>
-          <span class="subfeature-title">${stitle}</span>
-          ${b.isNew?`<span class="tag-new">NUOVO</span>`:''}
-          ${b.isSecret?`<span class="tag-secret">${b.secretLabel||'SPECIALE'}</span>`:''}
-        </div>${sblocks}</div>`;
+         <div class="subfeature-header"><span>${b.emoji||''}</span>
+           <span class="subfeature-title">${stitle}</span>
+           ${renderTags(b.tags)}
+         </div>${sblocks}</div>`;
     }
     default: return '';
   }
 }
 function renderSpellsSection(){
-  const C=CHAR; if(!C.spellcasting&&!(C.spells||[]).length) return '';
+  const C=CHAR;
+  if(!C.spellcasting&&!(C.spells||[]).length){
+    // In edit mode, show setup prompt
+    return `${sectionHeader('spells')}
+      <div class="section-header-line"></div>
+      <p class="empty-state">${T('noSpells')}</p>
+      <div style="display:flex;gap:8px;justify-content:center;margin:12px 0;">
+        <button class="add-btn" onclick="editSpellcasting()">✏️ ${T('editMagic')}</button>
+        <button class="add-btn" onclick="addSpell(0)">${T('addSpell')}</button>
+      </div><hr>`;
+  }
   const sc=C.spellcasting;
+  // Auto-compute DC and attack bonus from ability + PB
+  const pb=C.proficiencyBonus||computedPB(C.level||1);
+  const abilMod=sc?.ability?abilityMod(C.abilityScores?.[sc.ability]||10):0;
+  const dc=sc?.saveDCOverride??(8+pb+abilMod);
+  const atk=sc?.attackBonusOverride??(pb+abilMod);
+  const dcOverridden=sc?.saveDCOverride!=null;
+  const atkOverridden=sc?.attackBonusOverride!=null;
   const infoBox=sc?`<div class="spellcasting-info-box">
-    <table><tr><td><strong>${T('spellDC')}</strong></td><td>${sc.saveDC||'—'}</td></tr>
-      <tr><td><strong>${T('spellAttackBonus')}</strong></td><td>${sc.attackBonus>=0?'+':''}<span>${sc.attackBonus||0}</span></td></tr>
+    <table><tr><td><strong>${T('spellDC')}</strong></td><td>${dc}${dcOverridden?' ✱':''}</td></tr>
+      <tr><td><strong>${T('spellAttackBonus')}</strong></td><td>${modStr(atk)}${atkOverridden?' ✱':''}</td></tr>
       <tr><td><strong>${T('focus')}</strong></td><td>${sc.focus||'—'}</td></tr>
       <tr><td><strong>${T('lbl_ability')}</strong></td><td>${abilityLongName(sc.ability)||sc.ability||'—'}</td></tr></table>
     ${C.spellSlots?.length?`<h3 style="margin-top:12px;">${T('slotTitle')}</h3>
@@ -1823,7 +1893,7 @@ function renderSpellsSection(){
       ${(C.spellSlots||[]).map((sl,i)=>`<tr><td>${T('slotLvLabel')} ${sl.level}</td><td>${sl.total}</td>${EDIT_MODE?`<td><button class="btn-edit-sm" onclick="editSpellSlot(${i})">✏️</button> <button class="btn-del-sm" onclick="deleteSpellSlot(${i})">🗑</button></td>`:''}</tr>`).join('')}</table>`:''}
     ${EDIT_MODE?`<div class="edit-only" style="display:flex!important;gap:6px;margin-top:8px;">
       <button class="btn-edit-sm" onclick="editSpellcasting()">✏️ ${T('editMagic')}</button>
-      <button class="btn-edit-sm" onclick="addSpellSlot()">＋ ${T('addSlot').replace('＋ ','')}</button></div>`:''}
+      <button class="btn-edit-sm" onclick="addSpellSlot()">${T('addSlot')}</button></div>`:''}
   </div>`:'';
   // Group spells by level
   const spells=C.spells||[];
@@ -1843,9 +1913,7 @@ function renderSpellsSection(){
           <span style="font-size:1.1em;">${sp.emoji||''}</span>
           <span class="spell-card-name">${sp.name||''}</span>
           ${sp.originalName?`<span class="spell-card-original">(${sp.originalName})</span>`:''}
-          ${sp.isNew?`<span class="tag-new">NUOVO</span>`:''}
-          ${sp.isSecret?`<span class="tag-secret">${sp.secretLabel||'SPECIALE'}</span>`:''}
-          ${EDIT_MODE?`<div style="margin-left:auto;display:flex;gap:3px;">
+          ${renderTags(sp.tags)}          ${EDIT_MODE?`<div style="margin-left:auto;display:flex;gap:3px;">
             <button class="btn-edit-sm" onclick="editSpell(${realIdx})">✏️</button>
             <button class="btn-del-sm" onclick="deleteSpell(${realIdx})">🗑</button></div>`:''}
         </div>
@@ -1890,7 +1958,7 @@ function renderWeapons(){
   }
   const cards=(C.weapons||[]).map((w,i)=>`<div class="weapon-card">
     <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px;">
-      <h3 style="margin:0;">${w.emoji||''} ${w.name||''}${w.quantity>1?' (×'+w.quantity+')':''} ${w.isNew?`<span class="tag-new">NUOVO</span>`:''}</h3>
+      <h3 style="margin:0;">${w.emoji||''} ${w.name||''}${w.quantity>1?' (×'+w.quantity+')':''} ${renderTags(w.tags)}</h3>
       ${EDIT_MODE?`<div class="edit-only" style="display:flex!important;gap:4px;">
         <button class="btn-edit-sm" onclick="editWeapon(${i})">✏️</button>
         <button class="btn-del-sm" onclick="deleteWeapon(${i})">🗑</button></div>`:''}
@@ -2029,9 +2097,12 @@ function findTrackerById(id){
   // Check standalone trackers
   const st=CHAR.trackers?.find(tr=>(tr.id||slugify(tr.label))===id);
   if(st) return {label:st.label, emoji:st.emoji, total:st.total, potionFormula:st.potionFormula, isPotion:st.isPotion};
-  // Check feature-embedded trackers
-  const f=(CHAR.features||[]).find(f=>f.tracker && slugify(f.title)===id);
-  if(f) return {label:f.title, emoji:f.emoji, total:f.tracker.total, die:f.tracker.die};
+  // Check feature-embedded trackers (plural array)
+  for(const f of (CHAR.features||[])){
+    for(const t of (f.trackers||[])){
+      if(slugify(t.label||f.title)===id) return {label:t.label||f.title, emoji:t.emoji||f.emoji, total:t.total, die:t.die};
+    }
+  }
   return null;
 }
 function useTracker(id){
@@ -2061,10 +2132,19 @@ function usePotionTracker(id){
   renderPanel(); updateHPDisplay(); saveAll();
 }
 function changeGold(d){
-  SESSION.gold=Math.max(0,(SESSION.gold||0)+d);
+  const amtEl=document.getElementById('gold-amt');
+  const amt=Math.max(1,parseInt(amtEl?.value)||1);
+  SESSION.gold=Math.max(0,(SESSION.gold||0)+(d*amt));
   const gi=document.getElementById('gold-input'); if(gi) gi.value=SESSION.gold;
   const gs=document.getElementById('gold-static'); if(gs) gs.textContent=SESSION.gold;
   saveAll();
+}
+function setAidBonus(){
+  const cur=SESSION.hp?.aidBonus||0;
+  const v=prompt(T('aidBonus'),cur);
+  if(v===null) return;
+  SESSION.hp.aidBonus=parseInt(v)||0;
+  updateHPDisplay(); saveAll();
 }
 function changeRound(d){
   SESSION.round=Math.max(1,(SESSION.round||1)+d);
@@ -2109,11 +2189,12 @@ function longRest(){
     const tid=t.id||slugify(t.label);
     if(tid && S.trackers[tid] && t.recovery!=='manual') S.trackers[tid].used=0;
   });
-  // Reset feature-embedded trackers
+  // Reset feature-embedded trackers (plural array)
   (C.features||[]).forEach(f=>{
-    if(!f.tracker) return;
-    const tid=slugify(f.title);
-    if(tid && S.trackers[tid] && f.tracker.recovery!=='manual' && f.tracker.recovery!=='short') S.trackers[tid].used=0;
+    (f.trackers||[]).forEach(t=>{
+      const tid=slugify(t.label||f.title);
+      if(tid && S.trackers[tid] && t.recovery!=='manual' && t.recovery!=='short') S.trackers[tid].used=0;
+    });
   });
   (C.spellSlots||[]).forEach(sl=>{if(S.spellSlots[sl.level])S.spellSlots[sl.level].used=0;});
   S.round=1; S.concentration=''; S.conditions=[];
@@ -2184,26 +2265,41 @@ function importCharacter(event){
 }
 function importSession(event){importCharacter(event);}
 // ═══════════════ WIZARD ENGINE ═══════════════
-let WIZ_CONFIG=null, WIZ_STEP=0, WIZ_DATA={}, WIZ_EDIT_IDX=null;
+let WIZ_CONFIG=null, WIZ_STEP=0, WIZ_DATA={}, WIZ_EDIT_IDX=null, WIZ_KEY=null;
 let WIZ_BLOCKS=[], WIZ_ALGO_STEPS=[];
+let WIZ_TRACKERS=[], WIZ_ACTIONS=[], WIZ_TAGS=[];
+let WIZ_TRK_EDIT=-1, WIZ_ACT_EDIT=-1;
 
 function openWizard(configKey, editIdx=null, prefill={}){
+  WIZ_KEY=configKey;
   WIZ_CONFIG=WIZARDS[configKey];
   if(!WIZ_CONFIG){console.error('Unknown wizard:',configKey);return;}
   WIZ_STEP=0; WIZ_EDIT_IDX=editIdx; WIZ_DATA={...prefill};
   WIZ_BLOCKS=[...(prefill.contentBlocks||[])];
   WIZ_ALGO_STEPS=[...(prefill.steps||[])];
+  WIZ_TRACKERS=(prefill.trackers||[]).map(t=>({...t}));
+  WIZ_ACTIONS=(prefill.actions||[]).map(a=>({...a}));
+  WIZ_TAGS=(prefill.tags||[]).map(t=>({...t}));
   document.getElementById('wizard-overlay').style.display='flex';
   renderWizardStep();
 }
 function closeWizard(){
   document.getElementById('wizard-overlay').style.display='none';
-  WIZ_CONFIG=null; WIZ_DATA={}; WIZ_BLOCKS=[]; WIZ_ALGO_STEPS=[];
+  WIZ_CONFIG=null; WIZ_KEY=null; WIZ_DATA={}; WIZ_BLOCKS=[]; WIZ_ALGO_STEPS=[];
+  WIZ_TRACKERS=[]; WIZ_ACTIONS=[]; WIZ_TAGS=[]; WIZ_TRK_EDIT=-1; WIZ_ACT_EDIT=-1;
 }
 function wizBack(){
+  // Cancel any active inline edit before navigating back
+  if(CB_EDIT_IDX>=0){cancelBlockEdit();return;}
+  if(ALGO_EDIT_IDX>=0){cancelAlgoStep();return;}
+  if(WIZ_TRK_EDIT>=0){cancelWizTrkEdit();return;}
+  if(WIZ_ACT_EDIT>=0){cancelWizActEdit();return;}
   if(WIZ_STEP>0){WIZ_STEP--;renderWizardStep();}
 }
 function wizNext(){
+  // Auto-save any active inline edit before proceeding
+  if(WIZ_TRK_EDIT>=0){collectTrkEdit(WIZ_TRK_EDIT);WIZ_TRK_EDIT=-1;}
+  if(WIZ_ACT_EDIT>=0){collectActEdit(WIZ_ACT_EDIT);WIZ_ACT_EDIT=-1;}
   collectStepData();
   const err=validateStep();
   if(err){showToast(err,'error');return;}
@@ -2254,8 +2350,8 @@ function renderWizardStep(){
   if(step._afterRender) step._afterRender(WIZ_DATA);
 }
 function renderField(f){
-  const lbl=`<label for="wf-${f.id}" class="wiz-label">${T(f.label)}${f.required?` <span style="color:var(--accent)">*</span>`:''}</label>`;
-  const hint=f.hint?`<div class="wiz-hint">${f.hint}</div>`:'';
+  const hintAttr=f.hint?` title="${T(f.hint).replace(/"/g,'&quot;')}"`:''
+  const lbl=`<label for="wf-${f.id}" class="wiz-label"${hintAttr}>${T(f.label)}${f.required?` <span style="color:var(--accent)">*</span>`:''}${f.hint?' <span style="cursor:help;opacity:.5;">ⓘ</span>':''}</label>`;
   let inp='';
   const val=WIZ_DATA[f.id]??f.default??'';
   if(f.type==='text'||f.type==='number'){
@@ -2278,7 +2374,125 @@ function renderField(f){
     inp=`<select id="wf-${f.id}" class="wiz-input" onchange="toggleCustomInput('${f.id}')">${opts}</select>
       <input id="wf-${f.id}-custom" class="wiz-input" type="text" placeholder="${T('customPh')}" value="${isCustom?val:''}" style="margin-top:4px;display:${isCustom?'block':'none'};">`;
   }
-  return `<div class="wiz-field">${lbl}${hint}${inp}</div>`;
+  return `<div class="wiz-field">${lbl}${inp}</div>`;
+}
+// ── Feature wizard live preview ──
+function renderFeaturePreview(){
+  const el=id=>document.getElementById('wf-'+id);
+  const title=el('title')?.value||WIZ_DATA.title||'';
+  const emoji=el('emoji')?.value||WIZ_DATA.emoji||'';
+  const subtitle=el('subtitle')?.value||WIZ_DATA.subtitle||'';
+  const srcEl=el('source'),srcC=document.getElementById('wf-source-custom');
+  const source=srcEl?(srcEl.value==='_custom'?(srcC?.value||''):srcEl.value):(WIZ_DATA.source||'');
+  const tags=renderTags(WIZ_TAGS);
+  const srcTag=source?`<span class="feature-source">${translateSource(source)}</span>`:'';
+  const subLine=subtitle?`<div class="feature-subtitle">${md(subtitle)}</div>`:'';
+  const blocks=(WIZ_BLOCKS||[]).map(b=>renderContentBlock(b)).join('');
+  const tList=(WIZ_TRACKERS||[]).length?`<div class="preview-meta">📊 ${WIZ_TRACKERS.map(t=>`${t.emoji||'●'} ${t.label||title} (${t.total||1})`).join(', ')}</div>`:'';
+  const aList=(WIZ_ACTIONS||[]).length?`<div class="preview-meta">⚡ ${WIZ_ACTIONS.map(a=>`${a.emoji||'▶'} ${a.label||title}`).join(', ')}</div>`:'';
+  if(!title&&!blocks&&!WIZ_TRACKERS.length&&!WIZ_ACTIONS.length) return '';
+  return `<div id="wiz-preview" class="wiz-preview"><div class="wiz-preview-label">${T('wizPreview')}</div><div class="wiz-preview-content"><h2>${emoji} ${title||'...'} ${tags} ${srcTag}</h2><div class="section-header-line"></div>${subLine}${blocks}${tList}${aList}</div></div>`;
+}
+function injectFeaturePreview(){
+  const old=document.getElementById('wiz-preview');if(old)old.remove();
+  const body=document.getElementById('wiz-body');
+  const html=renderFeaturePreview();
+  if(body&&html) body.insertAdjacentHTML('beforeend',html);
+}
+// ── Spell wizard live preview ──
+function renderSpellPreview(){
+  const el=id=>document.getElementById('wf-'+id);
+  const name=el('name')?.value||WIZ_DATA.name||'';
+  const origName=el('originalName')?.value||WIZ_DATA.originalName||'';
+  const emoji=el('emoji')?.value||WIZ_DATA.emoji||'';
+  const level=+(el('level')?.value??WIZ_DATA.level??0);
+  const school=el('school')?.value||WIZ_DATA.school||'';
+  const actionType=el('actionType')?.value||WIZ_DATA.actionType||'';
+  const range=el('range')?.value||WIZ_DATA.range||'';
+  const duration=el('duration')?.value||WIZ_DATA.duration||'';
+  const conc=el('concentration')?.checked??WIZ_DATA.concentration??false;
+  const saveAb=el('saveAbility')?.value||WIZ_DATA.saveAbility||'';
+  const desc=el('description')?.value||WIZ_DATA.description||'';
+  const scaling=el('scaling')?.value||WIZ_DATA.scaling||'';
+  const notes=el('notes')?.value||WIZ_DATA.notes||'';
+  const tags=renderTags(WIZ_TAGS);
+  if(!name&&!desc) return '';
+  const color=DND.slotColors[level]||'var(--accent)';
+  const atype=dndTr('actionLabels',normalizeActionType(actionType))||actionType||'';
+  return `<div id="wiz-preview" class="wiz-preview"><div class="wiz-preview-label">${T('wizPreview')}</div><div class="wiz-preview-content"><div class="spell-card" style="border-left-color:${color};margin:0;">
+    <div class="spell-card-header"><span style="font-size:1.1em;">${emoji}</span> <span class="spell-card-name">${name||'...'}</span> ${origName?`<span class="spell-card-original">(${origName})</span>`:''} ${tags}</div>
+    <div class="spell-card-meta">${atype?`<span class="spell-meta-chip">${atype}</span>`:''}${range?`<span class="spell-meta-chip">📍 ${range}</span>`:''}${duration?`<span class="spell-meta-chip">⏱ ${duration}</span>`:''}${conc?`<span class="spell-meta-chip conc">🔮 ${T('concentration')}</span>`:''}${saveAb?`<span class="spell-meta-chip">TS ${abilityShortName(saveAb)}</span>`:''}${school?`<span class="spell-meta-chip">${dndTr('schools',school)||school}</span>`:''}</div>
+    ${desc?`<div class="spell-card-desc">${md(desc)}</div>`:''}${scaling?`<div class="spell-card-scaling">📈 ${md(scaling)}</div>`:''}${notes?`<div class="spell-card-notes">${md(notes)}</div>`:''}
+  </div></div></div>`;
+}
+function injectSpellPreview(){
+  const old=document.getElementById('wiz-preview');if(old)old.remove();
+  const body=document.getElementById('wiz-body');
+  const html=renderSpellPreview();
+  if(body&&html) body.insertAdjacentHTML('beforeend',html);
+}
+// ── Weapon wizard live preview ──
+function renderWeaponPreview(){
+  const el=id=>document.getElementById('wf-'+id);
+  const name=el('name')?.value||WIZ_DATA.name||'';
+  const emoji=el('emoji')?.value||WIZ_DATA.emoji||'';
+  const damageDie=el('damageDie')?.value||WIZ_DATA.damageDie||'';
+  const dtSel=el('damageType'),dtC=document.getElementById('wf-damageType-custom');
+  const damageType=dtSel?(dtSel.value==='_custom'?(dtC?.value||''):dtSel.value):(WIZ_DATA.damageType||'');
+  const attackStat=el('attackStat')?.value||WIZ_DATA.attackStat||'';
+  const magicBonus=+(el('magicBonus')?.value??WIZ_DATA.magicBonus??0);
+  const qty=+(el('quantity')?.value??WIZ_DATA.quantity??1);
+  const props=el('properties')?.value||WIZ_DATA.properties||'';
+  const notes=el('notes')?.value||WIZ_DATA.notes||'';
+  const tags=renderTags(WIZ_TAGS);
+  if(!name&&!damageDie) return '';
+  const scores=CHAR?.abilityScores||{};
+  const pb=CHAR?.proficiencyBonus||computedPB(CHAR?.level||1);
+  const atkMod=abilityMod(scores[attackStat]||10);
+  const atk=modStr(pb+atkMod+magicBonus);
+  const dmgMod=atkMod+magicBonus;
+  const dmg=`${damageDie||'?'}${dmgMod>=0?'+'+dmgMod:dmgMod}`;
+  return `<div id="wiz-preview" class="wiz-preview"><div class="wiz-preview-label">${T('wizPreview')}</div><div class="wiz-preview-content"><div class="weapon-card" style="margin:0;">
+    <h3 style="margin:0;">${emoji} ${name||'...'}${qty>1?' (×'+qty+')':''} ${tags}</h3>
+    <table style="margin-top:8px;"><tr><td><strong>${T('attackCol')}</strong></td><td>${atk} (${abilityShortName(attackStat)})</td></tr>
+    <tr><td><strong>${T('damageCol')}</strong></td><td>${dmg} ${dndTr('damageTypes',damageType)||damageType||''}</td></tr>
+    ${props?`<tr><td><strong>${T('propertiesCol')}</strong></td><td>${props}</td></tr>`:''}</table>
+    ${notes?`<p class="note" style="margin-top:6px;">📌 ${md(notes)}</p>`:''}
+  </div></div></div>`;
+}
+function injectWeaponPreview(){
+  const old=document.getElementById('wiz-preview');if(old)old.remove();
+  const body=document.getElementById('wiz-body');
+  const html=renderWeaponPreview();
+  if(body&&html) body.insertAdjacentHTML('beforeend',html);
+}
+// ── Algorithm wizard live preview ──
+function renderAlgoPreview(){
+  const el=id=>document.getElementById('wf-'+id);
+  const title=el('title')?.value||WIZ_DATA.title||'';
+  const emoji=el('emoji')?.value||WIZ_DATA.emoji||'';
+  const steps=(WIZ_ALGO_STEPS||[]);
+  if(!title&&!steps.length) return '';
+  const stepsHtml=steps.map(st=>`<div class="algo-step${st.indent?' indent':''}">
+    ${st.question?`<div class="algo-step-question">${md(st.question)}</div>`:''}
+    ${(st.bullets||[]).length?`<ul>${st.bullets.map(b=>`<li>${md(b)}</li>`).join('')}</ul>`:''}
+  </div>`).join('');
+  return `<div id="wiz-preview" class="wiz-preview"><div class="wiz-preview-label">${T('wizPreview')}</div><div class="wiz-preview-content"><div class="algo-block" style="margin:0;">
+    <div class="algo-block-title">${emoji} ${title||'...'}</div>${stepsHtml}
+  </div></div></div>`;
+}
+function injectAlgoPreview(){
+  const old=document.getElementById('wiz-preview');if(old)old.remove();
+  const body=document.getElementById('wiz-body');
+  const html=renderAlgoPreview();
+  if(body&&html) body.insertAdjacentHTML('beforeend',html);
+}
+// ── Generic wizard preview dispatcher ──
+function injectWizPreview(){
+  if(WIZ_KEY==='feature') injectFeaturePreview();
+  else if(WIZ_KEY==='spell') injectSpellPreview();
+  else if(WIZ_KEY==='weapon') injectWeaponPreview();
+  else if(WIZ_KEY==='algoblock') injectAlgoPreview();
 }
 function collectStepData(){
   const step=WIZ_CONFIG?.steps[WIZ_STEP];
@@ -2341,14 +2555,15 @@ function renderContentBlockEditor(){
   const typeOpts=Object.entries(DND.blockTypes).map(([k,enV])=>`<option value="${k}">${dndTr('blockTypes',k)||enV}</option>`).join('');
   return `<div class="wiz-field"><label class="wiz-label">${T('contentBlocks')}</label>
     <div id="cb-list">${rows}</div>
-    <div style="display:flex;gap:6px;margin-top:8px;flex-wrap:wrap;">
+    <div id="cb-add-controls" style="display:flex;gap:6px;margin-top:8px;flex-wrap:wrap;">
       <select id="cb-type-sel" class="wiz-input" style="flex:1;">${typeOpts}</select>
-      <button class="btn" onclick="addBlock()">＋ ${T('addBlock')}</button>
+      <button class="btn" onclick="addBlock()">${T('addBlock')}</button>
     </div></div>`;
 }
 function addBlock(){
   const type=document.getElementById('cb-type-sel')?.value||'paragraph';
   WIZ_BLOCKS.push({type,text:'',title:'',emoji:'',rows:[],bullets:[],contentBlocks:[]});
+  refreshCBEditor();
   editBlock(WIZ_BLOCKS.length-1);
 }
 let CB_EDIT_IDX=-1, CB_EDIT_DATA=null;
@@ -2373,6 +2588,8 @@ function editBlock(i){
     <button class="btn" onclick="saveBlockEdit()">✓ ${T('wizSave')}</button>
     <button class="btn" onclick="cancelBlockEdit()">✕</button></div></div>`;
   row.innerHTML=html;
+  WIZ_BLOCKS.forEach((_,j)=>{if(j!==i){const r=document.getElementById('cb-row-'+j);if(r)r.classList.add('cb-dimmed');}});
+  const addCtrl=document.getElementById('cb-add-controls');if(addCtrl)addCtrl.style.display='none';
 }
 function deleteBlock(i){WIZ_BLOCKS.splice(i,1);CB_EDIT_IDX=-1;CB_EDIT_DATA=null;refreshCBEditor();}
 function saveBlockEdit(){
@@ -2383,6 +2600,66 @@ function saveBlockEdit(){
   CB_EDIT_IDX=-1;CB_EDIT_DATA=null;refreshCBEditor();
 }
 function cancelBlockEdit(){CB_EDIT_IDX=-1;CB_EDIT_DATA=null;refreshCBEditor();}
+function cbeRenderTable(b){
+  const rows=b.rows||[];
+  let html='';
+  rows.forEach((r,i)=>{
+    html+=`<div class="cbe-tbl-row" style="display:flex;gap:4px;margin-bottom:4px;">
+      <input class="wiz-input" style="flex:1" placeholder="${T('cbeKey')}" value="${(r[0]||'').replace(/"/g,'&quot;')}">
+      <input class="wiz-input" style="flex:2" placeholder="${T('cbeValue')}" value="${(r[1]||'').replace(/"/g,'&quot;')}">
+      <button class="btn-del-sm" onclick="cbeDeleteTableRow(${i})">🗑</button>
+    </div>`;
+  });
+  html+=`<button class="btn" onclick="cbeAddTableRow()">${T('addRow')}</button>`;
+  return html;
+}
+function cbeAddTableRow(){
+  cbeCollectFromDOM();
+  CB_EDIT_DATA.rows=CB_EDIT_DATA.rows||[];
+  CB_EDIT_DATA.rows.push(['','']);
+  editBlock(CB_EDIT_IDX);
+}
+function cbeDeleteTableRow(idx){
+  cbeCollectFromDOM();
+  CB_EDIT_DATA.rows.splice(idx,1);
+  editBlock(CB_EDIT_IDX);
+}
+function cbeRenderSubfeature(b){
+  let html=`<div style="display:flex;gap:6px;margin-bottom:6px;">
+    <input id="cbe-title" class="wiz-input" style="flex:2" placeholder="${T('cbSubTitle')}" value="${(b.title||'').replace(/"/g,'&quot;')}">
+    <input id="cbe-emoji" class="wiz-input" style="width:3em" placeholder="🔹" value="${b.emoji||''}">
+  </div>`;
+  const subs=b.contentBlocks||[];
+  subs.forEach((sb,i)=>{
+    const txt=sb.type==='bullets'?(sb.bullets||[]).join('\n'):(sb.text||'');
+    html+=`<div class="cbe-sub-row" style="display:flex;gap:4px;margin-bottom:4px;align-items:flex-start;">
+      <span style="min-width:55px;font-size:.78em;color:var(--text-muted);padding-top:6px;">${sb.type}</span>
+      <textarea class="wiz-input cbe-sub-text" data-type="${sb.type}" rows="2" style="flex:1">${txt}</textarea>
+      <button class="btn-del-sm" style="margin-top:4px;" onclick="cbeDeleteSubBlock(${i})">🗑</button>
+    </div>`;
+  });
+  html+=`<div style="display:flex;gap:4px;margin-top:4px;">
+    <select id="cbe-sub-type" class="wiz-input" style="flex:1;">
+      <option value="paragraph">paragraph</option>
+      <option value="bullets">bullets</option>
+      <option value="note">note</option>
+    </select>
+    <button class="btn" onclick="cbeAddSubBlock()">${T('cbAddSubBlock')}</button>
+  </div>`;
+  return html;
+}
+function cbeAddSubBlock(){
+  cbeCollectFromDOM();
+  const type=document.getElementById('cbe-sub-type')?.value||'paragraph';
+  CB_EDIT_DATA.contentBlocks=CB_EDIT_DATA.contentBlocks||[];
+  CB_EDIT_DATA.contentBlocks.push(type==='bullets'?{type,bullets:[]}:{type,text:''});
+  editBlock(CB_EDIT_IDX);
+}
+function cbeDeleteSubBlock(idx){
+  cbeCollectFromDOM();
+  CB_EDIT_DATA.contentBlocks.splice(idx,1);
+  editBlock(CB_EDIT_IDX);
+}
 function cbeCollectFromDOM(){
   if(!CB_EDIT_DATA)return; const b=CB_EDIT_DATA;
   if(b.type==='paragraph'||b.type==='note') b.text=document.getElementById('cbe-text')?.value||'';
@@ -2395,7 +2672,6 @@ function cbeCollectFromDOM(){
   } else if(b.type==='subfeature'){
     b.title=document.getElementById('cbe-title')?.value||'';
     b.emoji=document.getElementById('cbe-emoji')?.value||'';
-    b.isNew=!!document.getElementById('cbe-new')?.checked;
     const blocks=[];document.querySelectorAll('.cbe-sub-row').forEach(r=>{
       const ta=r.querySelector('.cbe-sub-text');const type=ta?.dataset.type||'paragraph';const txt=ta?.value||'';
       if(type==='bullets')blocks.push({type,bullets:txt.split('\n').filter(Boolean)});else blocks.push({type,text:txt});
@@ -2410,7 +2686,7 @@ function moveBlock(i,dir){
 function refreshCBEditor(){
   const wrap=document.getElementById('cb-list'); if(!wrap)return;
   wrap.innerHTML=WIZ_BLOCKS.map((b,i)=>`<div class="cb-row" id="cb-row-${i}">
-    <span>${b.emoji||''} <strong>${b.type}</strong>: ${String(b.text||b.title||b.label||b.bullets?.join(', ')||'').slice(0,50)}</span>
+    <span>${b.emoji||''} <strong>${b.type}</strong>: ${String(b.text||b.title||b.label||b.bullets?.join(', ')||(b.rows?b.rows.length+' rows':'')||'').slice(0,50)}</span>
     <div style="display:flex;gap:4px;">
       <button class="btn-edit-sm" onclick="editBlock(${i})">✏️</button>
       <button class="btn-del-sm" onclick="deleteBlock(${i})">🗑</button>
@@ -2418,43 +2694,233 @@ function refreshCBEditor(){
       ${i<WIZ_BLOCKS.length-1?`<button class="btn-edit-sm" onclick="moveBlock(${i},1)">▼</button>`:''}
     </div>
   </div>`).join('');
+  const addCtrl=document.getElementById('cb-add-controls');if(addCtrl)addCtrl.style.display='';
+  injectWizPreview();
 }
-// ── Algo Step Editor ──
+let ALGO_EDIT_IDX=-1;
 function renderAlgoStepEditor(){
-  let rows=WIZ_ALGO_STEPS.map((s,i)=>`<div class="cb-row">
-    <span>${s.question?'❓ '+s.question.slice(0,40):s.bullets?.join(', ').slice(0,40)||'(step)'}</span>
+  let rows=WIZ_ALGO_STEPS.map((s,i)=>`<div class="cb-row" id="algo-row-${i}">
+    <span>${s.question?'❓ '+s.question.slice(0,40):s.bullets?.join(', ').slice(0,40)||'(step)'}${s.indent?' ↳':''}</span>
     <div style="display:flex;gap:4px;">
       <button class="btn-edit-sm" onclick="editAlgoStep(${i})">✏️</button>
       <button class="btn-del-sm" onclick="deleteAlgoStep(${i})">🗑</button>
+      ${i>0?`<button class="btn-edit-sm" onclick="moveAlgoStep(${i},-1)">▲</button>`:''}
+      ${i<WIZ_ALGO_STEPS.length-1?`<button class="btn-edit-sm" onclick="moveAlgoStep(${i},1)">▼</button>`:''}
     </div>
   </div>`).join('');
   return `<div class="wiz-field"><label class="wiz-label">${T('algoSteps')}</label>
     <div id="algo-step-list">${rows}</div>
-    <button class="btn" onclick="addAlgoStep()" style="margin-top:8px;">＋ ${T('addStep')}</button></div>`;
+    <button class="btn" onclick="addAlgoStep()" style="margin-top:8px;">${T('addStep')}</button></div>`;
 }
 function addAlgoStep(){
-  const q=prompt(T('algoStepQuestion'))||'';
-  const bRaw=prompt(T('algoStepBullets'))||'';
-  WIZ_ALGO_STEPS.push({question:q,bullets:bRaw?bRaw.split('\n').filter(Boolean):[],indent:false});
+  WIZ_ALGO_STEPS.push({question:'',bullets:[],indent:false});
   refreshAlgoStepEditor();
+  editAlgoStep(WIZ_ALGO_STEPS.length-1);
 }
 function editAlgoStep(i){
+  ALGO_EDIT_IDX=i;
   const s=WIZ_ALGO_STEPS[i];
-  const q=prompt(T('algoStepQuestion'),s.question||'')||'';
-  const bRaw=prompt(T('algoStepBullets'),(s.bullets||[]).join('\n'))||'';
-  WIZ_ALGO_STEPS[i]={...s,question:q,bullets:bRaw?bRaw.split('\n').filter(Boolean):[]};
+  const row=document.getElementById('algo-row-'+i);if(!row) return;
+  row.innerHTML=`<div style="width:100%;padding:6px 0;">
+    <input id="ase-q" class="wiz-input" type="text" placeholder="${T('algoStepQuestion')}" value="${(s.question||'').replace(/"/g,'&quot;')}" style="margin-bottom:6px;">
+    <textarea id="ase-b" class="wiz-input" rows="3" placeholder="${T('algoStepBullets')}">${(s.bullets||[]).join('\n')}</textarea>
+    <label style="display:flex;align-items:center;gap:6px;margin-top:6px;">
+      <input type="checkbox" id="ase-indent" ${s.indent?'checked':''}> ${T('algoStepIndent')}
+    </label>
+    <div style="display:flex;gap:6px;margin-top:6px;">
+      <button class="btn" onclick="saveAlgoStep(${i})">✓ ${T('wizSave')}</button>
+      <button class="btn" onclick="cancelAlgoStep()">✕</button>
+    </div></div>`;
+  WIZ_ALGO_STEPS.forEach((_,j)=>{if(j!==i){const r=document.getElementById('algo-row-'+j);if(r)r.classList.add('cb-dimmed');}});
+}
+function saveAlgoStep(i){
+  const q=document.getElementById('ase-q')?.value||'';
+  const bRaw=document.getElementById('ase-b')?.value||'';
+  const indent=!!document.getElementById('ase-indent')?.checked;
+  WIZ_ALGO_STEPS[i]={question:q,bullets:bRaw.split('\n').filter(Boolean),indent};
+  ALGO_EDIT_IDX=-1; refreshAlgoStepEditor();
+}
+function cancelAlgoStep(){ALGO_EDIT_IDX=-1;refreshAlgoStepEditor();}
+function deleteAlgoStep(i){WIZ_ALGO_STEPS.splice(i,1);ALGO_EDIT_IDX=-1;refreshAlgoStepEditor();}
+function moveAlgoStep(i,dir){
+  const j=i+dir; if(j<0||j>=WIZ_ALGO_STEPS.length)return;
+  [WIZ_ALGO_STEPS[i],WIZ_ALGO_STEPS[j]]=[WIZ_ALGO_STEPS[j],WIZ_ALGO_STEPS[i]];
   refreshAlgoStepEditor();
 }
-function deleteAlgoStep(i){WIZ_ALGO_STEPS.splice(i,1);refreshAlgoStepEditor();}
 function refreshAlgoStepEditor(){
   const wrap=document.getElementById('algo-step-list');if(!wrap)return;
-  wrap.innerHTML=WIZ_ALGO_STEPS.map((s,i)=>`<div class="cb-row">
-    <span>${s.question?'❓ '+s.question.slice(0,40):s.bullets?.join(', ').slice(0,40)||'(step)'}</span>
+  wrap.innerHTML=WIZ_ALGO_STEPS.map((s,i)=>`<div class="cb-row" id="algo-row-${i}">
+    <span>${s.question?'❓ '+s.question.slice(0,40):s.bullets?.join(', ').slice(0,40)||'(step)'}${s.indent?' ↳':''}</span>
     <div style="display:flex;gap:4px;">
       <button class="btn-edit-sm" onclick="editAlgoStep(${i})">✏️</button>
       <button class="btn-del-sm" onclick="deleteAlgoStep(${i})">🗑</button>
+      ${i>0?`<button class="btn-edit-sm" onclick="moveAlgoStep(${i},-1)">▲</button>`:''}
+      ${i<WIZ_ALGO_STEPS.length-1?`<button class="btn-edit-sm" onclick="moveAlgoStep(${i},1)">▼</button>`:''}
     </div>
   </div>`).join('');
+  injectAlgoPreview();
+}
+// ── Feature Wizard Step 3: Trackers + Actions List Editor ──
+function renderFeatureStep3(){
+  let html='<div class="wiz-field"><label class="wiz-label">'+T('trackers')+'</label>';
+  html+='<div class="wiz-hint">'+T('trackerHint')+'</div>';
+  html+='<div id="wiz-trk-list">'+renderWizTrackerList()+'</div>';
+  html+='<button class="btn" onclick="addWizTracker()" style="margin-top:6px;">'+T('addTracker')+'</button></div>';
+  html+='<div class="wiz-field" style="margin-top:12px;"><label class="wiz-label">'+T('quickActions')+'</label>';
+  html+='<div class="wiz-hint">'+T('actionHint')+'</div>';
+  html+='<div id="wiz-act-list">'+renderWizActionList()+'</div>';
+  html+='<button class="btn" onclick="addWizAction()" style="margin-top:6px;">'+T('addAction')+'</button></div>';
+  return html;
+}
+function renderWizTrackerList(){
+  return WIZ_TRACKERS.map((t,i)=>`<div class="cb-row" id="wiz-trk-${i}">
+    <span>${t.emoji||'●'} ${t.label||'('+T('tracker')+')'} — ${t.total||1} / ${dndTr('recovery',t.recovery)||t.recovery||'long'}</span>
+    <div style="display:flex;gap:4px;">
+      <button class="btn-edit-sm" onclick="editWizTracker(${i})">✏️</button>
+      <button class="btn-del-sm" onclick="deleteWizTracker(${i})">🗑</button>
+    </div></div>`).join('');
+}
+function addWizTracker(){
+  WIZ_TRACKERS.push({label:'',emoji:'',total:1,recovery:'long'});
+  editWizTracker(WIZ_TRACKERS.length-1);
+}
+function editWizTracker(i){
+  WIZ_TRK_EDIT=i; const t=WIZ_TRACKERS[i];
+  const body=document.getElementById('wiz-body'); if(!body) return;
+  const recOpts=recoveryOpts().map(o=>`<option value="${o.v}"${o.v===t.recovery?' selected':''}>${o.l}</option>`).join('');
+  body.innerHTML=`<div class="wiz-field"><label class="wiz-label">${T('tracker')}</label>
+    <div style="display:flex;gap:6px;margin-bottom:6px;">
+      <input id="wte-label" class="wiz-input" style="flex:2" placeholder="${T('wiz_f_trackerLabel')}" value="${(t.label||'').replace(/"/g,'&quot;')}">
+      <input id="wte-emoji" class="wiz-input" style="width:3em" placeholder="●" value="${t.emoji||''}">
+    </div>
+    <div style="display:flex;gap:6px;margin-bottom:6px;">
+      <input id="wte-total" class="wiz-input" type="number" min="1" style="width:60px" placeholder="${T('wiz_f_totalUses')}" value="${t.total||1}">
+      <select id="wte-recovery" class="wiz-input" style="flex:1">${recOpts}</select>
+    </div>
+    <div style="display:flex;gap:6px;margin-bottom:6px;align-items:center;">
+      <input id="wte-die" class="wiz-input" style="width:60px" placeholder="${T('f_die')}" value="${t.die||''}">
+      <label style="display:flex;align-items:center;gap:4px;"><input type="checkbox" id="wte-showdie" ${t.showDie?'checked':''}> ${T('f_showDie')}</label>
+    </div>
+    <div style="display:flex;gap:6px;">
+      <button class="btn" onclick="saveWizTracker(${i})">✓ ${T('wizSave')}</button>
+      <button class="btn" onclick="cancelWizTrkEdit()">✕</button>
+    </div></div>`;
+}
+function collectTrkEdit(i){
+  const t={
+    label:document.getElementById('wte-label')?.value||'',
+    emoji:document.getElementById('wte-emoji')?.value||'',
+    total:+(document.getElementById('wte-total')?.value)||1,
+    recovery:document.getElementById('wte-recovery')?.value||'long',
+    die:document.getElementById('wte-die')?.value||'',
+    showDie:!!document.getElementById('wte-showdie')?.checked
+  };
+  if(!t.die) delete t.die;
+  if(!t.showDie) delete t.showDie;
+  if(!t.emoji) delete t.emoji;
+  if(!t.label) delete t.label;
+  WIZ_TRACKERS[i]=t;
+}
+function saveWizTracker(i){
+  collectTrkEdit(i); WIZ_TRK_EDIT=-1; renderWizardStep();
+}
+function deleteWizTracker(i){WIZ_TRACKERS.splice(i,1);WIZ_TRK_EDIT=-1;renderWizardStep();}
+function cancelWizTrkEdit(){WIZ_TRK_EDIT=-1;renderWizardStep();}
+function refreshWizTrackerList(){
+  const w=document.getElementById('wiz-trk-list');if(!w)return;
+  w.innerHTML=renderWizTrackerList();
+  injectWizPreview();
+}
+function renderWizActionList(){
+  return WIZ_ACTIONS.map((a,i)=>`<div class="cb-row" id="wiz-act-${i}">
+    <span>${a.emoji||'⚡'} ${a.label||'('+T('action')+')'} — ${dndTr('actionLabels',a.type)||a.type||'action'}</span>
+    <div style="display:flex;gap:4px;">
+      <button class="btn-edit-sm" onclick="editWizAction(${i})">✏️</button>
+      <button class="btn-del-sm" onclick="deleteWizAction(${i})">🗑</button>
+    </div></div>`).join('');
+}
+function addWizAction(){
+  WIZ_ACTIONS.push({label:'',emoji:'',type:'action',description:''});
+  editWizAction(WIZ_ACTIONS.length-1);
+}
+function editWizAction(i){
+  WIZ_ACT_EDIT=i; const a=WIZ_ACTIONS[i];
+  const body=document.getElementById('wiz-body'); if(!body) return;
+  const typeOpts=actionTypeOpts().map(o=>`<option value="${o.v}"${o.v===a.type?' selected':''}>${o.l}</option>`).join('');
+  body.innerHTML=`<div class="wiz-field"><label class="wiz-label">${T('action')}</label>
+    <div style="display:flex;gap:6px;margin-bottom:6px;">
+      <input id="wae-label" class="wiz-input" style="flex:2" placeholder="${T('wiz_f_actionLabel')}" value="${(a.label||'').replace(/"/g,'&quot;')}">
+      <input id="wae-emoji" class="wiz-input" style="width:3em" placeholder="⚡" value="${a.emoji||''}">
+    </div>
+    <div style="display:flex;gap:6px;margin-bottom:6px;">
+      <select id="wae-type" class="wiz-input" style="flex:1">${typeOpts}</select>
+    </div>
+    <textarea id="wae-desc" class="wiz-input" rows="2" placeholder="${T('wiz_f_actionDesc')}">${a.description||''}</textarea>
+    <div style="display:flex;gap:6px;margin-top:6px;">
+      <button class="btn" onclick="saveWizAction(${i})">✓ ${T('wizSave')}</button>
+      <button class="btn" onclick="cancelWizActEdit()">✕</button>
+    </div></div>`;
+}
+function collectActEdit(i){
+  const a={
+    label:document.getElementById('wae-label')?.value||'',
+    emoji:document.getElementById('wae-emoji')?.value||'',
+    type:document.getElementById('wae-type')?.value||'action',
+    description:document.getElementById('wae-desc')?.value||''
+  };
+  if(!a.emoji) delete a.emoji;
+  if(!a.label) delete a.label;
+  WIZ_ACTIONS[i]=a;
+}
+function saveWizAction(i){
+  collectActEdit(i); WIZ_ACT_EDIT=-1; renderWizardStep();
+}
+function deleteWizAction(i){WIZ_ACTIONS.splice(i,1);WIZ_ACT_EDIT=-1;renderWizardStep();}
+function cancelWizActEdit(){WIZ_ACT_EDIT=-1;renderWizardStep();}
+function refreshWizActionList(){
+  const w=document.getElementById('wiz-act-list');if(!w)return;
+  w.innerHTML=renderWizActionList();
+  injectWizPreview();
+}
+// ── Tag Editor (for wizard step 1) ──
+const TAG_COLORS=['green','blue','purple','red','orange'];
+function renderTagEditor(){
+  const colorOpts=TAG_COLORS.map(c=>`<option value="${c}">${T('tagColor_'+c)}</option>`).join('');
+  const rows=WIZ_TAGS.map((t,i)=>`<div style="display:flex;gap:4px;align-items:center;margin-bottom:4px;">
+    <span class="feature-tag tag-${t.color||'green'}">${t.label||'?'}</span>
+    <button class="btn-del-sm" onclick="deleteWizTag(${i})">🗑</button>
+  </div>`).join('');
+  const canAdd=WIZ_TAGS.length<3;
+  return `<div class="wiz-field"><label class="wiz-label">${T('tags')}</label>
+    <div id="wiz-tag-list">${rows}</div>
+    ${canAdd?`<div id="wiz-tag-add" style="display:flex;gap:4px;margin-top:4px;">
+      <input id="wiz-tag-label" class="wiz-input" style="flex:2" placeholder="${T('tagLabel')}" maxlength="20">
+      <select id="wiz-tag-color" class="wiz-input" style="flex:1">${colorOpts}</select>
+      <button class="btn" onclick="addWizTag()">${T('addTag')}</button>
+    </div>`:''}
+  </div>`;
+}
+function addWizTag(){
+  if(WIZ_TAGS.length>=3) return;
+  const label=document.getElementById('wiz-tag-label')?.value?.trim();
+  const color=document.getElementById('wiz-tag-color')?.value||'green';
+  if(!label) return;
+  WIZ_TAGS.push({label,color});
+  refreshTagEditor();
+}
+function deleteWizTag(i){WIZ_TAGS.splice(i,1);refreshTagEditor();}
+function refreshTagEditor(){
+  const wrap=document.getElementById('wiz-tag-list');
+  const addCtrl=document.getElementById('wiz-tag-add');
+  if(wrap) wrap.innerHTML=WIZ_TAGS.map((t,i)=>`<div style="display:flex;gap:4px;align-items:center;margin-bottom:4px;">
+    <span class="feature-tag tag-${t.color||'green'}">${t.label||'?'}</span>
+    <button class="btn-del-sm" onclick="deleteWizTag(${i})">🗑</button>
+  </div>`).join('');
+  if(addCtrl){
+    if(WIZ_TAGS.length>=3) addCtrl.style.display='none';
+    else{addCtrl.style.display='';const inp=document.getElementById('wiz-tag-label');if(inp)inp.value='';}
+  }
+  injectWizPreview();
 }
 // ═══════════════ WIZARD CONFIGS ═══════════════
 // ── Point Buy System ──
@@ -2533,16 +2999,36 @@ function abToggleMode(){
 function abilityOpts(){ return DND.abilities.map(a=>({v:a,l:abilityShortName(a)})); }
 function schoolOpts(){ return DND.schools.map(s=>({v:s,l:dndTr('schools',s)||s})); }
 function diceOpts(){ return DND.dice.map(d=>({v:d,l:d})); }
+function hitDiceOpts(){ return ['d6','d8','d10','d12'].map(d=>({v:d,l:d})); }
 function damageOpts(){ return DND.damageTypes.map(d=>({v:d,l:dndTr('damageTypes',d)||d})); }
 function actionTypeOpts(){ return Object.entries(DND.actionLabels).map(([v,enL])=>({v,l:dndTr('actionLabels',v)||enL})); }
 function alignOpts(){ const lbls=DND.tr[currentLang]?.alignments||DND.alignments; return DND.alignments.map((v,i)=>({v,l:lbls[i]||v})); }
 function recoveryOpts(){ return Object.entries(DND.recovery).map(([v,enL])=>({v,l:dndTr('recovery',v)||enL})); }
 function lvOpts(){ return [1,2,3,4,5,6,7,8,9].map(n=>({v:n,l:T('lvPrefix')+' '+n})); }
+function spellLvOpts(){ return [{v:0,l:T('cantrips')},...[1,2,3,4,5,6,7,8,9].map(n=>({v:n,l:T('lvPrefix')+' '+n}))]; }
 // D&D identity opts — select + "Custom…" option for homebrew
 function raceOpts(){ return [{v:'',l:'— '+T('f_race')+' —'},...DND.races.map(r=>({v:r,l:dndTr('races',r)})),{v:'_custom',l:T('custom')}]; }
 function classOpts(){ return [{v:'',l:'— '+T('f_class')+' —'},...DND.classes.map(c=>({v:c,l:dndTr('classes',c)})),{v:'_custom',l:T('custom')}]; }
 function backgroundOpts(){ return [{v:'',l:'— '+T('f_background')+' —'},...DND.backgrounds.map(b=>({v:b,l:dndTr('backgrounds',b)})),{v:'_custom',l:T('custom')}]; }
 function subclassOpts(cls){ const list=DND.subclasses[cls]||[]; return [{v:'',l:'—'},...list.map(s=>({v:s,l:dndTr('subclasses',s)})),{v:'_custom',l:T('custom')}]; }
+function sourceOpts(){
+  const opts=[{v:'',l:'—'}];
+  const cls=CHAR.class,sub=CHAR.subclass,race=CHAR.race,bg=CHAR.background;
+  if(cls) opts.push({v:cls,l:dndTr('classes',cls)||cls});
+  if(sub) opts.push({v:sub,l:dndTr('subclasses',sub)||sub});
+  if(race) opts.push({v:race,l:dndTr('races',race)||race});
+  if(bg) opts.push({v:bg,l:dndTr('backgrounds',bg)||bg});
+  opts.push({v:'Feat',l:T('sourceFeat')},{v:'Origin Feat',l:T('sourceOriginFeat')});
+  opts.push({v:'Magic Item',l:T('sourceMagicItem')},{v:'Combat Rule',l:T('sourceCombatRule')});
+  opts.push({v:'_custom',l:T('custom')});
+  return opts;
+}
+function translateSource(src){
+  if(!src) return '';
+  const fixed={Feat:'sourceFeat','Origin Feat':'sourceOriginFeat','Magic Item':'sourceMagicItem','Combat Rule':'sourceCombatRule'};
+  if(fixed[src]) return T(fixed[src]);
+  return dndTr('classes',src)||dndTr('subclasses',src)||dndTr('races',src)||dndTr('backgrounds',src)||src;
+}
 function alignmentName(v){ const idx=DND.alignments.indexOf(v); const lbls=DND.tr[currentLang]?.alignments||DND.alignments; return lbls[idx]||v; }
 function toggleCustomInput(fid){ const s=document.getElementById('wf-'+fid); const c=document.getElementById('wf-'+fid+'-custom'); if(c) c.style.display=s&&s.value==='_custom'?'block':'none'; }
 
@@ -2562,7 +3048,6 @@ const WIZARDS = {
       {id:'quote',label:'f_quote',type:'text',placeholder:'wiz_ph_quote'},
       {id:'languages',label:'f_languages',type:'text',placeholder:'wiz_ph_languages'},
       {id:'playerName',label:'wiz_f_playerName',type:'text'},
-      {id:'emoji',label:'wiz_f_emojiPG',type:'emoji',default:'🧙'},
     ], _afterRender(data){
       const classSel=document.getElementById('wf-class');
       if(!classSel) return;
@@ -2599,12 +3084,10 @@ const WIZARDS = {
     },
     {label:'wiz_step_combat', fields:[
       {id:'hpMax',label:'f_hpMax',type:'number',min:1,required:true},
-      {id:'hitDieType',label:'f_hitDie',type:'select',options:diceOpts(),default:'d8'},
+      {id:'hitDieType',label:'f_hitDie',type:'select',options:hitDiceOpts(),default:'d8'},
       {id:'ac',label:'f_ac',type:'number',min:0,default:10,required:true},
       {id:'armorNote',label:'f_acDesc',type:'text',placeholder:'wiz_ph_armorNote'},
       {id:'speed',label:'f_speed',type:'text',default:'9m'},
-      {id:'initiative',label:'initiative',type:'number',default:0},
-      {id:'proficiencyBonus',label:'f_profBonus',type:'number',default:2},
     ]},
     {label:'wiz_step_savingThrows', fields:[], _buildFields(){
       return DND.abilities.map(a=>({
@@ -2618,15 +3101,14 @@ const WIZARDS = {
     const base=isEdit?CHAR:{};
     base.name=d.name; base.race=d.race; base.class=d.class; base.subclass=d.subclass;
     base.level=d.level||1; base.alignment=d.alignment; base.background=d.background;
-    base.playerName=d.playerName; base.emoji=d.emoji||'🧙';
+    base.playerName=d.playerName;
     if(d.quote) base.quote=d.quote; else delete base.quote;
     if(d.languages) base.languages=d.languages; else delete base.languages;
     base.abilityScores={STR:+d.STR||10,DEX:+d.DEX||10,CON:+d.CON||10,INT:+d.INT||10,WIS:+d.WIS||10,CHA:+d.CHA||10};
     base.abilityBudget=+(d.abilityBudget||PB_DEFAULT_BUDGET);
     base.hp={max:+d.hpMax||10}; base.hitDieType=parseInt((d.hitDieType||'d8').replace(/\D/g,''))||8;
     base.ac=+d.ac||10; if(d.armorNote) base.armorNote=d.armorNote; else delete base.armorNote;
-    base.speed=d.speed||'9m'; base.initiative=+d.initiative||0;
-    base.proficiencyBonus=+d.proficiencyBonus||2;
+    base.speed=d.speed||'9m';
     base.savingThrows=['STR','DEX','CON','INT','WIS','CHA'].filter(a=>d['saves'+a]);
     if(!isEdit){
       base.skills={}; base.features=[]; base.spells=[]; base.weapons=[]; base.equipment=[];
@@ -2647,28 +3129,43 @@ const WIZARDS = {
       {id:'name',label:'wiz_f_spellNameIT',type:'text',required:true},
       {id:'originalName',label:'f_originalName',type:'text'},
       {id:'emoji',label:'f_emoji',type:'emoji'},
-      {id:'level',label:'wiz_f_spellLevel',type:'number',min:0,max:9,default:0,required:true},
+      {id:'level',label:'wiz_f_spellLevel',type:'select',options:()=>spellLvOpts(),default:0,required:true},
       {id:'school',label:'f_school',type:'select',options:()=>schoolOpts()},
       {id:'actionType',label:'f_actionType',type:'select',options:()=>actionTypeOpts()},
-    ]},
-    {label:'wiz_step_spellDetails', fields:[
       {id:'range',label:'f_range',type:'text'},
       {id:'duration',label:'f_duration',type:'text'},
       {id:'concentration',label:'f_concentration',type:'checkbox',checkLabel:'wiz_f_concentrationCheck'},
       {id:'saveAbility',label:'f_saveAbility',type:'select',options:()=>[{v:'',l:'—'},...abilityOpts()]},
+    ], _afterRender(){
+      injectSpellPreview();
+      ['name','originalName','emoji','range','duration'].forEach(id=>{
+        const e=document.getElementById('wf-'+id);if(e)e.addEventListener('input',injectSpellPreview);
+      });
+      ['level','school','actionType','saveAbility'].forEach(id=>{
+        const e=document.getElementById('wf-'+id);if(e)e.addEventListener('change',injectSpellPreview);
+      });
+      const cb=document.getElementById('wf-concentration');
+      if(cb) cb.addEventListener('change',injectSpellPreview);
+    }},
+    {label:'wiz_step_spellDesc', fields:[
       {id:'description',label:'f_desc',type:'textarea',rows:4,required:true},
       {id:'scaling',label:'f_scaling',type:'textarea',rows:2},
       {id:'notes',label:'f_notes',type:'textarea',rows:2},
-      {id:'isNew',label:'f_isNew',type:'checkbox',checkLabel:'wiz_f_markNew'},
-      {id:'isSecret',label:'f_isSecret',type:'checkbox',checkLabel:'wiz_f_markSpecial'},
-      {id:'secretLabel',label:'wiz_f_specialLabel',type:'text',placeholder:'wiz_ph_special'},
-    ]},
+    ], _afterRender(data){
+      const body=document.getElementById('wiz-body');
+      if(body) body.insertAdjacentHTML('beforeend',renderTagEditor());
+      injectSpellPreview();
+      ['description','scaling','notes'].forEach(id=>{
+        const e=document.getElementById('wf-'+id);if(e)e.addEventListener('input',injectSpellPreview);
+      });
+    }},
   ],
   onSave(d,idx){
     const sp={name:d.name,originalName:d.originalName,emoji:d.emoji,level:+d.level||0,
       school:d.school,actionType:d.actionType,range:d.range,duration:d.duration,
       concentration:!!d.concentration,saveAbility:d.saveAbility,description:d.description,
-      scaling:d.scaling,notes:d.notes,isNew:!!d.isNew,isSecret:!!d.isSecret,secretLabel:d.secretLabel};
+      scaling:d.scaling,notes:d.notes};
+    if(WIZ_TAGS.length) sp.tags=[...WIZ_TAGS];
     if(!CHAR.spells)CHAR.spells=[];
     if(idx!==null&&idx!==undefined)CHAR.spells[idx]=sp; else CHAR.spells.push(sp);
   }
@@ -2680,18 +3177,31 @@ const WIZARDS = {
     {id:'name',label:'f_name',type:'text',required:true},
     {id:'emoji',label:'f_emoji',type:'emoji'},
     {id:'damageDie',label:'wiz_f_damageFull',type:'text',required:true},
-    {id:'damageType',label:'f_damageType',type:'select',options:()=>damageOpts()},
+    {id:'damageType',label:'f_damageType',type:'select-or-custom',options:()=>damageOpts()},
     {id:'attackStat',label:'wiz_f_attackStatLabel',type:'select',options:()=>abilityOpts()},
-    {id:'attackBonus',label:'wiz_f_attackBonusTotal',type:'text',placeholder:'wiz_ph_attackBonus'},
+    {id:'magicBonus',label:'wiz_f_magicBonus',type:'number',default:0},
     {id:'quantity',label:'f_quantity',type:'number',min:1,default:1},
     {id:'properties',label:'f_properties',type:'text'},
     {id:'notes',label:'f_notes',type:'textarea',rows:2},
-    {id:'isNew',label:'wiz_f_markNew',type:'checkbox'},
-  ]}],
+  ], _afterRender(data){
+    const body=document.getElementById('wiz-body');
+    if(body) body.insertAdjacentHTML('beforeend',renderTagEditor());
+    injectWeaponPreview();
+    ['name','emoji','damageDie','magicBonus','quantity','properties','notes'].forEach(id=>{
+      const e=document.getElementById('wf-'+id);if(e)e.addEventListener('input',injectWeaponPreview);
+    });
+    ['damageType','attackStat'].forEach(id=>{
+      const e=document.getElementById('wf-'+id);if(e)e.addEventListener('change',injectWeaponPreview);
+    });
+    const dtC=document.getElementById('wf-damageType-custom');
+    if(dtC) dtC.addEventListener('input',injectWeaponPreview);
+  }}],
   onSave(d,idx){
     const w={name:d.name,emoji:d.emoji,damageDie:d.damageDie,damageType:d.damageType,
-      attackStat:d.attackStat,attackBonus:d.attackBonus,quantity:+d.quantity||1,
-      properties:d.properties,notes:d.notes,isNew:!!d.isNew};
+      attackStat:d.attackStat,quantity:+d.quantity||1,
+      properties:d.properties,notes:d.notes};
+    if(WIZ_TAGS.length) w.tags=[...WIZ_TAGS];
+    if(+d.magicBonus) w.magicBonus=+d.magicBonus;
     if(!CHAR.weapons)CHAR.weapons=[];
     if(idx!==null&&idx!==undefined)CHAR.weapons[idx]=w; else CHAR.weapons.push(w);
   }
@@ -2714,40 +3224,35 @@ const WIZARDS = {
   title:'wiz_feature_title',
   steps:[
     {label:'wiz_step_header', fields:[
-      {id:'title',label:'wiz_f_featureTitle',type:'text',required:true},
-      {id:'emoji',label:'f_emoji',type:'emoji'},
-      {id:'subtitle',label:'wiz_f_featureSubtitle',type:'text'},
-      {id:'source',label:'wiz_f_featureSource',type:'text'},
-      {id:'isNew',label:'wiz_f_markNew',type:'checkbox'},
-      {id:'isSecret',label:'wiz_f_markSpecial',type:'checkbox'},
-      {id:'secretLabel',label:'wiz_f_specialLabel',type:'text'},
-    ]},
-    {label:'wiz_step_content', hasContentBlocks:true, fields:[]},
-    {label:'wiz_step_trackerAction', fields:[
-      {id:'hasTracker',label:'wiz_f_hasTracker',type:'checkbox'},
-      {id:'trackerTotal',label:'wiz_f_totalUses',type:'number',min:1,default:1},
-      {id:'trackerRecovery',label:'f_recovery',type:'select',options:()=>recoveryOpts()},
-      {id:'trackerDie',label:'f_die',type:'text'},
-      {id:'trackerShowDie',label:'f_showDie',type:'checkbox'},
-      {id:'hasAction',label:'wiz_f_hasAction',type:'checkbox'},
-      {id:'actionType',label:'f_actionType',type:'select',options:()=>actionTypeOpts()},
-      {id:'actionDesc',label:'wiz_f_actionDesc',type:'text'},
-    ]},
+      {id:'title',label:'wiz_f_featureTitle',type:'text',required:true,hint:'hint_featureTitle'},
+      {id:'emoji',label:'f_emoji',type:'emoji',hint:'hint_featureEmoji'},
+      {id:'subtitle',label:'wiz_f_featureSubtitle',type:'text',hint:'hint_featureSubtitle'},
+      {id:'source',label:'wiz_f_featureSource',type:'select-or-custom',options:()=>sourceOpts(),hint:'hint_featureSource'},
+    ], _afterRender(data){
+      const body=document.getElementById('wiz-body');
+      if(body) body.insertAdjacentHTML('beforeend',renderTagEditor());
+      injectFeaturePreview();
+      ['title','emoji','subtitle'].forEach(id=>{
+        const e=document.getElementById('wf-'+id);if(e)e.addEventListener('input',injectFeaturePreview);
+      });
+      const srcSel=document.getElementById('wf-source');
+      if(srcSel) srcSel.addEventListener('change',injectFeaturePreview);
+      const sc=document.getElementById('wf-source-custom');
+      if(sc) sc.addEventListener('input',injectFeaturePreview);
+    }},
+    {label:'wiz_step_content', hasContentBlocks:true, fields:[], _afterRender(){injectFeaturePreview();}},
+    {label:'wiz_step_trackerAction', _renderStep(data){
+      return renderFeatureStep3();
+    }, _afterRender(){injectFeaturePreview();}},
   ],
   onSave(d,idx,blocks){
     const oldTitle=idx!==null&&idx!==undefined?CHAR.features[idx]?.title:null;
     const f={title:d.title,emoji:d.emoji,subtitle:d.subtitle,source:d.source,
-      isNew:!!d.isNew,isSecret:!!d.isSecret,secretLabel:d.secretLabel,contentBlocks:blocks};
-    // Embedded tracker
-    if(d.hasTracker && d.trackerTotal>0){
-      f.tracker={total:+d.trackerTotal||1,recovery:d.trackerRecovery||'long'};
-      if(d.trackerDie) f.tracker.die=d.trackerDie;
-      if(d.trackerShowDie) f.tracker.showDie=true;
-    }
-    // Embedded action
-    if(d.hasAction && d.actionType){
-      f.action={type:d.actionType,description:d.actionDesc||''};
-    }
+      contentBlocks:blocks};
+    if(WIZ_TAGS.length) f.tags=[...WIZ_TAGS];
+    // Trackers & actions from step 3 list editor
+    if(WIZ_TRACKERS.length) f.trackers=[...WIZ_TRACKERS];
+    if(WIZ_ACTIONS.length) f.actions=[...WIZ_ACTIONS];
     if(!CHAR.features)CHAR.features=[];
     if(idx!==null&&idx!==undefined){
       CHAR.features[idx]=f;
@@ -2780,8 +3285,18 @@ const WIZARDS = {
     {id:'showDie',label:'f_showDie',type:'checkbox'},
     {id:'isPotion',label:'wiz_f_isPotionCheck',type:'checkbox'},
     {id:'potionFormula',label:'wiz_f_potionFormula',type:'text'},
+    {id:'potionNotes',label:'wiz_f_potionNotes',type:'text'},
     {id:'description',label:'f_desc',type:'textarea',rows:2},
-  ]}],
+  ], _afterRender(data){
+    function togglePotionFields(){
+      const isP=document.getElementById('wf-isPotion')?.checked;
+      ['potionFormula','potionNotes'].forEach(f=>{const el=document.getElementById('wf-'+f)?.closest('.wiz-field');if(el)el.style.display=isP?'':'none';});
+      ['die','showDie'].forEach(f=>{const el=document.getElementById('wf-'+f)?.closest('.wiz-field');if(el)el.style.display=isP?'none':'';});
+    }
+    const cb=document.getElementById('wf-isPotion');
+    if(cb) cb.addEventListener('change',togglePotionFields);
+    togglePotionFields();
+  }}],
   onSave(d,idx){
     const newId=slugify(d.label);
     // Handle ID collision
@@ -2799,7 +3314,7 @@ const WIZARDS = {
     }
     const t={id:finalId,label:d.label,emoji:d.emoji,total:+d.total||1,recovery:d.recovery,
       die:d.die||'',showDie:!!d.showDie,
-      isPotion:!!d.isPotion,potionFormula:d.potionFormula,description:d.description};
+      isPotion:!!d.isPotion,potionFormula:d.potionFormula,potionNotes:d.potionNotes,description:d.description};
     if(!CHAR.trackers)CHAR.trackers=[];
     if(idx!==null&&idx!==undefined)CHAR.trackers[idx]=t; else CHAR.trackers.push(t);
     if(!SESSION.trackers[t.id])SESSION.trackers[t.id]={used:0};
@@ -2840,8 +3355,13 @@ const WIZARDS = {
     {label:'wiz_step_algoTitle', fields:[
       {id:'title',label:'wiz_f_algoBlockTitle',type:'text',required:true},
       {id:'emoji',label:'f_emoji',type:'emoji'},
-    ]},
-    {label:'wiz_step_algoSteps', hasAlgoSteps:true, fields:[]},
+    ], _afterRender(){
+      injectAlgoPreview();
+      ['title','emoji'].forEach(id=>{
+        const e=document.getElementById('wf-'+id);if(e)e.addEventListener('input',injectAlgoPreview);
+      });
+    }},
+    {label:'wiz_step_algoSteps', hasAlgoSteps:true, fields:[], _afterRender(){injectAlgoPreview();}},
   ],
   onSave(d,idx,_blocks,steps){
     const b={title:d.title,emoji:d.emoji,steps:steps};
@@ -2854,13 +3374,14 @@ const WIZARDS = {
   title:'wiz_spellcasting_title',
   steps:[{label:'wiz_spellcasting_title', fields:[
     {id:'ability',label:'wiz_f_magicAbility',type:'select',options:()=>abilityOpts()},
-    {id:'saveDC',label:'wiz_f_magicDC',type:'number'},
-    {id:'attackBonus',label:'wiz_f_magicAttack',type:'number'},
     {id:'focus',label:'wiz_f_magicFocus',type:'text'},
     {id:'preparedCaster',label:'wiz_f_preparedCaster',type:'checkbox'},
   ]}],
   onSave(d){
-    CHAR.spellcasting={ability:d.ability,saveDC:+d.saveDC||0,attackBonus:+d.attackBonus||0,focus:d.focus,preparedCaster:!!d.preparedCaster};
+    const prev=CHAR.spellcasting||{};
+    CHAR.spellcasting={ability:d.ability,focus:d.focus,preparedCaster:!!d.preparedCaster};
+    if(prev.saveDCOverride!=null) CHAR.spellcasting.saveDCOverride=prev.saveDCOverride;
+    if(prev.attackBonusOverride!=null) CHAR.spellcasting.attackBonusOverride=prev.attackBonusOverride;
   }
 },
 // ── Skills ──
@@ -2875,7 +3396,7 @@ const WIZARDS = {
         {v:'none',          l:T('profType_none')},
         {v:'proficient',    l:T('profType_proficient')},
         {v:'expertise',     l:T('profType_expertise')},
-        {v:'jackOfAllTrades',l:T('profType_jackOfAllTrades')}
+        {v:'halfProficiency',l:T('profType_halfProficiency')}
       ]
     }));
   }}],
@@ -2900,12 +3421,11 @@ function flattenChar(){
   const saves=C.savingThrows||[];
   return {
     name:C.name,race:C.race,class:C.class,subclass:C.subclass,level:C.level,
-    alignment:C.alignment,background:C.background,playerName:C.playerName,emoji:C.emoji,
+    alignment:C.alignment,background:C.background,playerName:C.playerName,
     quote:C.quote,languages:C.languages,
     STR:sc.STR,DEX:sc.DEX,CON:sc.CON,INT:sc.INT,WIS:sc.WIS,CHA:sc.CHA,
     abilityBudget:C.abilityBudget||PB_DEFAULT_BUDGET,
     hpMax:C.hp?.max,hitDieType:C.hitDieType?'d'+C.hitDieType:'d8',ac:C.ac,armorNote:C.armorNote,speed:C.speed,
-    initiative:C.initiative,proficiencyBonus:C.proficiencyBonus,
     savesSTR:saves.includes('STR'),savesDEX:saves.includes('DEX'),
     savesCON:saves.includes('CON'),savesINT:saves.includes('INT'),
     savesWIS:saves.includes('WIS'),savesCHA:saves.includes('CHA'),
@@ -2934,19 +3454,10 @@ function addFeature(){ openWizard('feature',null,{}); }
 function editFeature(idx){
   const f=(CHAR.features||[])[idx];
   const flat={...f};
-  // Flatten embedded tracker for wizard fields
-  if(f.tracker){
-    flat.hasTracker=true; flat.trackerTotal=f.tracker.total;
-    flat.trackerRecovery=f.tracker.recovery; flat.trackerDie=f.tracker.die;
-    flat.trackerShowDie=!!f.tracker.showDie;
-  }
-  // Flatten embedded action for wizard fields
-  if(f.action){
-    flat.hasAction=true; flat.actionType=f.action.type;
-    flat.actionDesc=f.action.description;
-  }
   openWizard('feature',idx,flat);
   WIZ_BLOCKS=[...(f.contentBlocks||[])];
+  WIZ_TRACKERS=(f.trackers||[]).map(t=>({...t}));
+  WIZ_ACTIONS=(f.actions||[]).map(a=>({...a}));
 }
 function deleteFeature(idx){
   if(!confirm(T('confirmDelete')))return;
@@ -3011,14 +3522,6 @@ function deleteCondition(idx){
   (CHAR.customConditions||[]).splice(idx,1);
   saveAll(); renderAll();
 }
-// Skill CRUD — opens the bulk skills wizard (no per-row wizard needed)
-function editSkillItem(){ openWizard('skills',null,flattenSkills()); }
-function deleteSkill(skillId){
-  if(!confirm(T('confirmDelete'))) return;
-  if(CHAR.skills) delete CHAR.skills[skillId];
-  saveAll(); renderAll();
-}
-function addSkillItem(){ openWizard('skills',null,flattenSkills()); }
 // Session note
 function saveNote(){
   const el=document.getElementById('note-rapide');

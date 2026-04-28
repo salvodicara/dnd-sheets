@@ -20,40 +20,42 @@ Open `character-sheet.html` in any browser. No server, no build step, no interne
 - **Potion Tracker** -- auto-heals on use via dice formula
 - **Concentration** -- toggle with visual indicator
 - **Round & Initiative Counter**
-- **Gold Tracker**
+- **Gold Tracker** -- custom amount input with +/- buttons
 - **Condition Toggles** -- standard D&D conditions
 - **Action Log** -- timestamped log of all actions (last 40 entries)
-- **Quick Actions** -- auto-generated from spells/weapons, plus manual entries
-- **Rest Buttons** -- long/short rest with proper D&D recovery rules
+- **Quick Actions** -- auto-generated from feature-embedded actions
+- **Rest Buttons** -- long/short rest with D&D 2024 recovery rules
 - **Quick Notes** -- freeform session notes
 
 ### Character Data
 - Ability scores with auto-computed modifiers
 - Saving throws (proficiency toggle)
-- 18 standard skills with proficiency/expertise/Jack of All Trades support
-- Custom skills
+- 18 standard skills always visible, with proficiency/expertise/half-proficiency support
 
 ### Spellcasting
 - Spellcasting info summary (class, ability, save DC, attack bonus)
 - Spell cards grouped by level with metadata chips (school, casting time, range, etc.)
 - Markdown-lite descriptions with scaling notes
-- NEW and SECRET tags for recently added or hidden spells
+- Custom color tags (up to 3 per spell)
 - Concentration indicator per spell
 
 ### Combat
-- Weapon stat cards with attack/damage formulas
+- Weapon stat cards with attack/damage formulas and custom tags
 - Combat Algorithm -- decision-tree blocks for turn planning
 
 ### Equipment & Features
-- Equipment table with quantity and gold value tracking
+- Equipment table with quantity tracking
 - Feature sections with recursive content blocks (paragraph, bullets, table, note, header, subfeature)
+- Features can embed trackers and quick actions (rendered in the game panel)
+- Custom color tags (up to 3 per feature)
 
 ### UI / UX
-- Dark and light themes (CSS custom properties)
+- Dark and light themes (CSS custom properties, eye-comfort palette)
 - English / Italian language toggle (extensible i18n system)
 - Edit mode -- togglable add/edit/delete controls throughout the sheet
 - Responsive mobile layout (hamburger menu at 768px)
-- Sidebar navigation with drag-and-drop section reordering
+- Sidebar navigation with section ordering
+- Live wizard preview -- see how your feature/spell/weapon will look as you fill in fields
 - Toast notifications for feedback
 - Modal wizard system for all CRUD operations
 
@@ -61,48 +63,65 @@ Open `character-sheet.html` in any browser. No server, no build step, no interne
 
 ```
 dnd-sheets/
-  character-sheet.html          Main application (single file)
+  character-sheet.html          Main application (single file, ~3,680 lines)
+  CLAUDE.md                     AI steering document (golden rules, architecture)
+  DESIGN.md                     Design decisions, phase plan, data model
   Catalion/
-    catalion.json               Example character data (v2.0 format)
-    catalion_di_sancaldo_*.json Exported session snapshot
+    catalion.json               Example character data (v3.0 format)
     Catalion_Livello3.html      Legacy v1 prototype (deprecated)
-    *.pdf                       Traditional PDF character sheet
 ```
 
 ## Data Format
 
-Characters are stored as JSON (v2.0 schema). The top-level structure:
+Characters are stored as JSON (v3.0 schema). Key design principles:
+- **No redundancy** -- only unique, non-derivable data is stored
+- **English canonical names** -- D&D terms stored in English, localized at display time
+- **Auto-compute + override** -- derived values calculated by engine, with optional manual overrides
+
+Top-level structure:
 
 ```json
 {
-  "version": "2.0",
+  "version": "3.0",
   "character": {
-    "nome": "...",
-    "classe": "...",
-    "livello": 3,
-    "razza": "...",
-    "abilities": { "FOR": 10, "DES": 14, ... },
-    "savingThrows": [...],
-    "skills": [...],
-    "spellcasting": {...},
-    "spellSlots": [...],
-    "spells": [...],
-    "weapons": [...],
-    "equipment": [...],
-    "features": [...],
-    "trackers": [...],
-    "conditions": [...],
-    "actions": [...],
-    "combatAlgorithm": [...],
-    "sidebar": [...]
+    "name": "...",
+    "class": "Fighter",
+    "subclass": "Champion",
+    "level": 3,
+    "race": "Human",
+    "background": "Soldier",
+    "abilityScores": { "STR": 16, "DEX": 14, "CON": 13, "INT": 10, "WIS": 12, "CHA": 8 },
+    "savingThrows": ["STR", "CON"],
+    "skills": { "athletics": "proficient", "intimidation": "proficient" },
+    "spellcasting": { "ability": "CHA", "focus": "..." },
+    "spellSlots": [{ "level": 1, "total": 2 }],
+    "spells": [{ "name": "...", "level": 0, "school": "Evocation", "tags": [] }],
+    "weapons": [{ "name": "...", "damageDie": "1d8", "damageType": "Slashing", "tags": [] }],
+    "equipment": [{ "name": "..." }],
+    "features": [{
+      "title": "...", "emoji": "...", "source": "Fighter",
+      "contentBlocks": [],
+      "trackers": [{ "total": 2, "recovery": "short" }],
+      "actions": [{ "type": "action", "description": "..." }],
+      "tags": [{ "label": "New", "color": "green" }]
+    }],
+    "trackers": [],
+    "combatAlgorithm": [],
+    "sidebar": ["base-data", "skills", "spells", "weapons", "equipment"]
   },
   "session": {
-    "hp": 30, "maxHp": 30, "tempHp": 0,
-    "hitDiceUsed": 0, "deathSuccess": 0, "deathFail": 0,
-    "slotsUsed": [], "trackersUsed": [],
-    "gold": 50, "round": 0, "initiative": 0,
-    "concentration": false, "conditions": [],
-    "log": [], "note": "", "portrait": null
+    "hp": { "current": 30, "temp": 0, "aidBonus": 0 },
+    "hitDice": { "used": 0 },
+    "trackers": {},
+    "spellSlots": {},
+    "gold": 50,
+    "round": 0,
+    "concentration": false,
+    "conditions": [],
+    "deathSucc": 0, "deathFail": 0,
+    "notes": "",
+    "portrait": null,
+    "logEntries": []
   }
 }
 ```

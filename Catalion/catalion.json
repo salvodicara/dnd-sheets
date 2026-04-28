@@ -28,19 +28,19 @@
       "sleightOfHand": "proficient",
       "performance": "proficient",
       "persuasion": "expertise",
-      "deception": "jackOfAllTrades",
-      "intimidation": "jackOfAllTrades",
-      "perception": "jackOfAllTrades",
-      "insight": "jackOfAllTrades",
-      "medicine": "jackOfAllTrades",
-      "survival": "jackOfAllTrades",
-      "animalHandling": "jackOfAllTrades",
-      "athletics": "jackOfAllTrades",
-      "arcana": "jackOfAllTrades",
-      "investigation": "jackOfAllTrades",
-      "nature": "jackOfAllTrades",
-      "religion": "jackOfAllTrades",
-      "history": "jackOfAllTrades"
+      "deception": "halfProficiency",
+      "intimidation": "halfProficiency",
+      "perception": "halfProficiency",
+      "insight": "halfProficiency",
+      "medicine": "halfProficiency",
+      "survival": "halfProficiency",
+      "animalHandling": "halfProficiency",
+      "athletics": "halfProficiency",
+      "arcana": "halfProficiency",
+      "investigation": "halfProficiency",
+      "nature": "halfProficiency",
+      "religion": "halfProficiency",
+      "history": "halfProficiency"
     },
 
     "spellcasting": {
@@ -91,7 +91,7 @@
         "range": "9 m",
         "duration": "1 minuto",
         "description": "Crea **un suono** oppure **un'immagine visiva** entro raggio:\n• **Suono:** qualsiasi suono, da un sussurro a una voce alta\n• **Immagine:** un oggetto fisso (max 1,5 m di lato), senza suono né odore\n📌 Chi interagisce può smascherarla con INT (Arcano) CD 13.\n📌 Ottima per distrarre nemici o creare diversivi.",
-        "isNew": true
+        "tags": [{"label": "NEW", "color": "green"}]
       },
       {
         "level": 1,
@@ -153,7 +153,7 @@
         "saveAbility": "CON",
         "description": "3d8 danni tuono (metà se salva).\nOggetti inorganici e nemici in armatura metallica hanno svantaggio al TS.",
         "scaling": "+1d8 per ogni slot sopra il 2°",
-        "isNew": true,
+        "tags": [{"label": "NEW", "color": "green"}],
         "notes": "📌 Usa su gruppi di nemici vicini tra loro."
       },
       {
@@ -167,7 +167,7 @@
         "concentration": true,
         "duration": "Fino a 1 ora",
         "description": "Una creatura diventa **invisibile**. Termina se la creatura attacca o lancia un incantesimo.\n📌 Usa su te stesso se sei in pericolo grave.\n📌 Usala sul Ladro per dargli vantaggio sugli attacchi.",
-        "isNew": true
+        "tags": [{"label": "NEW", "color": "green"}]
       },
       {
         "level": 2,
@@ -180,8 +180,7 @@
         "duration": "8 ore",
         "description": "Fino a 3 creature: **+5 PF massimi e PF attuali** per 8 ore.\n📌 Lancia **prima del combattimento** su Barbaro, Monaco, Paladino.\n📌 Dura tutto il giorno. Non spreca concentrazione.",
         "scaling": "+5 PF per ogni slot sopra il 2°",
-        "isSecret": true,
-        "secretLabel": "SEGRETO MAGICO"
+        "tags": [{"label": "SEGRETO MAGICO", "color": "purple"}]
       },
       {
         "level": 2,
@@ -195,8 +194,7 @@
         "duration": "Fino a 1 minuto",
         "saveAbility": "WIS",
         "description": "⚠️ **Solo su UMANOIDI** (umani, elfi, nani, orchi, ecc.)\nSe fallisce, il bersaglio è **Paralizzato**:\n• Non può muoversi né parlare\n• Fallisce automaticamente TS su FOR e DES\n• Tutti gli attacchi contro di lui hanno **Vantaggio**\n• Attacchi in mischia entro 1,5 m sono **CRITICI AUTOMATICI**\n📌 Usa sul nemico umanoide più pericoloso del combattimento.\n📌 Il Barbaro, il Monaco e il Paladino faranno danni enormi.",
-        "isSecret": true,
-        "secretLabel": "SEGRETO MAGICO"
+        "tags": [{"label": "SEGRETO MAGICO", "color": "purple"}]
       }
     ],
 
@@ -220,7 +218,7 @@
         "attackStat": "STR",
         "properties": "Versatile (1d8), Lanciabile (6/18 m)",
         "notes": "Arma semplice, sei competente. Statistiche basse perché FOR è −1. Meglio come arma di riserva o da lancio situazionale.",
-        "isNew": true
+        "tags": [{"label": "NEW", "color": "green"}]
       },
       {
         "name": "Spada Bella",
@@ -231,7 +229,7 @@
         "attackStat": "DEX",
         "properties": "Da definire con il DM",
         "notes": "Se è uno spadino/rapier (Finesse): Attacco +5, Danno 1d8+3. Chiedi al DM di che arma si tratta esattamente.",
-        "isNew": true
+        "tags": [{"label": "NEW", "color": "green"}]
       }
     ],
 
@@ -253,7 +251,7 @@
       {
         "title": "Ispirazione Bardica",
         "emoji": "🎵",
-        "source": "Bardo",
+        "source": "Bard",
         "contentBlocks": [
           { "type": "table", "rows": [
             ["Dado", "d6"], ["Uso", "Azione Bonus"], ["Raggio", "18 m (60 ft)"],
@@ -263,13 +261,13 @@
           { "type": "paragraph", "text": "**Effetto:** una creatura che ti vede o sente ottiene 1 dado di Ispirazione Bardica. Può spenderlo dopo aver fallito un tiro su d20 — aggiunge 1d6 al risultato. Una creatura può avere 1 solo dado alla volta." },
           { "type": "note", "text": "📈 Progressione: Liv 5 → d8 | Liv 10 → d10 | Liv 15 → d12" }
         ],
-        "tracker": { "total": 3, "recovery": "long", "die": "d6", "showDie": true },
-        "action": { "type": "bonus", "description": "+1d6 al d20 di un alleato | 18 m | 3 usi / Riposo Lungo" }
+        "trackers": [{ "total": 3, "recovery": "long", "die": "d6", "showDie": true }],
+        "actions": [{ "type": "bonus", "description": "+1d6 al d20 di un alleato | 18 m | 3 usi / Riposo Lungo" }]
       },
       {
         "title": "Expertise (Perizia)",
         "emoji": "🎓",
-        "source": "Bardo",
+        "source": "Bard",
         "contentBlocks": [
           { "type": "paragraph", "text": "Raddoppi il Bonus di Competenza in 2 abilità scelte." },
           { "type": "paragraph", "text": "**Scelte di Catalion:** Furtività → +7 | Persuasione → +7" },
@@ -279,7 +277,7 @@
       {
         "title": "Jack of All Trades",
         "emoji": "🃏",
-        "source": "Bardo",
+        "source": "Bard",
         "contentBlocks": [
           { "type": "paragraph", "text": "Aggiungi **metà** del Bonus di Competenza (arrotondato per difetto) a tutte le prove abilità in cui NON sei competente." },
           { "type": "note", "text": "👉 Non si applica a tiri salvezza o attacchi." }
@@ -288,9 +286,9 @@
       {
         "title": "College of Lore",
         "emoji": "🎓",
-        "source": "Bardo — Sottoclasse",
+        "source": "College of Lore",
         "contentBlocks": [
-          { "type": "subfeature", "title": "Parole Taglienti (Cutting Words)", "emoji": "🗡️", "isNew": true, "contentBlocks": [
+          { "type": "subfeature", "title": "Parole Taglienti (Cutting Words)", "emoji": "🗡️", "tags": [{"label": "NEW", "color": "green"}], "contentBlocks": [
             { "type": "paragraph", "text": "**REAZIONE | Raggio 18 m**" },
             { "type": "paragraph", "text": "Quando una creatura entro 18 m fa un **tiro d'attacco**, una **prova di caratteristica** o un **tiro danni**:\n→ Spendi 1 Ispirazione Bardica: il bersaglio **sottrae 1d6 al risultato**." },
             { "type": "bullets", "bullets": [
@@ -299,7 +297,7 @@
               "📌 Non funziona se il bersaglio è immune a essere affascinato."
             ]}
           ]},
-          { "type": "subfeature", "title": "Segreti Magici Bonus (Bonus Magical Secrets)", "emoji": "🔮", "isNew": true, "contentBlocks": [
+          { "type": "subfeature", "title": "Segreti Magici Bonus (Bonus Magical Secrets)", "emoji": "🔮", "tags": [{"label": "NEW", "color": "green"}], "contentBlocks": [
             { "type": "paragraph", "text": "Apprendi **2 incantesimi da qualsiasi lista di classe**." },
             { "type": "paragraph", "text": "**Scelte di Catalion:**" },
             { "type": "bullets", "bullets": [
@@ -308,7 +306,7 @@
             ]}
           ]}
         ],
-        "action": { "type": "reaction", "description": "Parole Taglienti: −1d6 a tiro attacco/danno nemico | spendi 1 Ispirazione | 18 m" }
+        "actions": [{ "label": "Parole Taglienti (Cutting Words)", "emoji": "🗡️", "type": "reaction", "description": "Parole Taglienti: −1d6 a tiro attacco/danno nemico | spendi 1 Ispirazione | 18 m" }]
       },
       {
         "title": "Feat Origin",
@@ -331,7 +329,7 @@
             ]}
           ]}
         ],
-        "tracker": { "total": 2, "recovery": "long" }
+        "trackers": [{ "label": "Lucky", "emoji": "🍀", "total": 2, "recovery": "long" }]
       },
       {
         "title": "Two-Weapon Fighting",
@@ -340,7 +338,7 @@
         "contentBlocks": [
           { "type": "paragraph", "text": "1d4 perforante (NO mod DES al danno). Richiede attacco col primo pugnale." }
         ],
-        "action": { "type": "bonus", "description": "1d4 perforante (NO mod DES al danno) | richiede attacco col primo pugnale" }
+        "actions": [{ "type": "bonus", "description": "1d4 perforante (NO mod DES al danno) | richiede attacco col primo pugnale" }]
       }
     ],
 

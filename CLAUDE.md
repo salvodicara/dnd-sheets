@@ -2,7 +2,7 @@
 
 ## Project Overview
 
-**D&D Sheets** is a zero-dependency, single-file (HTML+CSS+JS) digital character sheet for D&D 2024 players. The entire application lives in `character-sheet.html` (~3,170 lines). There is no build system, no framework, no server. Open the file in a browser and it works.
+**D&D Sheets** is a zero-dependency, single-file (HTML+CSS+JS) digital character sheet for D&D 2024 players. The entire application lives in `character-sheet.html` (~3,680 lines). There is no build system, no framework, no server. Open the file in a browser and it works.
 
 ## Golden Rules
 
@@ -42,10 +42,23 @@ The file is organized in this order:
 
 #### Global State
 ```
-CHAR   -- character definition (abilities, spells, weapons, features, etc.)
+CHAR    -- character definition (abilities, spells, weapons, features, etc.)
 SESSION -- mutable game state (HP, slots used, log, conditions, etc.)
 ```
 Both are plain objects. All mutations must call `saveAll()` afterward.
+
+Wizard-related globals (managed by wizard lifecycle):
+```
+WIZ_DATA      -- collected wizard data across steps
+WIZ_KEY       -- current wizard name (set in openWizard, cleared in closeWizard)
+WIZ_BLOCKS    -- content blocks array for feature wizard
+WIZ_TAGS      -- tags array [{label,color}] for feature/spell/weapon wizards
+WIZ_TRACKERS  -- trackers array for feature wizard step 3
+WIZ_ACTIONS   -- actions array for feature wizard step 3
+WIZ_ALGO_STEPS -- algo steps array for algorithm wizard
+CB_EDIT_IDX   -- index of content block being edited inline (-1 = none)
+CB_EDIT_DATA  -- deep clone of block being edited (for cancel/restore)
+```
 
 #### Rendering
 - **String-based templating.** Each section has a `render*()` function that builds an HTML string from `CHAR`/`SESSION`.
@@ -77,6 +90,28 @@ Both are plain objects. All mutations must call `saveAll()` afterward.
 - Fields support types: `text`, `number`, `select`, `select-or-custom`, `textarea`, `checkbox`, `group`, `content-blocks`, `emoji`.
 - Hooks: `_renderStep(data)`, `_collectData(data)`, `_validateStep(data)`, `_afterRender(data)`, `_buildFields()`.
 - To add a new entity type, add a new wizard config and a button that calls `openWizard('wizardName')`.
+- Field hints render as hover tooltips (`title` attribute + `ⓘ` icon), not visible `<div>` elements.
+
+#### Tag System
+- Features, spells, and weapons support `tags: [{label, color}]` — array of 0-3 tags.
+- Preset colors: `green`, `blue`, `purple`, `red`, `orange`. CSS vars: `--tag-green`, etc.
+- `WIZ_TAGS=[]` global populated from `prefill.tags` in `openWizard()`, cleared in `closeWizard()`.
+- `renderTags(tags)` renders tags as `<span class="feature-tag tag-{color}">`.
+- Tag editor injected via `_afterRender` in feature/spell/weapon wizard steps.
+
+#### Live Wizard Preview
+- `WIZ_KEY` global tracks current wizard name (set in `openWizard()`, cleared in `closeWizard()`).
+- Four preview functions: `renderFeaturePreview()`, `renderSpellPreview()`, `renderWeaponPreview()`, `renderAlgoPreview()`.
+- Four inject functions: `injectFeaturePreview()`, `injectSpellPreview()`, `injectWeaponPreview()`, `injectAlgoPreview()`.
+- Generic dispatcher: `injectWizPreview()` checks `WIZ_KEY` and calls the right inject function.
+- All preview-enabled wizard steps have `_afterRender` hooks. Step 1 fields have live `input`/`change` listeners.
+- CSS: `.wiz-preview` (dashed border box), `.wiz-preview-label`, `.wiz-preview-content` (pointer-events:none).
+
+#### Tracker/Action Page-Replacement UX
+- `editWizTracker(i)` and `editWizAction(i)` replace entire `wiz-body.innerHTML` with a dedicated editor form.
+- Save/cancel calls `renderWizardStep()` to restore step 3.
+- `collectTrkEdit(i)` / `collectActEdit(i)` — extracted data-collection helpers.
+- `wizNext()` auto-saves any active tracker/action edit. `wizBack()` intercepts and cancels active edits.
 
 #### i18n System
 - `BASE` object contains all English strings (~330 keys).
@@ -108,6 +143,9 @@ Both are plain objects. All mutations must call `saveAll()` afterward.
 | `syncSession()` | Ensure SESSION completeness, cleanup stale data |
 | `ensureSidebar()` | Auto-populate/clean sidebar array |
 | `resolveSidebarItem(item)` | Resolve sidebar entry to full metadata |
+| `renderTags(tags)` | Render tag badges as HTML spans |
+| `injectWizPreview()` | Dispatch live preview update for current wizard |
+| `translateSource(src)` | Translate feature source for display |
 
 ## Design Philosophy
 
