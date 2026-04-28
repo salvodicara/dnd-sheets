@@ -57,63 +57,46 @@ If overridden, show a subtle indicator (asterisk or color) so the user knows it'
 ## v1 Implementation Plan
 
 ### Phase 1: i18n Completeness
-**Status:** NOT STARTED
+**Status:** ✅ COMPLETE
 **Goal:** All source keys English, zero hardcoded Italian, proper translations everywhere.
 
-Tasks:
-1. Full audit of every addLog() call and rendered string for hardcoded Italian
-2. Add ~80+ new keys to BASE (English) for all wizard labels
-3. Add matching Italian translations to TRANSLATIONS.it
-4. Convert every WIZARDS definition to use T()
-5. Fix toggleCond(): use dndTr('conditions', name) for log messages
-6. Add hpAbbr key (HP/PF), fix hardcoded "PF" in damage/heal logs (L1654, L1662)
-7. Fix lvOpts() (L2135): translate 'Lv ' prefix
-8. Fix spendHD() (L1679): hardcoded Italian error message
-9. Remove dead i18n keys (editOn/editOff)
-10. Use orphaned keys (noEquip, noFeatures, sidebarEmpty) in empty states
-
-Key naming convention: camelCase, grouped by wizard prefix:
-- wiz_charCreate_title, wiz_charCreate_step_identity, wiz_charCreate_f_name
-- wiz_spell_title, wiz_spell_step_base, wiz_spell_f_nameIt
+Done:
+- ~340+ keys in BASE (English) with matching TRANSLATIONS.it
+- All WIZARDS definitions use T() for labels, placeholders, titles
+- All addLog() calls use T() keys
+- hpAbbr, logNoHD, logSlotUsed, etc. all i18n'd
+- Dead keys removed, orphaned keys wired to empty states
 
 ### Phase 2: Auto-Generate Technical IDs
-**Status:** NOT STARTED
+**Status:** ✅ COMPLETE
 **Goal:** Users never see or type technical IDs.
 
-Tasks:
-1. Tracker wizard: remove id field. Auto-generate via slugify(label).
-   Handle collisions (-2, -3). On rename, migrate SESSION key.
-2. Action wizard: remove dead id field (never referenced).
-3. Sidebar link wizard: remove id field (replaced by section picker).
-4. Add die (text) and showDie (checkbox) fields to tracker wizard.
+Done:
+- Tracker IDs auto-generated via slugify(label) with collision handling
+- Dead action ID field removed
+- Sidebar uses ID-only strings, labels derived from registry/features
+- die/showDie fields added to tracker wizard
 
 ### Phase 3: Sidebar + Section Architecture Redesign
-**Status:** NOT STARTED
+**Status:** IN PROGRESS (~70%)
 **Goal:** Sidebar and main view always in sync (Google Docs TOC style).
 
-Architecture:
-- CHAR.sidebar is the master layout controller (array of IDs + separators)
-- SECTION_REGISTRY maps section IDs to render functions
+Done:
+- SECTION_REGISTRY maps English section IDs to {render, label, emoji, deletable, hiddenWhen}
+- sectionHeader(sectionId, extra) builds <h2> with emoji from registry
+- CHAR.sidebar is master layout controller (array of IDs + separator objects)
 - renderSections() iterates CHAR.sidebar and calls registered renderers
-- Game Panel pinned at top (not reorderable)
-- Spells section auto-generates expandable sub-links per spell level
+- ensureSidebar() auto-adds missing built-in sections, removes stale entries
+- resolveSidebarItem() resolves sidebar entry to full metadata
+- Game Panel pinned at top (NOT in sidebar/registry)
+- Delete controls on sidebar items in edit mode
+- addFeature() button wired in sidebar footer (edit mode)
+- moveSidebarItem() / drag-drop functions exist but NOT wired to UI
 
-Section types:
-
-| Section | Deletable | Reorderable | Visibility |
-|---------|-----------|-------------|------------|
-| Game Panel | No | No (pinned top) | Always |
-| Base Data | No | Yes | Always |
-| Skills | No | Yes | Always (empty state if no skills) |
-| Spells | No | Yes | Hidden if no spellcasting |
-| Weapons | No | Yes | Always (empty state) |
-| Equipment | No | Yes | Always (empty state) |
-| Algorithm | No | Yes | Hidden if empty |
-| Custom features | Yes | Yes | Always when present |
-
-Separators: simple visual lines (no labels).
-Empty non-deletable sections always show with friendly empty-state and add button in edit mode.
-Sidebar IDs only — labels/emojis derived from section registry or features at render time.
+Remaining:
+- Sidebar reorder UI: add up/down arrows (or wire draggable attributes) in edit mode
+- moveSidebarItem() must also call renderSections() to keep view in sync
+- Verify sidebar ↔ section order stays consistent after reorder
 
 ### Phase 4: Pip Tracker Fix (Both Themes)
 **Status:** NOT STARTED
@@ -137,31 +120,46 @@ Tasks:
 4. Audit all btn-row containers for overflow
 
 ### Phase 6: Algorithm/Wizard UX
-**Status:** NOT STARTED
+**Status:** IN PROGRESS (~40%)
 **Goal:** Contextual labels, in-modal editing, usability first.
 
-Tasks:
-1. Algo wizard step 1: "When do you use this?" with default emoji diamond
-2. Algo wizard step 2: "Decision Steps" with descriptive intro
-3. Replace prompt() in algo step editor with inline wizard fields
-4. Replace prompt() in content block editor with inline wizard fields
+Done:
+- Content block inline editor: editBlock/saveBlockEdit/cancelBlockEdit/cbeCollectFromDOM written
+- Paragraph, note, header, bullets block types have working inline editors
+
+Remaining:
+- cbeRenderTable() — table key-value pair editor (called but not defined yet)
+- cbeRenderSubfeature() — subfeature editor (called but not defined yet)
+- cbeAddTableRow/cbeDeleteTableRow, cbeAddSubBlock/cbeDeleteSubBlock helpers
+- Replace prompt() in algo step editor with inline editing
+- Algo step indent flag not settable via UI
 
 ### Phase 7: Feature + Tracker + Action Integration
-**Status:** NOT STARTED
+**Status:** IN PROGRESS (~50%)
 **Goal:** Features are the single source of truth for trackers and actions.
 
 Architecture:
-- Features optionally embed .tracker (total, recovery, die, showDie)
-- Features optionally embed .action (type, description) for panel quick-ref cards
+- Features embed .trackers[] (array) and .actions[] (array) — **plural, not singular**
+- Each tracker: { label?, emoji?, total, recovery, die?, showDie? }
+- Each action:  { label?, emoji?, type, description }
+- label/emoji are optional — default to parent feature's title/emoji when omitted
+- A feature can have MULTIPLE trackers and MULTIPLE actions (e.g. subclass grants several)
+- Session tracker IDs: slugify(t.label || f.title)
 - CHAR.trackers[] only for standalone trackers (potions, generic resources)
 - CHAR.actions[] array REMOVED — all actions come from features
 - Panel renders trackers/actions by scanning features + standalone trackers
 
-Feature wizard steps:
-1. Header (title, emoji, subtitle, source, isNew, isSecret)
-2. Content (inline content block editor)
-3. Usage Tracking (optional: "Does this have limited uses?" -> tracker fields)
-4. Quick Action (optional: "Show as action card in panel?" -> action type, description)
+Done:
+- Features embed singular tracker/action (working but wrong labels + only 1 per feature)
+- Feature wizard step 3 has tracker+action fields (flat, singular)
+- editFeature() flattens tracker/action for prefill
+- Standalone trackers fully working
+
+Remaining (next implementation phase):
+- Refactor singular tracker/action → plural trackers[]/actions[] arrays
+- Feature wizard step 3: rewrite as list editor (add/edit/delete pattern)
+- Update syncSession, findTrackerById, longRest, tracker rendering, action rendering
+- Update catalion.json to use new array format with labels
 
 ### Phase 8: Spell Preparation & Ritual
 **Status:** NOT STARTED
@@ -330,10 +328,11 @@ Menu items:
     title, emoji, source?,
     subtitle?, isNew?, isSecret?, secretLabel?,
     contentBlocks: [{ type, text?, title?, emoji?, bullets?, rows?, ... }],
-    // Optional embedded tracker
-    tracker?: { total, recovery, die?, showDie? },
-    // Optional embedded action card
-    action?: { type: "action"|"bonus"|"reaction", description }
+    // Embedded trackers (plural — a feature can have multiple)
+    trackers?: [{ label?, emoji?, total, recovery, die?, showDie? }],
+    // Embedded action cards (plural — a feature can have multiple)
+    actions?: [{ label?, emoji?, type: "action"|"bonus"|"reaction", description }]
+    // label/emoji default to parent feature's title/emoji when omitted
   }],
 
   // Standalone trackers only (not tied to features)
@@ -352,7 +351,7 @@ Menu items:
   }],
 
   // IDs only — labels/emojis derived from registry or features
-  sidebar: ["pannello", {type:"sep"}, "dati-base", "abilita", ...]
+  sidebar: ["base-data", {type:"sep"}, "skills", "spells", "weapons", ...]
 }
 ```
 
@@ -445,6 +444,11 @@ Menu items:
 | 49 | Backward compat | Not required (v3 breaking changes OK) |
 | 50 | No redundancy | Auto-compute + override everywhere |
 | 51 | v1.1 class tables | Bard, Monk, Barbarian, Paladin, Rogue, Wizard |
+| 52 | English canonical D&D names | Stored in English, localized via dndTr() at display time |
+| 53 | select-or-custom field type | Fixed list + "Custom..." option for homebrew in wizards |
+| 54 | Feature trackers/actions | Arrays (plural) with per-entry label+emoji, not singular |
+| 55 | Content block inline editing | Replace all prompt() with in-modal editing |
+| 56 | Sidebar reorder | Needs arrows or drag-drop wired + renderSections() sync |
 
 ---
 
@@ -452,58 +456,50 @@ Menu items:
 
 | Bug | Location | Fix |
 |-----|----------|-----|
-| Condition names not translated in logs | toggleCond() L1756-1757 | dndTr('conditions', name) |
-| "PF" hardcoded in logs | L1654, L1662 | T('hpAbbr') |
-| "Nessun dado vita" hardcoded | spendHD() L1679 | T() key |
-| shortRest() is a no-op | L1785 | Full implementation |
-| longRest() ignores tracker recovery | L1772-1783 | Check recovery field |
-| Manual trackers reset on long rest | L1776-1778 | Skip recovery:'manual' |
-| Tracker die/showDie not in wizard | WIZARDS.tracker | Add fields |
-| Action ID is dead code | WIZARDS.action L2328 | Remove field |
-| PB auto-calc shadowed | L1425, L1458 | Override pattern |
-| noEquip/noFeatures unused | BASE keys | Use in empty states |
-| Death save colors hardcoded | CSS L180-183 | CSS variables |
-| Gold input color hardcoded | CSS L199 | CSS variable |
-| Pip text color hardcoded | CSS L172 | CSS variable |
+| ~~Condition names not translated~~ | ~~toggleCond()~~ | ✅ Fixed (dndTr) |
+| ~~"PF" hardcoded in logs~~ | ~~L1654, L1662~~ | ✅ Fixed (T('hpAbbr')) |
+| ~~"Nessun dado vita" hardcoded~~ | ~~spendHD()~~ | ✅ Fixed (T() key) |
+| ~~Tracker die/showDie not in wizard~~ | ~~WIZARDS.tracker~~ | ✅ Fixed |
+| ~~Action ID is dead code~~ | ~~WIZARDS.action~~ | ✅ Fixed (removed) |
+| shortRest() is a no-op | shortRest() | Full implementation (Phase 12) |
+| longRest() ignores tracker recovery | longRest() | Check recovery field |
+| Manual trackers reset on long rest | longRest() | Skip recovery:'manual' |
+| PB auto-calc shadowed | renderBaseData | Override pattern (Phase 9) |
+| Death save colors hardcoded | CSS | CSS variables (Phase 4) |
+| Gold input color hardcoded | CSS | CSS variable (Phase 5) |
+| Pip text color hardcoded | CSS | CSS variable (Phase 4) |
+| **Tracker label shows parent title** | buildPanelRow2 | **trackers[] with label field** |
+| **Action label shows parent title** | quick actions | **actions[] with label field** |
+| **Only 1 tracker/action per feature** | data model | **trackers[]/actions[] arrays** |
+| **cbeRenderTable() not defined** | editBlock() | Implement function |
+| **cbeRenderSubfeature() not defined** | editBlock() | Implement function |
+| **Sidebar reorder not wired** | renderSidebar | Wire arrows + renderSections sync |
+| **Algo step editor uses prompt()** | addAlgoStep | Inline editing |
 
 ---
 
 ## Key Line References (character-sheet.html)
 
-| Component | Lines |
-|-----------|-------|
-| CSS theme variables (dark) | 1-30 |
-| CSS theme variables (light) | 31-60 |
-| CSS pips | 169-183 |
-| CSS gold row | 197-199 |
-| HTML skeleton | 484-510 |
-| DND constants | 576-611 |
-| DND Italian translations | 614-641 |
-| BASE i18n object | 653-775 |
-| TRANSLATIONS.it object | 776-903 |
-| T() function | 907 |
-| EDIT_MODE global | 912 |
-| computedPB() | 917 |
-| syncSession() | 953-961 |
-| renderAll() | 987-996 |
-| getAvailableSections() | 1018-1034 |
-| slugify() | 1013-1016 |
-| renderSidebar() | 1122-1142 |
-| renderPannello() / buildPannello() | 1162-1406 |
-| renderSections() | 1408-1422 |
-| renderDatiBase() | 1425-1455 |
-| renderAbilita() | 1456-1478 |
-| renderSpellsSection() | 1513-1574 |
-| renderWeapons() | 1576-1594 |
-| renderEquipment() | 1595-1608 |
-| renderAlgorithm() | 1610-1623 |
-| addLog() | 1626 |
-| spendHD() | 1673-1690 |
-| longRest() | 1772-1783 |
-| shortRest() | 1785 |
-| Wizard engine | 1848-1963 |
-| Content block editor | 1964-2016 |
-| Algo step editor | 2017-2050 |
-| WIZARDS config object | 2137-2454 |
-| loadPortrait() | 2611-2624 |
-| toggleEditMode() | 2589-2594 |
+> **Note:** Line numbers are approximate and shift frequently. Use grep/search
+> to find components. These are kept as rough landmarks only.
+
+| Component | ~Lines |
+|-----------|--------|
+| CSS theme variables (dark) | ~1-30 |
+| CSS theme variables (light) | ~31-60 |
+| HTML skeleton | ~490-520 |
+| DND constants + canonical lists | ~580-660 |
+| BASE i18n object | ~660-830 |
+| TRANSLATIONS.it object | ~830-1080 |
+| syncSession() | ~1185-1195 |
+| SECTION_REGISTRY | ~1255-1270 |
+| ensureSidebar() | ~1296-1330 |
+| renderSidebar() | ~1358-1395 |
+| renderPanel / buildPanelRow* | ~1420-1690 |
+| renderSections() | ~1690-1715 |
+| longRest() / shortRest() | ~2100-2125 |
+| Wizard engine | ~2140-2320 |
+| Content block editor | ~2326-2415 |
+| Algo step editor | ~2416-2445 |
+| WIZARDS config object | ~2450-2810 |
+| Feature CRUD | ~2930-2970 |

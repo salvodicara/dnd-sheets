@@ -4,11 +4,11 @@
   "character": {
     "name": "Catalion di Sancaldo",
     "quote": "«Le storie cambiano il mondo. Le spade lo feriscono soltanto.»",
-    "race": "Umano",
+    "race": "Human",
     "class": "Bard",
     "subclass": "College of Lore",
     "level": 3,
-    "background": "Intrattenitore",
+    "background": "Entertainer",
     "alignment": "Neutral Good",
     "speed": "9 m",
     "ac": 14,
@@ -448,10 +448,8 @@
     ],
 
     "sidebar": [
-      "pannello",
-      { "type": "sep" },
-      "dati-base",
-      "abilita",
+      "base-data",
+      "skills",
       { "type": "sep" },
       "ispirazione-bardica",
       "expertise-perizia",
@@ -461,12 +459,12 @@
       "feat-origin",
       "two-weapon-fighting",
       { "type": "sep" },
-      "incantesimi",
+      "spells",
       { "type": "sep" },
-      "armi",
-      "equipaggiamento",
+      "weapons",
+      "equipment",
       { "type": "sep" },
-      "algoritmo"
+      "algorithm"
     ]
   },
 

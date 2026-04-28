@@ -2,19 +2,24 @@
 
 ## Project Overview
 
-**D&D Sheets** is a zero-dependency, single-file (HTML+CSS+JS) digital character sheet for D&D 2024 players. The entire application lives in `character-sheet.html` (~2,600 lines). There is no build system, no framework, no server. Open the file in a browser and it works.
+**D&D Sheets** is a zero-dependency, single-file (HTML+CSS+JS) digital character sheet for D&D 2024 players. The entire application lives in `character-sheet.html` (~3,170 lines). There is no build system, no framework, no server. Open the file in a browser and it works.
 
 ## Golden Rules
 
-1. **Single file only.** All code (CSS, HTML, JS) must stay in `character-sheet.html`. Never split into separate files.
-2. **Zero dependencies.** No libraries, frameworks, CDNs, or npm packages. Vanilla JS/CSS/HTML only.
-3. **Never exceed 100 lines per write operation.** The writing tool fails on large writes. Always use targeted edits or write in small chunks.
-4. **Preserve the existing architecture.** Follow the patterns already in the code (see below). Do not introduce new paradigms.
-5. **Always test in context.** After any change, mentally verify that `renderAll()` will still produce correct output and that event handlers will bind properly.
-6. **Usability first.** Never ask users for technical information (IDs, slugs, anchors). Auto-generate from user-friendly inputs. Wizards should guide step-by-step with contextual labels.
-7. **Auto-compute + override.** Every derived value (PB, spell DC, weapon attack, etc.) is auto-calculated. Each has an optional `*Override` field for custom values (magic items, homebrew).
-8. **No redundancy in data.** The JSON should store only unique, non-derivable data. The engine is smart. See `DESIGN.md` for the v3.0 data model.
-9. **Read DESIGN.md first.** For any new implementation work, read `DESIGN.md` before starting — it contains all design decisions, the v1 phase plan, and the target data model.
+1. **MAIN GOAL: Full UI completeness.** Every single piece of character data must be creatable, editable, and deletable through the UI wizards. A user starting from a blank sheet must be able to build any character (like Catalion) entirely through the app -- no JSON editing, ever. If a data field exists in the model but has no wizard path to set it, that is a **critical bug**. `catalion.json` is the reference: if the wizards can't reproduce it, the app is incomplete.
+2. **Single file only.** All code (CSS, HTML, JS) must stay in `character-sheet.html`. Never split into separate files.
+3. **Zero dependencies.** No libraries, frameworks, CDNs, or npm packages. Vanilla JS/CSS/HTML only.
+4. **Never exceed 100 lines per write operation.** The writing tool fails on large writes. Always use targeted edits or write in small chunks.
+5. **Preserve the existing architecture.** Follow the patterns already in the code (see below). Do not introduce new paradigms.
+6. **Always test in context.** After any change, mentally verify that `renderAll()` will still produce correct output and that event handlers will bind properly.
+7. **Usability first.** Never ask users for technical information (IDs, slugs, anchors). Auto-generate from user-friendly inputs. Wizards should guide step-by-step with contextual labels.
+8. **Auto-compute + override.** Every derived value (PB, spell DC, weapon attack, etc.) is auto-calculated. Each has an optional `*Override` field for custom values (magic items, homebrew).
+9. **No redundancy in data.** The JSON should store only unique, non-derivable data. The engine is smart. See `DESIGN.md` for the v3.0 data model.
+10. **Read DESIGN.md first.** For any new implementation work, read `DESIGN.md` before starting -- it contains all design decisions, the v1 phase plan, and the target data model.
+11. **English source code.** ALL identifiers (variable names, function names, CSS classes/IDs, translation keys, section IDs) must be English. Only the string VALUES in `TRANSLATIONS.it` are Italian. If you encounter Italian identifiers in the codebase, rename them to English immediately.
+12. **English canonical D&D names.** All fixed D&D names (races, classes, backgrounds, subclasses, conditions, schools, damage types, etc.) are stored in English in the data model. Localization happens only at display time via `dndTr()`. The char-create wizard uses `select-or-custom` fields for these, with a "Custom..." option for homebrew.
+13. **No backward compatibility required.** The engine targets v3.0 data format only. When data model changes, update `catalion.json` directly instead of writing migration code.
+14. **No commits unless told to.** Never create git commits unless the user explicitly asks.
 
 ## Architecture
 
@@ -49,23 +54,40 @@ Both are plain objects. All mutations must call `saveAll()` afterward.
 - For live inputs (range sliders, text fields), use `addEventListener` after inserting the HTML.
 - After adding a new section, register it in `renderAll()`.
 
+#### Section Architecture
+- `SECTION_REGISTRY` maps English section IDs to `{render, label, emoji, deletable, hiddenWhen}`.
+- `sectionHeader(sectionId, extra)` builds `<h2>` with emoji from registry + label from `T()`. All render functions use this helper -- never manually build section h2 tags.
+- `CHAR.sidebar` is the master layout controller (array of string IDs + separator objects).
+- `renderSections()` iterates `CHAR.sidebar` and calls registered renderers.
+- `renderSidebar()` renders the sidebar nav from `CHAR.sidebar` via `resolveSidebarItem()`.
+- `ensureSidebar()` auto-adds missing built-in sections and features, removes stale entries.
+- Game Panel (`#panel`) is pinned at top -- NOT in `SECTION_REGISTRY`, NOT in `CHAR.sidebar`.
+- Built-in section IDs: `base-data`, `skills`, `spells`, `weapons`, `equipment`, `algorithm`.
+- Custom features: resolved by matching `slugify(feature.title)` against sidebar IDs.
+- Separators: `{type:'sep'}` objects in the sidebar array.
+- In edit mode, sidebar items show reorder (up/down) and delete controls.
+
 #### Wizard System
 - All create/edit operations use the generic wizard engine.
 - Wizards are defined in the `WIZARDS` config object. Each wizard has:
-  - `title` -- display name
-  - `steps[]` -- array of step objects, each with `title` and `fields[]`
+  - `title` -- i18n key (resolved via `T()` at render time)
+  - `steps[]` -- array of step objects, each with `label` (i18n key) and `fields[]`
   - `onSave(data)` -- callback that mutates `CHAR`/`SESSION` and calls `saveAll(); renderAll();`
-- Fields support types: `text`, `number`, `select`, `textarea`, `checkbox`, `group`, `content-blocks`.
+- Field `label`, `title`, `placeholder`, `checkLabel` are i18n keys resolved through `T()` by the wizard engine.
+- Fields support types: `text`, `number`, `select`, `select-or-custom`, `textarea`, `checkbox`, `group`, `content-blocks`, `emoji`.
+- Hooks: `_renderStep(data)`, `_collectData(data)`, `_validateStep(data)`, `_afterRender(data)`, `_buildFields()`.
 - To add a new entity type, add a new wizard config and a button that calls `openWizard('wizardName')`.
 
 #### i18n System
-- `BASE` object contains all English strings.
+- `BASE` object contains all English strings (~330 keys).
 - `TRANSLATIONS` object has locale overrides (currently only `it`).
 - `T(key)` function (uppercase T) returns the translated string for the current language.
 - `dndTr(category, key)` translates D&D-specific terms (conditions, schools, abilities, recovery).
 - The `DND` object holds D&D-specific constants with per-language name maps.
 - When adding new UI text, add the English string to `BASE` and the Italian translation to `TRANSLATIONS.it`.
-- **Never hardcode user-visible strings** — always use `T()` or `dndTr()`.
+- **All translation keys must be English identifiers** (e.g. `addWeapon`, not `aggiungiArma`).
+- **Section title translations must NOT include emojis** -- emojis live only in `SECTION_REGISTRY`.
+- **Never hardcode user-visible strings** -- always use `T()` or `dndTr()`.
 
 #### Key Functions Reference
 | Function | Purpose |
@@ -73,16 +95,19 @@ Both are plain objects. All mutations must call `saveAll()` afterward.
 | `renderAll()` | Full re-render of all sections |
 | `saveAll()` | Persist `CHAR` + `SESSION` to localStorage |
 | `openWizard(name, editIndex)` | Open a wizard modal (create or edit) |
-| `t(key)` | Get translated string |
+| `T(key)` | Get translated string (uppercase T) |
+| `sectionHeader(id, extra)` | Build section `<h2>` with emoji from registry |
 | `mod(score)` | Compute ability modifier from score |
 | `rollDice(formula)` | Parse and roll NdM+K dice formulas |
 | `addLog(msg)` | Append to the action log |
 | `toast(msg, type)` | Show a toast notification (success/error/info) |
-| `renderMarkdown(text)` | Convert **bold**, *italic*, newlines to HTML |
+| `renderMarkdown(text)` / `md(text)` | Convert **bold**, *italic*, newlines to HTML |
 | `computedPB(level)` | Auto-calculate proficiency bonus from level |
 | `slugify(str)` | Convert string to safe kebab-case ID |
 | `dndTr(cat, key)` | Translate D&D-specific term |
 | `syncSession()` | Ensure SESSION completeness, cleanup stale data |
+| `ensureSidebar()` | Auto-populate/clean sidebar array |
+| `resolveSidebarItem(item)` | Resolve sidebar entry to full metadata |
 
 ## Design Philosophy
 
@@ -118,21 +143,9 @@ Always verify game mechanics (point buy costs, spell slot recovery, ability modi
 - Every label should explain *what the user is entering*, not just name the field.
 - Use contextual descriptions (e.g., "When do you use this?" not "Title").
 - Default emojis: 🔷 for algo blocks, 📄 for features.
-- Never ask for technical IDs — auto-generate via `slugify()`.
+- Never ask for technical IDs -- auto-generate via `slugify()`.
 - Group related fields logically; use the final step for optional advanced settings.
 - In-modal editing for all sub-content (no browser `prompt()` dialogs).
-
-## Section Architecture
-
-- `CHAR.sidebar` is the master layout controller (like Google Docs TOC).
-- `SECTION_REGISTRY` maps section IDs to render functions.
-- `renderSections()` iterates `CHAR.sidebar` and calls registered renderers.
-- Game Panel is pinned at top (not reorderable).
-- Built-in sections (Base Data, Skills, Weapons, Equipment, Spells, Algorithm) are non-deletable.
-- Custom features are deletable (with confirmation dialog).
-- Empty non-deletable sections always show with empty-state message.
-- Separators are simple visual lines, no labels.
-- Spells section auto-generates expandable sub-links in sidebar per spell level.
 
 ## Auto-Compute + Override Pattern
 

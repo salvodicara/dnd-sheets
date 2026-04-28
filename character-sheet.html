@@ -19,7 +19,8 @@
   --algo-bg:#1e1e34; --algo-step-bg:#262642; --algo-step-border:#3a3a58;
   --log-damage:#e88888; --log-heal:#88d888;
   --modal-bg:#222238; --overlay:rgba(10,10,20,.85);
-  --pip-on:#6868a8; --pip-off:#222238;
+  --pip-on:#6868a8; --pip-off-bg:transparent; --pip-off-border:#44446a; --pip-text:#e0e0f0;
+  --death-succ:#4a9a4a; --death-fail:#9a4a4a;
   --slot1-color:#5588dd; --slot2-color:#8855dd; --slot3-color:#44aa66;
   --slot4-color:#cc5555; --slot5-color:#bbaa30; --slot6-color:#44aabb;
   --slot7-color:#bb55bb; --slot8-color:#cc7744; --slot9-color:#9999aa;
@@ -49,7 +50,8 @@
   --algo-bg:#f0efe8; --algo-step-bg:#fafaf6; --algo-step-border:#c8c6b8;
   --log-damage:#b82020; --log-heal:#2a8a2a;
   --modal-bg:#fafaf6; --overlay:rgba(20,20,30,.55);
-  --pip-on:#6868b8; --pip-off:#e0dfd8;
+  --pip-on:#6868b8; --pip-off-bg:transparent; --pip-off-border:#a0a0b0; --pip-text:#ffffff;
+  --death-succ:#2e8e2e; --death-fail:#a02020;
   --slot1-color:#3366bb; --slot2-color:#7733bb; --slot3-color:#2e8e4e;
   --slot4-color:#aa3333; --slot5-color:#8a7718; --slot6-color:#228888;
   --slot7-color:#883399; --slot8-color:#995522; --slot9-color:#707088;
@@ -109,6 +111,9 @@ a{color:var(--accent);text-decoration:none;}
 #sidebar a:hover{background:var(--sidebar-hover);color:var(--text);border-left-color:var(--accent);}
 #sidebar a.active{background:var(--accent-dim);color:var(--accent);border-left-color:var(--accent);}
 .nav-sep{border-top:1px solid var(--border-light);margin:6px 0;}
+.nav-sub-link{font-size:.85em!important;padding:4px 12px 4px 24px!important;opacity:.8;}
+.nav-sub-link:hover{opacity:1;}
+.section-sep{border:none;border-top:1px solid var(--border-light);margin:24px 0;}
 #main{margin-left:200px;max-width:920px;padding:32px 32px 80px;}
 #hamburger{display:none;position:fixed;top:12px;left:12px;z-index:300;
   background:var(--bg-card);border:1px solid var(--border-light);color:var(--text);
@@ -147,7 +152,7 @@ a{color:var(--accent);text-decoration:none;}
   .portrait-wrap{width:70px;height:88px;}
 }
 /* ═══════════════ PANNELLO ═══════════════ */
-#pannello{background:var(--bg-card);border-radius:14px;padding:22px 24px 26px;
+#panel{background:var(--bg-card);border-radius:14px;padding:22px 24px 26px;
   margin-bottom:32px;box-shadow:var(--shadow-sm);border:1px solid var(--border-light);}
 .pn-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(175px,1fr));gap:14px;margin-bottom:16px;}
 .pn-card{background:var(--bg-card2);border-radius:10px;padding:11px 14px 13px;
@@ -167,20 +172,20 @@ a{color:var(--accent);text-decoration:none;}
 input[type=number]::-webkit-inner-spin-button,
 input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;}
 .pips{display:flex;flex-wrap:wrap;gap:5px;margin-top:7px;}
-.pip{width:24px;height:24px;border-radius:50%;border:2px solid var(--border-light);
+.pip{width:24px;height:24px;border-radius:50%;border:2px solid var(--pip-on);
   background:var(--pip-on);cursor:pointer;transition:all .15s;display:inline-flex;
-  align-items:center;justify-content:center;font-size:.62em;font-weight:bold;color:#fff;
+  align-items:center;justify-content:center;font-size:.62em;font-weight:bold;color:var(--pip-text);
   user-select:none;}
-.pip.used{background:var(--pip-off);color:var(--text-faint);border-color:var(--border-light);opacity:.5;}
+.pip.used{background:var(--pip-off-bg);color:var(--text-faint);border-color:var(--pip-off-border);}
 .pip:hover{border-color:var(--accent);transform:scale(1.1);}
 .death-row{display:flex;gap:10px;align-items:center;margin-top:6px;}
 .death-pips{display:flex;flex-direction:row;gap:5px;align-items:center;}
 .death-pip{width:20px;height:20px;border-radius:50%;border:2px solid var(--border-light);
   background:var(--bg-input);cursor:pointer;transition:all .15s;}
-.death-pip.succ:not(.used){border-color:#4a9a4a;}
-.death-pip.fail:not(.used){border-color:#9a4a4a;}
-.death-pip.succ.used{background:#4a9a4a;border-color:#4a9a4a;}
-.death-pip.fail.used{background:#9a4a4a;border-color:#9a4a4a;}
+.death-pip.succ:not(.used){border-color:var(--death-succ);}
+.death-pip.fail:not(.used){border-color:var(--death-fail);}
+.death-pip.succ.used{background:var(--death-succ);border-color:var(--death-succ);}
+.death-pip.fail.used{background:var(--death-fail);border-color:var(--death-fail);}
 .btn-row{display:flex;gap:6px;margin-top:7px;flex-wrap:wrap;}
 .btn{background:var(--bg-card2);border:1px solid var(--border-light);color:var(--text-muted);
   border-radius:6px;padding:5px 11px;font-size:.8em;cursor:pointer;transition:all .15s;white-space:nowrap;}
@@ -387,18 +392,6 @@ body.edit-mode .edit-only-block{display:block!important;}
 .sb-edit-btns{display:flex;gap:1px;flex-shrink:0;}
 .sb-edit-btns .btn-del-sm{padding:1px 4px;}
 .sb-edit-btns .btn-del-sm:disabled{opacity:.25;cursor:default;pointer-events:none;}
-/* ── Section picker panel ── */
-#sb-section-picker{position:fixed;background:var(--sidebar-bg);border:1px solid var(--border-light);
-  border-radius:10px;padding:6px 0 8px;z-index:1200;box-shadow:var(--shadow);
-  min-width:200px;max-height:60vh;overflow-y:auto;}
-#sb-section-picker h4{font-size:.68em;text-transform:uppercase;letter-spacing:1.5px;
-  color:var(--text-faint);padding:4px 12px 6px;margin:0;}
-.sb-pick-item{display:flex;align-items:center;gap:8px;padding:6px 12px;
-  cursor:pointer;font-size:.82em;color:var(--sidebar-text);transition:background .12s;white-space:nowrap;}
-.sb-pick-item:hover{background:var(--sidebar-hover);color:var(--text);}
-.sb-pick-item.already-in{opacity:.35;pointer-events:none;}
-.sb-pick-item .sb-pick-check{margin-left:auto;font-size:.75em;color:var(--accent);}
-.sb-pick-sep{border-top:1px solid var(--border-light);margin:4px 0;}
 .add-btn{display:inline-flex;align-items:center;gap:5px;background:var(--accent-dim);
   border:1px dashed var(--accent);color:var(--accent);border-radius:7px;
   padding:5px 12px;font-size:.82em;cursor:pointer;margin-top:10px;transition:all .15s;}
@@ -507,7 +500,7 @@ body.edit-mode .edit-only-block{display:block!important;}
     </div>
   </div>
   <hr>
-  <div id="pannello"></div>
+  <div id="panel"></div>
   <hr>
   <div id="sections-area"></div>
   <p id="footer-quote" style="text-align:center;font-style:italic;font-size:1.05em;margin-top:36px;color:var(--text-muted);"></p>
@@ -588,6 +581,24 @@ const DND = {
   abilityNames:{ STR:'Strength', DEX:'Dexterity', CON:'Constitution', INT:'Intelligence', WIS:'Wisdom', CHA:'Charisma' },
   abilityShort:{ STR:'STR', DEX:'DEX', CON:'CON', INT:'INT', WIS:'WIS', CHA:'CHA' },
   dice:        ['d4','d6','d8','d10','d12','d20','d100'],
+  // D&D 2024 PHB canonical lists — stored in English, localized via dndTr()
+  races:       ['Aasimar','Dragonborn','Dwarf','Elf','Gnome','Goliath','Halfling','Human','Orc','Tiefling'],
+  classes:     ['Barbarian','Bard','Cleric','Druid','Fighter','Monk','Paladin','Ranger','Rogue','Sorcerer','Warlock','Wizard'],
+  backgrounds: ['Acolyte','Artisan','Charlatan','Criminal','Entertainer','Farmer','Guard','Guide','Hermit','Merchant','Noble','Sage','Sailor','Scribe','Soldier','Wayfarer'],
+  subclasses: {
+    Barbarian:['Path of the Berserker','Path of the Wild Heart','Path of the World Tree','Path of the Zealot'],
+    Bard:['College of Dance','College of Glamour','College of Lore','College of Valor'],
+    Cleric:['Life Domain','Light Domain','Trickery Domain','War Domain'],
+    Druid:['Circle of the Land','Circle of the Moon','Circle of the Sea','Circle of the Stars'],
+    Fighter:['Battle Master','Champion','Eldritch Knight','Psi Warrior'],
+    Monk:['Warrior of Mercy','Warrior of Shadow','Warrior of the Elements','Warrior of the Open Hand'],
+    Paladin:['Oath of Devotion','Oath of Glory','Oath of the Ancients','Oath of Vengeance'],
+    Ranger:['Beast Master','Fey Wanderer','Gloom Stalker','Hunter'],
+    Rogue:['Arcane Trickster','Assassin','Soulknife','Thief'],
+    Sorcerer:['Aberrant Sorcery','Clockwork Sorcery','Draconic Sorcery','Wild Magic Sorcery'],
+    Warlock:['Archfey Patron','Celestial Patron','Fiend Patron','Great Old One Patron'],
+    Wizard:['Abjurer','Diviner','Evoker','Illusionist'],
+  },
   slotColors:  ['','#3a6adf','#7a3adf','#2a8a4a','#c04040','#b08010','#208080','#b030b0','#c06020','#909090'],
   standardSkills:[
     {id:'acrobatics',    en:'Acrobatics',     ability:'DEX'},
@@ -638,6 +649,40 @@ const DND = {
         performance:'Intrattenere',intimidation:'Intimidire',insight:'Intuizione',medicine:'Medicina',
         nature:'Natura',perception:'Percezione',persuasion:'Persuasione',
         sleightOfHand:'Rapidità di Mano',religion:'Religione',history:'Storia',survival:'Sopravvivenza' },
+      races:{ Aasimar:'Aasimar',Dragonborn:'Dragonide',Dwarf:'Nano',Elf:'Elfo',Gnome:'Gnomo',
+        Goliath:'Goliath',Halfling:'Halfling',Human:'Umano',Orc:'Orco',Tiefling:'Tiefling' },
+      classes:{ Barbarian:'Barbaro',Bard:'Bardo',Cleric:'Chierico',Druid:'Druido',Fighter:'Guerriero',
+        Monk:'Monaco',Paladin:'Paladino',Ranger:'Ranger',Rogue:'Ladro',Sorcerer:'Stregone',
+        Warlock:'Warlock',Wizard:'Mago' },
+      backgrounds:{ Acolyte:'Accolito',Artisan:'Artigiano',Charlatan:'Ciarlatano',Criminal:'Criminale',
+        Entertainer:'Intrattenitore',Farmer:'Contadino',Guard:'Guardia',Guide:'Guida',Hermit:'Eremita',
+        Merchant:'Mercante',Noble:'Nobile',Sage:'Saggio',Sailor:'Marinaio',Scribe:'Scriba',
+        Soldier:'Soldato',Wayfarer:'Viandante' },
+      subclasses:{
+        'Path of the Berserker':'Cammino del Berserker','Path of the Wild Heart':'Cammino del Cuore Selvaggio',
+        'Path of the World Tree':'Cammino dell\'Albero del Mondo','Path of the Zealot':'Cammino dello Zelota',
+        'College of Dance':'Collegio della Danza','College of Glamour':'Collegio del Fascino',
+        'College of Lore':'Collegio della Sapienza','College of Valor':'Collegio del Valore',
+        'Life Domain':'Dominio della Vita','Light Domain':'Dominio della Luce',
+        'Trickery Domain':'Dominio dell\'Inganno','War Domain':'Dominio della Guerra',
+        'Circle of the Land':'Circolo della Terra','Circle of the Moon':'Circolo della Luna',
+        'Circle of the Sea':'Circolo del Mare','Circle of the Stars':'Circolo delle Stelle',
+        'Battle Master':'Maestro di Battaglia',Champion:'Campione',
+        'Eldritch Knight':'Cavaliere Mistico','Psi Warrior':'Guerriero Psichico',
+        'Warrior of Mercy':'Guerriero della Pietà','Warrior of Shadow':'Guerriero dell\'Ombra',
+        'Warrior of the Elements':'Guerriero degli Elementi','Warrior of the Open Hand':'Guerriero della Mano Aperta',
+        'Oath of Devotion':'Giuramento di Devozione','Oath of Glory':'Giuramento di Gloria',
+        'Oath of the Ancients':'Giuramento degli Antichi','Oath of Vengeance':'Giuramento di Vendetta',
+        'Beast Master':'Signore delle Bestie','Fey Wanderer':'Vagabondo Fatato',
+        'Gloom Stalker':'Cacciatore delle Tenebre',Hunter:'Cacciatore',
+        'Arcane Trickster':'Mistificatore Arcano',Assassin:'Assassino',
+        Soulknife:'Lama dell\'Anima',Thief:'Ladro',
+        'Aberrant Sorcery':'Stregoneria Aberrante','Clockwork Sorcery':'Stregoneria Meccanica',
+        'Draconic Sorcery':'Stregoneria Draconica','Wild Magic Sorcery':'Stregoneria della Magia Selvaggia',
+        'Archfey Patron':'Patrono Archifata','Celestial Patron':'Patrono Celestiale',
+        'Fiend Patron':'Patrono Immondo','Great Old One Patron':'Patrono Grande Antico',
+        Abjurer:'Abiuratore',Diviner:'Divinatore',Evoker:'Evocatore',Illusionist:'Illusionista',
+      },
     }
   }
 };
@@ -652,49 +697,48 @@ function skillName(sk){ return DND.tr[currentLang]?.skills?.[sk.id]||sk.en; }
 // Adding a new language is one object: TRANSLATIONS.fr = { navTitle:'...', ... }
 const BASE = {
   navTitle:'📜 Index', editSidebar:'✏️ Sidebar',
-  datiBase:'🧬 Base Data', abilita:'🎯 Skills', incantesimi:'✨ Spells',
-  trucchetti:'🔮 Cantrips', armi:'🗡️ Weapons', equipaggiamento:'🎒 Equipment',
-  algoritmo:'⚔️ Combat Algorithm',
-  pannelloTitle:'🎮 Game Panel',
-  pf:'❤️ Hit Points', pfTemp:'Temp HP', aidBonus:'HP max (aid)',
-  dadiVita:'🎲 Hit Dice', tiriMorte:'💀 Death Saving Throws',
+  baseData:'Base Data', skills:'Skills', spells:'Spells',
+  equipment:'Equipment',
+  algorithm:'Combat Algorithm',
+  panelTitle:'Game Panel',
+  hp:'❤️ Hit Points', tempHP:'Temp HP', aidBonus:'HP max (aid)',
+  hitDice:'🎲 Hit Dice', deathSaves:'💀 Death Saving Throws',
   succ:'✅ Successes', fail:'❌ Failures',
-  conc:'🔮 Concentration', concNone:'No active concentration.',
+  concLabel:'🔮 Concentration', concNone:'No active concentration.',
   concActive:'⚡ Concentrating on: ',
-  round:'⚔️ Round', iniziativa:'Initiative:', oro:'🪙 Gold (GP)',
-  riposi:'😴 Rests', riposoLungo:'🌙 Long Rest', riposoBreve:'☕ Short Rest',
-  riposoLungoNote:'Long: everything recovers.', riposoBrevNote:'Short: spend Hit Dice.',
+  round:'⚔️ Round', initiative:'Initiative:', gold:'🪙 Gold (GP)',
+  rests:'😴 Rests', longRest:'🌙 Long Rest', shortRest:'☕ Short Rest',
+  longRestNote:'Long: everything recovers.', shortRestNote:'Short: spend Hit Dice.',
   log:'📋 Action Log', logEmpty:'No actions yet...',
-  azioni:'⚡ Quick Actions', tutteAzioni:'All',
-  condizioni:'⚠️ Active Conditions',
+  quickActions:'⚡ Quick Actions', allActions:'All',
+  conditions:'⚠️ Active Conditions',
   note:'📝 Quick Notes', notePlaceholder:'Write conditions, plans, important enemies...',
-  sessione:'💾 Session', salvaSessione:'💾 Save JSON', caricaSessione:'📂 Load JSON',
-  copiaClipboard:'📋 Copy JSON', sessioneNote:'JSON contains everything: sheet + session.',
-  danno:'💥 Damage', cura:'💚 Heal', pfTempBtn:'🛡️ Temp HP',
-  spendi:'Use 1', reset:'Reset', spendiFull:'Spend 1 HD',
+  session:'💾 Session', saveSession:'💾 Save JSON', loadSession:'📂 Load JSON',
+  copyClipboard:'📋 Copy JSON', sessionNote:'JSON contains everything: sheet + session.',
+  damage:'💥 Damage', heal:'💚 Heal', tempHPBtn:'🛡️ Temp HP',
+  spend:'Use 1', reset:'Reset', spendFull:'Spend 1 HD',
   hdNote:'Recover ½ on short rest',
-  potUsaNote:'Bonus Action',
-  caratTitle:'Ability Scores', tsTitle:'🛡️ Saving Throws', skillNote:'Jack of All Trades already included',
-  competente:'✅ proficient', expertise:'⭐ Expertise', jack:'🃏 Jack of All Trades',
-  spellTitle:'Spells', cdTS:'Spell Save DC', bonusAttacco:'Spell Attack Bonus',
-  focus:'Focus', slotTitle:'Spell Slots', slotLivello:'Level', slotTot:'Slots', slotNote:'Notes',
-  slotNew:'NEW', recuperoLungo:'Recover on Long Rest',
-  cantripTitle:'Cantrips', spellLvPrefix:'Level',
+  potionUseNote:'Bonus Action',
+  abilitiesTitle:'Ability Scores', tsTitle:'🛡️ Saving Throws', skillNote:'Jack of All Trades already included',
+  proficient:'✅ proficient', expertise:'⭐ Expertise', jack:'🃏 Jack of All Trades',
+  spellTitle:'Spells', spellDC:'Spell Save DC', spellAttackBonus:'Spell Attack Bonus',
+  focus:'Focus', slotTitle:'Spell Slots', slotLevel:'Level', slotTot:'Slots', slotNote:'Notes',
+  slotNew:'NEW', longRestRecovery:'Recover on Long Rest',
+  cantrips:'Cantrips', spellLvPrefix:'Level',
   lvSuffix:' Spells',
-  raggio:'Range', durata:'Duration', scuola:'School', azioneTipo:'Action',
-  concentrazione:'Concentration', ts:'Saving Throw',
-  scaling:'Scaling', nessuna:'none',
-  armiTitle:'Weapons', dannoCol:'Damage', attaccoCol:'Attack', propCol:'Properties',
-  equipTitle:'Equipment', oggettoCol:'Item', noteCol:'Notes',
-   aggiungiArma:'＋ Add Weapon', aggiungiEquip:'＋ Add Item',
-   aggiungiIncantesimo:'＋ Add Spell', aggiungiFeature:'＋ Add Section',
-   aggiungiAzione:'＋ Add Action', aggiungiSlot:'＋ Add Slot',
-   aggiungiTracker:'＋ Add Tracker', aggiungiCondizione:'＋ Add Condition',
-   aggiungiBlockAlgo:'＋ Add Block', aggiungiSidebar:'＋ Link',
-   aggiungiSezione:'Add to sidebar', separatore:'Separator', sezioniDisp:'Available sections',
+  range:'Range', duration:'Duration', school:'School', actionType:'Action',
+  concentration:'Concentration', ts:'Saving Throw',
+  scaling:'Scaling', none:'none',
+  weapons:'Weapons', damageCol:'Damage', attackCol:'Attack', propertiesCol:'Properties',
+  equipTitle:'Equipment', itemCol:'Item', notesCol:'Notes',
+   addWeapon:'＋ Add Weapon', addItem:'＋ Add Item', addSkill:'＋ Add Skill',
+   addSpell:'＋ Add Spell', addFeature:'＋ Add Section',
+   addSlot:'＋ Add Slot',
+   addTracker:'＋ Add Tracker', addCondition:'＋ Add Condition',
+   addAlgoBlock:'＋ Add Block',
+   custom:'Custom…', customPh:'Type a custom value',
    sidebarEmpty:'Sidebar is empty. Enable edit mode (✏️) to add sections.',
-   featureSectionId:'Section ID (auto if empty)', featureAddToSidebar:'Add / update sidebar link',
-  editBtn:'✏️', delBtn:'🗑',
+   editBtn:'✏️', delBtn:'🗑',
   langToggle:'🇮🇹 IT', editMode:'✏️', editModeActive:'✏️ ON',
   splashSub:'Interactive Character Sheet — D&D 2024',
   splashImport:'Import JSON', splashImportDesc:'Load your existing sheet',
@@ -753,23 +797,28 @@ const BASE = {
   moveUp:'▲', moveDown:'▼',
   noSpells:'No spells. Add one in edit mode.',
   noWeapons:'No weapons configured.',
+  noSkills:'No skills configured.',
   noEquip:'No equipment.',
   noFeatures:'No features configured.',
   noActions:'No quick actions configured.',
-  noAlgo:'No algorithm configured.',
+  noAlgorithm:'No algorithm configured.',
   noTracker:'No custom tracker.',
   noSpellcasting:'No spellcasting configured.',
-  slotLvLabel:'Lv', livello:'Level',
+  slotLvLabel:'Lv', level:'Level',
   lbl_race:'Race', lbl_class:'Class', lbl_background:'Background',
   lbl_alignment:'Alignment', lbl_profBonus:'Proficiency Bonus',
   lbl_speed:'Speed', lbl_hpMax:'Max HP', lbl_hitDice:'Hit Dice',
   lbl_ac:'AC', lbl_languages:'Languages', lbl_tsChar:'Ability',
   lbl_ability:'Ability', lbl_bonus:'Bonus', lbl_totalGold:'Total Gold',
-  editDatiBase:'Base Data', editAbilita:'Skills', editMagia:'Magic',
+  editBaseData:'Base Data', editSkills:'Skills', editMagic:'Magic',
   step:'Step', wizSave:'Save', wizNext:'Next →',
   wizRequired:'Required field', wizSaved:'✅ Saved!', wizEdit:'edit',
-  contentBlocks:'Content Blocks', aggiungiBlock:'＋ Block',
-  algoSteps:'Algorithm Steps', aggiungiStep:'＋ Step',
+  contentBlocks:'Content Blocks', addBlock:'＋ Block',
+  addRow:'＋ Row', cbBulletsHint:'One bullet point per line',
+  cbeKey:'Key', cbeValue:'Value',
+  cbSubTitle:'Subfeature title', cbSubEmoji:'Emoji', cbSubNew:'Mark as new',
+  cbAddSubBlock:'＋ Sub-block',
+  algoSteps:'Algorithm Steps', addStep:'＋ Step',
   algoStepQuestion:'Step question (optional):',
   algoStepBullets:'Bullet points (one per line):',
   // Point-buy ability keys (were IT-only)
@@ -807,11 +856,9 @@ const BASE = {
   wiz_equipment_title:'Item',
   wiz_feature_title:'Trait / Feature',
   wiz_tracker_title:'Tracker',
-  wiz_action_title:'Quick Action',
   wiz_condition_title:'Custom Condition',
   wiz_spellslot_title:'Spell Slot',
   wiz_algoblock_title:'Algorithm Block',
-  wiz_sidebarlink_title:'Sidebar Link',
   wiz_spellcasting_title:'Magic Info',
   wiz_skills_title:'Skill Proficiencies',
   // Wizard step labels
@@ -823,6 +870,7 @@ const BASE = {
   wiz_step_spellDetails:'Details',
   wiz_step_header:'Header',
   wiz_step_content:'Content',
+  wiz_step_trackerAction:'Tracker & Action',
   wiz_step_algoTitle:'Title',
   wiz_step_algoSteps:'Steps',
   // Wizard field labels
@@ -841,25 +889,20 @@ const BASE = {
   wiz_f_attackBonusTotal:'Total Attack Bonus',
   wiz_f_trackerID:'ID (unique, no spaces)',
   wiz_f_totalUses:'Total uses',
+  wiz_f_hasTracker:'Has usage tracker',
+  wiz_f_hasAction:'Has combat action',
+  wiz_f_actionDesc:'Action description',
   wiz_f_isPotionCheck:'Is a potion (use and heal HP)',
   wiz_f_potionFormula:'Potion formula (e.g. 2d4+2)',
-  wiz_f_actionDescShort:'Short description',
-  wiz_f_damageFormula:'Damage formula (e.g. 1d10)',
-  wiz_f_toHit:'To Hit bonus',
-  wiz_f_dcSave:'Save DC',
-  wiz_f_dcAbility:'Save Ability',
-  wiz_f_usesEmpty:'Uses (empty=unlimited)',
-  wiz_f_recoveryUses:'Uses recovery',
   wiz_f_conditionName:'Condition name',
   wiz_f_slotLevel:'Slot Level',
   wiz_f_slotTotal:'Slot Count',
   wiz_f_algoBlockTitle:'Block title',
-  wiz_f_anchorID:'Anchor ID (e.g. spells)',
-  wiz_f_linkLabel:'Label',
   wiz_f_magicAbility:'Spellcasting ability',
   wiz_f_magicDC:'Spell Save DC',
   wiz_f_magicAttack:'Spell Attack Bonus',
   wiz_f_magicFocus:'Focus / Components',
+  wiz_f_preparedCaster:'Prepared caster (prepares spells daily)',
   wiz_f_featureTitle:'Title',
   wiz_f_featureSubtitle:'Subtitle',
   wiz_f_featureSource:'Source (e.g. Class Lv3)',
@@ -868,6 +911,9 @@ const BASE = {
   wiz_ph_race:'E.g. Elf, Human…',
   wiz_ph_class:'E.g. Wizard, Fighter…',
   wiz_ph_subclass:'E.g. Evoker',
+  wiz_ph_quote:'E.g. "The pen is mightier than the sword."',
+  wiz_ph_armorNote:'E.g. Leather armor 11 + DEX',
+  wiz_ph_languages:'E.g. Common, Dwarvish',
   wiz_ph_special:'SPECIAL',
   wiz_ph_attackBonus:'+5',
   wiz_ph_trackerID:'bardic_inspiration',
@@ -877,48 +923,47 @@ const BASE = {
 const TRANSLATIONS = {
   it:{
     navTitle:'📜 Indice', editSidebar:'✏️ Sidebar',
-    datiBase:'🧬 Dati Base', abilita:'🎯 Abilità', incantesimi:'✨ Incantesimi',
-    trucchetti:'🔮 Trucchetti', armi:'🗡️ Armi', equipaggiamento:'🎒 Equipaggiamento',
-    algoritmo:'⚔️ Algoritmo di Combattimento',
-    pannelloTitle:'🎮 Pannello di Gioco',
-    pf:'❤️ Punti Ferita', pfTemp:'PF temp', aidBonus:'PF max (aid)',
-    dadiVita:'🎲 Dadi Vita', tiriMorte:'💀 Tiri Salvezza Morte',
+  baseData:'Dati Base', skills:'Abilità', spells:'Incantesimi',
+  equipment:'Equipaggiamento',
+  algorithm:'Algoritmo di Combattimento',
+    panelTitle:'Pannello di Gioco',
+    hp:'❤️ Punti Ferita', tempHP:'PF temp', aidBonus:'PF max (aid)',
+    hitDice:'🎲 Dadi Vita', deathSaves:'💀 Tiri Salvezza Morte',
     succ:'✅ Successi', fail:'❌ Fallimenti',
-    conc:'🔮 Concentrazione', concNone:'Nessuna concentrazione attiva.',
+    concLabel:'🔮 Concentrazione', concNone:'Nessuna concentrazione attiva.',
     concActive:'⚡ In concentrazione: ',
-    round:'⚔️ Round', iniziativa:'Iniziativa:', oro:'🪙 Oro (GP)',
-    riposi:'😴 Riposi', riposoLungo:'🌙 Riposo Lungo', riposoBreve:'☕ Riposo Breve',
-    riposoLungoNote:'Lungo: tutto si recupera.', riposoBrevNote:'Breve: spendi Dadi Vita.',
+    round:'⚔️ Round', initiative:'Iniziativa:', gold:'🪙 Oro (GP)',
+    rests:'😴 Riposi', longRest:'🌙 Riposo Lungo', shortRest:'☕ Riposo Breve',
+    longRestNote:'Lungo: tutto si recupera.', shortRestNote:'Breve: spendi Dadi Vita.',
     log:'📋 Log Azioni', logEmpty:'Nessuna azione ancora...',
-    azioni:'⚡ Azioni Rapide', tutteAzioni:'Tutte',
-    condizioni:'⚠️ Condizioni Attive',
+    quickActions:'⚡ Azioni Rapide', allActions:'Tutte',
+    conditions:'⚠️ Condizioni Attive',
     note:'📝 Note Rapide', notePlaceholder:'Scrivi qui condizioni, piani, nemici importanti...',
-    sessione:'💾 Sessione', salvaSessione:'💾 Salva JSON', caricaSessione:'📂 Carica JSON',
-    copiaClipboard:'📋 Copia JSON', sessioneNote:'Il JSON contiene tutto: scheda + sessione.',
-    danno:'💥 Danno', cura:'💚 Cura', pfTempBtn:'🛡️ PF Temp',
-    spendi:'Spendi 1', reset:'Reset', spendiFull:'Spendi 1 HD',
+    session:'💾 Sessione', saveSession:'💾 Salva JSON', loadSession:'📂 Carica JSON',
+    copyClipboard:'📋 Copia JSON', sessionNote:'Il JSON contiene tutto: scheda + sessione.',
+    damage:'💥 Danno', heal:'💚 Cura', tempHPBtn:'🛡️ PF Temp',
+    spend:'Spendi 1', reset:'Reset', spendFull:'Spendi 1 HD',
     hdNote:'Recuperi ½ con riposo breve',
-    potUsaNote:'Azione Bonus',
-    caratTitle:'Caratteristiche', tsTitle:'🛡️ Tiri Salvezza', skillNote:'Jack of All Trades già incluso',
-    competente:'✅ competente', expertise:'⭐ Expertise', jack:'🃏 Jack of All Trades',
-    spellTitle:'Incantesimi', cdTS:'CD Tiro Salvezza', bonusAttacco:'Bonus Attacco Incantesimi',
-    focus:'Focus', slotTitle:'Slot Incantesimi', slotLivello:'Livello', slotTot:'Slot', slotNote:'Note',
-    slotNew:'NUOVO', recuperoLungo:'Recupero con Riposo Lungo',
-    cantripTitle:'Trucchetti', spellLvPrefix:'Incantesimi di',
+    potionUseNote:'Azione Bonus',
+    abilitiesTitle:'Caratteristiche', tsTitle:'🛡️ Tiri Salvezza', skillNote:'Jack of All Trades già incluso',
+    proficient:'✅ competente', expertise:'⭐ Expertise', jack:'🃏 Jack of All Trades',
+    spellTitle:'Incantesimi', spellDC:'CD Tiro Salvezza', spellAttackBonus:'Bonus Attacco Incantesimi',
+    focus:'Focus', slotTitle:'Slot Incantesimi', slotLevel:'Livello', slotTot:'Slot', slotNote:'Note',
+    slotNew:'NUOVO', longRestRecovery:'Recupero con Riposo Lungo',
+    cantrips:'Trucchetti', spellLvPrefix:'Incantesimi di',
     lvSuffix:'° Livello',
-    raggio:'Raggio', durata:'Durata', scuola:'Scuola', azioneTipo:'Azione',
-    concentrazione:'Concentrazione', ts:'Tiro Salvezza',
-    scaling:'Progressione', nessuna:'nessuna',
-    armiTitle:'Armi', dannoCol:'Danno', attaccoCol:'Attacco', propCol:'Proprietà',
-    equipTitle:'Equipaggiamento', oggettoCol:'Oggetto', noteCol:'Note',
-    aggiungiArma:'＋ Aggiungi arma', aggiungiEquip:'＋ Aggiungi oggetto',
-    aggiungiIncantesimo:'＋ Aggiungi incantesimo', aggiungiFeature:'＋ Aggiungi sezione',
-    aggiungiAzione:'＋ Aggiungi azione', aggiungiSlot:'＋ Aggiungi slot',
-    aggiungiTracker:'＋ Aggiungi tracker', aggiungiCondizione:'＋ Aggiungi condizione',
-    aggiungiBlockAlgo:'＋ Aggiungi blocco', aggiungiSidebar:'＋ Link',
-    aggiungiSezione:'Aggiungi al sidebar', separatore:'Separatore', sezioniDisp:'Sezioni disponibili',
+    range:'Raggio', duration:'Durata', school:'Scuola', actionType:'Azione',
+    concentration:'Concentrazione', ts:'Tiro Salvezza',
+    scaling:'Progressione', none:'nessuna',
+    weapons:'Armi', damageCol:'Danno', attackCol:'Attacco', propertiesCol:'Proprietà',
+    equipTitle:'Equipaggiamento', itemCol:'Oggetto', notesCol:'Note',
+    addWeapon:'＋ Aggiungi arma', addItem:'＋ Aggiungi oggetto', addSkill:'＋ Aggiungi abilità',
+    addSpell:'＋ Aggiungi incantesimo', addFeature:'＋ Aggiungi sezione',
+    addSlot:'＋ Aggiungi slot',
+    addTracker:'＋ Aggiungi tracker', addCondition:'＋ Aggiungi condizione',
+    addAlgoBlock:'＋ Aggiungi blocco',
+    custom:'Personalizzato…', customPh:'Inserisci un valore personalizzato',
     sidebarEmpty:'Sidebar vuota. Abilita modalità modifica (✏️) per aggiungere sezioni.',
-    featureSectionId:'ID Sezione (auto se vuoto)', featureAddToSidebar:'Aggiungi / aggiorna link sidebar',
     editBtn:'✏️', delBtn:'🗑',
     langToggle:'🇬🇧 EN', editMode:'✏️', editModeActive:'✏️ ON',
     splashSub:'Scheda Personaggio Interattiva — D&D 2024',
@@ -982,23 +1027,28 @@ const TRANSLATIONS = {
     moveUp:'▲', moveDown:'▼',
     noSpells:'Nessun incantesimo. Aggiungine uno in modalità modifica.',
     noWeapons:'Nessuna arma configurata.',
+    noSkills:'Nessuna abilità configurata.',
     noEquip:'Nessun equipaggiamento.',
     noFeatures:'Nessuna feature configurata.',
     noActions:'Nessuna azione rapida configurata.',
-    noAlgo:'Nessun algoritmo configurato.',
+    noAlgorithm:'Nessun algoritmo configurato.',
     noTracker:'Nessun tracker custom.',
     noSpellcasting:'Nessun lancio di incantesimi configurato.',
-    slotLvLabel:'Lv', livello:'Livello',
+    slotLvLabel:'Lv', level:'Livello',
     lbl_race:'Razza', lbl_class:'Classe', lbl_background:'Background',
     lbl_alignment:'Allineamento', lbl_profBonus:'Bonus di Competenza',
     lbl_speed:'Velocità', lbl_hpMax:'PF Massimi', lbl_hitDice:'Dadi Vita',
     lbl_ac:'CA', lbl_languages:'Linguaggi', lbl_tsChar:'Car.',
     lbl_ability:'Caratteristica', lbl_bonus:'Bonus', lbl_totalGold:'Oro totale',
-    editDatiBase:'Dati Base', editAbilita:'Abilità', editMagia:'Magia',
+    editBaseData:'Dati Base', editSkills:'Abilità', editMagic:'Magia',
     step:'Passo', wizSave:'Salva', wizNext:'Avanti →',
     wizRequired:'Campo obbligatorio', wizSaved:'✅ Salvato!', wizEdit:'modifica',
-    contentBlocks:'Blocchi di Contenuto', aggiungiBlock:'＋ Blocco',
-    algoSteps:'Passi Algoritmo', aggiungiStep:'＋ Passo',
+    contentBlocks:'Blocchi di Contenuto', addBlock:'＋ Blocco',
+    addRow:'＋ Riga', cbBulletsHint:'Un punto elenco per riga',
+    cbeKey:'Chiave', cbeValue:'Valore',
+    cbSubTitle:'Titolo sotto-capacità', cbSubEmoji:'Emoji', cbSubNew:'Segna come nuovo',
+    cbAddSubBlock:'＋ Sotto-blocco',
+    algoSteps:'Passi Algoritmo', addStep:'＋ Passo',
     algoStepQuestion:'Domanda del passo (opzionale):',
     algoStepBullets:'Punti elenco (uno per riga):',
     // Point-buy (already existed)
@@ -1026,11 +1076,9 @@ const TRANSLATIONS = {
     wiz_equipment_title:'Oggetto',
     wiz_feature_title:'Tratto / Capacità',
     wiz_tracker_title:'Tracker',
-    wiz_action_title:'Azione Rapida',
     wiz_condition_title:'Condizione Personalizzata',
     wiz_spellslot_title:'Slot Incantesimo',
     wiz_algoblock_title:'Blocco Algoritmo',
-    wiz_sidebarlink_title:'Link Sidebar',
     wiz_spellcasting_title:'Info Magia',
     wiz_skills_title:'Competenze Abilità',
     wiz_step_identity:'Identità',
@@ -1041,6 +1089,7 @@ const TRANSLATIONS = {
     wiz_step_spellDetails:'Dettagli',
     wiz_step_header:'Intestazione',
     wiz_step_content:'Contenuto',
+    wiz_step_trackerAction:'Tracker e Azione',
     wiz_step_algoTitle:'Titolo',
     wiz_step_algoSteps:'Passi',
     wiz_f_playerName:'Nome Giocatore',
@@ -1058,25 +1107,20 @@ const TRANSLATIONS = {
     wiz_f_attackBonusTotal:'Bonus Attacco totale',
     wiz_f_trackerID:'ID (univoco, no spazi)',
     wiz_f_totalUses:'Totale usi',
+    wiz_f_hasTracker:'Ha un tracker di utilizzo',
+    wiz_f_hasAction:'Ha un\'azione di combattimento',
+    wiz_f_actionDesc:'Descrizione azione',
     wiz_f_isPotionCheck:'È una pozione (usa e cura PF)',
     wiz_f_potionFormula:'Formula pozione (es. 2d4+2)',
-    wiz_f_actionDescShort:'Descrizione breve',
-    wiz_f_damageFormula:'Formula danno (es. 1d10)',
-    wiz_f_toHit:'Bonus colpire',
-    wiz_f_dcSave:'CD Tiro Salvezza',
-    wiz_f_dcAbility:'Caratteristica TS',
-    wiz_f_usesEmpty:'Usi (vuoto=illimitati)',
-    wiz_f_recoveryUses:'Ripristino usi',
     wiz_f_conditionName:'Nome condizione',
     wiz_f_slotLevel:'Livello Slot',
     wiz_f_slotTotal:'Totale Slot',
     wiz_f_algoBlockTitle:'Titolo blocco',
-    wiz_f_anchorID:'ID ancora (es. incantesimi)',
-    wiz_f_linkLabel:'Etichetta',
     wiz_f_magicAbility:'Caratteristica magia',
     wiz_f_magicDC:'CD Tiro Salvezza Magia',
     wiz_f_magicAttack:'Bonus Attacco Magia',
     wiz_f_magicFocus:'Focus / Componenti',
+    wiz_f_preparedCaster:'Incantatore preparato (prepara gli incantesimi giornalmente)',
     wiz_f_featureTitle:'Titolo',
     wiz_f_featureSubtitle:'Sottotitolo',
     wiz_f_featureSource:'Fonte (es. Classe Lv3)',
@@ -1084,6 +1128,9 @@ const TRANSLATIONS = {
     wiz_ph_race:'Es. Elfo, Umano…',
     wiz_ph_class:'Es. Mago, Guerriero…',
     wiz_ph_subclass:'Es. Evocatore',
+    wiz_ph_quote:'Es. "La penna è più potente della spada."',
+    wiz_ph_armorNote:'Es. Armatura di cuoio 11 + DES',
+    wiz_ph_languages:'Es. Comune, Nanico',
     wiz_ph_special:'SPECIALE',
     wiz_ph_attackBonus:'+5',
     wiz_ph_trackerID:'bardic_inspiration',
@@ -1144,7 +1191,9 @@ function syncSession(){
   if(!SESSION.hitDice) SESSION.hitDice={used:0};
   if(!SESSION.trackers) SESSION.trackers={};
   if(!SESSION.spellSlots) SESSION.spellSlots={};
-  (CHAR.trackers||[]).forEach(t=>{ if(!SESSION.trackers[t.id]) SESSION.trackers[t.id]={used:0}; });
+  (CHAR.trackers||[]).forEach(t=>{ const tid=t.id||slugify(t.label); if(tid && !SESSION.trackers[tid]) SESSION.trackers[tid]={used:0}; });
+  // Feature-embedded trackers
+  (CHAR.features||[]).forEach(f=>{ if(f.tracker){ const tid=slugify(f.title); if(tid && !SESSION.trackers[tid]) SESSION.trackers[tid]={used:0}; }});
   (CHAR.spellSlots||[]).forEach(sl=>{ if(!SESSION.spellSlots[sl.level]) SESSION.spellSlots[sl.level]={used:0}; });
 }
 function saveAll(){
@@ -1178,7 +1227,7 @@ function renderAll(){
   updatePageTitle();
   renderSidebar();
   renderHeader();
-  renderPannello();
+  renderPanel();
   renderSections();
   updateFixedControls();
 }
@@ -1206,22 +1255,79 @@ function slugify(str){
     .replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
 }
 // All sections that can appear as sidebar links — built-ins always present, features added dynamically
-function getAvailableSections(){
-  const C=CHAR||{};
-  const sections=[
-    {id:'pannello',       emoji:'🎮', label:T('pannelloTitle')},
-    {id:'dati-base',      emoji:'📋', label:T('datiBase')},
-    {id:'abilita',        emoji:'🎯', label:T('abilita')},
-    {id:'incantesimi',    emoji:'✨', label:T('incantesimi')},
-    {id:'armi',           emoji:'⚔️', label:T('armiTitle')},
-    {id:'equipaggiamento',emoji:'🎒', label:T('equipaggiamento')},
-    {id:'algoritmo',      emoji:'⚡', label:T('algoritmo')},
-  ];
-  (C.features||[]).forEach(f=>{
-    const id=f.sectionId||f.id||slugify(f.title||'');
-    if(id) sections.push({id, emoji:f.emoji||'📄', label:f.title||f.name||id, isCustom:true});
+// SECTION_REGISTRY: maps section IDs → render function + metadata
+// render functions are assigned after they're defined (see below)
+const SECTION_REGISTRY = {
+  'base-data':  { label:()=>T('baseData'),   emoji:'🧬', deletable:false },
+  'skills':     { label:()=>T('skills'),     emoji:'🎯', deletable:false },
+  'spells':     { label:()=>T('spells'),     emoji:'✨', deletable:false,
+                  hiddenWhen:()=>!CHAR?.spellcasting&&!(CHAR?.spells?.length) },
+  'weapons':    { label:()=>T('weapons'),    emoji:'⚔️', deletable:false },
+  'equipment':  { label:()=>T('equipment'),  emoji:'🎒', deletable:false },
+  'algorithm':  { label:()=>T('algorithm'),  emoji:'⚡', deletable:false,
+                  hiddenWhen:()=>!(CHAR?.combatAlgorithm?.length)&&!EDIT_MODE },
+};
+const BUILTIN_SECTION_IDS = Object.keys(SECTION_REGISTRY);
+const DEFAULT_SIDEBAR = ['base-data','skills','weapons','equipment'];
+// Helper: build section <h2> header with emoji from registry
+function sectionHeader(sectionId, extra=''){
+  const reg=SECTION_REGISTRY[sectionId];
+  if(!reg) return '';
+  return `<h2 id="${sectionId}">${reg.emoji} ${reg.label()}${extra}</h2>`;
+}
+
+// Resolve a sidebar item to {id, label, emoji, deletable, isFeature, featureIdx}
+function resolveSidebarItem(item) {
+  if(typeof item==='object' && item.type==='sep') return {type:'sep'};
+  // Support both string IDs (v3) and legacy {id,label,emoji} objects
+  const id = typeof item==='string' ? item : item?.id;
+  if(!id) return null;
+  const reg = SECTION_REGISTRY[id];
+  if(reg) return {id, label:reg.label(), emoji:reg.emoji, deletable:reg.deletable, hidden:reg.hiddenWhen?.()};
+  // Check custom features
+  const fIdx = (CHAR?.features||[]).findIndex(f=>slugify(f.title)===id || f.sectionId===id);
+  if(fIdx>=0) {
+    const f=CHAR.features[fIdx];
+    return {id, label:f.title||'', emoji:f.emoji||'📄', deletable:true, isFeature:true, featureIdx:fIdx};
+  }
+  // Legacy: if item has label/emoji from old format, use those
+  if(typeof item==='object' && item.label) return {id, label:item.label, emoji:item.emoji||'', deletable:true};
+  return null;
+}
+
+// Ensure CHAR.sidebar has all visible built-in sections + feature entries
+function ensureSidebar(){
+  if(!CHAR) return;
+  if(!CHAR.sidebar) CHAR.sidebar=[...DEFAULT_SIDEBAR];
+  // Migrate legacy {id,label,emoji} objects to plain ID strings
+  CHAR.sidebar = CHAR.sidebar.map(item=>{
+    if(typeof item==='object' && item.type==='sep') return item;
+    if(typeof item==='object' && item.id) return item.id;
+    return item;
   });
-  return sections;
+  const existing=new Set(CHAR.sidebar.filter(i=>typeof i==='string'));
+  // Add missing built-in sections (in default order, at the end)
+  BUILTIN_SECTION_IDS.forEach(id=>{
+    if(!existing.has(id)){
+      const reg=SECTION_REGISTRY[id];
+      // Only auto-add if section should be visible
+      if(!reg.hiddenWhen || !reg.hiddenWhen()){
+        CHAR.sidebar.push(id);
+      }
+    }
+  });
+  // Add missing features
+  (CHAR.features||[]).forEach(f=>{
+    const fId=slugify(f.title);
+    if(fId && !existing.has(fId)) CHAR.sidebar.push(fId);
+  });
+  // Remove entries for deleted features (IDs not in registry and not matching any feature)
+  CHAR.sidebar = CHAR.sidebar.filter(item=>{
+    if(typeof item==='object') return true; // separators
+    if(SECTION_REGISTRY[item]) return true; // built-in
+    // Check if it's a valid feature
+    return (CHAR.features||[]).some(f=>slugify(f.title)===item || f.sectionId===item);
+  });
 }
 // ── Sidebar drag-and-drop ──
 let SB_DRAG_IDX=null;
@@ -1251,84 +1357,45 @@ function sbDragEnd(){
   SB_DRAG_IDX=null;
   document.querySelectorAll('.sb-item-edit').forEach(el=>el.classList.remove('drag-over'));
 }
-// ── Section picker ──
-function openSectionPicker(btn){
-  const existing=document.getElementById('sb-section-picker');
-  if(existing){closeSectionPicker();return;}
-  const inSidebar=new Set((CHAR.sidebar||[]).filter(s=>s.id).map(s=>s.id));
-  const sections=getAvailableSections();
-  const builtIn=sections.filter(s=>!s.isCustom);
-  const custom=sections.filter(s=>s.isCustom);
-  let html=`<h4>${T('sezioniDisp')}</h4>`;
-  const row=(s)=>{
-    const has=inSidebar.has(s.id);
-    return `<div class="sb-pick-item${has?' already-in':''}" onclick="addSectionToSidebar('${s.id}','${(s.label||'').replace(/'/g,"\\'")}','${(s.emoji||'').replace(/'/g,"\\'")}')">
-      <span>${s.emoji||'📄'}</span><span>${s.label||s.id}</span>
-      ${has?'<span class="sb-pick-check">✓</span>':''}
-    </div>`;
-  };
-  builtIn.forEach(s=>{html+=row(s);});
-  if(custom.length){
-    html+=`<div class="sb-pick-sep"></div><h4>Custom</h4>`;
-    custom.forEach(s=>{html+=row(s);});
-  }
-  html+=`<div class="sb-pick-sep"></div>
-    <div class="sb-pick-item" onclick="addSepToSidebar()">
-      <span>─</span><span>${T('separatore')}</span>
-    </div>`;
-  const panel=document.createElement('div');
-  panel.id='sb-section-picker'; panel.innerHTML=html;
-  document.body.appendChild(panel);
-  // Position to the right of the button, clamped to viewport
-  const r=btn.getBoundingClientRect();
-  panel.style.left=(r.right+8)+'px'; panel.style.top=r.top+'px';
-  requestAnimationFrame(()=>{
-    const pr=panel.getBoundingClientRect();
-    if(pr.right>window.innerWidth-8) panel.style.left=(r.left-pr.width-8)+'px';
-    if(pr.bottom>window.innerHeight-8) panel.style.top=(window.innerHeight-pr.height-8)+'px';
-  });
-  setTimeout(()=>document.addEventListener('click',_sbPickerOutside,{capture:true}),50);
-}
-function _sbPickerOutside(e){
-  const p=document.getElementById('sb-section-picker');
-  if(p&&!p.contains(e.target)) closeSectionPicker();
-}
-function closeSectionPicker(){
-  const p=document.getElementById('sb-section-picker'); if(p) p.remove();
-  document.removeEventListener('click',_sbPickerOutside,{capture:true});
-}
-function addSectionToSidebar(id,label,emoji){
-  if(!CHAR.sidebar) CHAR.sidebar=[];
-  // Don't add duplicates
-  if(!CHAR.sidebar.some(s=>s.id===id)) CHAR.sidebar.push({id,label,emoji});
-  closeSectionPicker(); saveAll(); renderSidebar();
-}
-function addSepToSidebar(){
-  if(!CHAR.sidebar) CHAR.sidebar=[];
-  CHAR.sidebar.push({type:'sep'});
-  closeSectionPicker(); saveAll(); renderSidebar();
-}
-
 // ─── SIDEBAR ───
 function renderSidebar(){
   const links=document.getElementById('nav-links');
   const footer=document.getElementById('sidebar-footer');
   document.getElementById('nav-title').textContent=T('navTitle');
   if(!CHAR){links.innerHTML='';footer.innerHTML='';return;}
-  links.innerHTML=(CHAR.sidebar||[]).map((item,i)=>{
-    if(item.type==='sep') return `<div class="nav-sep"${EDIT_MODE?` style="position:relative"`:''}>${EDIT_MODE?`<span style="position:absolute;right:4px;top:-7px;"><button class="btn-del-sm" onclick="deleteSidebarItem(${i})">🗑</button></span>`:''}</div>`;
-    // support both {id,label} (canonical) and {href,label} (legacy)
-    const href=item.href||(item.id?'#'+item.id:'#');
-    return `<a href="${href}" onclick="closeSidebarMobile()">${item.emoji||''} ${item.label||''}
-      ${EDIT_MODE?`<span style="float:right;display:flex;gap:2px;">
-        <button class="btn-del-sm" onclick="event.preventDefault();editSidebarItem(${i})">✏️</button>
-        <button class="btn-del-sm" onclick="event.preventDefault();deleteSidebarItem(${i})">🗑</button>
-      </span>`:''}
-    </a>`;
+  ensureSidebar();
+  // Pinned game panel link at top
+  let html=`<a href="#panel" onclick="closeSidebarMobile()">🎮 ${T('panelTitle')}</a>`;
+  // Render sidebar items from CHAR.sidebar
+  html+=(CHAR.sidebar||[]).map((item,i)=>{
+    if(typeof item==='object' && item.type==='sep'){
+      return `<div class="nav-sep"${EDIT_MODE?` style="position:relative"`:''}>` +
+        (EDIT_MODE?`<span style="position:absolute;right:4px;top:-7px;"><button class="btn-del-sm" onclick="deleteSidebarItem(${i})">🗑</button></span>`:'')+`</div>`;
+    }
+    const resolved=resolveSidebarItem(item);
+    if(!resolved || resolved.hidden) return '';
+    const id=resolved.id;
+    let link=`<a href="#${id}" onclick="closeSidebarMobile()">${resolved.emoji||''} ${resolved.label||''}`;
+    if(EDIT_MODE){
+      const delBtn=resolved.deletable?`<button class="btn-del-sm" onclick="event.preventDefault();deleteSidebarItem(${i})">🗑</button>`:'';
+      link+=`<span style="float:right;display:flex;gap:2px;">${delBtn}</span>`;
+    }
+    link+=`</a>`;
+    // Auto-generate spell sub-links per spell level
+    if(id==='spells'){
+      const spells=CHAR.spells||[];
+      const levels=[...new Set(spells.map(s=>s.level))].sort((a,b)=>a-b);
+      levels.forEach(lv=>{
+        const label=lv===0?T('cantrips'):`${T('spellLvPrefix')} ${lv}${T('lvSuffix')}`;
+        link+=`<a href="#spell-lv-${lv}" class="nav-sub-link" onclick="closeSidebarMobile()">&nbsp;&nbsp;${label}</a>`;
+      });
+    }
+    return link;
   }).join('');
+  links.innerHTML=html;
   if(EDIT_MODE){
-    footer.innerHTML=`<button class="btn-edit-sm edit-only" style="display:inline-flex;width:100%;margin:2px 0;justify-content:center;" onclick="addSidebarLink()">${T('aggiungiSidebar')}</button>
-    <button class="btn-edit-sm edit-only" style="display:inline-flex;width:100%;margin:2px 0;justify-content:center;" onclick="addSidebarSep()">${T('addSep')}</button>`;
+    footer.innerHTML=`<button class="btn-edit-sm edit-only" style="display:inline-flex;width:100%;margin:2px 0;justify-content:center;" onclick="addFeature()">${T('addFeature')}</button>
+      <button class="btn-edit-sm edit-only" style="display:inline-flex;width:100%;margin:2px 0;justify-content:center;" onclick="addSidebarSep()">${T('addSep')}</button>`;
   } else {footer.innerHTML='';}
 }
 
@@ -1336,7 +1403,7 @@ function renderHeader(){
   if(!CHAR) return;
   // derive display name and subtitle from data — no redundant title/subtitle fields needed
   const name=CHAR.name||'';
-  const derived=CHAR.class?(CHAR.class+(CHAR.level?' — '+T('livello')+' '+CHAR.level:'')):CHAR.race||'';
+  const derived=CHAR.class?(dndTr('classes',CHAR.class)+(CHAR.level?' — '+T('level')+' '+CHAR.level:'')):dndTr('races',CHAR.race)||'';
   document.getElementById('char-name').textContent=name;
   const sub=document.getElementById('char-subtitle');
   sub.className='subtitle'; sub.textContent=CHAR.subtitle||derived;
@@ -1354,10 +1421,10 @@ function renderHeader(){
   if(ph) ph.innerHTML='🧙<br>'+T('portraitPlaceholder');
 }
 // ═══════════════ RENDER PANNELLO ═══════════════
-function renderPannello(){
-  const el=document.getElementById('pannello');
+function renderPanel(){
+  const el=document.getElementById('panel');
   if(!CHAR||!SESSION){el.innerHTML='';return;}
-  el.innerHTML=buildPannello();
+  el.innerHTML=buildPanel();
   // bind live inputs
   document.getElementById('conc-spell-input').addEventListener('input',e=>{
     SESSION.concentration=e.target.value;
@@ -1373,7 +1440,7 @@ function renderPannello(){
     saveAll();
   });
 }
-function buildPannello(){
+function buildPanel(){
   const S=SESSION, C=CHAR;
   const effMax=(S.hp?.current!==undefined?C.hp?.max||0:0)+(S.hp?.aidBonus||0);
   const hpCurr=S.hp?.current??0;
@@ -1382,7 +1449,7 @@ function buildPannello(){
 
   // ── HP Card ──
   const hpCard=`<div class="pn-card" style="grid-column:span 2;">
-    <div class="label">${T('pf')}</div>
+    <div class="label">${T('hp')}</div>
     <div class="value-row">
       <div class="big-val" id="hp-curr">${hpCurr}</div>
       <div class="max-val">/ <span id="hp-max-disp">${effMax}</span></div>
@@ -1390,11 +1457,11 @@ function buildPannello(){
     <div class="hp-bar-wrap"><div class="hp-bar" id="hp-bar" style="width:${hpPct}%;background:${hpColor};"></div></div>
     <div class="hp-input-row">
       <input type="number" id="hp-amount" placeholder="val" min="1">
-      <button class="btn danger" onclick="applyDamage()">${T('danno')}</button>
-      <button class="btn heal" onclick="applyHeal()">${T('cura')}</button>
-      <button class="btn heal" onclick="applyTempHP()">${T('pfTempBtn')}</button>
+      <button class="btn danger" onclick="applyDamage()">${T('damage')}</button>
+      <button class="btn heal" onclick="applyHeal()">${T('heal')}</button>
+      <button class="btn heal" onclick="applyTempHP()">${T('tempHPBtn')}</button>
     </div>
-    <div class="temp-hp-info">${T('pfTemp')}: <span id="temp-hp-disp" style="color:var(--accent);font-weight:bold;">${S.hp?.temp||0}</span>
+    <div class="temp-hp-info">${T('tempHP')}: <span id="temp-hp-disp" style="color:var(--accent);font-weight:bold;">${S.hp?.temp||0}</span>
     &nbsp;|&nbsp;${T('aidBonus')}: <span id="aid-disp" style="color:var(--edit-mode-color);font-weight:600;">${modStr(S.hp?.aidBonus||0)}</span></div>
   </div>`;
 
@@ -1403,10 +1470,10 @@ function buildPannello(){
   const hdLabel=`d${C.hitDieType||8}`;
   let hdPips=''; for(let i=0;i<(C.level||1);i++) hdPips+=`<div class="pip${i<hdUsed?' used':''}" title="${hdLabel}" onclick="clickHDPip(${i})">${hdLabel}</div>`;
   const hdCard=`<div class="pn-card">
-    <div class="label">${T('dadiVita')} (${hdLabel})</div>
+    <div class="label">${T('hitDice')} (${hdLabel})</div>
     <div class="pips" id="hd-pips">${hdPips}</div>
     <div class="btn-row">
-      <button class="btn heal" onclick="spendHD()">${T('spendiFull')}</button>
+      <button class="btn heal" onclick="spendHD()">${T('spendFull')}</button>
       <button class="btn" onclick="resetHD()">${T('reset')}</button>
     </div>
     <div style="margin-top:4px;font-size:.75em;color:var(--text-muted);">${T('hdNote')}</div>
@@ -1418,31 +1485,46 @@ function buildPannello(){
   for(let i=0;i<3;i++){dSucc+=`<div class="death-pip succ${i<(ds.deathSucc||0)?' used':''}" onclick="toggleDeathPip(this,'succ',${i})"></div>`;}
   for(let i=0;i<3;i++){dFail+=`<div class="death-pip fail${i<(ds.deathFail||0)?' used':''}" onclick="toggleDeathPip(this,'fail',${i})"></div>`;}
   const deathCard=`<div class="pn-card">
-    <div class="label">${T('tiriMorte')}</div>
-    <div class="death-row"><span style="font-size:.8em;color:#4a9a4a;">✅</span><div class="death-pips" id="death-succ">${dSucc}</div></div>
-    <div class="death-row"><span style="font-size:.8em;color:#9a4a4a;">❌</span><div class="death-pips" id="death-fail">${dFail}</div></div>
+    <div class="label">${T('deathSaves')}</div>
+    <div class="death-row"><span style="font-size:.8em;color:var(--death-succ);">✅</span><div class="death-pips" id="death-succ">${dSucc}</div></div>
+    <div class="death-row"><span style="font-size:.8em;color:var(--death-fail);">❌</span><div class="death-pips" id="death-fail">${dFail}</div></div>
     <div class="btn-row"><button class="btn" onclick="resetDeathSaves()">${T('reset')}</button></div>
   </div>`;
 
-  return `<div class="pn-grid">${hpCard}${hdCard}${deathCard}</div>${buildPannelloRow2()}${buildPannelloRow3()}${buildPannelloBottom()}`;
+  return `<div class="pn-grid">${hpCard}${hdCard}${deathCard}</div>${buildPanelRow2()}${buildPanelRow3()}${buildPanelBottom()}`;
 }
 // ─── Pannello Row 2: custom trackers + spell slots ───
-function buildPannelloRow2(){
+function buildPanelRow2(){
   let cards='';
   // Custom trackers
   (CHAR.trackers||[]).forEach((t,i)=>{
-    const used=SESSION.trackers?.[t.id]?.used||0;
+    const tid=t.id||slugify(t.label);
+    const used=SESSION.trackers?.[tid]?.used||0;
     const total=t.total||1;
-    let pips=''; for(let j=0;j<total;j++) pips+=`<div class="pip${j<used?' used':''}" onclick="clickTrackerPip('${t.id}',${j})">${t.showDie&&t.die?t.die:(t.emoji||'●')}</div>`;
+    let pips=''; for(let j=0;j<total;j++) pips+=`<div class="pip${j<used?' used':''}" onclick="clickTrackerPip('${tid}',${j})">${t.showDie&&t.die?t.die:(t.emoji||'●')}</div>`;
     const useBtn=t.isPotion
-      ?`<button class="btn danger" onclick="usePotionTracker('${t.id}')">${T('spendi')} (${t.potionFormula||''})</button>`
-      :`<button class="btn danger" onclick="useTracker('${t.id}')">${T('spendi')}</button>`;
-    cards+=`<div class="pn-card" id="tracker-card-${t.id}">
-      <div class="label">${t.emoji||''} ${t.label||t.id}</div>
-      <div class="pips" id="pips-${t.id}">${pips}</div>
-      <div class="btn-row">${useBtn}<button class="btn" onclick="resetTracker('${t.id}')">${T('reset')} (${total})</button></div>
+      ?`<button class="btn danger" onclick="usePotionTracker('${tid}')">${T('spend')} (${t.potionFormula||''})</button>`
+      :`<button class="btn danger" onclick="useTracker('${tid}')">${T('spend')}</button>`;
+    cards+=`<div class="pn-card" id="tracker-card-${tid}">
+      <div class="label">${t.emoji||''} ${t.label||tid}</div>
+      <div class="pips" id="pips-${tid}">${pips}</div>
+      <div class="btn-row">${useBtn}<button class="btn" onclick="resetTracker('${tid}')">${T('reset')} (${total})</button></div>
       ${t.potionNotes?`<div style="font-size:.75em;color:var(--text-muted);margin-top:4px;">${t.potionNotes}</div>`:''}
       ${EDIT_MODE?`<div class="btn-row edit-only"><button class="btn-edit-sm" onclick="editTracker(${i})">✏️</button><button class="btn-del-sm" onclick="deleteTracker(${i})">🗑</button></div>`:''}
+    </div>`;
+  });
+  // Feature-embedded trackers (v3: trackers live inside features)
+  (CHAR.features||[]).forEach(f=>{
+    if(!f.tracker) return;
+    const t=f.tracker;
+    const tid=slugify(f.title);
+    const used=SESSION.trackers?.[tid]?.used||0;
+    const total=t.total||1;
+    let pips=''; for(let j=0;j<total;j++) pips+=`<div class="pip${j<used?' used':''}" onclick="clickTrackerPip('${tid}',${j})">${t.showDie&&t.die?t.die:(f.emoji||'●')}</div>`;
+    cards+=`<div class="pn-card" id="tracker-card-${tid}">
+      <div class="label">${f.emoji||''} ${f.title||''}</div>
+      <div class="pips" id="pips-${tid}">${pips}</div>
+      <div class="btn-row"><button class="btn danger" onclick="useTracker('${tid}')">${T('spend')}</button><button class="btn" onclick="resetTracker('${tid}')">${T('reset')} (${total})</button></div>
     </div>`;
   });
   // Spell slots
@@ -1455,25 +1537,25 @@ function buildPannelloRow2(){
       <div class="label" style="color:${color};">✨ Slot Lv${lv}</div>
       <div class="pips" id="slot${lv}-pips">${pips}</div>
       <div class="btn-row">
-        <button class="btn danger" onclick="useSlot(${lv})">${T('spendi')}</button>
+        <button class="btn danger" onclick="useSlot(${lv})">${T('spend')}</button>
         <button class="btn" onclick="resetSlot(${lv})">${T('reset')} (${tot})</button>
       </div>
     </div>`;
   });
   if(EDIT_MODE) cards+=`<div class="pn-card" style="display:flex;align-items:center;justify-content:center;flex-direction:column;gap:8px;">
-    <button class="add-btn edit-only" onclick="addTracker()">${T('aggiungiTracker')}</button>
-    <button class="add-btn edit-only" onclick="addSpellSlot()">${T('aggiungiSlot')}</button>
+    <button class="add-btn edit-only" onclick="addTracker()">${T('addTracker')}</button>
+    <button class="add-btn edit-only" onclick="addSpellSlot()">${T('addSlot')}</button>
   </div>`;
   return `<div class="pn-grid">${cards}</div>`;
 }
 
 // ─── Pannello Row 3: conc, round, gold ───
-function buildPannelloRow3(){
+function buildPanelRow3(){
   const S=SESSION;
   const concCard=`<div class="pn-card">
-    <div class="label">${T('conc')}</div>
+    <div class="label">${T('concLabel')}</div>
     <div class="inline-field" style="margin-top:8px;">
-      <input type="text" id="conc-spell-input" placeholder="${T('nessuna')}…" value="${S.concentration||''}" style="width:160px;">
+      <input type="text" id="conc-spell-input" placeholder="${T('none')}…" value="${S.concentration||''}" style="width:160px;">
       <button class="btn danger" onclick="dropConc()">❌</button>
     </div>
     <div id="conc-status" class="conc-status-text${S.concentration?' conc-active':''}">${S.concentration?T('concActive')+S.concentration:T('concNone')}</div>
@@ -1487,12 +1569,12 @@ function buildPannelloRow3(){
       <button class="btn" onclick="resetRound()">${T('reset')}</button>
     </div>
     <div class="inline-field" style="margin-top:8px;">
-      <span>${T('iniziativa')}</span>
+      <span>${T('initiative')}</span>
       <input type="number" id="init-input" placeholder="—" value="${S.initiative||''}" style="width:65px;">
     </div>
   </div>`;
   const goldCard=`<div class="pn-card">
-    <div class="label">${T('oro')}</div>
+    <div class="label">${T('gold')}</div>
     <div class="oro-row">
       <input type="number" id="gold-input" value="${S.gold||0}" min="0">
       <button class="btn" onclick="changeGold(-1)">−1</button>
@@ -1505,27 +1587,30 @@ function buildPannelloRow3(){
 }
 
 // ─── Pannello Bottom: conditions, rests, log, actions, session, notes ───
-function buildPannelloBottom(){
+function buildPanelBottom(){
   const S=SESSION, C=CHAR;
-  // Conditions
-  const conds=(C.conditions||[]);
-  const condGrid=conds.map((c,i)=>`<div class="cond-btn${(S.conditions||[]).includes(c)?' active':''}" onclick="toggleCond(this,'${c.replace(/'/g,"\\'")}')">
-    ${dndTr('conditions',c)||c}${EDIT_MODE?`<button class="btn-del-sm" onclick="event.stopPropagation();deleteCondition(${i})" style="margin-left:4px;">×</button>`:''}
+  // Conditions: standard D&D conditions + custom
+  const stdConds=DND.conditions||[];
+  const customConds=C.customConditions||[];
+  const condGrid=stdConds.map(c=>`<div class="cond-btn${(S.conditions||[]).includes(c)?' active':''}" onclick="toggleCond(this,'${c.replace(/'/g,"\\'")}')">
+    ${dndTr('conditions',c)||c}
+  </div>`).join('') + customConds.map((c,i)=>`<div class="cond-btn${(S.conditions||[]).includes(c)?' active':''}" onclick="toggleCond(this,'${c.replace(/'/g,"\\'")}')">
+    ${c}${EDIT_MODE?`<button class="btn-del-sm" onclick="event.stopPropagation();deleteCondition(${i})" style="margin-left:4px;">×</button>`:''}
   </div>`).join('');
   const condSection=`<div class="pn-card" style="margin-bottom:14px;">
-    <div class="label">${T('condizioni')}</div>
+    <div class="label">${T('conditions')}</div>
     <div class="cond-grid" id="cond-grid">${condGrid}</div>
-    ${EDIT_MODE?`<button class="add-btn edit-only" onclick="addCondition()" style="margin-top:8px;">${T('aggiungiCondizione')}</button>`:''}
+    ${EDIT_MODE?`<button class="add-btn edit-only" onclick="addCondition()" style="margin-top:8px;">${T('addCondition')}</button>`:''}
   </div>`;
   // Rests + Log
   const restsLog=`<div class="pn-grid">
     <div class="pn-card">
-      <div class="label">${T('riposi')}</div>
+      <div class="label">${T('rests')}</div>
       <div class="btn-row" style="margin-top:8px;">
-        <button class="btn long-rest" onclick="longRest()">${T('riposoLungo')}</button>
-        <button class="btn short-rest" onclick="shortRest()">${T('riposoBreve')}</button>
+        <button class="btn long-rest" onclick="longRest()">${T('longRest')}</button>
+        <button class="btn short-rest" onclick="shortRest()">${T('shortRest')}</button>
       </div>
-      <div style="font-size:.75em;color:var(--text-muted);margin-top:6px;">${T('riposoLungoNote')}<br>${T('riposoBrevNote')}</div>
+      <div style="font-size:.75em;color:var(--text-muted);margin-top:6px;">${T('longRestNote')}<br>${T('shortRestNote')}</div>
     </div>
     <div class="pn-card" style="grid-column:span 2;">
       <div class="label">${T('log')}</div>
@@ -1535,7 +1620,7 @@ function buildPannelloBottom(){
   // Quick Actions — auto-generated from spells + weapons + manual actions
   const actTypes=['action','bonus','reaction'];
   const actFilter=`<div class="action-filter-row">
-    <button class="filter-btn active" onclick="filterActions(this,'all')">${T('tutteAzioni')}</button>
+    <button class="filter-btn active" onclick="filterActions(this,'all')">${T('allActions')}</button>
     ${actTypes.map(t=>`<button class="filter-btn" onclick="filterActions(this,'${t}')">${dndTr('actionLabels',t)||t}</button>`).join('')}
   </div>`;
   function actionBadge(type){
@@ -1547,7 +1632,7 @@ function buildPannelloBottom(){
     const firstLine=(sp.description||'').split('\n')[0].replace(/\*\*/g,'').trim().slice(0,55);
     if(firstLine) parts.push(firstLine);
     if(sp.saveAbility) parts.push(T('ts')+' '+sp.saveAbility);
-    if(sp.concentration) parts.push(T('concentrazione'));
+    if(sp.concentration) parts.push(T('concentration'));
     if(sp.range) parts.push(sp.range);
     if((sp.level||0)>0) parts.push(T('slotLvLabel')+' '+sp.level+'+');
     return parts.join(' | ');
@@ -1558,39 +1643,44 @@ function buildPannelloBottom(){
       <div class="action-entry-name">${sp.emoji||''} ${sp.name||''}</div>
       <div class="action-entry-note">${spellQuickNote(sp)}</div>
     </div></div>`;}).join('');
-  const weaponEntries=(C.weapons||[]).map(w=>`<div class="action-entry" data-type="action">
+  const pb=C.proficiencyBonus||computedPB(C.level||1);
+  const scores=C.abilityScores||{};
+  const weaponEntries=(C.weapons||[]).map(w=>{
+    const atkMod=abilityMod(scores[w.attackStat]||10);
+    const magic=w.magicBonus||0;
+    const atk=w.attackBonusOverride!=null?modStr(w.attackBonusOverride):modStr(pb+atkMod+magic);
+    const dmgMod=atkMod+magic;
+    const dmg=w.damageOverride||(w.damageDie||'?')+(dmgMod>=0?'+'+dmgMod:dmgMod);
+    return `<div class="action-entry" data-type="action">
     ${actionBadge('action')}
     <div class="action-entry-body">
       <div class="action-entry-name">${w.emoji||''} ${w.name||''}</div>
-      <div class="action-entry-note">${w.attackBonus||''} | ${w.damage||''} ${w.damageType||''}${w.properties?' | '+w.properties:''}</div>
-    </div></div>`).join('');
-  const manualEntries=(C.actions||[]).map((a,i)=>{const t=normalizeActionType(a.type||'action');return `<div class="action-entry" data-type="${t}">
+      <div class="action-entry-note">${atk} | ${dmg} ${dndTr('damageTypes',w.damageType)||w.damageType||''}${w.properties?' | '+w.properties:''}</div>
+    </div></div>`;}).join('');
+  // Feature-embedded actions (v3: actions live inside features)
+  const featureActionEntries=(C.features||[]).filter(f=>f.action).map(f=>{
+    const t=normalizeActionType(f.action.type||'action');
+    return `<div class="action-entry" data-type="${t}">
     ${actionBadge(t)}
     <div class="action-entry-body">
-      <div class="action-entry-name">${a.emoji||''} ${a.label||a.name||''}</div>
-      <div class="action-entry-note">${a.description||a.note||''}</div>
-    </div>
-    ${EDIT_MODE?`<div style="flex-shrink:0;display:flex;gap:3px;">
-      <button class="btn-edit-sm" onclick="editAction(${i})">✏️</button>
-      <button class="btn-del-sm" onclick="deleteAction(${i})">🗑</button>
-    </div>`:''}
-  </div>`;}).join('');
-  const allEntries=spellEntries+weaponEntries+manualEntries;
+      <div class="action-entry-name">${f.emoji||''} ${f.title||''}</div>
+      <div class="action-entry-note">${f.action.description||''}</div>
+    </div></div>`;}).join('');
+  const allEntries=spellEntries+weaponEntries+featureActionEntries;
   const actionsCard=`<div class="pn-card" style="margin-top:14px;">
-    <div class="label">${T('azioni')}</div>
+    <div class="label">${T('quickActions')}</div>
     ${actFilter}
     <div id="action-list">${allEntries||`<p class="empty-state">${T('noActions')}</p>`}</div>
-    ${EDIT_MODE?`<button class="add-btn edit-only" onclick="addAction()">${T('aggiungiAzione')}</button>`:''}
   </div>`;
   // Session save/load
   const sessionCard=`<div class="pn-card" style="margin-top:14px;">
-    <div class="label">${T('sessione')}</div>
+    <div class="label">${T('session')}</div>
     <div class="btn-row" style="margin-top:8px;">
-      <button class="btn long-rest" onclick="exportCharacter()">${T('salvaSessione')}</button>
-      <label class="btn short-rest" style="cursor:pointer;">${T('caricaSessione')}<input type="file" id="import-session-click" accept=".json" onchange="importSession(event)" style="display:none;"></label>
-      <button class="btn" onclick="copyToClipboard()">${T('copiaClipboard')}</button>
+      <button class="btn long-rest" onclick="exportCharacter()">${T('saveSession')}</button>
+      <label class="btn short-rest" style="cursor:pointer;">${T('loadSession')}<input type="file" id="import-session-click" accept=".json" onchange="importSession(event)" style="display:none;"></label>
+      <button class="btn" onclick="copyToClipboard()">${T('copyClipboard')}</button>
     </div>
-    <div style="font-size:.75em;color:var(--text-muted);margin-top:6px;">${T('sessioneNote')}</div>
+    <div style="font-size:.75em;color:var(--text-muted);margin-top:6px;">${T('sessionNote')}</div>
   </div>`;
   // Notes
   const notesCard=`<div class="pn-card" style="margin-top:14px;">
@@ -1603,24 +1693,35 @@ function buildPannelloBottom(){
 function renderSections(){
   const el=document.getElementById('sections-area');
   if(!CHAR){el.innerHTML='';return;}
+  ensureSidebar();
   let html='';
-  html+=renderDatiBase();
-  html+=renderAbilita();
-  (CHAR.features||[]).forEach((f,i)=>{ html+=renderFeature(f,i); });
-  html+=renderSpellsSection();
-  html+=renderWeapons();
-  html+=renderEquipment();
-  html+=renderAlgorithm();
+  for(const item of CHAR.sidebar||[]){
+    if(typeof item==='object' && item.type==='sep'){
+      html+='<hr class="section-sep">';
+      continue;
+    }
+    const id=typeof item==='string'?item:item?.id;
+    if(!id) continue;
+    const reg=SECTION_REGISTRY[id];
+    if(reg){
+      if(reg.hiddenWhen && reg.hiddenWhen()) continue;
+      html+=reg.render();
+    } else {
+      // Custom feature
+      const fIdx=(CHAR.features||[]).findIndex(f=>slugify(f.title)===id||f.sectionId===id);
+      if(fIdx>=0) html+=renderFeature(CHAR.features[fIdx],fIdx);
+    }
+  }
   el.innerHTML=html;
   const fq=document.getElementById('footer-quote');
   fq.innerHTML=CHAR.quote?'🎭 '+md(CHAR.quote):'';
 }
-function renderDatiBase(){
+function renderBaseData(){
   const C=CHAR;
   const pb=C.proficiencyBonus||computedPB(C.level||1);
   const rows=[
-    [T('lbl_race'),C.race],[T('lbl_class'),C.class],[T('lbl_background'),C.background],
-    [T('lbl_alignment'),C.alignment],[T('lbl_profBonus'),'+'+pb],
+    [T('lbl_race'),dndTr('races',C.race)],[T('lbl_class'),dndTr('classes',C.class)],[T('lbl_background'),dndTr('backgrounds',C.background)],
+    [T('lbl_alignment'),alignmentName(C.alignment)],[T('lbl_profBonus'),'+'+pb],
     [T('lbl_speed'),C.speed],[T('lbl_hpMax'),`<span id="stat-hp-max">${(C.hp?.max||0)+(SESSION?.hp?.aidBonus||0)}</span>`],
     [T('lbl_hitDice'),`${C.level||1}d${C.hitDieType||8}`],
     [T('lbl_ac'),`${C.ac??C.armorClass??'—'}${C.armorNote?' ('+C.armorNote+')':''}`],
@@ -1637,49 +1738,54 @@ function renderDatiBase(){
     const bonus=abilityMod(scores[a]||10)+(prof?pb:0);
     return `<tr><td>${abilityShortName(a)}</td>
       <td>${prof?'<strong>'+modStr(bonus)+'</strong>':modStr(bonus)}</td>
-      <td>${prof?T('competente'):''}</td></tr>`;
+      <td>${prof?T('proficient'):''}</td></tr>`;
   }).join('');
   const eb=EDIT_MODE?`<div class="edit-only" style="display:flex!important;gap:6px;margin-bottom:8px;">
-    <button class="btn-edit-sm" onclick="editCharacter()">✏️ ${T('editDatiBase')}</button>
-    <button class="btn-edit-sm" onclick="editSkills()">✏️ ${T('editAbilita')}</button></div>`:'';
-  return `<h2 id="dati-base">${T('datiBase')}</h2><div class="section-header-line"></div>${eb}
+    <button class="btn-edit-sm" onclick="editCharacter()">✏️ ${T('editBaseData')}</button></div>`:'';
+  return `${sectionHeader('base-data')}<div class="section-header-line"></div>${eb}
     <table>${rows.map(r=>`<tr><td><strong>${r[0]}</strong></td><td>${r[1]}</td></tr>`).join('')}</table>
-    <h3>${T('caratTitle')}</h3>
+    <h3>${T('abilitiesTitle')}</h3>
     <table><tr>${DND.abilities.map(a=>`<th>${abilityShortName(a)}</th>`).join('')}</tr><tr>${statsRow}</tr></table>
     <h3>${T('tsTitle')}</h3><table><tr><th>${T('lbl_tsChar')}</th><th>${T('lbl_bonus')}</th><th></th></tr>${savesRows}</table><hr>`;
 }
-function renderAbilita(){
-  const C=CHAR; const skills=C.skills||[]; if(!skills.length) return '';
+function renderSkills(){
+  const C=CHAR; const skillsMap=C.skills||{};
   const pb=C.proficiencyBonus||computedPB(C.level||1);
   const scores=C.abilityScores||{};
-  // compute bonus: no stored value needed
-  function skillBonus(sk){
-    const base=abilityMod(scores[sk.ability]||10);
-    if(sk.type==='expertise')       return base+pb*2;
-    if(sk.type==='proficient')      return base+pb;
-    if(sk.type==='jackOfAllTrades') return base+Math.floor(pb/2);
+  function skillBonus(ability, type){
+    const base=abilityMod(scores[ability]||10);
+    if(type==='expertise')       return base+pb*2;
+    if(type==='proficient')      return base+pb;
+    if(type==='jackOfAllTrades') return base+Math.floor(pb/2);
     return base;
   }
-  const rows=skills.map((sk,i)=>`<tr>
-    <td>${sk.name}${sk.ability?' <span style="font-size:.75em;color:var(--text-muted);">(${abilityShortName(sk.ability)})</span>':''}</td>
-    <td><strong>${modStr(skillBonus(sk))}</strong></td>
-    <td style="font-size:.8em;">${sk.type==='expertise'?T('expertise'):sk.type==='proficient'?T('competente'):sk.type==='jackOfAllTrades'?T('jack'):''}</td>
-    ${EDIT_MODE?`<td><button class="btn-edit-sm" onclick="editSkillItem(${i})">✏️</button> <button class="btn-del-sm" onclick="deleteSkill(${i})">🗑</button></td>`:''}</tr>`).join('');
-  return `<h2 id="abilita">${T('abilita')}${EDIT_MODE?`<button class="btn-edit-sm edit-only" style="margin-left:auto" onclick="editSkills()">✏️</button>`:''}</h2>
-    <div class="section-header-line"></div><p class="note">${T('skillNote')}</p>
-    <table><tr><th>${T('abilita')}</th><th>${T('lbl_bonus')}</th><th></th>${EDIT_MODE?'<th></th>':''}</tr>${rows}</table>
-    ${EDIT_MODE?`<button class="add-btn edit-only" onclick="addSkillItem()">＋ Abilità</button>`:''}
+  // v3: skills is a map {skillId: proficiencyLevel}. Only show skills with proficiency.
+  const entries=DND.standardSkills
+    .filter(sk=>skillsMap[sk.id] && skillsMap[sk.id]!=='none')
+    .map(sk=>({id:sk.id, name:skillName(sk), ability:sk.ability, type:skillsMap[sk.id]}));
+  const rows=entries.map(sk=>`<tr>
+    <td>${sk.name} <span style="font-size:.75em;color:var(--text-muted);">(${abilityShortName(sk.ability)})</span></td>
+    <td><strong>${modStr(skillBonus(sk.ability, sk.type))}</strong></td>
+    <td style="font-size:.8em;">${sk.type==='expertise'?T('expertise'):sk.type==='proficient'?T('proficient'):sk.type==='jackOfAllTrades'?T('jack'):''}</td>
+    ${EDIT_MODE?`<td><button class="btn-del-sm" onclick="deleteSkill('${sk.id}')">🗑</button></td>`:''}</tr>`).join('');
+  const body=rows?`<p class="note">${T('skillNote')}</p>
+    <table><tr><th>${T('skills')}</th><th>${T('lbl_bonus')}</th><th></th>${EDIT_MODE?'<th></th>':''}</tr>${rows}</table>`
+    :`<p class="empty-state">${T('noSkills')}</p>`;
+  return `${sectionHeader('skills',EDIT_MODE?`<button class="btn-edit-sm edit-only" style="margin-left:auto" onclick="editSkills()">✏️</button>`:'')}
+    <div class="section-header-line"></div>${body}
+    ${EDIT_MODE?`<button class="add-btn edit-only" onclick="addSkillItem()">${T('addSkill')}</button>`:''}
     <hr>`;
 }
 function renderFeature(f,i){
   // support both canonical (title/contentBlocks) and legacy (name/content)
   const title=f.title||f.name||'';
+  const sectionId=slugify(title)||f.sectionId||f.id||'';
   const blocks=(f.contentBlocks||f.content||[]).map(b=>renderContentBlock(b)).join('');
   const eb=EDIT_MODE?`<button class="btn-edit-sm edit-only" onclick="editFeature(${i})">✏️</button>
     <button class="btn-del-sm edit-only" onclick="deleteFeature(${i})">🗑</button>`:'';
-  const tags=(f.isNew?`<span class="tag-new">NUOVO</span>`:'')+
-             (f.isSecret?`<span class="tag-secret">${f.secretLabel||'SPECIALE'}</span>`:'');
-  return `<h2 id="${f.id||f.sectionId||''}">${f.emoji||''} ${title} ${tags} ${eb}</h2>
+  const tags=(f.isNew?`<span class="tag-new">${T('slotNew')}</span>`:'')+
+             (f.isSecret?`<span class="tag-secret">${f.secretLabel||T('f_isSecret')}</span>`:'');
+  return `<h2 id="${sectionId}">${f.emoji||''} ${title} ${tags} ${eb}</h2>
     <div class="section-header-line"></div>${blocks}<hr>`;
 }
 function renderContentBlock(b){
@@ -1708,16 +1814,16 @@ function renderSpellsSection(){
   const C=CHAR; if(!C.spellcasting&&!(C.spells||[]).length) return '';
   const sc=C.spellcasting;
   const infoBox=sc?`<div class="spellcasting-info-box">
-    <table><tr><td><strong>${T('cdTS')}</strong></td><td>${sc.saveDC||'—'}</td></tr>
-      <tr><td><strong>${T('bonusAttacco')}</strong></td><td>${sc.attackBonus>=0?'+':''}<span>${sc.attackBonus||0}</span></td></tr>
+    <table><tr><td><strong>${T('spellDC')}</strong></td><td>${sc.saveDC||'—'}</td></tr>
+      <tr><td><strong>${T('spellAttackBonus')}</strong></td><td>${sc.attackBonus>=0?'+':''}<span>${sc.attackBonus||0}</span></td></tr>
       <tr><td><strong>${T('focus')}</strong></td><td>${sc.focus||'—'}</td></tr>
       <tr><td><strong>${T('lbl_ability')}</strong></td><td>${abilityLongName(sc.ability)||sc.ability||'—'}</td></tr></table>
     ${C.spellSlots?.length?`<h3 style="margin-top:12px;">${T('slotTitle')}</h3>
-      <table><tr><th>${T('slotLivello')}</th><th>${T('slotTot')}</th></tr>
-      ${(C.spellSlots||[]).map(sl=>`<tr><td>${T('slotLvLabel')} ${sl.level}</td><td>${sl.total}</td></tr>`).join('')}</table>`:''}
+      <table><tr><th>${T('slotLevel')}</th><th>${T('slotTot')}</th>${EDIT_MODE?'<th></th>':''}</tr>
+      ${(C.spellSlots||[]).map((sl,i)=>`<tr><td>${T('slotLvLabel')} ${sl.level}</td><td>${sl.total}</td>${EDIT_MODE?`<td><button class="btn-edit-sm" onclick="editSpellSlot(${i})">✏️</button> <button class="btn-del-sm" onclick="deleteSpellSlot(${i})">🗑</button></td>`:''}</tr>`).join('')}</table>`:''}
     ${EDIT_MODE?`<div class="edit-only" style="display:flex!important;gap:6px;margin-top:8px;">
-      <button class="btn-edit-sm" onclick="editSpellcasting()">✏️ ${T('editMagia')}</button>
-      <button class="btn-edit-sm" onclick="addSpellSlot()">＋ ${T('aggiungiSlot').replace('＋ ','')}</button></div>`:''}
+      <button class="btn-edit-sm" onclick="editSpellcasting()">✏️ ${T('editMagic')}</button>
+      <button class="btn-edit-sm" onclick="addSpellSlot()">＋ ${T('addSlot').replace('＋ ','')}</button></div>`:''}
   </div>`:'';
   // Group spells by level
   const spells=C.spells||[];
@@ -1726,8 +1832,8 @@ function renderSpellsSection(){
   let spellSections='';
   levels.forEach(lv=>{
     const lvSpells=spells.filter(s=>s.level===lv);
-    const lvTitle=lv===0?T('cantripTitle'):`${T('spellLvPrefix')} ${lv}° ${T('lvSuffix')}`;
-    const lvId=lv===0?'trucchetti':`lv${lv}`;
+    const lvTitle=lv===0?T('cantrips'):`${T('spellLvPrefix')} ${lv}° ${T('lvSuffix')}`;
+    const lvId=`spell-lv-${lv}`;
     const color=DND.slotColors[lv]||'var(--accent)';
     const cards=lvSpells.map((sp,rawI)=>{
       const realIdx=spells.indexOf(sp);
@@ -1747,7 +1853,7 @@ function renderSpellsSection(){
           ${atype?`<span class="spell-meta-chip">${atype}</span>`:''}
           ${sp.range?`<span class="spell-meta-chip">📍 ${sp.range}</span>`:''}
           ${sp.duration?`<span class="spell-meta-chip">⏱ ${sp.duration}</span>`:''}
-          ${sp.concentration?`<span class="spell-meta-chip conc">🔮 ${T('concentrazione')}</span>`:''}
+          ${sp.concentration?`<span class="spell-meta-chip conc">🔮 ${T('concentration')}</span>`:''}
           ${sp.saveAbility?`<span class="spell-meta-chip">TS ${abilityShortName(sp.saveAbility)}</span>`:''}
           ${sp.school?`<span class="spell-meta-chip">${dndTr('schools',sp.school)||sp.school}</span>`:''}
         </div>
@@ -1762,13 +1868,26 @@ function renderSpellsSection(){
         ${EDIT_MODE?`<button class="btn-edit-sm edit-only" onclick="addSpell(${lv})" style="margin-left:auto;">＋</button>`:''}
       </div>${cards}</div>`;
   });
-  return `<h2 id="incantesimi">${T('incantesimi')}${EDIT_MODE?`<button class="btn-edit-sm edit-only" style="margin-left:auto" onclick="addSpell(0)">＋</button>`:''}</h2>
+  return `${sectionHeader('spells',EDIT_MODE?`<button class="btn-edit-sm edit-only" style="margin-left:auto" onclick="addSpell(0)">＋</button>`:'')}
     <div class="section-header-line"></div>${infoBox}${spellSections||`<p class="empty-state">${T('noSpells')}</p>`}
-    ${EDIT_MODE?`<button class="add-btn edit-only" onclick="addSpell(null)">${T('aggiungiIncantesimo')}</button>`:''}
+    ${EDIT_MODE?`<button class="add-btn edit-only" onclick="addSpell(null)">${T('addSpell')}</button>`:''}
     <hr>`;
 }
 function renderWeapons(){
-  const C=CHAR; if(!(C.weapons||[]).length&&!EDIT_MODE) return '';
+  const C=CHAR;
+  const pb=C.proficiencyBonus||computedPB(C.level||1);
+  const scores=C.abilityScores||{};
+  function weaponAtk(w){
+    if(w.attackBonusOverride!=null) return modStr(w.attackBonusOverride);
+    const atkMod=abilityMod(scores[w.attackStat]||10);
+    return modStr(pb+atkMod+(w.magicBonus||0));
+  }
+  function weaponDmg(w){
+    if(w.damageOverride) return w.damageOverride;
+    const die=w.damageDie||'?';
+    const dmgMod=abilityMod(scores[w.attackStat]||10)+(w.magicBonus||0);
+    return `${die}${dmgMod>=0?'+'+dmgMod:dmgMod}`;
+  }
   const cards=(C.weapons||[]).map((w,i)=>`<div class="weapon-card">
     <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px;">
       <h3 style="margin:0;">${w.emoji||''} ${w.name||''}${w.quantity>1?' (×'+w.quantity+')':''} ${w.isNew?`<span class="tag-new">NUOVO</span>`:''}</h3>
@@ -1776,15 +1895,15 @@ function renderWeapons(){
         <button class="btn-edit-sm" onclick="editWeapon(${i})">✏️</button>
         <button class="btn-del-sm" onclick="deleteWeapon(${i})">🗑</button></div>`:''}
     </div>
-    <table style="margin-top:8px;"><tr><td><strong>${T('dannoCol')}</strong></td><td>${w.damage||'—'} ${w.damageType||''}</td></tr>
-      <tr><td><strong>${T('attaccoCol')}</strong></td><td>${w.attackBonus||'—'} (${abilityShortName(w.attackStat||'')})</td></tr>
-      ${w.properties?`<tr><td><strong>${T('propCol')}</strong></td><td>${w.properties}</td></tr>`:''}
+    <table style="margin-top:8px;"><tr><td><strong>${T('attackCol')}</strong></td><td>${weaponAtk(w)} (${abilityShortName(w.attackStat||'')})</td></tr>
+      <tr><td><strong>${T('damageCol')}</strong></td><td>${weaponDmg(w)} ${dndTr('damageTypes',w.damageType)||w.damageType||''}</td></tr>
+      ${w.properties?`<tr><td><strong>${T('propertiesCol')}</strong></td><td>${w.properties}</td></tr>`:''}
     </table>
     ${w.notes?`<p class="note" style="margin-top:6px;">📌 ${md(w.notes)}</p>`:''}
   </div>`).join('');
-  return `<h2 id="armi">${T('armiTitle')}</h2><div class="section-header-line"></div>
+  return `${sectionHeader('weapons')}<div class="section-header-line"></div>
     ${cards||`<p class="empty-state">${T('noWeapons')}</p>`}
-    ${EDIT_MODE?`<button class="add-btn edit-only" onclick="addWeapon()">${T('aggiungiArma')}</button>`:''}
+    ${EDIT_MODE?`<button class="add-btn edit-only" onclick="addWeapon()">${T('addWeapon')}</button>`:''}
     <hr>`;
 }
 function renderEquipment(){
@@ -1796,14 +1915,14 @@ function renderEquipment(){
   const goldRow=`<tr><td><strong>${T('lbl_totalGold')}</strong></td>
     <td><strong><span id="gold-static">${SESSION?.gold||0}</span> GP</strong></td>
     ${EDIT_MODE?'<td></td>':''}</tr>`;
-  return `<h2 id="equipaggiamento">${T('equipaggiamento')}</h2><div class="section-header-line"></div>
-    <table class="equip-table"><tr><th>${T('oggettoCol')}</th><th>${T('noteCol')}</th>${EDIT_MODE?'<th></th>':''}</tr>
+  return `${sectionHeader('equipment')}<div class="section-header-line"></div>
+    <table class="equip-table"><tr><th>${T('itemCol')}</th><th>${T('notesCol')}</th>${EDIT_MODE?'<th></th>':''}</tr>
       ${rows}${goldRow}</table>
-    ${EDIT_MODE?`<button class="add-btn edit-only" onclick="addEquip()">${T('aggiungiEquip')}</button>`:''}
+    ${EDIT_MODE?`<button class="add-btn edit-only" onclick="addEquip()">${T('addItem')}</button>`:''}
     <hr>`;
 }
 function renderAlgorithm(){
-  const C=CHAR; if(!(C.combatAlgorithm||[]).length&&!EDIT_MODE) return '';
+  const C=CHAR;
   const blocks=(C.combatAlgorithm||[]).map((b,i)=>`<div class="algo-block">
     <div class="algo-block-title">${b.emoji||''} ${b.title||''} ${EDIT_MODE?`<button class="btn-edit-sm edit-only" onclick="editAlgoBlock(${i})">✏️</button> <button class="btn-del-sm edit-only" onclick="deleteAlgoBlock(${i})">🗑</button>`:''}</div>
     ${(b.steps||[]).map(st=>`<div class="algo-step${st.indent?' indent':''}">
@@ -1811,12 +1930,19 @@ function renderAlgorithm(){
       ${(st.bullets||[]).length?`<ul>${st.bullets.map(bl=>`<li>${md(bl)}</li>`).join('')}</ul>`:''}
     </div>`).join('')}
   </div>`).join('');
-  return `<h2 id="algoritmo">${T('algoritmo')}${EDIT_MODE?`<button class="btn-edit-sm edit-only" style="margin-left:auto" onclick="addAlgoBlock()">＋</button>`:''}</h2>
+  return `${sectionHeader('algorithm',EDIT_MODE?`<button class="btn-edit-sm edit-only" style="margin-left:auto" onclick="addAlgoBlock()">＋</button>`:'')}
     <div class="section-header-line"></div>
-    <div class="algo">${blocks||`<p class="empty-state">${T('noAlgo')}</p>`}</div>
-    ${EDIT_MODE?`<button class="add-btn edit-only" onclick="addAlgoBlock()">${T('aggiungiBlockAlgo')}</button>`:''}
+    <div class="algo">${blocks||`<p class="empty-state">${T('noAlgorithm')}</p>`}</div>
+    ${EDIT_MODE?`<button class="add-btn edit-only" onclick="addAlgoBlock()">${T('addAlgoBlock')}</button>`:''}
     <hr>`;
 }
+// Assign render functions to SECTION_REGISTRY (defined above, functions defined here)
+SECTION_REGISTRY['base-data'].render = renderBaseData;
+SECTION_REGISTRY['skills'].render = renderSkills;
+SECTION_REGISTRY['spells'].render = renderSpellsSection;
+SECTION_REGISTRY['weapons'].render = renderWeapons;
+SECTION_REGISTRY['equipment'].render = renderEquipment;
+SECTION_REGISTRY['algorithm'].render = renderAlgorithm;
 // ═══════════════ TRACKER INTERACTIONS ═══════════════
 function addLog(msg,type=''){
   const w=document.getElementById('log-wrap'); if(!w) return;
@@ -1875,55 +2001,64 @@ function spendHD(){
   S.hp.current=Math.min(effMax,S.hp.current+roll);
   S.hitDice.used=(S.hitDice.used||0)+1;
   addLog(`${T('logHD')} ${roll} ${T('logHDResult')} ${S.hp.current}`,'log-heal');
-  renderPannello(); saveAll();
+  renderPanel(); saveAll();
 }
-function resetHD(){SESSION.hitDice.used=0;renderPannello();addLog(T('logHDReset'));saveAll();}
+function resetHD(){SESSION.hitDice.used=0;renderPanel();addLog(T('logHDReset'));saveAll();}
 function clickHDPip(i){
   const used=SESSION.hitDice?.used||0;
   if(i<used) SESSION.hitDice.used=i; else SESSION.hitDice.used=i+1;
-  renderPannello(); saveAll();
+  renderPanel(); saveAll();
 }
 function useSlot(lv){
   const s=SESSION.spellSlots[lv]; if(!s) return;
   const tot=(CHAR.spellSlots||[]).find(sl=>sl.level===lv)?.total||0;
   if(s.used>=tot){addLog(`${T('logNoSlot')}${lv}.`);return;}
   s.used++;addLog(`${T('logSlot')}${lv}${T('logSlotUsed')} ${tot-s.used}`,'log-damage');
-  renderPannello(); saveAll();
+  renderPanel(); saveAll();
 }
 function resetSlot(lv){
   if(SESSION.spellSlots[lv]) SESSION.spellSlots[lv].used=0;
-  renderPannello(); saveAll();
+  renderPanel(); saveAll();
 }
 function clickSlotPip(lv,j){
   const s=SESSION.spellSlots[lv]; if(!s) return;
   if(j<s.used) s.used=j; else s.used=j+1;
-  renderPannello(); saveAll();
+  renderPanel(); saveAll();
+}
+function findTrackerById(id){
+  // Check standalone trackers
+  const st=CHAR.trackers?.find(tr=>(tr.id||slugify(tr.label))===id);
+  if(st) return {label:st.label, emoji:st.emoji, total:st.total, potionFormula:st.potionFormula, isPotion:st.isPotion};
+  // Check feature-embedded trackers
+  const f=(CHAR.features||[]).find(f=>f.tracker && slugify(f.title)===id);
+  if(f) return {label:f.title, emoji:f.emoji, total:f.tracker.total, die:f.tracker.die};
+  return null;
 }
 function useTracker(id){
-  const s=SESSION.trackers[id]; const t=CHAR.trackers?.find(tr=>tr.id===id);
+  const s=SESSION.trackers[id]; const t=findTrackerById(id);
   if(!s||!t) return;
   if(s.used>=t.total){addLog(`${T('logNoUses')} ${t.label}.`);return;}
   s.used++; addLog(`${t.emoji||''} ${t.label}: ${T('logTrackerUsed')} ${t.total-s.used}`,'log-damage');
-  renderPannello(); saveAll();
+  renderPanel(); saveAll();
 }
 function resetTracker(id){
   if(SESSION.trackers[id]) SESSION.trackers[id].used=0;
-  renderPannello(); saveAll();
+  renderPanel(); saveAll();
 }
 function clickTrackerPip(id,j){
   const s=SESSION.trackers[id]; if(!s) return;
   if(j<s.used) s.used=j; else s.used=j+1;
-  renderPannello(); saveAll();
+  renderPanel(); saveAll();
 }
 function usePotionTracker(id){
-  const s=SESSION.trackers[id]; const t=CHAR.trackers?.find(tr=>tr.id===id);
+  const s=SESSION.trackers[id]; const t=findTrackerById(id);
   if(!s||!t) return;
   if(s.used>=t.total){addLog(`${T('logNoPotionLeft')} ${t.label} ${T('logNoPotionRight')}`);return;}
   const roll=t.potionFormula?rollDice(t.potionFormula):0;
   const effMax=(CHAR.hp?.max||0)+(SESSION.hp?.aidBonus||0);
   SESSION.hp.current=Math.min(effMax,SESSION.hp.current+roll);
   s.used++; addLog(`${t.emoji||''} ${t.label}: ${t.potionFormula||''}=${roll} ${T('logPotionHealed')} ${SESSION.hp.current}`,'log-heal');
-  renderPannello(); updateHPDisplay(); saveAll();
+  renderPanel(); updateHPDisplay(); saveAll();
 }
 function changeGold(d){
   SESSION.gold=Math.max(0,(SESSION.gold||0)+d);
@@ -1969,14 +2104,22 @@ function longRest(){
   const C=CHAR, S=SESSION;
   S.hp.current=(C.hp?.max||0); S.hp.temp=0; S.hp.aidBonus=0;
   S.hitDice.used=0;
+  // Reset standalone trackers (respecting recovery field)
   (C.trackers||[]).forEach(t=>{
-    if(S.trackers[t.id]) S.trackers[t.id].used=0;
+    const tid=t.id||slugify(t.label);
+    if(tid && S.trackers[tid] && t.recovery!=='manual') S.trackers[tid].used=0;
+  });
+  // Reset feature-embedded trackers
+  (C.features||[]).forEach(f=>{
+    if(!f.tracker) return;
+    const tid=slugify(f.title);
+    if(tid && S.trackers[tid] && f.tracker.recovery!=='manual' && f.tracker.recovery!=='short') S.trackers[tid].used=0;
   });
   (C.spellSlots||[]).forEach(sl=>{if(S.spellSlots[sl.level])S.spellSlots[sl.level].used=0;});
   S.round=1; S.concentration=''; S.conditions=[];
   document.querySelectorAll('.death-pip').forEach(p=>p.classList.remove('used'));
   S.deathSucc=0; S.deathFail=0;
-  renderPannello(); updateHPDisplay(); addLog(T('logLongRest'),'log-heal'); saveAll();
+  renderPanel(); updateHPDisplay(); addLog(T('logLongRest'),'log-heal'); saveAll();
 }
 function shortRest(){addLog(T('logShortRest'),'log-heal');}
 function filterActions(btn,type){
@@ -2098,8 +2241,17 @@ function renderWizardStep(){
     if(!el)return;
     const val=WIZ_DATA[f.id]??f.default??'';
     if(f.type==='checkbox') el.checked=!!val;
+    else if(f.type==='select-or-custom'){
+      const optArr=typeof f.options==='function'?f.options():(f.options||[]);
+      const isCustom=val && val!=='_custom' && !optArr.some(o=>o.v===val && o.v!=='_custom');
+      el.value=isCustom?'_custom':val;
+      const ci=document.getElementById('wf-'+f.id+'-custom');
+      if(ci){ci.value=isCustom?val:'';ci.style.display=isCustom?'block':'none';}
+    }
     else el.value=val;
   });
+  // Call _afterRender hook for field-based steps too (e.g. class→subclass dependency)
+  if(step._afterRender) step._afterRender(WIZ_DATA);
 }
 function renderField(f){
   const lbl=`<label for="wf-${f.id}" class="wiz-label">${T(f.label)}${f.required?` <span style="color:var(--accent)">*</span>`:''}</label>`;
@@ -2118,6 +2270,13 @@ function renderField(f){
     inp=`<label style="display:flex;align-items:center;gap:8px;cursor:pointer;"><input id="wf-${f.id}" type="checkbox" ${val?'checked':''}> ${T(f.checkLabel||'')}</label>`;
   }else if(f.type==='emoji'){
     inp=`<input id="wf-${f.id}" class="wiz-input" type="text" maxlength="4" placeholder="🧙" value="${val}" style="font-size:1.6em;width:70px;">`;
+  }else if(f.type==='select-or-custom'){
+    const optArr=typeof f.options==='function'?f.options():(f.options||[]);
+    const isCustom=val && val!=='_custom' && !optArr.some(o=>o.v===val && o.v!=='_custom');
+    const selVal=isCustom?'_custom':val;
+    const opts=optArr.map(o=>`<option value="${o.v}" ${String(selVal)===String(o.v)?'selected':''}>${o.l}</option>`).join('');
+    inp=`<select id="wf-${f.id}" class="wiz-input" onchange="toggleCustomInput('${f.id}')">${opts}</select>
+      <input id="wf-${f.id}-custom" class="wiz-input" type="text" placeholder="${T('customPh')}" value="${isCustom?val:''}" style="margin-top:4px;display:${isCustom?'block':'none'};">`;
   }
   return `<div class="wiz-field">${lbl}${hint}${inp}</div>`;
 }
@@ -2131,6 +2290,10 @@ function collectStepData(){
     if(!el)return;
     if(f.type==='checkbox') WIZ_DATA[f.id]=el.checked;
     else if(f.type==='number') WIZ_DATA[f.id]=el.value!==''?Number(el.value):null;
+    else if(f.type==='select-or-custom'){
+      const ci=document.getElementById('wf-'+f.id+'-custom');
+      WIZ_DATA[f.id]=el.value==='_custom'?(ci?.value||''):el.value;
+    }
     else WIZ_DATA[f.id]=el.value;
   });
 }
@@ -2144,6 +2307,13 @@ function validateStep(){
       const el=document.getElementById('wf-'+f.id);
       if(!el)continue;
       if(f.type==='checkbox')continue;
+      if(f.type==='select-or-custom'){
+        if(el.value==='_custom'){
+          const ci=document.getElementById('wf-'+f.id+'-custom');
+          if(!ci||!ci.value.trim()) return `${T('wizRequired')}: ${T(f.label)}`;
+        } else if(!el.value||el.value.trim()==='') return `${T('wizRequired')}: ${T(f.label)}`;
+        continue;
+      }
       if(!el.value||el.value.trim()==='') return `${T('wizRequired')}: ${T(f.label)}`;
     }
   }
@@ -2173,26 +2343,65 @@ function renderContentBlockEditor(){
     <div id="cb-list">${rows}</div>
     <div style="display:flex;gap:6px;margin-top:8px;flex-wrap:wrap;">
       <select id="cb-type-sel" class="wiz-input" style="flex:1;">${typeOpts}</select>
-      <button class="btn" onclick="addBlock()">＋ ${T('aggiungiBlock')}</button>
+      <button class="btn" onclick="addBlock()">＋ ${T('addBlock')}</button>
     </div></div>`;
 }
 function addBlock(){
   const type=document.getElementById('cb-type-sel')?.value||'paragraph';
-  WIZ_BLOCKS.push({type,text:'',title:'',emoji:'',rows:[]});
+  WIZ_BLOCKS.push({type,text:'',title:'',emoji:'',rows:[],bullets:[],contentBlocks:[]});
   editBlock(WIZ_BLOCKS.length-1);
 }
+let CB_EDIT_IDX=-1, CB_EDIT_DATA=null;
 function editBlock(i){
-  const b=WIZ_BLOCKS[i];
-  const val=prompt(`${T('promptEditBlock')} (${b.type}) - ${T('promptBlockText')}`,b.text||b.title||b.label||'');
-  if(val===null)return;
-  if(b.type==='paragraph'||b.type==='note') b.text=val;
-  else if(b.type==='header') b.title=val;
-  else if(b.type==='bullets') b.bullets=(val||'').split('\n').filter(Boolean);
-  else if(b.type==='table'){b.label=val;}
-  else if(b.type==='subfeature'){b.title=val;}
-  refreshCBEditor();
+  CB_EDIT_IDX=i;
+  if(!CB_EDIT_DATA||CB_EDIT_DATA._srcIdx!==i) CB_EDIT_DATA={...JSON.parse(JSON.stringify(WIZ_BLOCKS[i])),_srcIdx:i};
+  const row=document.getElementById('cb-row-'+i); if(!row) return;
+  const b=CB_EDIT_DATA;
+  let html='<div style="width:100%;padding:6px 0;">';
+  if(b.type==='paragraph'||b.type==='note'){
+    html+=`<textarea id="cbe-text" class="wiz-input" rows="3">${b.text||''}</textarea>`;
+  } else if(b.type==='header'){
+    html+=`<input id="cbe-text" class="wiz-input" type="text" value="${(b.text||b.title||'').replace(/"/g,'&quot;')}">`;
+  } else if(b.type==='bullets'){
+    html+=`<textarea id="cbe-text" class="wiz-input" rows="4" placeholder="${T('cbBulletsHint')}">${(b.bullets||b.items||[]).join('\n')}</textarea>`;
+  } else if(b.type==='table'){
+    html+=cbeRenderTable(b);
+  } else if(b.type==='subfeature'){
+    html+=cbeRenderSubfeature(b);
+  }
+  html+=`<div style="display:flex;gap:6px;margin-top:6px;">
+    <button class="btn" onclick="saveBlockEdit()">✓ ${T('wizSave')}</button>
+    <button class="btn" onclick="cancelBlockEdit()">✕</button></div></div>`;
+  row.innerHTML=html;
 }
-function deleteBlock(i){WIZ_BLOCKS.splice(i,1);refreshCBEditor();}
+function deleteBlock(i){WIZ_BLOCKS.splice(i,1);CB_EDIT_IDX=-1;CB_EDIT_DATA=null;refreshCBEditor();}
+function saveBlockEdit(){
+  if(CB_EDIT_IDX<0||!CB_EDIT_DATA)return;
+  cbeCollectFromDOM();
+  delete CB_EDIT_DATA._srcIdx;
+  WIZ_BLOCKS[CB_EDIT_IDX]=CB_EDIT_DATA;
+  CB_EDIT_IDX=-1;CB_EDIT_DATA=null;refreshCBEditor();
+}
+function cancelBlockEdit(){CB_EDIT_IDX=-1;CB_EDIT_DATA=null;refreshCBEditor();}
+function cbeCollectFromDOM(){
+  if(!CB_EDIT_DATA)return; const b=CB_EDIT_DATA;
+  if(b.type==='paragraph'||b.type==='note') b.text=document.getElementById('cbe-text')?.value||'';
+  else if(b.type==='header'){b.text=document.getElementById('cbe-text')?.value||'';b.title=b.text;}
+  else if(b.type==='bullets') b.bullets=(document.getElementById('cbe-text')?.value||'').split('\n').filter(Boolean);
+  else if(b.type==='table'){
+    const rows=[];document.querySelectorAll('.cbe-tbl-row').forEach(r=>{
+      const inp=r.querySelectorAll('.wiz-input');if(inp.length>=2)rows.push([inp[0].value,inp[1].value]);
+    });b.rows=rows;
+  } else if(b.type==='subfeature'){
+    b.title=document.getElementById('cbe-title')?.value||'';
+    b.emoji=document.getElementById('cbe-emoji')?.value||'';
+    b.isNew=!!document.getElementById('cbe-new')?.checked;
+    const blocks=[];document.querySelectorAll('.cbe-sub-row').forEach(r=>{
+      const ta=r.querySelector('.cbe-sub-text');const type=ta?.dataset.type||'paragraph';const txt=ta?.value||'';
+      if(type==='bullets')blocks.push({type,bullets:txt.split('\n').filter(Boolean)});else blocks.push({type,text:txt});
+    });b.contentBlocks=blocks;
+  }
+}
 function moveBlock(i,dir){
   const j=i+dir; if(j<0||j>=WIZ_BLOCKS.length)return;
   [WIZ_BLOCKS[i],WIZ_BLOCKS[j]]=[WIZ_BLOCKS[j],WIZ_BLOCKS[i]];
@@ -2221,7 +2430,7 @@ function renderAlgoStepEditor(){
   </div>`).join('');
   return `<div class="wiz-field"><label class="wiz-label">${T('algoSteps')}</label>
     <div id="algo-step-list">${rows}</div>
-    <button class="btn" onclick="addAlgoStep()" style="margin-top:8px;">＋ ${T('aggiungiStep')}</button></div>`;
+    <button class="btn" onclick="addAlgoStep()" style="margin-top:8px;">＋ ${T('addStep')}</button></div>`;
 }
 function addAlgoStep(){
   const q=prompt(T('algoStepQuestion'))||'';
@@ -2329,6 +2538,13 @@ function actionTypeOpts(){ return Object.entries(DND.actionLabels).map(([v,enL])
 function alignOpts(){ const lbls=DND.tr[currentLang]?.alignments||DND.alignments; return DND.alignments.map((v,i)=>({v,l:lbls[i]||v})); }
 function recoveryOpts(){ return Object.entries(DND.recovery).map(([v,enL])=>({v,l:dndTr('recovery',v)||enL})); }
 function lvOpts(){ return [1,2,3,4,5,6,7,8,9].map(n=>({v:n,l:T('lvPrefix')+' '+n})); }
+// D&D identity opts — select + "Custom…" option for homebrew
+function raceOpts(){ return [{v:'',l:'— '+T('f_race')+' —'},...DND.races.map(r=>({v:r,l:dndTr('races',r)})),{v:'_custom',l:T('custom')}]; }
+function classOpts(){ return [{v:'',l:'— '+T('f_class')+' —'},...DND.classes.map(c=>({v:c,l:dndTr('classes',c)})),{v:'_custom',l:T('custom')}]; }
+function backgroundOpts(){ return [{v:'',l:'— '+T('f_background')+' —'},...DND.backgrounds.map(b=>({v:b,l:dndTr('backgrounds',b)})),{v:'_custom',l:T('custom')}]; }
+function subclassOpts(cls){ const list=DND.subclasses[cls]||[]; return [{v:'',l:'—'},...list.map(s=>({v:s,l:dndTr('subclasses',s)})),{v:'_custom',l:T('custom')}]; }
+function alignmentName(v){ const idx=DND.alignments.indexOf(v); const lbls=DND.tr[currentLang]?.alignments||DND.alignments; return lbls[idx]||v; }
+function toggleCustomInput(fid){ const s=document.getElementById('wf-'+fid); const c=document.getElementById('wf-'+fid+'-custom'); if(c) c.style.display=s&&s.value==='_custom'?'block':'none'; }
 
 const WIZARDS = {
 // ── Character Creation ──
@@ -2337,15 +2553,32 @@ const WIZARDS = {
   steps:[
     {label:'wiz_step_identity', fields:[
       {id:'name',label:'f_name',type:'text',placeholder:'wiz_ph_name',required:true},
-      {id:'race',label:'f_race',type:'text',placeholder:'wiz_ph_race',required:true},
-      {id:'class',label:'f_class',type:'text',placeholder:'wiz_ph_class',required:true},
-      {id:'subclass',label:'wiz_f_subclass',type:'text',placeholder:'wiz_ph_subclass'},
+      {id:'race',label:'f_race',type:'select-or-custom',options:()=>raceOpts(),required:true},
+      {id:'class',label:'f_class',type:'select-or-custom',options:()=>classOpts(),required:true},
+      {id:'subclass',label:'wiz_f_subclass',type:'select-or-custom',options:()=>subclassOpts(WIZ_DATA.class||'')},
       {id:'level',label:'f_level',type:'number',min:1,max:20,default:1,required:true},
       {id:'alignment',label:'f_alignment',type:'select',options:()=>alignOpts()},
-      {id:'background',label:'f_background',type:'text'},
+      {id:'background',label:'f_background',type:'select-or-custom',options:()=>backgroundOpts()},
+      {id:'quote',label:'f_quote',type:'text',placeholder:'wiz_ph_quote'},
+      {id:'languages',label:'f_languages',type:'text',placeholder:'wiz_ph_languages'},
       {id:'playerName',label:'wiz_f_playerName',type:'text'},
       {id:'emoji',label:'wiz_f_emojiPG',type:'emoji',default:'🧙'},
-    ]},
+    ], _afterRender(data){
+      const classSel=document.getElementById('wf-class');
+      if(!classSel) return;
+      classSel.addEventListener('change',function(){
+        const cls=this.value==='_custom'?'':this.value;
+        WIZ_DATA.class=cls;
+        const subSel=document.getElementById('wf-subclass');
+        if(subSel){
+          const opts=subclassOpts(cls);
+          subSel.innerHTML=opts.map(o=>`<option value="${o.v}">${o.l}</option>`).join('');
+          WIZ_DATA.subclass='';
+          const ci=document.getElementById('wf-subclass-custom');
+          if(ci){ci.value='';ci.style.display='none';}
+        }
+      });
+    }},
     {label:'wiz_step_abilityScores',
       _renderStep(data){ return renderAbilityBuyStep(data); },
       _collectData(data){
@@ -2368,8 +2601,9 @@ const WIZARDS = {
       {id:'hpMax',label:'f_hpMax',type:'number',min:1,required:true},
       {id:'hitDieType',label:'f_hitDie',type:'select',options:diceOpts(),default:'d8'},
       {id:'ac',label:'f_ac',type:'number',min:0,default:10,required:true},
+      {id:'armorNote',label:'f_acDesc',type:'text',placeholder:'wiz_ph_armorNote'},
       {id:'speed',label:'f_speed',type:'text',default:'9m'},
-      {id:'initiative',label:'iniziativa',type:'number',default:0},
+      {id:'initiative',label:'initiative',type:'number',default:0},
       {id:'proficiencyBonus',label:'f_profBonus',type:'number',default:2},
     ]},
     {label:'wiz_step_savingThrows', fields:[], _buildFields(){
@@ -2385,16 +2619,19 @@ const WIZARDS = {
     base.name=d.name; base.race=d.race; base.class=d.class; base.subclass=d.subclass;
     base.level=d.level||1; base.alignment=d.alignment; base.background=d.background;
     base.playerName=d.playerName; base.emoji=d.emoji||'🧙';
+    if(d.quote) base.quote=d.quote; else delete base.quote;
+    if(d.languages) base.languages=d.languages; else delete base.languages;
     base.abilityScores={STR:+d.STR||10,DEX:+d.DEX||10,CON:+d.CON||10,INT:+d.INT||10,WIS:+d.WIS||10,CHA:+d.CHA||10};
     base.abilityBudget=+(d.abilityBudget||PB_DEFAULT_BUDGET);
     base.hp={max:+d.hpMax||10}; base.hitDieType=parseInt((d.hitDieType||'d8').replace(/\D/g,''))||8;
-    base.ac=+d.ac||10; base.speed=d.speed||'9m'; base.initiative=+d.initiative||0;
+    base.ac=+d.ac||10; if(d.armorNote) base.armorNote=d.armorNote; else delete base.armorNote;
+    base.speed=d.speed||'9m'; base.initiative=+d.initiative||0;
     base.proficiencyBonus=+d.proficiencyBonus||2;
     base.savingThrows=['STR','DEX','CON','INT','WIS','CHA'].filter(a=>d['saves'+a]);
     if(!isEdit){
-      base.skills=[]; base.features=[]; base.spells=[]; base.weapons=[]; base.equipment=[];
-      base.trackers=[]; base.actions=[]; base.conditions=[...DND.conditions];
-      base.sidebar=[]; base.combatAlgorithm=[];
+      base.skills={}; base.features=[]; base.spells=[]; base.weapons=[]; base.equipment=[];
+      base.trackers=[]; base.customConditions=[];
+      base.sidebar=[...DEFAULT_SIDEBAR]; base.combatAlgorithm=[];
       SESSION=createDefaultSession(base);
     } else {
       if(SESSION?.hp) SESSION.hp.max=+d.hpMax||SESSION.hp.max;
@@ -2442,7 +2679,7 @@ const WIZARDS = {
   steps:[{label:'wiz_weapon_title', fields:[
     {id:'name',label:'f_name',type:'text',required:true},
     {id:'emoji',label:'f_emoji',type:'emoji'},
-    {id:'damage',label:'wiz_f_damageFull',type:'text',required:true},
+    {id:'damageDie',label:'wiz_f_damageFull',type:'text',required:true},
     {id:'damageType',label:'f_damageType',type:'select',options:()=>damageOpts()},
     {id:'attackStat',label:'wiz_f_attackStatLabel',type:'select',options:()=>abilityOpts()},
     {id:'attackBonus',label:'wiz_f_attackBonusTotal',type:'text',placeholder:'wiz_ph_attackBonus'},
@@ -2452,7 +2689,7 @@ const WIZARDS = {
     {id:'isNew',label:'wiz_f_markNew',type:'checkbox'},
   ]}],
   onSave(d,idx){
-    const w={name:d.name,emoji:d.emoji,damage:d.damage,damageType:d.damageType,
+    const w={name:d.name,emoji:d.emoji,damageDie:d.damageDie,damageType:d.damageType,
       attackStat:d.attackStat,attackBonus:d.attackBonus,quantity:+d.quantity||1,
       properties:d.properties,notes:d.notes,isNew:!!d.isNew};
     if(!CHAR.weapons)CHAR.weapons=[];
@@ -2486,12 +2723,49 @@ const WIZARDS = {
       {id:'secretLabel',label:'wiz_f_specialLabel',type:'text'},
     ]},
     {label:'wiz_step_content', hasContentBlocks:true, fields:[]},
+    {label:'wiz_step_trackerAction', fields:[
+      {id:'hasTracker',label:'wiz_f_hasTracker',type:'checkbox'},
+      {id:'trackerTotal',label:'wiz_f_totalUses',type:'number',min:1,default:1},
+      {id:'trackerRecovery',label:'f_recovery',type:'select',options:()=>recoveryOpts()},
+      {id:'trackerDie',label:'f_die',type:'text'},
+      {id:'trackerShowDie',label:'f_showDie',type:'checkbox'},
+      {id:'hasAction',label:'wiz_f_hasAction',type:'checkbox'},
+      {id:'actionType',label:'f_actionType',type:'select',options:()=>actionTypeOpts()},
+      {id:'actionDesc',label:'wiz_f_actionDesc',type:'text'},
+    ]},
   ],
   onSave(d,idx,blocks){
+    const oldTitle=idx!==null&&idx!==undefined?CHAR.features[idx]?.title:null;
     const f={title:d.title,emoji:d.emoji,subtitle:d.subtitle,source:d.source,
       isNew:!!d.isNew,isSecret:!!d.isSecret,secretLabel:d.secretLabel,contentBlocks:blocks};
+    // Embedded tracker
+    if(d.hasTracker && d.trackerTotal>0){
+      f.tracker={total:+d.trackerTotal||1,recovery:d.trackerRecovery||'long'};
+      if(d.trackerDie) f.tracker.die=d.trackerDie;
+      if(d.trackerShowDie) f.tracker.showDie=true;
+    }
+    // Embedded action
+    if(d.hasAction && d.actionType){
+      f.action={type:d.actionType,description:d.actionDesc||''};
+    }
     if(!CHAR.features)CHAR.features=[];
-    if(idx!==null&&idx!==undefined)CHAR.features[idx]=f; else CHAR.features.push(f);
+    if(idx!==null&&idx!==undefined){
+      CHAR.features[idx]=f;
+      // Update sidebar ID if title changed
+      if(oldTitle && oldTitle!==d.title){
+        const oldId=slugify(oldTitle), newId=slugify(d.title);
+        const sbIdx=(CHAR.sidebar||[]).indexOf(oldId);
+        if(sbIdx>=0) CHAR.sidebar[sbIdx]=newId;
+      }
+    } else {
+      CHAR.features.push(f);
+      // Auto-add to sidebar
+      const fId=slugify(d.title);
+      if(fId && !(CHAR.sidebar||[]).includes(fId)){
+        if(!CHAR.sidebar) CHAR.sidebar=[];
+        CHAR.sidebar.push(fId);
+      }
+    }
   }
 },
 // ── Tracker ──
@@ -2531,29 +2805,6 @@ const WIZARDS = {
     if(!SESSION.trackers[t.id])SESSION.trackers[t.id]={used:0};
   }
 },
-// ── Action ──
-'action':{
-  title:'wiz_action_title',
-  steps:[{label:'wiz_action_title', fields:[
-    {id:'label',label:'f_label',type:'text',required:true},
-    {id:'emoji',label:'f_emoji',type:'emoji'},
-    {id:'type',label:'f_actionType',type:'select',options:()=>actionTypeOpts()},
-    {id:'description',label:'wiz_f_actionDescShort',type:'textarea',rows:2},
-    {id:'damage',label:'wiz_f_damageFormula',type:'text'},
-    {id:'toHit',label:'wiz_f_toHit',type:'text'},
-    {id:'dc',label:'wiz_f_dcSave',type:'number'},
-    {id:'dcAbility',label:'wiz_f_dcAbility',type:'select',options:()=>[{v:'',l:'—'},...abilityOpts()]},
-    {id:'uses',label:'wiz_f_usesEmpty',type:'number'},
-    {id:'recovery',label:'wiz_f_recoveryUses',type:'select',options:()=>recoveryOpts()},
-  ]}],
-  onSave(d,idx){
-    const a={id:slugify(d.label),label:d.label,emoji:d.emoji,type:d.type,description:d.description,
-      damage:d.damage,toHit:d.toHit,dc:d.dc?+d.dc:null,dcAbility:d.dcAbility,
-      uses:d.uses?+d.uses:null,recovery:d.recovery};
-    if(!CHAR.actions)CHAR.actions=[];
-    if(idx!==null&&idx!==undefined)CHAR.actions[idx]=a; else CHAR.actions.push(a);
-  }
-},
 // ── Condition ──
 'condition':{
   title:'wiz_condition_title',
@@ -2561,8 +2812,8 @@ const WIZARDS = {
     {id:'name',label:'wiz_f_conditionName',type:'text',required:true},
   ]}],
   onSave(d){
-    if(!CHAR.conditions)CHAR.conditions=[];
-    if(!CHAR.conditions.includes(d.name))CHAR.conditions.push(d.name);
+    if(!CHAR.customConditions)CHAR.customConditions=[];
+    if(!CHAR.customConditions.includes(d.name))CHAR.customConditions.push(d.name);
   }
 },
 // ── Spell Slot ──
@@ -2598,19 +2849,6 @@ const WIZARDS = {
     if(idx!==null&&idx!==undefined)CHAR.combatAlgorithm[idx]=b; else CHAR.combatAlgorithm.push(b);
   }
 },
-// ── Sidebar Link ──
-'sidebarlink':{
-  title:'wiz_sidebarlink_title',
-  steps:[{label:'wiz_sidebarlink_title', fields:[
-    {id:'label',label:'wiz_f_linkLabel',type:'text',required:true},
-    {id:'emoji',label:'f_emoji',type:'emoji'},
-  ]}],
-  onSave(d,idx){
-    const s={id:slugify(d.label),label:d.label,emoji:d.emoji};
-    if(!CHAR.sidebar)CHAR.sidebar=[];
-    if(idx!==null&&idx!==undefined)CHAR.sidebar[idx]=s; else CHAR.sidebar.push(s);
-  }
-},
 // ── Spellcasting Info ──
 'spellcasting':{
   title:'wiz_spellcasting_title',
@@ -2619,16 +2857,17 @@ const WIZARDS = {
     {id:'saveDC',label:'wiz_f_magicDC',type:'number'},
     {id:'attackBonus',label:'wiz_f_magicAttack',type:'number'},
     {id:'focus',label:'wiz_f_magicFocus',type:'text'},
+    {id:'preparedCaster',label:'wiz_f_preparedCaster',type:'checkbox'},
   ]}],
   onSave(d){
-    CHAR.spellcasting={ability:d.ability,saveDC:+d.saveDC||0,attackBonus:+d.attackBonus||0,focus:d.focus};
+    CHAR.spellcasting={ability:d.ability,saveDC:+d.saveDC||0,attackBonus:+d.attackBonus||0,focus:d.focus,preparedCaster:!!d.preparedCaster};
   }
 },
 // ── Skills ──
 'skills':{
   title:'wiz_skills_title',
   // fields built lazily so currentLang is resolved at open time
-  steps:[{label:'abilita', fields:[], _buildFields(){
+  steps:[{label:'skills', fields:[], _buildFields(){
     return DND.standardSkills.map(sk=>({
       id:'sk_'+sk.id, label:skillName(sk),
       type:'select',
@@ -2641,22 +2880,13 @@ const WIZARDS = {
     }));
   }}],
   onSave(d){
-    const existing=CHAR.skills||[];
-    const stdNames=new Set(DND.standardSkills.map(sk=>sk.en));
-    // also include Italian names for legacy backward compat
-    DND.standardSkills.forEach(sk=>{ const itName=DND.tr.it?.skills?.[sk.id]; if(itName) stdNames.add(itName); });
-    CHAR.skills=DND.standardSkills
-      .filter(sk=>{
-        const type=d['sk_'+sk.id];
-        if(type && type!=='none') return true; // has proficiency — always include
-        // 'none': keep only if the skill was already in the list
-        const itName=DND.tr.it?.skills?.[sk.id];
-        return existing.some(s=>s.name===sk.en||(itName&&s.name===itName));
-      })
-      .map(sk=>({name:sk.en, ability:sk.ability, type:d['sk_'+sk.id]||'none'}));
-    // re-append any non-standard custom skills
-    const custom=existing.filter(s=>!stdNames.has(s.name));
-    if(custom.length) CHAR.skills.push(...custom);
+    // v3: save as map {skillId: proficiencyLevel}, omit 'none'
+    const skills={};
+    DND.standardSkills.forEach(sk=>{
+      const type=d['sk_'+sk.id];
+      if(type && type!=='none') skills[sk.id]=type;
+    });
+    CHAR.skills=skills;
   }
 },
 }; // end WIZARDS
@@ -2671,9 +2901,10 @@ function flattenChar(){
   return {
     name:C.name,race:C.race,class:C.class,subclass:C.subclass,level:C.level,
     alignment:C.alignment,background:C.background,playerName:C.playerName,emoji:C.emoji,
+    quote:C.quote,languages:C.languages,
     STR:sc.STR,DEX:sc.DEX,CON:sc.CON,INT:sc.INT,WIS:sc.WIS,CHA:sc.CHA,
     abilityBudget:C.abilityBudget||PB_DEFAULT_BUDGET,
-    hpMax:C.hp?.max,hitDieType:C.hitDieType?'d'+C.hitDieType:'d8',ac:C.ac,speed:C.speed,
+    hpMax:C.hp?.max,hitDieType:C.hitDieType?'d'+C.hitDieType:'d8',ac:C.ac,armorNote:C.armorNote,speed:C.speed,
     initiative:C.initiative,proficiencyBonus:C.proficiencyBonus,
     savesSTR:saves.includes('STR'),savesDEX:saves.includes('DEX'),
     savesCON:saves.includes('CON'),savesINT:saves.includes('INT'),
@@ -2688,6 +2919,8 @@ function deleteSpell(idx){ if(!confirm(T('confirmDelete')))return; CHAR.spells.s
 function editSpellcasting(){ openWizard('spellcasting',null,{...(CHAR.spellcasting||{})}); }
 // Spell slots
 function addSpellSlot(){ openWizard('spellslot',null,{}); }
+function editSpellSlot(idx){ const sl=(CHAR.spellSlots||[])[idx]; if(sl) openWizard('spellslot',idx,{level:sl.level,total:sl.total}); }
+function deleteSpellSlot(idx){ if(!confirm(T('confirmDelete')))return; CHAR.spellSlots.splice(idx,1); saveAll(); renderAll(); }
 // Weapons
 function addWeapon(){ openWizard('weapon',null,{}); }
 function editWeapon(idx){ openWizard('weapon',idx,{...(CHAR.weapons||[])[idx]}); }
@@ -2700,18 +2933,34 @@ function deleteEquip(idx){ if(!confirm(T('confirmDelete')))return; CHAR.equipmen
 function addFeature(){ openWizard('feature',null,{}); }
 function editFeature(idx){
   const f=(CHAR.features||[])[idx];
-  openWizard('feature',idx,{...f},);
+  const flat={...f};
+  // Flatten embedded tracker for wizard fields
+  if(f.tracker){
+    flat.hasTracker=true; flat.trackerTotal=f.tracker.total;
+    flat.trackerRecovery=f.tracker.recovery; flat.trackerDie=f.tracker.die;
+    flat.trackerShowDie=!!f.tracker.showDie;
+  }
+  // Flatten embedded action for wizard fields
+  if(f.action){
+    flat.hasAction=true; flat.actionType=f.action.type;
+    flat.actionDesc=f.action.description;
+  }
+  openWizard('feature',idx,flat);
   WIZ_BLOCKS=[...(f.contentBlocks||[])];
 }
-function deleteFeature(idx){ if(!confirm(T('confirmDelete')))return; CHAR.features.splice(idx,1); saveAll(); renderAll(); }
+function deleteFeature(idx){
+  if(!confirm(T('confirmDelete')))return;
+  const f=CHAR.features[idx];
+  const fId=f?slugify(f.title):'';
+  CHAR.features.splice(idx,1);
+  // Remove from sidebar
+  if(fId) CHAR.sidebar=(CHAR.sidebar||[]).filter(s=>s!==fId);
+  saveAll(); renderAll();
+}
 // Trackers
 function addTracker(){ openWizard('tracker',null,{}); }
 function editTracker(idx){ openWizard('tracker',idx,{...(CHAR.trackers||[])[idx]}); }
 function deleteTracker(idx){ if(!confirm(T('confirmDelete')))return; CHAR.trackers.splice(idx,1); saveAll(); renderAll(); }
-// Actions
-function addAction(){ openWizard('action',null,{}); }
-function editAction(idx){ openWizard('action',idx,{...(CHAR.actions||[])[idx]}); }
-function deleteAction(idx){ if(!confirm(T('confirmDelete')))return; CHAR.actions.splice(idx,1); saveAll(); renderAll(); }
 // Algo blocks
 function addAlgoBlock(){ openWizard('algoblock',null,{}); }
 function editAlgoBlock(idx){
@@ -2720,23 +2969,18 @@ function editAlgoBlock(idx){
   WIZ_ALGO_STEPS=[...(b.steps||[])];
 }
 function deleteAlgoBlock(idx){ if(!confirm(T('confirmDelete')))return; CHAR.combatAlgorithm.splice(idx,1); saveAll(); renderAll(); }
-// Sidebar
-function addSidebarLink(){ openWizard('sidebarlink',null,{}); }
-function editSidebarLink(idx){ openWizard('sidebarlink',idx,{...(CHAR.sidebar||[])[idx]}); }
-function deleteSidebarLink(idx){ if(!confirm(T('confirmDelete')))return; CHAR.sidebar.splice(idx,1); saveAll(); renderAll(); }
 // Skills
 function editSkills(){ openWizard('skills',null,flattenSkills()); }
 function flattenSkills(){
   const d={};
+  const skills=CHAR.skills||{};
   DND.standardSkills.forEach(sk=>{
-    const itName=DND.tr.it?.skills?.[sk.id];
-    const found=(CHAR.skills||[]).find(s=>s.name===sk.en||(itName&&s.name===itName));
-    d['sk_'+sk.id]=found?.type||'none';
+    d['sk_'+sk.id]=skills[sk.id]||'none';
   });
   return d;
 }
 // Conditions custom
-function addCustomCondition(){ openWizard('condition',null,{}); }
+// Conditions — uses wizard for custom conditions
 // Sidebar item helpers (generic — covers links, separators, and mobile close)
 function closeSidebarMobile(){ onOverlayClick(); }
 function addSidebarSep(){
@@ -2745,33 +2989,33 @@ function addSidebarSep(){
   saveAll(); renderAll();
 }
 function deleteSidebarItem(idx){
+  const item=(CHAR.sidebar||[])[idx];
+  // Don't allow deleting built-in sections
+  if(typeof item==='string' && SECTION_REGISTRY[item] && !SECTION_REGISTRY[item].deletable) return;
   if(!confirm(T('confirmDelete'))) return;
+  // If deleting a custom feature section, also delete the feature
+  if(typeof item==='string' && !SECTION_REGISTRY[item]){
+    const fIdx=(CHAR.features||[]).findIndex(f=>slugify(f.title)===item||f.sectionId===item);
+    if(fIdx>=0) CHAR.features.splice(fIdx,1);
+  }
   (CHAR.sidebar||[]).splice(idx,1);
   saveAll(); renderAll();
 }
 function editSidebarItem(idx){
-  const item=(CHAR.sidebar||[])[idx];
-  if(item && item.type!=='sep') editSidebarLink(idx);
+  // Sidebar items are now ID strings — editing not needed (sections have their own edit buttons)
 }
 // Condition CRUD
-function addCondition(){
-  const v=prompt(T('promptConditionName'));
-  if(v && v.trim()){
-    if(!CHAR.conditions) CHAR.conditions=[];
-    CHAR.conditions.push(v.trim());
-    saveAll(); renderAll();
-  }
-}
+function addCondition(){ openWizard('condition',null,{}); }
 function deleteCondition(idx){
   if(!confirm(T('confirmDelete'))) return;
-  (CHAR.conditions||[]).splice(idx,1);
+  (CHAR.customConditions||[]).splice(idx,1);
   saveAll(); renderAll();
 }
 // Skill CRUD — opens the bulk skills wizard (no per-row wizard needed)
 function editSkillItem(){ openWizard('skills',null,flattenSkills()); }
-function deleteSkill(idx){
+function deleteSkill(skillId){
   if(!confirm(T('confirmDelete'))) return;
-  (CHAR.skills||[]).splice(idx,1);
+  if(CHAR.skills) delete CHAR.skills[skillId];
   saveAll(); renderAll();
 }
 function addSkillItem(){ openWizard('skills',null,flattenSkills()); }
@@ -2852,7 +3096,7 @@ function logoutCharacter(){
   localStorage.removeItem('dnd_sheet_v2');
   // Reset rendered content
   document.getElementById('char-name').textContent=T('splashSub');
-  ['char-subtitle','char-description','char-quote','sections-area','pannello','nav-links','sidebar-footer'].forEach(id=>{
+  ['char-subtitle','char-description','char-quote','sections-area','panel','nav-links','sidebar-footer'].forEach(id=>{
     const el=document.getElementById(id); if(el) el.innerHTML='';
   });
   const img=document.getElementById('portrait-img'); if(img){img.src='';img.style.display='none';}
@@ -2875,7 +3119,7 @@ function init(){
   // Theme
   const savedTheme=localStorage.getItem('dnd-theme')||'dark';
   document.documentElement.setAttribute('data-theme',savedTheme);
-  const themeBtn=document.getElementById('theme-btn');
+  const themeBtn=document.getElementById('btn-theme');
   if(themeBtn) themeBtn.textContent=savedTheme==='light'?'🌙':'☀️';
   // Lang
   currentLang=localStorage.getItem('dnd-lang')||'it';
@@ -2883,6 +3127,7 @@ function init(){
   const loaded=loadFromStorage();
   if(!loaded||!CHAR){
     showSplash();
+    updateFixedControls();
     return;
   }
   hideSplash();
