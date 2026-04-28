@@ -1,0 +1,2580 @@
+<!DOCTYPE html>
+<html lang="it" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Scheda D&D 2024</title>
+  <style>
+/* ═══════════════ THEME VARIABLES ═══════════════ */
+*{box-sizing:border-box;margin:0;padding:0;}
+:root[data-theme="dark"]{
+  --bg:#09091a; --bg-card:#13132c; --bg-card2:#1c1c3a; --bg-input:#0d0d22;
+  --border:#32325e; --border-light:#22224a;
+  --text:#eaeaff; --text-muted:#7878aa; --text-faint:#38386a;
+  --accent:#8c8cff; --accent-dim:#1e1e50; --accent-glow:rgba(140,140,255,.28);
+  --sidebar-bg:#0c0c1f; --sidebar-text:#c0c0e0; --sidebar-hover:#1c1c40;
+  --shadow:0 4px 32px rgba(0,0,0,.6); --shadow-sm:0 2px 10px rgba(0,0,0,.4);
+  --hp-green:#3a9a3a; --hp-yellow:#c09020; --hp-red:#9a2020;
+  --tag-new-bg:#1a7a1a; --tag-sec-bg:#7a1a8a;
+  --algo-bg:#10102a; --algo-step-bg:#18183a; --algo-step-border:#38386a;
+  --log-damage:#ff8888; --log-heal:#88ff88;
+  --modal-bg:#13132c; --overlay:#000000d8;
+  --pip-on:#5a5aaa; --pip-off:#141430;
+  --slot1-color:#4477ee; --slot2-color:#8844ee; --slot3-color:#33aa55;
+  --slot4-color:#dd4444; --slot5-color:#cc9910; --slot6-color:#22aaaa;
+  --slot7-color:#cc33cc; --slot8-color:#dd6622; --slot9-color:#aaaaaa;
+  --cond-active-bg:#5a1010; --cond-active-border:#ee4444; --cond-active-text:#ffbbbb;
+  --toast-success-bg:#0a2a0a; --toast-success-border:#228822;
+  --toast-err-bg:#2a0a0a; --toast-err-border:#882222;
+  --toast-info-bg:#0a182a; --toast-info-border:#224488;
+  --scrollbar-track:#0d0d22; --scrollbar-thumb:#32325e;
+  --edit-mode-color:#e08820;
+}
+:root[data-theme="light"]{
+  --bg:#f3f3ff; --bg-card:#ffffff; --bg-card2:#ebebff; --bg-input:#e4e4ff;
+  --border:#a8a8d8; --border-light:#c4c4e8;
+  --text:#0e0e2a; --text-muted:#42427a; --text-faint:#9090c0;
+  --accent:#5050e0; --accent-dim:#dcdcff; --accent-glow:rgba(80,80,224,.18);
+  --sidebar-bg:#111130; --sidebar-text:#ccccee; --sidebar-hover:#1e1e48;
+  --shadow:0 4px 24px rgba(60,60,120,.13); --shadow-sm:0 2px 8px rgba(60,60,120,.08);
+  --hp-green:#228822; --hp-yellow:#887710; --hp-red:#881818;
+  --tag-new-bg:#1a7a1a; --tag-sec-bg:#7a1a8a;
+  --algo-bg:#eaeaff; --algo-step-bg:#f0f0ff; --algo-step-border:#b8b8e0;
+  --log-damage:#cc2020; --log-heal:#228822;
+  --modal-bg:#ffffff; --overlay:#00000099;
+  --pip-on:#6868dd; --pip-off:#d4d4f8;
+  --slot1-color:#2255cc; --slot2-color:#6622cc; --slot3-color:#228844;
+  --slot4-color:#aa2222; --slot5-color:#886600; --slot6-color:#117777;
+  --slot7-color:#882299; --slot8-color:#994411; --slot9-color:#666688;
+  --cond-active-bg:#ffe0e0; --cond-active-border:#dd3333; --cond-active-text:#770000;
+  --toast-success-bg:#d8ffd8; --toast-success-border:#228822;
+  --toast-err-bg:#ffd8d8; --toast-err-border:#882222;
+  --toast-info-bg:#d8d8ff; --toast-info-border:#4444aa;
+  --scrollbar-track:#e4e4ff; --scrollbar-thumb:#a8a8d8;
+  --edit-mode-color:#cc7700;
+}
+/* ═══════════════ BASE ═══════════════ */
+html{scroll-behavior:smooth;}
+body{font-family:'Segoe UI',Arial,sans-serif;background:var(--bg);color:var(--text);
+  line-height:1.7;font-size:15px;transition:background .3s,color .3s;}
+h1{font-size:1.9em;margin-bottom:2px;color:var(--text);}
+h2{font-size:1.2em;border-bottom:2px solid var(--border);padding-bottom:4px;
+  margin-top:40px;margin-bottom:14px;scroll-margin-top:20px;color:var(--text);
+  display:flex;align-items:center;gap:8px;}
+h3{font-size:1.02em;margin-top:18px;margin-bottom:4px;color:var(--text);}
+p{margin:4px 0;}
+.subtitle{color:var(--text-muted);font-style:italic;margin-top:2px;font-size:.95em;}
+.note{color:var(--text-muted);font-size:.92em;}
+hr{border:none;border-top:1px solid var(--border);margin:28px 0;}
+table{border-collapse:collapse;margin:10px 0;width:auto;}
+td,th{border:1px solid var(--border);padding:6px 14px;text-align:left;font-size:.93em;}
+th{background:var(--bg-card2);font-weight:bold;color:var(--text);}
+td{background:var(--bg-card);color:var(--text);}
+ul{margin:6px 0 10px 22px;} li{margin:3px 0;}
+a{color:var(--accent);text-decoration:none;}
+::-webkit-scrollbar{width:7px;height:7px;}
+::-webkit-scrollbar-track{background:var(--scrollbar-track);}
+::-webkit-scrollbar-thumb{background:var(--scrollbar-thumb);border-radius:4px;}
+.tag-new{display:inline-block;background:var(--tag-new-bg);color:#fff;
+  font-size:.72em;padding:1px 7px;border-radius:3px;vertical-align:middle;margin-left:5px;}
+.tag-secret{display:inline-block;background:var(--tag-sec-bg);color:#fff;
+  font-size:.72em;padding:1px 7px;border-radius:3px;vertical-align:middle;margin-left:5px;}
+.empty-state{color:var(--text-muted);font-style:italic;padding:18px 0;text-align:center;
+  border:2px dashed var(--border);border-radius:8px;margin:10px 0;}
+.section-header{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px;}
+.section-header h2{margin-top:0;border-bottom:none;padding-bottom:0;flex:1;}
+.section-header-line{border-bottom:2px solid var(--border);margin-bottom:14px;padding-bottom:4px;}
+/* ═══════════════ LAYOUT ═══════════════ */
+#sidebar{position:fixed;left:0;top:0;width:200px;height:100vh;overflow-y:auto;
+  background:var(--sidebar-bg);padding:16px 0 24px;z-index:200;
+  transition:transform .25s ease;display:flex;flex-direction:column;}
+#sidebar .nav-title{color:var(--text-faint);font-size:.7em;text-transform:uppercase;
+  letter-spacing:2px;padding:0 14px 10px;border-bottom:1px solid var(--border);margin-bottom:6px;}
+#sidebar a{display:block;color:var(--sidebar-text);text-decoration:none;
+  padding:5px 14px;font-size:.82em;border-left:3px solid transparent;transition:all .15s;}
+#sidebar a:hover{background:var(--sidebar-hover);color:#fff;border-left-color:var(--accent);}
+#sidebar a.active{background:var(--accent-dim);color:var(--accent);border-left-color:var(--accent);}
+.nav-sep{border-top:1px solid var(--border-light);margin:6px 0;}
+#main{margin-left:200px;max-width:920px;padding:32px 32px 80px;}
+#hamburger{display:none;position:fixed;top:12px;left:12px;z-index:300;
+  background:var(--bg-card);border:1px solid var(--border);color:var(--text);
+  border-radius:8px;padding:8px 12px;font-size:1.1em;cursor:pointer;}
+#sidebar-overlay{display:none;position:fixed;inset:0;background:var(--overlay);z-index:150;}
+@media(max-width:768px){
+  #hamburger{display:block;}
+  #sidebar{transform:translateX(-100%);width:220px;z-index:220;}
+  #sidebar.open{transform:translateX(0);}
+  #sidebar-overlay.open{display:block;}
+  #main{margin-left:0;padding:16px 14px 80px;}
+  h1{font-size:1.4em;}
+  table{font-size:.82em;}
+  td,th{padding:5px 8px;}
+}
+/* ═══════════════ HEADER ═══════════════ */
+#header-area{display:flex;align-items:flex-start;gap:20px;margin-bottom:24px;
+  background:linear-gradient(135deg,var(--bg-card) 0%,var(--bg) 100%);
+  border-radius:12px;padding:20px 22px;box-shadow:var(--shadow-sm);
+  border:1px solid var(--border);}
+.portrait-wrap{flex-shrink:0;width:96px;height:120px;border-radius:10px;
+  border:2px solid var(--border);overflow:hidden;background:var(--bg-card2);
+  cursor:pointer;display:flex;align-items:center;justify-content:center;
+  transition:border-color .2s,box-shadow .2s;position:relative;}
+.portrait-wrap:hover{border-color:var(--accent);box-shadow:0 0 12px var(--accent-glow);}
+.portrait-wrap img{width:100%;height:100%;object-fit:cover;display:none;}
+.portrait-ph{font-size:.62em;color:var(--text-faint);text-align:center;line-height:1.7;padding:6px;}
+#portrait-input{display:none;}
+.header-text{flex:1;min-width:0;}
+.header-text h1{font-size:1.85em;line-height:1.2;margin-bottom:4px;}
+.header-text .subtitle{margin-bottom:2px;}
+.header-text .char-description{color:var(--text-muted);font-size:.9em;margin:4px 0;}
+.header-text .char-quote{color:var(--text-muted);font-style:italic;font-size:.95em;
+  margin-top:8px;padding-left:12px;border-left:3px solid var(--accent);}
+@media(max-width:600px){
+  #header-area{flex-direction:column;gap:12px;}
+  .portrait-wrap{width:70px;height:88px;}
+}
+/* ═══════════════ PANNELLO ═══════════════ */
+#pannello{background:var(--bg-card);border-radius:14px;padding:22px 24px 26px;
+  margin-bottom:32px;box-shadow:var(--shadow);border:1px solid var(--border);}
+.pn-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(175px,1fr));gap:14px;margin-bottom:16px;}
+.pn-card{background:var(--bg-card2);border-radius:10px;padding:11px 14px 13px;
+  border:1px solid var(--border);transition:box-shadow .2s;}
+.pn-card:hover{box-shadow:0 0 10px var(--accent-glow);}
+.pn-card .label{font-size:.68em;text-transform:uppercase;letter-spacing:1.5px;
+  color:var(--text-muted);margin-bottom:7px;}
+.pn-card .value-row{display:flex;align-items:center;gap:6px;}
+.pn-card .big-val{font-size:2em;font-weight:bold;color:var(--text);min-width:38px;
+  text-align:center;line-height:1;}
+.pn-card .max-val{font-size:.85em;color:var(--text-muted);}
+.hp-bar-wrap{margin-top:9px;background:var(--bg-input);border-radius:5px;height:9px;overflow:hidden;}
+.hp-bar{height:100%;border-radius:5px;transition:width .4s,background .4s;}
+.hp-input-row{display:flex;gap:5px;align-items:center;margin-top:9px;flex-wrap:wrap;}
+.hp-input-row input[type=number]{width:54px;background:var(--bg-input);border:1px solid var(--border);
+  color:var(--text);border-radius:5px;padding:4px 6px;font-size:.9em;text-align:center;}
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;}
+.pips{display:flex;flex-wrap:wrap;gap:5px;margin-top:7px;}
+.pip{width:24px;height:24px;border-radius:50%;border:2px solid var(--border);
+  background:var(--pip-on);cursor:pointer;transition:all .15s;display:inline-flex;
+  align-items:center;justify-content:center;font-size:.62em;font-weight:bold;color:#fff;
+  user-select:none;}
+.pip.used{background:var(--pip-off);color:var(--text-faint);}
+.pip:hover{border-color:var(--accent);transform:scale(1.12);}
+.death-row{display:flex;gap:10px;align-items:center;margin-top:6px;}
+.death-pips{display:flex;flex-direction:row;gap:5px;align-items:center;}
+.death-pip{width:20px;height:20px;border-radius:50%;border:2px solid var(--border);
+  background:var(--bg-input);cursor:pointer;transition:all .15s;}
+.death-pip.succ:not(.used){border-color:#4a9a4a;}
+.death-pip.fail:not(.used){border-color:#9a4a4a;}
+.death-pip.succ.used{background:#4a9a4a;border-color:#4a9a4a;}
+.death-pip.fail.used{background:#9a4a4a;border-color:#9a4a4a;}
+.btn-row{display:flex;gap:6px;margin-top:7px;flex-wrap:wrap;}
+.btn{background:var(--bg-card);border:1px solid var(--border);color:var(--text-muted);
+  border-radius:6px;padding:5px 11px;font-size:.79em;cursor:pointer;transition:all .13s;white-space:nowrap;}
+.btn:hover{background:var(--accent-dim);color:var(--text);border-color:var(--accent);}
+.btn.danger:hover{background:#5a1a1a;color:#ffaaaa;border-color:#aa4444;}
+.btn.heal:hover{background:#1a4a1a;color:#aaffaa;border-color:#44aa44;}
+.btn.long-rest{background:#1a3a1a;border-color:#3a7a3a;color:#8aff8a;font-weight:bold;}
+.btn.long-rest:hover{background:#1a5a1a;}
+.btn.short-rest{background:#1a2a3a;border-color:#3a5a8a;color:#88aaff;font-weight:bold;}
+.btn.short-rest:hover{background:#1a3a5a;}
+.inline-field{display:flex;align-items:center;gap:8px;margin-top:7px;font-size:.85em;color:var(--text-muted);}
+.inline-field input{background:var(--bg-input);border:1px solid var(--border);color:var(--text);
+  border-radius:5px;padding:3px 8px;font-size:.95em;}
+.oro-row{display:flex;align-items:center;gap:7px;margin-top:7px;}
+.oro-row input[type=number]{width:82px;background:var(--bg-input);border:1px solid var(--border);
+  color:#ffd700;border-radius:5px;padding:5px 8px;font-size:1em;font-weight:bold;text-align:center;}
+#log-wrap{background:var(--bg-input);border:1px solid var(--border-light);border-radius:7px;
+  padding:7px 10px;max-height:95px;overflow-y:auto;margin-top:7px;font-size:.78em;color:var(--text-muted);}
+#log-wrap p{margin:2px 0;}
+.log-damage{color:var(--log-damage);}
+.log-heal{color:var(--log-heal);}
+.round-row{display:flex;align-items:center;gap:8px;margin-top:7px;font-size:.85em;}
+.round-val{font-size:1.6em;font-weight:bold;color:var(--text);min-width:32px;text-align:center;}
+.cond-grid{display:flex;flex-wrap:wrap;gap:6px;margin-top:7px;}
+.cond-btn{background:var(--bg-input);border:1.5px solid var(--border);color:var(--text-muted);
+  border-radius:14px;padding:3px 11px;font-size:.78em;cursor:pointer;transition:all .15s;user-select:none;}
+.cond-btn.active{background:var(--cond-active-bg);border-color:var(--cond-active-border);
+  color:var(--cond-active-text);font-weight:bold;}
+.cond-btn:hover{border-color:var(--accent);color:var(--text);}
+.action-filter-row{display:flex;gap:6px;flex-wrap:wrap;margin:10px 0 12px;}
+.filter-btn{background:var(--bg-input);border:1.5px solid var(--border);color:var(--text-muted);
+  border-radius:14px;padding:4px 13px;font-size:.79em;cursor:pointer;transition:all .15s;user-select:none;}
+.filter-btn.active{background:var(--accent-dim);border-color:var(--accent);color:var(--text);font-weight:bold;}
+.filter-btn:hover{border-color:var(--accent);color:var(--text);}
+.action-entry{display:flex;align-items:flex-start;gap:9px;padding:8px 0;
+  border-bottom:1px solid var(--border-light);}
+.action-entry:last-child{border-bottom:none;}
+.action-badge{flex-shrink:0;font-size:.63em;padding:2px 8px;border-radius:10px;
+  font-weight:bold;margin-top:3px;white-space:nowrap;}
+.badge-azione{background:#0e2a50;color:#7ab0ff;border:1px solid #2a4a7a;}
+.badge-bonus{background:#2a1a50;color:#b07aff;border:1px solid #4a2a7a;}
+.badge-reazione{background:#4a1a00;color:#ffaa55;border:1px solid #7a3a00;}
+.action-entry-body{flex:1;line-height:1.4;}
+.action-entry-name{font-weight:bold;color:var(--text);font-size:.88em;}
+.action-entry-note{color:var(--text-muted);font-size:.78em;margin-top:2px;}
+#note-rapide{width:100%;background:var(--bg-input);border:1px solid var(--border-light);
+  color:var(--text);border-radius:7px;padding:8px 11px;font-size:.85em;resize:vertical;
+  min-height:62px;margin-top:8px;font-family:inherit;}
+#conc-spell-input{background:var(--bg-input);border:1px solid var(--border);color:var(--text);
+  border-radius:5px;padding:3px 8px;font-size:.85em;width:170px;}
+.conc-active{color:#ffdd66;font-weight:bold;}
+.temp-hp-info{margin-top:6px;font-size:.79em;color:var(--text-muted);}
+/* ═══════════════ SECTIONS ═══════════════ */
+.spell-card{border-left:4px solid var(--accent);background:var(--bg-card);
+  border-radius:0 8px 8px 0;padding:12px 14px;margin:10px 0;
+  box-shadow:var(--shadow-sm);transition:box-shadow .2s;}
+.spell-card:hover{box-shadow:var(--shadow);}
+.spell-card-header{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:4px;}
+.spell-card-name{font-weight:bold;font-size:1em;color:var(--text);}
+.spell-card-original{color:var(--text-muted);font-size:.82em;font-style:italic;}
+.spell-card-meta{display:flex;flex-wrap:wrap;gap:6px;font-size:.8em;color:var(--text-muted);margin:5px 0;}
+.spell-meta-chip{background:var(--bg-card2);border:1px solid var(--border);
+  border-radius:5px;padding:1px 7px;}
+.spell-meta-chip.conc{border-color:#cc8800;color:#cc8800;}
+.spell-card-desc{font-size:.9em;color:var(--text);margin-top:5px;white-space:pre-line;}
+.spell-card-scaling{font-size:.82em;color:var(--text-muted);margin-top:4px;font-style:italic;}
+.spell-card-notes{font-size:.82em;color:var(--text-muted);margin-top:4px;}
+.algo{background:var(--algo-bg);border:1px solid var(--border);border-radius:10px;
+  padding:16px 18px;margin:12px 0;}
+.algo-block{margin-bottom:10px;}
+.algo-block-title{font-weight:bold;font-size:.95em;color:var(--accent);margin-bottom:6px;}
+.algo-step{background:var(--algo-step-bg);border-left:4px solid var(--algo-step-border);
+  padding:9px 13px;margin:7px 0;border-radius:0 6px 6px 0;}
+.algo-step.indent{margin-left:20px;border-left-color:var(--text-faint);}
+.algo-step-question{font-weight:bold;color:var(--text);margin-bottom:4px;font-size:.93em;}
+.algo-step ul{margin:0 0 0 18px;}
+.algo-step li{color:var(--text);font-size:.9em;}
+.weapon-card{background:var(--bg-card);border:1px solid var(--border);border-radius:8px;
+  padding:13px 15px;margin:10px 0;box-shadow:var(--shadow-sm);}
+.weapon-card h3{margin-top:0;margin-bottom:6px;}
+.subfeature-block{background:var(--bg-card2);border:1px solid var(--border-light);
+  border-radius:8px;padding:12px 14px;margin:10px 0;}
+.subfeature-header{display:flex;align-items:center;gap:7px;margin-bottom:8px;}
+.subfeature-title{font-weight:bold;font-size:.97em;color:var(--text);}
+.spellcasting-info-box{background:var(--bg-card2);border:1px solid var(--border);
+  border-radius:8px;padding:14px 16px;margin-bottom:18px;}
+.spell-level-section{margin-top:28px;}
+.spell-level-title{font-size:1.1em;font-weight:bold;color:var(--text);
+  border-bottom:1px solid var(--border);padding-bottom:4px;margin-bottom:10px;
+  display:flex;align-items:center;gap:8px;}
+.equip-table td:first-child{font-weight:500;}
+/* ═══════════════ WIZARD ═══════════════ */
+.overlay{position:fixed;inset:0;background:var(--overlay);z-index:1100;
+  display:flex;align-items:center;justify-content:center;padding:16px;}
+.modal{background:var(--modal-bg);border:1px solid var(--border);border-radius:14px;
+  width:100%;max-width:580px;max-height:90vh;display:flex;flex-direction:column;
+  box-shadow:0 8px 40px rgba(0,0,0,.5);animation:modalIn .2s ease;}
+@keyframes modalIn{from{opacity:0;transform:scale(.96);}to{opacity:1;transform:scale(1);}}
+.modal-header{padding:18px 22px 14px;border-bottom:1px solid var(--border);}
+.modal-title-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;}
+.modal-title{font-size:1.1em;font-weight:bold;color:var(--text);}
+.modal-close{background:none;border:none;color:var(--text-muted);font-size:1.2em;
+  cursor:pointer;padding:2px 6px;border-radius:4px;}
+.modal-close:hover{background:var(--bg-card2);color:var(--text);}
+.wiz-steps-dots{display:flex;gap:6px;align-items:center;}
+.wiz-dot{width:8px;height:8px;border-radius:50%;background:var(--border);transition:all .2s;}
+.wiz-dot.active{background:var(--accent);transform:scale(1.3);}
+.wiz-dot.done{background:var(--accent);opacity:.5;}
+.wiz-step-label{font-size:.75em;color:var(--text-muted);}
+.wiz-progress-bar{height:3px;background:var(--border);border-radius:2px;margin:10px 0 0;}
+#wiz-progress{height:100%;background:var(--accent);border-radius:2px;transition:width .3s;width:0%;}
+.modal-body{padding:20px 22px;overflow-y:auto;flex:1;}
+/* Sidebar buttons always use sidebar palette regardless of theme */
+#sidebar .btn-edit-sm{background:var(--sidebar-hover);border-color:var(--border-light);color:var(--sidebar-text);}
+#sidebar .btn-edit-sm:hover{border-color:var(--accent);color:var(--accent);}
+/* Light-mode ctrl-btn: use slight shadow for contrast on white bg */
+:root[data-theme="light"] .ctrl-btn{box-shadow:0 2px 8px rgba(0,0,0,.14);}
+.modal-footer{padding:14px 22px;border-top:1px solid var(--border);display:flex;
+  justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;}
+.modal-footer-right{display:flex;gap:8px;}
+.btn-primary{background:var(--accent);border:none;color:#fff;border-radius:7px;
+  padding:8px 18px;font-size:.9em;cursor:pointer;font-weight:bold;transition:all .15s;}
+.btn-primary:hover{filter:brightness(1.15);}
+.btn-primary.finish{background:linear-gradient(135deg,#2a8a2a,#1a6a1a);}
+.btn-secondary{background:var(--bg-card2);border:1px solid var(--border);color:var(--text-muted);
+  border-radius:7px;padding:8px 15px;font-size:.9em;cursor:pointer;transition:all .15s;}
+.btn-secondary:hover{border-color:var(--accent);color:var(--text);}
+.btn-cancel{background:none;border:none;color:var(--text-muted);font-size:.88em;
+  cursor:pointer;padding:6px 10px;border-radius:5px;}
+.btn-cancel:hover{color:var(--log-damage);}
+.form-group{margin-bottom:16px;}
+.form-group label{display:block;font-size:.83em;color:var(--text-muted);
+  margin-bottom:5px;font-weight:500;text-transform:uppercase;letter-spacing:.5px;}
+.form-group input[type=text],.form-group input[type=number],
+.form-group select,.form-group textarea{width:100%;background:var(--bg-input);
+  border:1px solid var(--border);color:var(--text);border-radius:7px;
+  padding:8px 11px;font-size:.93em;font-family:inherit;transition:border-color .15s;}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus{
+  outline:none;border-color:var(--accent);}
+.form-group .hint{font-size:.79em;color:var(--text-faint);margin-top:4px;}
+.form-group textarea{resize:vertical;min-height:80px;}
+.form-group select option{background:var(--bg-card);}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.form-row-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;}
+.ability-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;}
+.ability-cell{text-align:center;}
+.ability-cell label{font-size:.75em;font-weight:bold;color:var(--accent);margin-bottom:3px;}
+.ability-cell input{text-align:center;width:100%;padding:6px 2px!important;}
+.ability-mod{font-size:.8em;color:var(--text-muted);margin-top:3px;text-align:center;}
+.checkbox-row{display:flex;align-items:center;gap:8px;margin:5px 0;cursor:pointer;}
+.checkbox-row input[type=checkbox]{width:16px;height:16px;accent-color:var(--accent);}
+.checkbox-row span{font-size:.9em;color:var(--text);}
+.skills-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;}
+.skill-row{display:flex;align-items:center;gap:6px;padding:3px 0;}
+.skill-row label{font-size:.85em;color:var(--text);flex:1;}
+.skill-row select{background:var(--bg-input);border:1px solid var(--border);color:var(--text);
+  border-radius:5px;padding:2px 4px;font-size:.78em;}
+.content-block-list{margin:8px 0;}
+.cb-item{display:flex;align-items:center;gap:7px;background:var(--bg-card2);
+  border:1px solid var(--border);border-radius:7px;padding:7px 10px;margin:5px 0;}
+.cb-badge{font-size:.68em;background:var(--accent-dim);color:var(--accent);
+  border-radius:4px;padding:2px 6px;white-space:nowrap;}
+.cb-preview{font-size:.8em;color:var(--text-muted);flex:1;overflow:hidden;
+  text-overflow:ellipsis;white-space:nowrap;}
+.cb-actions{display:flex;gap:3px;}
+.cb-actions button{background:none;border:none;cursor:pointer;color:var(--text-muted);
+  padding:2px 5px;border-radius:4px;font-size:.85em;}
+.cb-actions button:hover{background:var(--bg-card);color:var(--text);}
+.cb-expanded{background:var(--bg-card2);border:1px solid var(--accent);border-radius:7px;padding:10px;margin:5px 0;}
+.algo-step-editor{background:var(--bg-card2);border:1px solid var(--border);
+  border-radius:7px;padding:10px;margin:6px 0;}
+.algo-bullet-row{display:flex;gap:6px;align-items:center;margin:4px 0;}
+.algo-bullet-row input{flex:1;background:var(--bg-input);border:1px solid var(--border);
+  color:var(--text);border-radius:5px;padding:4px 8px;font-size:.85em;}
+.algo-bullet-row button{background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:.9em;}
+
+/* ═══════════════ EDIT MODE ═══════════════ */
+.edit-only{display:none!important;}
+body.edit-mode .edit-only{display:inline-flex!important;}
+body.edit-mode .edit-only-block{display:block!important;}
+.edit-only-block{display:none!important;}
+.btn-edit-sm{background:var(--bg-card2);border:1px solid var(--border);color:var(--text-muted);
+  border-radius:5px;padding:2px 8px;font-size:.75em;cursor:pointer;transition:all .13s;
+  white-space:nowrap;}
+.btn-edit-sm:hover{border-color:var(--accent);color:var(--accent);}
+.btn-del-sm{background:none;border:1px solid transparent;color:var(--text-faint);
+  border-radius:5px;padding:2px 6px;font-size:.75em;cursor:pointer;transition:all .13s;}
+.btn-del-sm:hover{border-color:#aa4444;color:#ff8888;}
+.item-edit-row{display:flex;align-items:center;gap:5px;flex-wrap:wrap;}
+/* ── Sidebar edit-mode item row ── */
+.sb-item-edit{display:flex;align-items:center;gap:2px;padding:1px 4px 1px 6px;
+  border-left:3px solid transparent;transition:border-color .15s,background .15s;}
+.sb-item-edit.drag-over{border-left-color:var(--accent);background:var(--sidebar-hover);}
+.sb-item-edit[draggable="true"]{cursor:grab;}
+.sb-item-edit[draggable="true"]:active{cursor:grabbing;}
+.drag-handle{color:var(--sidebar-text);opacity:.4;font-size:1em;user-select:none;
+  padding:0 3px;flex-shrink:0;line-height:1;}
+.sb-item-edit a{flex:1;color:var(--sidebar-text);text-decoration:none;font-size:.82em;
+  padding:3px 2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0;}
+.sb-item-edit a:hover{color:#fff;}
+.sb-item-edit .nav-sep{flex:1;border-top:1px solid var(--border-light);margin:0;}
+.sb-item-edit .sep-label{flex:1;font-size:.7em;color:var(--text-faint);font-style:italic;
+  padding:0 4px;}
+.sb-edit-btns{display:flex;gap:1px;flex-shrink:0;}
+.sb-edit-btns .btn-del-sm{padding:1px 4px;}
+.sb-edit-btns .btn-del-sm:disabled{opacity:.25;cursor:default;pointer-events:none;}
+/* ── Section picker panel ── */
+#sb-section-picker{position:fixed;background:var(--sidebar-bg);border:1px solid var(--border-light);
+  border-radius:10px;padding:6px 0 8px;z-index:1200;box-shadow:0 8px 32px #0009;
+  min-width:200px;max-height:60vh;overflow-y:auto;}
+#sb-section-picker h4{font-size:.68em;text-transform:uppercase;letter-spacing:1.5px;
+  color:var(--text-faint);padding:4px 12px 6px;margin:0;}
+.sb-pick-item{display:flex;align-items:center;gap:8px;padding:6px 12px;
+  cursor:pointer;font-size:.82em;color:var(--sidebar-text);transition:background .12s;white-space:nowrap;}
+.sb-pick-item:hover{background:var(--sidebar-hover);color:#fff;}
+.sb-pick-item.already-in{opacity:.35;pointer-events:none;}
+.sb-pick-item .sb-pick-check{margin-left:auto;font-size:.75em;color:var(--accent);}
+.sb-pick-sep{border-top:1px solid var(--border-light);margin:4px 0;}
+.add-btn{display:inline-flex;align-items:center;gap:5px;background:var(--accent-dim);
+  border:1px dashed var(--accent);color:var(--accent);border-radius:7px;
+  padding:5px 12px;font-size:.82em;cursor:pointer;margin-top:10px;transition:all .15s;}
+.add-btn:hover{background:var(--accent);color:#fff;}
+
+/* ═══════════════ MISC ═══════════════ */
+#splash{position:fixed;inset:0;background:var(--bg);z-index:1000;
+  display:flex;align-items:center;justify-content:center;flex-direction:column;
+  padding:20px;text-align:center;}
+.splash-title{font-size:2.5em;font-weight:bold;color:var(--accent);margin-bottom:8px;}
+.splash-sub{color:var(--text-muted);font-size:1em;margin-bottom:40px;}
+.splash-btns{display:flex;gap:16px;flex-wrap:wrap;justify-content:center;}
+.splash-btn{background:var(--bg-card);border:2px solid var(--border);color:var(--text);
+  border-radius:12px;padding:20px 32px;font-size:1em;cursor:pointer;transition:all .2s;
+  display:flex;flex-direction:column;align-items:center;gap:8px;min-width:160px;}
+.splash-btn:hover{border-color:var(--accent);box-shadow:0 0 20px var(--accent-glow);transform:translateY(-2px);}
+.splash-btn-icon{font-size:2em;}
+.splash-btn-label{font-weight:bold;}
+.splash-btn-desc{font-size:.8em;color:var(--text-muted);}
+#toast-container{position:fixed;bottom:24px;right:24px;z-index:9000;display:flex;
+  flex-direction:column;gap:8px;pointer-events:none;}
+.toast{background:var(--bg-card);border:1px solid var(--border);border-radius:9px;
+  padding:11px 16px;font-size:.85em;color:var(--text);box-shadow:var(--shadow);
+  animation:toastIn .3s ease;max-width:300px;pointer-events:all;}
+.toast.success{border-color:var(--toast-success-border);background:var(--toast-success-bg);}
+.toast.error{border-color:var(--toast-err-border);background:var(--toast-err-bg);}
+.toast.info{border-color:var(--toast-info-border);background:var(--toast-info-bg);}
+@keyframes toastIn{from{opacity:0;transform:translateX(20px);}to{opacity:1;transform:none;}}
+#fixed-controls{position:fixed;top:14px;right:16px;z-index:1050;display:flex;gap:7px;}
+.ctrl-btn{background:var(--bg-card);border:1px solid var(--border);color:var(--text);
+  border-radius:8px;padding:7px 11px;font-size:.9em;cursor:pointer;transition:all .15s;
+  box-shadow:var(--shadow-sm);}
+.ctrl-btn:hover{border-color:var(--accent);color:var(--accent);}
+.ctrl-btn.active{background:var(--accent-dim);border-color:var(--accent);color:var(--accent);}
+.sidebar-footer{margin-top:auto;padding:10px 14px;border-top:1px solid var(--border-light);}
+.sidebar-footer .btn-edit-sm{width:100%;justify-content:center;margin:3px 0;}
+.conc-status-text{margin-top:4px;font-size:.8em;color:var(--text-muted);}
+@media(max-width:500px){.ability-grid{grid-template-columns:repeat(3,1fr);}
+  .form-row{grid-template-columns:1fr;} .form-row-3{grid-template-columns:1fr 1fr;}
+  .skills-grid{grid-template-columns:1fr;} .splash-title{font-size:1.7em;}}
+.spells-section-header{display:flex;align-items:center;gap:10px;}
+.slot-pip-inline{width:12px;height:12px;border-radius:50%;display:inline-block;margin:0 1px;}
+.section-actions{display:flex;align-items:center;gap:6px;}
+  </style>
+</head>
+<body>
+<!-- HAMBURGER -->
+<button id="hamburger" onclick="toggleSidebar()">☰</button>
+<div id="sidebar-overlay" onclick="toggleSidebar()"></div>
+
+<!-- SIDEBAR -->
+<nav id="sidebar">
+  <div class="nav-title" id="nav-title">📜 Indice</div>
+  <div id="nav-links"></div>
+  <div class="sidebar-footer" id="sidebar-footer"></div>
+</nav>
+
+<!-- MAIN -->
+<div id="main">
+  <div id="header-area">
+    <label class="portrait-wrap" for="portrait-input" title="Clicca per caricare immagine">
+      <img id="portrait-img" src="" alt="">
+      <div class="portrait-ph" id="portrait-ph">🧙<br>Aggiungi<br>foto</div>
+    </label>
+    <input type="file" id="portrait-input" accept="image/*" onchange="loadPortrait(event)">
+    <div class="header-text">
+      <h1 id="char-name">Scheda D&D 2024</h1>
+      <div id="char-subtitle"></div>
+      <div id="char-description"></div>
+      <div id="char-quote"></div>
+    </div>
+    <div class="edit-only" style="flex-shrink:0;align-self:flex-start;">
+      <button class="btn-edit-sm" onclick="openCharInfoWizard()">✏️ Info</button>
+    </div>
+  </div>
+  <hr>
+  <div id="pannello"></div>
+  <hr>
+  <div id="sections-area"></div>
+  <p id="footer-quote" style="text-align:center;font-style:italic;font-size:1.05em;margin-top:36px;color:var(--text-muted);"></p>
+</div>
+
+<!-- SPLASH -->
+<div id="splash">
+  <div class="splash-title">⚔️ D&D 2024</div>
+  <div class="splash-sub" id="splash-sub">Scheda Personaggio Interattiva</div>
+  <div class="splash-btns">
+    <button class="splash-btn" onclick="document.getElementById('import-char-input').click()">
+      <span class="splash-btn-icon">📂</span>
+      <span class="splash-btn-label" id="splash-import-label">Importa JSON</span>
+      <span class="splash-btn-desc" id="splash-import-desc">Carica la tua scheda esistente</span>
+    </button>
+    <button class="splash-btn" onclick="openCharCreationWizard()">
+      <span class="splash-btn-icon">✨</span>
+      <span class="splash-btn-label" id="splash-create-label">Crea Personaggio</span>
+      <span class="splash-btn-desc" id="splash-create-desc">Wizard guidato passo per passo</span>
+    </button>
+  </div>
+  <input type="file" id="import-char-input" accept=".json" style="display:none" onchange="importCharacter(event)">
+</div>
+
+<!-- WIZARD MODAL -->
+<div id="wizard-overlay" class="overlay" style="display:none" onclick="onOverlayClick(event)">
+  <div class="modal" id="wizard-modal">
+    <div class="modal-header">
+      <div class="modal-title-row">
+        <span class="modal-title" id="wiz-title">Wizard</span>
+        <button class="modal-close" onclick="closeWizard()">✕</button>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:space-between;">
+        <div class="wiz-steps-dots" id="wiz-dots"></div>
+        <span class="wiz-step-label" id="wiz-step-label"></span>
+      </div>
+      <div class="wiz-progress-bar"><div id="wiz-progress"></div></div>
+    </div>
+    <div class="modal-body" id="wiz-body"></div>
+    <div class="modal-footer">
+      <button class="btn-cancel" onclick="closeWizard()" id="wiz-cancel">Annulla</button>
+      <div class="modal-footer-right">
+        <button class="btn-secondary" id="wiz-back" onclick="wizBack()" style="display:none">← Indietro</button>
+        <button class="btn-primary" id="wiz-next" onclick="wizNext()">Avanti →</button>
+        <button class="btn-primary finish" id="wiz-finish" onclick="wizFinish()" style="display:none">✓ Salva</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div id="toast-container"></div>
+
+<!-- FIXED CONTROLS -->
+<div id="fixed-controls">
+  <button class="ctrl-btn" id="btn-logout" onclick="logoutCharacter()" title="Home" style="display:none">🏠</button>
+  <button class="ctrl-btn" id="btn-theme" onclick="toggleTheme()" title="Tema"></button>
+  <button class="ctrl-btn" id="btn-lang" onclick="toggleLang()" title="Lingua"></button>
+  <button class="ctrl-btn" id="btn-edit" onclick="toggleEditMode()" title="Modifica"></button>
+</div>
+
+<!-- Import file (hidden) -->
+<input type="file" id="import-session-input" accept=".json" style="display:none" onchange="importSession(event)">
+<script>
+// ═══════════════ CONSTANTS ═══════════════
+const DND = {
+  abilities:   ['STR','DEX','CON','INT','WIS','CHA'],
+  // English canonical values — these are stored in character JSON
+  schools:     ['Abjuration','Enchantment','Divination','Evocation','Illusion','Conjuration','Necromancy','Transmutation'],
+  damageTypes: ['Bludgeoning','Piercing','Slashing','Fire','Cold','Lightning','Thunder','Acid','Poison','Psychic','Radiant','Necrotic','Force'],
+  conditions:  ['Blinded','Charmed','Deafened','Exhausted','Frightened','Grappled','Incapacitated','Invisible','Paralyzed','Petrified','Poisoned','Prone','Restrained','Stunned','Unconscious'],
+  weaponProps: ['Finesse','Light','Thrown','Versatile','Heavy','Two-Handed','Reach','Loading','Ammunition','Special'],
+  alignments:  ['Lawful Good','Neutral Good','Chaotic Good','Lawful Neutral','True Neutral','Chaotic Neutral','Lawful Evil','Neutral Evil','Chaotic Evil'],
+  actionTypes: ['action','bonus','reaction','free'],
+  actionLabels:{ action:'ACTION', bonus:'BONUS ACTION', reaction:'REACTION', free:'FREE ACTION' },
+  recovery:    { long:'Long Rest', short:'Short Rest', manual:'Manual' },
+  blockTypes:  { paragraph:'Paragraph', bullets:'List', table:'Table', note:'Note', header:'Header', subfeature:'Subfeature' },
+  abilityNames:{ STR:'Strength', DEX:'Dexterity', CON:'Constitution', INT:'Intelligence', WIS:'Wisdom', CHA:'Charisma' },
+  abilityShort:{ STR:'STR', DEX:'DEX', CON:'CON', INT:'INT', WIS:'WIS', CHA:'CHA' },
+  dice:        ['d4','d6','d8','d10','d12','d20','d100'],
+  slotColors:  ['','#3a6adf','#7a3adf','#2a8a4a','#c04040','#b08010','#208080','#b030b0','#c06020','#909090'],
+  standardSkills:[
+    {id:'acrobatics',    en:'Acrobatics',     ability:'DEX'},
+    {id:'animalHandling',en:'Animal Handling', ability:'WIS'},
+    {id:'arcana',        en:'Arcana',          ability:'INT'},
+    {id:'athletics',     en:'Athletics',       ability:'STR'},
+    {id:'stealth',       en:'Stealth',         ability:'DEX'},
+    {id:'investigation', en:'Investigation',   ability:'INT'},
+    {id:'deception',     en:'Deception',       ability:'CHA'},
+    {id:'performance',   en:'Performance',     ability:'CHA'},
+    {id:'intimidation',  en:'Intimidation',    ability:'CHA'},
+    {id:'insight',       en:'Insight',         ability:'WIS'},
+    {id:'medicine',      en:'Medicine',        ability:'WIS'},
+    {id:'nature',        en:'Nature',          ability:'INT'},
+    {id:'perception',    en:'Perception',      ability:'WIS'},
+    {id:'persuasion',    en:'Persuasion',      ability:'CHA'},
+    {id:'sleightOfHand', en:'Sleight of Hand', ability:'DEX'},
+    {id:'religion',      en:'Religion',        ability:'INT'},
+    {id:'history',       en:'History',         ability:'INT'},
+    {id:'survival',      en:'Survival',        ability:'WIS'},
+  ],
+  // Per-language translations. To add a language: tr.fr = { abilityNames:{...}, ... }
+  tr:{
+    it:{
+      abilityNames:{ STR:'Forza',DEX:'Destrezza',CON:'Costituzione',INT:'Intelligenza',WIS:'Saggezza',CHA:'Carisma' },
+      abilityShort:{ STR:'FOR',DEX:'DES',CON:'COS',INT:'INT',WIS:'SAG',CHA:'CAR' },
+      schools:{ Abjuration:'Abiurazione',Enchantment:'Ammaliamento',Divination:'Divinazione',
+        Evocation:'Evocazione',Illusion:'Illusione',Conjuration:'Invocazione',
+        Necromancy:'Necromanzia',Transmutation:'Trasmutazione' },
+      damageTypes:{ Bludgeoning:'Contundente',Piercing:'Perforante',Slashing:'Tagliente',
+        Fire:'Fuoco',Cold:'Freddo',Lightning:'Fulmine',Thunder:'Tuono',Acid:'Acido',
+        Poison:'Veleno',Psychic:'Psichico',Radiant:'Radiante',Necrotic:'Necrotico',Force:'Forza' },
+      conditions:{ Blinded:'Accecato',Charmed:'Ammaliato',Deafened:'Assordato',Exhausted:'Esausto',
+        Frightened:'Spaventato',Grappled:'Afferrato',Incapacitated:'Incapacitato',Invisible:'Invisibile',
+        Paralyzed:'Paralizzato',Petrified:'Pietrificato',Poisoned:'Avvelenato',Prone:'Prono',
+        Restrained:'Trattenuto',Stunned:'Stordito',Unconscious:'Privo di Sensi' },
+      weaponProps:{ Finesse:'Finesse',Light:'Leggera',Thrown:'Lanciabile',Versatile:'Versatile',
+        Heavy:'Pesante','Two-Handed':'A due mani',Reach:'Portata',Loading:'Caricamento',
+        Ammunition:'Munizioni',Special:'Speciale' },
+      alignments:['Legale Buono','Neutrale Buono','Caotico Buono','Legale Neutrale','Neutrale',
+        'Caotico Neutrale','Legale Malvagio','Neutrale Malvagio','Caotico Malvagio'],
+      actionLabels:{ action:'AZIONE',bonus:'AZ. BONUS',reaction:'REAZIONE',free:'GRATUITA' },
+      recovery:{ long:'Riposo Lungo',short:'Riposo Breve',manual:'Manuale' },
+      blockTypes:{ paragraph:'Paragrafo',bullets:'Lista',table:'Tabella',note:'Nota',
+        header:'Titolo',subfeature:'Sottocapacità' },
+      skills:{ acrobatics:'Acrobazia',animalHandling:'Addestrare Animali',arcana:'Arcano',
+        athletics:'Atletica',stealth:'Furtività',investigation:'Indagare',deception:'Inganno',
+        performance:'Intrattenere',intimidation:'Intimidire',insight:'Intuizione',medicine:'Medicina',
+        nature:'Natura',perception:'Percezione',persuasion:'Persuasione',
+        sleightOfHand:'Rapidità di Mano',religion:'Religione',history:'Storia',survival:'Sopravvivenza' },
+    }
+  }
+};
+// DND helpers — translate terms and build option arrays for the current language
+function dndTr(cat,key){ return DND.tr[currentLang]?.[cat]?.[key]||key; }
+function abilityShortName(a){ return DND.tr[currentLang]?.abilityShort?.[a]||DND.abilityShort[a]||a; }
+function abilityLongName(a) { return DND.tr[currentLang]?.abilityNames?.[a]||DND.abilityNames[a]||a; }
+function skillName(sk){ return DND.tr[currentLang]?.skills?.[sk.id]||sk.en; }
+// ═══════════════ I18N ═══════════════
+// BASE  = English strings (single source of truth).
+// TRANSLATIONS = per-language overrides; missing keys fall back to BASE.
+// Adding a new language is one object: TRANSLATIONS.fr = { navTitle:'...', ... }
+const BASE = {
+  navTitle:'📜 Index', editSidebar:'✏️ Sidebar',
+  datiBase:'🧬 Base Data', abilita:'🎯 Skills', incantesimi:'✨ Spells',
+  trucchetti:'🔮 Cantrips', armi:'🗡️ Weapons', equipaggiamento:'🎒 Equipment',
+  algoritmo:'⚔️ Combat Algorithm',
+  pannelloTitle:'🎮 Game Panel',
+  pf:'❤️ Hit Points', pfTemp:'Temp HP', aidBonus:'HP max (aid)',
+  dadiVita:'🎲 Hit Dice', tiriMorte:'💀 Death Saving Throws',
+  succ:'✅ Successes', fail:'❌ Failures',
+  conc:'🔮 Concentration', concNone:'No active concentration.',
+  concActive:'⚡ Concentrating on: ',
+  round:'⚔️ Round', iniziativa:'Initiative:', oro:'🪙 Gold (GP)',
+  riposi:'😴 Rests', riposoLungo:'🌙 Long Rest', riposoBreve:'☕ Short Rest',
+  riposoLungoNote:'Long: everything recovers.', riposoBrevNote:'Short: spend Hit Dice.',
+  log:'📋 Action Log', logEmpty:'No actions yet...',
+  azioni:'⚡ Quick Actions', tutteAzioni:'All',
+  condizioni:'⚠️ Active Conditions',
+  note:'📝 Quick Notes', notePlaceholder:'Write conditions, plans, important enemies...',
+  sessione:'💾 Session', salvaSessione:'💾 Save JSON', caricaSessione:'📂 Load JSON',
+  copiaClipboard:'📋 Copy JSON', sessioneNote:'JSON contains everything: sheet + session.',
+  danno:'💥 Damage', cura:'💚 Heal', pfTempBtn:'🛡️ Temp HP',
+  spendi:'Use 1', reset:'Reset', spendiFull:'Spend 1 HD',
+  hdNote:'Recover ½ on short rest',
+  potUsaNote:'Bonus Action',
+  caratTitle:'Ability Scores', tsTitle:'🛡️ Saving Throws', skillNote:'Jack of All Trades already included',
+  competente:'✅ proficient', expertise:'⭐ Expertise', jack:'🃏 Jack of All Trades',
+  spellTitle:'Spells', cdTS:'Spell Save DC', bonusAttacco:'Spell Attack Bonus',
+  focus:'Focus', slotTitle:'Spell Slots', slotLivello:'Level', slotTot:'Slots', slotNote:'Notes',
+  slotNew:'NEW', recuperoLungo:'Recover on Long Rest',
+  cantripTitle:'Cantrips', spellLvPrefix:'Level',
+  lvSuffix:' Spells',
+  raggio:'Range', durata:'Duration', scuola:'School', azioneTipo:'Action',
+  concentrazione:'Concentration', ts:'Saving Throw',
+  scaling:'Scaling', nessuna:'none',
+  armiTitle:'Weapons', dannoCol:'Damage', attaccoCol:'Attack', propCol:'Properties',
+  equipTitle:'Equipment', oggettoCol:'Item', noteCol:'Notes',
+   aggiungiArma:'＋ Add Weapon', aggiungiEquip:'＋ Add Item',
+   aggiungiIncantesimo:'＋ Add Spell', aggiungiFeature:'＋ Add Section',
+   aggiungiAzione:'＋ Add Action', aggiungiSlot:'＋ Add Slot',
+   aggiungiTracker:'＋ Add Tracker', aggiungiCondizione:'＋ Add Condition',
+   aggiungiBlockAlgo:'＋ Add Block', aggiungiSidebar:'＋ Link',
+   aggiungiSezione:'Add to sidebar', separatore:'Separator', sezioniDisp:'Available sections',
+   sidebarEmpty:'Sidebar is empty. Enable edit mode (✏️) to add sections.',
+   featureSectionId:'Section ID (auto if empty)', featureAddToSidebar:'Add / update sidebar link',
+  editBtn:'✏️', delBtn:'🗑',
+  langToggle:'🇮🇹 IT', editMode:'✏️', editModeActive:'✏️ ON',
+  splashSub:'Interactive Character Sheet — D&D 2024',
+  splashImport:'Import JSON', splashImportDesc:'Load your existing sheet',
+  splashCreate:'Create Character', splashCreateDesc:'Step-by-step guided wizard',
+  f_name:'Name', f_class:'Class', f_level:'Level', f_race:'Race / Species',
+  f_background:'Background', f_alignment:'Alignment', f_subtitle:'Subtitle',
+  f_description:'Description', f_quote:'Quote', f_profBonus:'Proficiency Bonus',
+  f_speed:'Speed', f_hitDie:'Hit Die', f_hpMax:'Maximum HP',
+  f_ac:'Armor Class (AC)', f_acDesc:'AC Description', f_languages:'Languages',
+  f_spellAbility:'Spellcasting Ability', f_saveDC:'Spell Save DC',
+  f_spellAttack:'Spell Attack Bonus', f_spellFocus:'Focus',
+  f_spellLevel:'Spell Level', f_spellName:'Name', f_originalName:'Original Name',
+  f_emoji:'Emoji', f_actionType:'Action Type', f_school:'Magic School',
+  f_range:'Range', f_concentration:'Concentration', f_duration:'Duration',
+  f_saveAbility:'Saving Throw (ability)', f_desc:'Description',
+  f_scaling:'Scaling', f_notes:'Notes', f_isNew:'Mark as NEW',
+  f_isSecret:'Magical Secret / Special', f_secretLabel:'Secret Label',
+  f_wName:'Weapon Name', f_quantity:'Quantity', f_damage:'Damage Formula',
+  f_damageType:'Damage Type', f_attackBonus:'Attack Bonus', f_attackStat:'Attack Ability',
+  f_properties:'Properties', f_label:'Label', f_die:'Die (optional)',
+  f_showDie:'Show die on pips', f_total:'Total Uses', f_recovery:'Recovery',
+  f_isPotion:'Is a potion / healer?', f_potionFormula:'Heal Formula', f_potionNotes:'Potion Notes',
+  f_sectionId:'Anchor ID (no #)', f_source:'Source', f_content:'Content',
+  f_slotTotal:'Slot Count', f_algoTitle:'Block Title', f_linkHref:'Anchor (#id)',
+  f_linkLabel:'Link Label', f_question:'Question (optional)', f_bullets:'Bullet points',
+  required:'(required)', optional:'(optional)',
+  profType_none:'None', profType_proficient:'Proficient', profType_expertise:'Expertise',
+  profType_jackOfAllTrades:'Jack of All Trades',
+  hasSpellcasting:'Does this character use magic?',
+  abilityMethod:'Score assignment method',
+  method_manual:'Manual', method_standard:'Standard Array (15,14,13,12,10,8)',
+  method_pointbuy:'Point Buy',
+  logDmg:'💥 Took', logHeal:'💚 Healed', logTempHP:'🛡️ Temp HP',
+  logAbsorb:'🛡️ Temp HP absorbed', logSlot:'✨ Slot Lv',
+  logUsed:' used. Remaining:', logRestored:'restored',
+  logLongRest:'🌙 Long Rest complete. Everything restored.',
+  logShortRest:'☕ Short Rest. Spend Hit Dice to recover HP.',
+  logHD:'🎲 Hit die:', logHDResult:'HP recovered → HP:',
+  logConc:'🔮 Concentration on', logConcStop:'ended.',
+  logDeath3succ:'✅ Stabilized! 3 successes.', logDeath3fail:'💀 DEAD. 3 failures.',
+  logCondOn:'⚠️ Condition active:', logCondOff:'✅ Condition removed:',
+  logExport:'💾 JSON exported.',
+  errNoChar:'No character loaded.',
+  errInvalidJSON:'Invalid JSON file.',
+  errNoAmt:'Enter a value.',
+  toastImported:'✅ Character loaded!',
+  toastSaved:'💾 Saved!',
+  toastCopied:'📋 JSON copied to clipboard!',
+  toastExported:'💾 Download started!',
+  toastExportFallback:'📱 On iOS: long-press → Download (or copy to clipboard)',
+   confirmDelete:'Delete this element?',
+   confirmLogout:'Go back to home screen? Unsaved changes will be lost.',
+  addBlockType:'Block type to add',
+  addStep:'＋ Add step', addBullet:'＋ Bullet point',
+  addLink:'＋ Add link', addSep:'— Separator',
+  moveUp:'▲', moveDown:'▼',
+  noSpells:'No spells. Add one in edit mode.',
+  noWeapons:'No weapons configured.',
+  noEquip:'No equipment.',
+  noFeatures:'No features configured.',
+  noActions:'No quick actions configured.',
+  noAlgo:'No algorithm configured.',
+  noTracker:'No custom tracker.',
+  noSpellcasting:'No spellcasting configured.',
+  slotLvLabel:'Lv', livello:'Level',
+  lbl_race:'Race', lbl_class:'Class', lbl_background:'Background',
+  lbl_alignment:'Alignment', lbl_profBonus:'Proficiency Bonus',
+  lbl_speed:'Speed', lbl_hpMax:'Max HP', lbl_hitDice:'Hit Dice',
+  lbl_ac:'AC', lbl_languages:'Languages', lbl_tsChar:'Ability',
+  lbl_ability:'Ability', lbl_bonus:'Bonus', lbl_totalGold:'Total Gold',
+  editDatiBase:'Base Data', editAbilita:'Skills', editMagia:'Magic',
+  step:'Step', wizSave:'Save', wizNext:'Next →',
+  wizRequired:'Required field', wizSaved:'✅ Saved!',
+  contentBlocks:'Content Blocks', aggiungiBlock:'＋ Block',
+  algoSteps:'Algorithm Steps', aggiungiStep:'＋ Step',
+  algoStepQuestion:'Step question (optional):',
+  algoStepBullets:'Bullet points (one per line):',
+};
+const TRANSLATIONS = {
+  it:{
+    navTitle:'📜 Indice', editSidebar:'✏️ Sidebar',
+    datiBase:'🧬 Dati Base', abilita:'🎯 Abilità', incantesimi:'✨ Incantesimi',
+    trucchetti:'🔮 Trucchetti', armi:'🗡️ Armi', equipaggiamento:'🎒 Equipaggiamento',
+    algoritmo:'⚔️ Algoritmo di Combattimento',
+    pannelloTitle:'🎮 Pannello di Gioco',
+    pf:'❤️ Punti Ferita', pfTemp:'PF temp', aidBonus:'PF max (aid)',
+    dadiVita:'🎲 Dadi Vita', tiriMorte:'💀 Tiri Salvezza Morte',
+    succ:'✅ Successi', fail:'❌ Fallimenti',
+    conc:'🔮 Concentrazione', concNone:'Nessuna concentrazione attiva.',
+    concActive:'⚡ In concentrazione: ',
+    round:'⚔️ Round', iniziativa:'Iniziativa:', oro:'🪙 Oro (GP)',
+    riposi:'😴 Riposi', riposoLungo:'🌙 Riposo Lungo', riposoBreve:'☕ Riposo Breve',
+    riposoLungoNote:'Lungo: tutto si recupera.', riposoBrevNote:'Breve: spendi Dadi Vita.',
+    log:'📋 Log Azioni', logEmpty:'Nessuna azione ancora...',
+    azioni:'⚡ Azioni Rapide', tutteAzioni:'Tutte',
+    condizioni:'⚠️ Condizioni Attive',
+    note:'📝 Note Rapide', notePlaceholder:'Scrivi qui condizioni, piani, nemici importanti...',
+    sessione:'💾 Sessione', salvaSessione:'💾 Salva JSON', caricaSessione:'📂 Carica JSON',
+    copiaClipboard:'📋 Copia JSON', sessioneNote:'Il JSON contiene tutto: scheda + sessione.',
+    danno:'💥 Danno', cura:'💚 Cura', pfTempBtn:'🛡️ PF Temp',
+    spendi:'Spendi 1', reset:'Reset', spendiFull:'Spendi 1 HD',
+    hdNote:'Recuperi ½ con riposo breve',
+    potUsaNote:'Azione Bonus',
+    caratTitle:'Caratteristiche', tsTitle:'🛡️ Tiri Salvezza', skillNote:'Jack of All Trades già incluso',
+    competente:'✅ competente', expertise:'⭐ Expertise', jack:'🃏 Jack of All Trades',
+    spellTitle:'Incantesimi', cdTS:'CD Tiro Salvezza', bonusAttacco:'Bonus Attacco Incantesimi',
+    focus:'Focus', slotTitle:'Slot Incantesimi', slotLivello:'Livello', slotTot:'Slot', slotNote:'Note',
+    slotNew:'NUOVO', recuperoLungo:'Recupero con Riposo Lungo',
+    cantripTitle:'Trucchetti', spellLvPrefix:'Incantesimi di',
+    lvSuffix:'° Livello',
+    raggio:'Raggio', durata:'Durata', scuola:'Scuola', azioneTipo:'Azione',
+    concentrazione:'Concentrazione', ts:'Tiro Salvezza',
+    scaling:'Progressione', nessuna:'nessuna',
+    armiTitle:'Armi', dannoCol:'Danno', attaccoCol:'Attacco', propCol:'Proprietà',
+    equipTitle:'Equipaggiamento', oggettoCol:'Oggetto', noteCol:'Note',
+    aggiungiArma:'＋ Aggiungi arma', aggiungiEquip:'＋ Aggiungi oggetto',
+    aggiungiIncantesimo:'＋ Aggiungi incantesimo', aggiungiFeature:'＋ Aggiungi sezione',
+    aggiungiAzione:'＋ Aggiungi azione', aggiungiSlot:'＋ Aggiungi slot',
+    aggiungiTracker:'＋ Aggiungi tracker', aggiungiCondizione:'＋ Aggiungi condizione',
+    aggiungiBlockAlgo:'＋ Aggiungi blocco', aggiungiSidebar:'＋ Link',
+    aggiungiSezione:'Aggiungi al sidebar', separatore:'Separatore', sezioniDisp:'Sezioni disponibili',
+    sidebarEmpty:'Sidebar vuota. Abilita modalità modifica (✏️) per aggiungere sezioni.',
+    featureSectionId:'ID Sezione (auto se vuoto)', featureAddToSidebar:'Aggiungi / aggiorna link sidebar',
+    editBtn:'✏️', delBtn:'🗑',
+    langToggle:'🇬🇧 EN', editMode:'✏️', editModeActive:'✏️ ON',
+    splashSub:'Scheda Personaggio Interattiva — D&D 2024',
+    splashImport:'Importa JSON', splashImportDesc:'Carica la tua scheda esistente',
+    splashCreate:'Crea Personaggio', splashCreateDesc:'Wizard guidato passo per passo',
+    f_name:'Nome', f_class:'Classe', f_level:'Livello', f_race:'Razza / Specie',
+    f_background:'Background', f_alignment:'Allineamento', f_subtitle:'Sottotitolo',
+    f_description:'Descrizione', f_quote:'Citazione', f_profBonus:'Bonus di Competenza',
+    f_speed:'Velocità', f_hitDie:'Dado Vita', f_hpMax:'PF Massimi',
+    f_ac:'Classe Armatura (CA)', f_acDesc:'Descrizione CA', f_languages:'Linguaggi',
+    f_spellAbility:'Caratteristica Incantesimi', f_saveDC:'CD Tiro Salvezza',
+    f_spellAttack:'Bonus Attacco Incantesimi', f_spellFocus:'Focus',
+    f_spellLevel:'Livello Incantesimo', f_spellName:'Nome', f_originalName:'Nome Originale (EN)',
+    f_emoji:'Emoji', f_actionType:'Tipo Azione', f_school:'Scuola Magia',
+    f_range:'Raggio', f_concentration:'Concentrazione', f_duration:'Durata',
+    f_saveAbility:'Tiro Salvezza (caratteristica)', f_desc:'Descrizione',
+    f_scaling:'Progressione (scaling)', f_notes:'Note', f_isNew:'Segnala come NUOVO',
+    f_isSecret:'Segreto Magico / Speciale', f_secretLabel:'Etichetta Segreto',
+    f_wName:'Nome Arma', f_quantity:'Quantità', f_damage:'Formula Danno',
+    f_damageType:'Tipo Danno', f_attackBonus:'Bonus Attacco', f_attackStat:'Caratteristica Attacco',
+    f_properties:'Proprietà', f_label:'Label', f_die:'Dado (opzionale)',
+    f_showDie:'Mostra dado sui pip', f_total:'Usi Totali', f_recovery:'Recupero',
+    f_isPotion:'È una pozione / cura?', f_potionFormula:'Formula Cura', f_potionNotes:'Note Pozione',
+    f_sectionId:'Anchor ID (senza #)', f_source:'Fonte', f_content:'Contenuto',
+    f_slotTotal:'Numero Slot', f_algoTitle:'Titolo Blocco', f_linkHref:'Anchor (#id)',
+    f_linkLabel:'Label Link', f_question:'Domanda (opzionale)', f_bullets:'Punti elenco',
+    required:'(obbligatorio)', optional:'(opzionale)',
+    profType_none:'Nessuna', profType_proficient:'Competente', profType_expertise:'Expertise',
+    profType_jackOfAllTrades:'Jack of All Trades',
+    hasSpellcasting:'Il personaggio usa magia?',
+    abilityMethod:'Metodo assegnazione punteggi',
+    method_manual:'Manuale', method_standard:'Array Standard (15,14,13,12,10,8)',
+    method_pointbuy:'Point Buy',
+    logDmg:'💥 Subiti', logHeal:'💚 Curati', logTempHP:'🛡️ PF temporanei',
+    logAbsorb:'🛡️ PF temporanei assorbono', logSlot:'✨ Slot Lv',
+    logUsed:' usato. Rimasti:', logRestored:'ripristinati',
+    logLongRest:'🌙 Riposo Lungo completato. Tutto ripristinato.',
+    logShortRest:'☕ Riposo Breve. Spendi i Dadi Vita per recuperare PF.',
+    logHD:'🎲 Dado vita:', logHDResult:'PF recuperati → PF:',
+    logConc:'🔮 Concentrazione su', logConcStop:'interrotta.',
+    logDeath3succ:'✅ Stabilizzato! 3 successi.', logDeath3fail:'💀 MORTO. 3 fallimenti.',
+    logCondOn:'⚠️ Condizione attiva:', logCondOff:'✅ Condizione rimossa:',
+    logExport:'💾 JSON esportato.',
+    errNoChar:'Nessun personaggio caricato.',
+    errInvalidJSON:'File JSON non valido.',
+    errNoAmt:'Inserisci un valore.',
+    toastImported:'✅ Personaggio caricato!',
+    toastSaved:'💾 Salvato!',
+    toastCopied:'📋 JSON copiato negli appunti!',
+    toastExported:'💾 Download avviato!',
+    toastExportFallback:'📱 Su iOS: tieni premuto → Scarica (oppure copia negli appunti)',
+     confirmDelete:'Eliminare questo elemento?',
+     confirmLogout:'Tornare alla schermata iniziale? Le modifiche non salvate andranno perse.',
+    addBlockType:'Tipo blocco da aggiungere',
+    addStep:'＋ Aggiungi step', addBullet:'＋ Punto elenco',
+    addLink:'＋ Aggiungi link', addSep:'— Separatore',
+    moveUp:'▲', moveDown:'▼',
+    noSpells:'Nessun incantesimo. Aggiungine uno in modalità modifica.',
+    noWeapons:'Nessuna arma configurata.',
+    noEquip:'Nessun equipaggiamento.',
+    noFeatures:'Nessuna feature configurata.',
+    noActions:'Nessuna azione rapida configurata.',
+    noAlgo:'Nessun algoritmo configurato.',
+    noTracker:'Nessun tracker custom.',
+    noSpellcasting:'Nessun lancio di incantesimi configurato.',
+    slotLvLabel:'Lv', livello:'Livello',
+    lbl_race:'Razza', lbl_class:'Classe', lbl_background:'Background',
+    lbl_alignment:'Allineamento', lbl_profBonus:'Bonus di Competenza',
+    lbl_speed:'Velocità', lbl_hpMax:'PF Massimi', lbl_hitDice:'Dadi Vita',
+    lbl_ac:'CA', lbl_languages:'Linguaggi', lbl_tsChar:'Car.',
+    lbl_ability:'Caratteristica', lbl_bonus:'Bonus', lbl_totalGold:'Oro totale',
+    editDatiBase:'Dati Base', editAbilita:'Abilità', editMagia:'Magia',
+    step:'Passo', wizSave:'Salva', wizNext:'Avanti →',
+    wizRequired:'Campo obbligatorio', wizSaved:'✅ Salvato!',
+    contentBlocks:'Blocchi di Contenuto', aggiungiBlock:'＋ Blocco',
+    algoSteps:'Passi Algoritmo', aggiungiStep:'＋ Passo',
+    algoStepQuestion:'Domanda del passo (opzionale):',
+    algoStepBullets:'Punti elenco (uno per riga):',
+  }
+  // To add Spanish: es:{ navTitle:'...', ... }
+};
+let currentLang = localStorage.getItem('dnd-lang')||'it';
+const T = k => TRANSLATIONS[currentLang]?.[k] ?? BASE[k] ?? k;
+// ═══════════════ DATA MODEL ═══════════════
+const SAVE_KEY = 'dnd_sheet_v2';
+let CHAR = null;
+let SESSION = null;
+let EDIT_MODE = false;
+
+function abilityMod(score){return Math.floor((score-10)/2);}
+function modStr(m){return (m>=0?'+':'')+m;}
+// D&D 2024: PB = 2 + floor((level-1)/4), levels 1-4→+2, 5-8→+3, 9-12→+4, 13-16→+5, 17-20→+6
+function computedPB(level){return 2+Math.floor((Math.max(1,level||1)-1)/4);}
+// Normalize legacy IT action type keys to canonical EN keys (backward compat with old JSON)
+function normalizeActionType(t){
+  return {azione:'action',reazione:'reaction',gratuita:'free',bonus:'bonus',action:'action',reaction:'reaction',free:'free'}[t]||t||'action';
+}
+function md(text){
+  if(!text) return '';
+  return String(text)
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>')
+    .replace(/\*(.+?)\*/g,'<em>$1</em>')
+    .replace(/\n/g,'<br>');
+}
+function rollDice(formula){
+  // parse NdM+K
+  const m = formula.match(/(\d+)d(\d+)([+-]\d+)?/i);
+  if(!m) return parseInt(formula)||0;
+  let r=0; for(let i=0;i<+m[1];i++) r+=Math.floor(Math.random()*+m[2])+1;
+  if(m[3]) r+=parseInt(m[3]);
+  return r;
+}
+function createDefaultSession(char){
+  const s={
+    hp:{current: char?.hp?.max||10, temp:0, aidBonus:0},
+    hitDice:{used:0},
+    trackers:{},
+    spellSlots:{},
+    gold: char?.session?.gold ?? 0,
+    round:1, concentration:'', initiative:'',
+    conditions:[], deathSucc:0, deathFail:0,
+    notes:'', portrait:null, logEntries:[]
+  };
+  (char?.trackers||[]).forEach(t=>{ s.trackers[t.id]={used:0}; });
+  (char?.spellSlots||[]).forEach(sl=>{ s.spellSlots[sl.level]={used:0}; });
+  return s;
+}
+function syncSession(){
+  if(!SESSION||!CHAR) return;
+  if(!SESSION.hp) SESSION.hp={current:CHAR.hp?.max||10,temp:0,aidBonus:0};
+  if(!SESSION.hitDice) SESSION.hitDice={used:0};
+  if(!SESSION.trackers) SESSION.trackers={};
+  if(!SESSION.spellSlots) SESSION.spellSlots={};
+  (CHAR.trackers||[]).forEach(t=>{ if(!SESSION.trackers[t.id]) SESSION.trackers[t.id]={used:0}; });
+  (CHAR.spellSlots||[]).forEach(sl=>{ if(!SESSION.spellSlots[sl.level]) SESSION.spellSlots[sl.level]={used:0}; });
+}
+function saveAll(){
+  if(!CHAR) return;
+  try{
+    localStorage.setItem(SAVE_KEY, JSON.stringify({
+      version:'2.0', savedAt:new Date().toISOString(),
+      character:CHAR, session:SESSION
+    }));
+  }catch(e){console.warn('localStorage full',e);}
+}
+function loadFromStorage(){
+  try{
+    const raw=localStorage.getItem(SAVE_KEY);
+    if(!raw) return false;
+    const data=JSON.parse(raw);
+    if(!data.character) return false;
+    CHAR=data.character;
+    SESSION=data.session||createDefaultSession(CHAR);
+    syncSession();
+    return true;
+  }catch(e){return false;}
+}
+function buildExportData(){
+  return {version:'2.0',savedAt:new Date().toISOString(),character:CHAR,session:SESSION};
+}
+// ═══════════════ RENDER UTILS ═══════════════
+function renderAll(){
+  if(!CHAR){showSplash();return;}
+  hideSplash();
+  updatePageTitle();
+  renderSidebar();
+  renderHeader();
+  renderPannello();
+  renderSections();
+  updateFixedControls();
+}
+function updatePageTitle(){
+  document.title=(CHAR?.name||'Scheda')+' — D&D 2024';
+  document.documentElement.lang=currentLang;
+}
+function updateFixedControls(){
+  const isDark=document.documentElement.getAttribute('data-theme')!=='light';
+  document.getElementById('btn-theme').textContent=isDark?'☀️':'🌙';
+  document.getElementById('btn-lang').textContent=T('langToggle');
+  const hasChar=!!CHAR;
+  const logoutBtn=document.getElementById('btn-logout');
+  const editBtn=document.getElementById('btn-edit');
+  if(logoutBtn) logoutBtn.style.display=hasChar?'':'none';
+  if(editBtn){ editBtn.style.display=hasChar?'':'none'; editBtn.textContent=EDIT_MODE?T('editModeActive'):T('editMode'); editBtn.classList.toggle('active',EDIT_MODE); }
+}
+
+// ─── SIDEBAR UTILITIES ───
+function slugify(str){
+  return (str||'').toLowerCase().normalize('NFD')
+    .replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
+}
+// All sections that can appear as sidebar links — built-ins always present, features added dynamically
+function getAvailableSections(){
+  const C=CHAR||{};
+  const sections=[
+    {id:'pannello',       emoji:'🎮', label:T('pannelloTitle')},
+    {id:'dati-base',      emoji:'📋', label:T('datiBase')},
+    {id:'abilita',        emoji:'🎯', label:T('abilita')},
+    {id:'incantesimi',    emoji:'✨', label:T('incantesimi')},
+    {id:'armi',           emoji:'⚔️', label:T('armiTitle')},
+    {id:'equipaggiamento',emoji:'🎒', label:T('equipaggiamento')},
+    {id:'algoritmo',      emoji:'⚡', label:T('algoritmo')},
+  ];
+  (C.features||[]).forEach(f=>{
+    const id=f.sectionId||f.id||slugify(f.title||'');
+    if(id) sections.push({id, emoji:f.emoji||'📄', label:f.title||f.name||id, isCustom:true});
+  });
+  return sections;
+}
+// ── Sidebar drag-and-drop ──
+let SB_DRAG_IDX=null;
+function moveSidebarItem(idx,dir){
+  const arr=CHAR.sidebar||[]; const to=idx+dir;
+  if(to<0||to>=arr.length) return;
+  [arr[idx],arr[to]]=[arr[to],arr[idx]];
+  saveAll(); renderSidebar();
+}
+function sbDragStart(e,idx){ SB_DRAG_IDX=idx; e.dataTransfer.effectAllowed='move'; }
+function sbDragOver(e,idx){
+  e.preventDefault(); e.dataTransfer.dropEffect='move';
+  document.querySelectorAll('.sb-item-edit').forEach((el,i)=>
+    el.classList.toggle('drag-over', i===idx && i!==SB_DRAG_IDX));
+}
+function sbDrop(e,idx){
+  e.preventDefault();
+  document.querySelectorAll('.sb-item-edit').forEach(el=>el.classList.remove('drag-over'));
+  if(SB_DRAG_IDX===null||SB_DRAG_IDX===idx){SB_DRAG_IDX=null;return;}
+  const arr=CHAR.sidebar||[];
+  const [item]=arr.splice(SB_DRAG_IDX,1);
+  arr.splice(idx,0,item);
+  CHAR.sidebar=arr; SB_DRAG_IDX=null;
+  saveAll(); renderSidebar();
+}
+function sbDragEnd(){
+  SB_DRAG_IDX=null;
+  document.querySelectorAll('.sb-item-edit').forEach(el=>el.classList.remove('drag-over'));
+}
+// ── Section picker ──
+function openSectionPicker(btn){
+  const existing=document.getElementById('sb-section-picker');
+  if(existing){closeSectionPicker();return;}
+  const inSidebar=new Set((CHAR.sidebar||[]).filter(s=>s.id).map(s=>s.id));
+  const sections=getAvailableSections();
+  const builtIn=sections.filter(s=>!s.isCustom);
+  const custom=sections.filter(s=>s.isCustom);
+  let html=`<h4>${T('sezioniDisp')}</h4>`;
+  const row=(s)=>{
+    const has=inSidebar.has(s.id);
+    return `<div class="sb-pick-item${has?' already-in':''}" onclick="addSectionToSidebar('${s.id}','${(s.label||'').replace(/'/g,"\\'")}','${(s.emoji||'').replace(/'/g,"\\'")}')">
+      <span>${s.emoji||'📄'}</span><span>${s.label||s.id}</span>
+      ${has?'<span class="sb-pick-check">✓</span>':''}
+    </div>`;
+  };
+  builtIn.forEach(s=>{html+=row(s);});
+  if(custom.length){
+    html+=`<div class="sb-pick-sep"></div><h4>Custom</h4>`;
+    custom.forEach(s=>{html+=row(s);});
+  }
+  html+=`<div class="sb-pick-sep"></div>
+    <div class="sb-pick-item" onclick="addSepToSidebar()">
+      <span>─</span><span>${T('separatore')}</span>
+    </div>`;
+  const panel=document.createElement('div');
+  panel.id='sb-section-picker'; panel.innerHTML=html;
+  document.body.appendChild(panel);
+  // Position to the right of the button, clamped to viewport
+  const r=btn.getBoundingClientRect();
+  panel.style.left=(r.right+8)+'px'; panel.style.top=r.top+'px';
+  requestAnimationFrame(()=>{
+    const pr=panel.getBoundingClientRect();
+    if(pr.right>window.innerWidth-8) panel.style.left=(r.left-pr.width-8)+'px';
+    if(pr.bottom>window.innerHeight-8) panel.style.top=(window.innerHeight-pr.height-8)+'px';
+  });
+  setTimeout(()=>document.addEventListener('click',_sbPickerOutside,{capture:true}),50);
+}
+function _sbPickerOutside(e){
+  const p=document.getElementById('sb-section-picker');
+  if(p&&!p.contains(e.target)) closeSectionPicker();
+}
+function closeSectionPicker(){
+  const p=document.getElementById('sb-section-picker'); if(p) p.remove();
+  document.removeEventListener('click',_sbPickerOutside,{capture:true});
+}
+function addSectionToSidebar(id,label,emoji){
+  if(!CHAR.sidebar) CHAR.sidebar=[];
+  // Don't add duplicates
+  if(!CHAR.sidebar.some(s=>s.id===id)) CHAR.sidebar.push({id,label,emoji});
+  closeSectionPicker(); saveAll(); renderSidebar();
+}
+function addSepToSidebar(){
+  if(!CHAR.sidebar) CHAR.sidebar=[];
+  CHAR.sidebar.push({type:'sep'});
+  closeSectionPicker(); saveAll(); renderSidebar();
+}
+
+// ─── SIDEBAR ───
+function renderSidebar(){
+  const links=document.getElementById('nav-links');
+  const footer=document.getElementById('sidebar-footer');
+  document.getElementById('nav-title').textContent=T('navTitle');
+  if(!CHAR){links.innerHTML='';footer.innerHTML='';return;}
+  links.innerHTML=(CHAR.sidebar||[]).map((item,i)=>{
+    if(item.type==='sep') return `<div class="nav-sep"${EDIT_MODE?` style="position:relative"`:''}>${EDIT_MODE?`<span style="position:absolute;right:4px;top:-7px;"><button class="btn-del-sm" onclick="deleteSidebarItem(${i})">🗑</button></span>`:''}</div>`;
+    // support both {id,label} (canonical) and {href,label} (legacy)
+    const href=item.href||(item.id?'#'+item.id:'#');
+    return `<a href="${href}" onclick="closeSidebarMobile()">${item.emoji||''} ${item.label||''}
+      ${EDIT_MODE?`<span style="float:right;display:flex;gap:2px;">
+        <button class="btn-del-sm" onclick="event.preventDefault();editSidebarItem(${i})">✏️</button>
+        <button class="btn-del-sm" onclick="event.preventDefault();deleteSidebarItem(${i})">🗑</button>
+      </span>`:''}
+    </a>`;
+  }).join('');
+  if(EDIT_MODE){
+    footer.innerHTML=`<button class="btn-edit-sm edit-only" style="display:inline-flex;width:100%;margin:2px 0;justify-content:center;" onclick="addSidebarLink()">＋ Link</button>
+    <button class="btn-edit-sm edit-only" style="display:inline-flex;width:100%;margin:2px 0;justify-content:center;" onclick="addSidebarSep()">— Sep</button>`;
+  } else {footer.innerHTML='';}
+}
+
+function renderHeader(){
+  if(!CHAR) return;
+  // derive display name and subtitle from data — no redundant title/subtitle fields needed
+  const name=CHAR.name||'';
+  const derived=CHAR.class?(CHAR.class+(CHAR.level?' — '+T('livello')+' '+CHAR.level:'')):CHAR.race||'';
+  document.getElementById('char-name').textContent=name;
+  const sub=document.getElementById('char-subtitle');
+  sub.className='subtitle'; sub.textContent=CHAR.subtitle||derived;
+  const desc=document.getElementById('char-description');
+  desc.textContent=CHAR.quote?'':'' ; // quote shown separately
+  const q=document.getElementById('char-quote');
+  if(CHAR.quote){q.className='char-quote';q.textContent=CHAR.quote;}else{q.innerHTML='';}
+  const img=document.getElementById('portrait-img');
+  const ph=document.getElementById('portrait-ph');
+  if(SESSION?.portrait){img.src=SESSION.portrait;img.style.display='block';ph.style.display='none';}
+  else{img.src='';img.style.display='none';ph.style.display='';}
+}
+// ═══════════════ RENDER PANNELLO ═══════════════
+function renderPannello(){
+  const el=document.getElementById('pannello');
+  if(!CHAR||!SESSION){el.innerHTML='';return;}
+  el.innerHTML=buildPannello();
+  // bind live inputs
+  document.getElementById('conc-spell-input').addEventListener('input',e=>{
+    SESSION.concentration=e.target.value;
+    document.getElementById('conc-status').textContent=e.target.value?T('concActive')+e.target.value:T('concNone');
+    document.getElementById('conc-status').className='conc-status-text'+(e.target.value?' conc-active':'');
+    saveAll();
+  });
+  document.getElementById('init-input').addEventListener('input',e=>{SESSION.initiative=e.target.value;saveAll();});
+  document.getElementById('note-rapide').addEventListener('input',e=>{SESSION.notes=e.target.value;saveAll();});
+  document.getElementById('gold-input').addEventListener('input',e=>{
+    SESSION.gold=Math.max(0,parseInt(e.target.value)||0);
+    const gs=document.getElementById('gold-static');if(gs)gs.textContent=SESSION.gold;
+    saveAll();
+  });
+}
+function buildPannello(){
+  const S=SESSION, C=CHAR;
+  const effMax=(S.hp?.current!==undefined?C.hp?.max||0:0)+(S.hp?.aidBonus||0);
+  const hpCurr=S.hp?.current??0;
+  const hpPct=effMax>0?Math.max(0,Math.min(100,(hpCurr/effMax)*100)):0;
+  const hpColor=hpPct>50?'var(--hp-green)':hpPct>25?'var(--hp-yellow)':'var(--hp-red)';
+
+  // ── HP Card ──
+  const hpCard=`<div class="pn-card" style="grid-column:span 2;">
+    <div class="label">${T('pf')}</div>
+    <div class="value-row">
+      <div class="big-val" id="hp-curr">${hpCurr}</div>
+      <div class="max-val">/ <span id="hp-max-disp">${effMax}</span></div>
+    </div>
+    <div class="hp-bar-wrap"><div class="hp-bar" id="hp-bar" style="width:${hpPct}%;background:${hpColor};"></div></div>
+    <div class="hp-input-row">
+      <input type="number" id="hp-amount" placeholder="val" min="1">
+      <button class="btn danger" onclick="applyDamage()">${T('danno')}</button>
+      <button class="btn heal" onclick="applyHeal()">${T('cura')}</button>
+      <button class="btn heal" onclick="applyTempHP()">${T('pfTempBtn')}</button>
+    </div>
+    <div class="temp-hp-info">${T('pfTemp')}: <span id="temp-hp-disp" style="color:#aaddff;font-weight:bold;">${S.hp?.temp||0}</span>
+    &nbsp;|&nbsp;${T('aidBonus')}: <span id="aid-disp" style="color:#ffdd66;">${modStr(S.hp?.aidBonus||0)}</span></div>
+  </div>`;
+
+  // ── HD Card ──
+  const hdUsed=S.hitDice?.used||0;
+  const hdLabel=`d${C.hitDieType||8}`;
+  let hdPips=''; for(let i=0;i<(C.level||1);i++) hdPips+=`<div class="pip${i<hdUsed?' used':''}" title="${hdLabel}" onclick="clickHDPip(${i})">${hdLabel}</div>`;
+  const hdCard=`<div class="pn-card">
+    <div class="label">${T('dadiVita')} (${hdLabel})</div>
+    <div class="pips" id="hd-pips">${hdPips}</div>
+    <div class="btn-row">
+      <button class="btn heal" onclick="spendHD()">${T('spendiFull')}</button>
+      <button class="btn" onclick="resetHD()">${T('reset')}</button>
+    </div>
+    <div style="margin-top:4px;font-size:.75em;color:var(--text-muted);">${T('hdNote')}</div>
+  </div>`;
+
+  // ── Death Saves ──
+  const ds=S;
+  let dSucc='',dFail='';
+  for(let i=0;i<3;i++){dSucc+=`<div class="death-pip succ${i<(ds.deathSucc||0)?' used':''}" onclick="toggleDeathPip(this,'succ',${i})"></div>`;}
+  for(let i=0;i<3;i++){dFail+=`<div class="death-pip fail${i<(ds.deathFail||0)?' used':''}" onclick="toggleDeathPip(this,'fail',${i})"></div>`;}
+  const deathCard=`<div class="pn-card">
+    <div class="label">${T('tiriMorte')}</div>
+    <div class="death-row"><span style="font-size:.8em;color:#4a9a4a;">✅</span><div class="death-pips" id="death-succ">${dSucc}</div></div>
+    <div class="death-row"><span style="font-size:.8em;color:#9a4a4a;">❌</span><div class="death-pips" id="death-fail">${dFail}</div></div>
+    <div class="btn-row"><button class="btn" onclick="resetDeathSaves()">${T('reset')}</button></div>
+  </div>`;
+
+  return `<div class="pn-grid">${hpCard}${hdCard}${deathCard}</div>${buildPannelloRow2()}${buildPannelloRow3()}${buildPannelloBottom()}`;
+}
+// ─── Pannello Row 2: custom trackers + spell slots ───
+function buildPannelloRow2(){
+  let cards='';
+  // Custom trackers
+  (CHAR.trackers||[]).forEach((t,i)=>{
+    const used=SESSION.trackers?.[t.id]?.used||0;
+    const total=t.total||1;
+    let pips=''; for(let j=0;j<total;j++) pips+=`<div class="pip${j<used?' used':''}" onclick="clickTrackerPip('${t.id}',${j})">${t.showDie&&t.die?t.die:(t.emoji||'●')}</div>`;
+    const useBtn=t.isPotion
+      ?`<button class="btn danger" onclick="usePotionTracker('${t.id}')">${T('spendi')} (${t.potionFormula||''})</button>`
+      :`<button class="btn danger" onclick="useTracker('${t.id}')">${T('spendi')}</button>`;
+    cards+=`<div class="pn-card" id="tracker-card-${t.id}">
+      <div class="label">${t.emoji||''} ${t.label||t.id}</div>
+      <div class="pips" id="pips-${t.id}">${pips}</div>
+      <div class="btn-row">${useBtn}<button class="btn" onclick="resetTracker('${t.id}')">${T('reset')} (${total})</button></div>
+      ${t.potionNotes?`<div style="font-size:.75em;color:var(--text-muted);margin-top:4px;">${t.potionNotes}</div>`:''}
+      ${EDIT_MODE?`<div class="btn-row edit-only"><button class="btn-edit-sm" onclick="editTracker(${i})">✏️</button><button class="btn-del-sm" onclick="deleteTracker(${i})">🗑</button></div>`:''}
+    </div>`;
+  });
+  // Spell slots
+  (CHAR.spellSlots||[]).forEach(sl=>{
+    const lv=sl.level; const tot=sl.total||0;
+    const used=SESSION.spellSlots?.[lv]?.used||0;
+    const color=DND.slotColors[lv]||'var(--accent)';
+    let pips=''; for(let j=0;j<tot;j++) pips+=`<div class="pip${j<used?' used':''}" style="${j<used?'':'border-color:'+color+';background:'+color+'22;'}" onclick="clickSlotPip(${lv},${j})">${lv}</div>`;
+    cards+=`<div class="pn-card">
+      <div class="label" style="color:${color};">✨ Slot Lv${lv}</div>
+      <div class="pips" id="slot${lv}-pips">${pips}</div>
+      <div class="btn-row">
+        <button class="btn danger" onclick="useSlot(${lv})">${T('spendi')}</button>
+        <button class="btn" onclick="resetSlot(${lv})">${T('reset')} (${tot})</button>
+      </div>
+    </div>`;
+  });
+  if(EDIT_MODE) cards+=`<div class="pn-card" style="display:flex;align-items:center;justify-content:center;flex-direction:column;gap:8px;">
+    <button class="add-btn edit-only" onclick="addTracker()">${T('aggiungiTracker')}</button>
+    <button class="add-btn edit-only" onclick="addSpellSlot()">${T('aggiungiSlot')}</button>
+  </div>`;
+  return `<div class="pn-grid">${cards}</div>`;
+}
+
+// ─── Pannello Row 3: conc, round, gold ───
+function buildPannelloRow3(){
+  const S=SESSION;
+  const concCard=`<div class="pn-card">
+    <div class="label">${T('conc')}</div>
+    <div class="inline-field" style="margin-top:8px;">
+      <input type="text" id="conc-spell-input" placeholder="${T('nessuna')}…" value="${S.concentration||''}" style="width:160px;">
+      <button class="btn danger" onclick="dropConc()">❌</button>
+    </div>
+    <div id="conc-status" class="conc-status-text${S.concentration?' conc-active':''}">${S.concentration?T('concActive')+S.concentration:T('concNone')}</div>
+  </div>`;
+  const roundCard=`<div class="pn-card">
+    <div class="label">${T('round')}</div>
+    <div class="round-row">
+      <button class="btn" onclick="changeRound(-1)">−</button>
+      <div class="round-val" id="round-val">${S.round||1}</div>
+      <button class="btn" onclick="changeRound(1)">+</button>
+      <button class="btn" onclick="resetRound()">${T('reset')}</button>
+    </div>
+    <div class="inline-field" style="margin-top:8px;">
+      <span>${T('iniziativa')}</span>
+      <input type="number" id="init-input" placeholder="—" value="${S.initiative||''}" style="width:65px;">
+    </div>
+  </div>`;
+  const goldCard=`<div class="pn-card">
+    <div class="label">${T('oro')}</div>
+    <div class="oro-row">
+      <input type="number" id="gold-input" value="${S.gold||0}" min="0">
+      <button class="btn" onclick="changeGold(-1)">−1</button>
+      <button class="btn" onclick="changeGold(1)">+1</button>
+      <button class="btn" onclick="changeGold(-10)">−10</button>
+      <button class="btn" onclick="changeGold(10)">+10</button>
+    </div>
+  </div>`;
+  return `<div class="pn-grid">${concCard}${roundCard}${goldCard}</div>`;
+}
+
+// ─── Pannello Bottom: conditions, rests, log, actions, session, notes ───
+function buildPannelloBottom(){
+  const S=SESSION, C=CHAR;
+  // Conditions
+  const conds=(C.conditions||[]);
+  const condGrid=conds.map((c,i)=>`<div class="cond-btn${(S.conditions||[]).includes(c)?' active':''}" onclick="toggleCond(this,'${c.replace(/'/g,"\\'")}')">
+    ${dndTr('conditions',c)||c}${EDIT_MODE?`<button class="btn-del-sm" onclick="event.stopPropagation();deleteCondition(${i})" style="margin-left:4px;">×</button>`:''}
+  </div>`).join('');
+  const condSection=`<div class="pn-card" style="margin-bottom:14px;">
+    <div class="label">${T('condizioni')}</div>
+    <div class="cond-grid" id="cond-grid">${condGrid}</div>
+    ${EDIT_MODE?`<button class="add-btn edit-only" onclick="addCondition()" style="margin-top:8px;">${T('aggiungiCondizione')}</button>`:''}
+  </div>`;
+  // Rests + Log
+  const restsLog=`<div class="pn-grid">
+    <div class="pn-card">
+      <div class="label">${T('riposi')}</div>
+      <div class="btn-row" style="margin-top:8px;">
+        <button class="btn long-rest" onclick="longRest()">${T('riposoLungo')}</button>
+        <button class="btn short-rest" onclick="shortRest()">${T('riposoBreve')}</button>
+      </div>
+      <div style="font-size:.75em;color:var(--text-muted);margin-top:6px;">${T('riposoLungoNote')}<br>${T('riposoBrevNote')}</div>
+    </div>
+    <div class="pn-card" style="grid-column:span 2;">
+      <div class="label">${T('log')}</div>
+      <div id="log-wrap"><p style="color:var(--text-faint);font-style:italic;">${T('logEmpty')}</p></div>
+    </div>
+  </div>`;
+  // Quick Actions — auto-generated from spells + weapons + manual actions
+  const actTypes=['action','bonus','reaction'];
+  const actFilter=`<div class="action-filter-row">
+    <button class="filter-btn active" onclick="filterActions(this,'all')">${T('tutteAzioni')}</button>
+    ${actTypes.map(t=>`<button class="filter-btn" onclick="filterActions(this,'${t}')">${dndTr('actionLabels',t)||t}</button>`).join('')}
+  </div>`;
+  function actionBadge(type){
+    const cls=type==='action'?'badge-azione':type==='bonus'?'badge-bonus':type==='reaction'?'badge-reazione':'badge-azione';
+    return `<span class="action-badge ${cls}">${dndTr('actionLabels',type)||type.toUpperCase()}</span>`;
+  }
+  function spellQuickNote(sp){
+    const parts=[];
+    const firstLine=(sp.description||'').split('\n')[0].replace(/\*\*/g,'').trim().slice(0,55);
+    if(firstLine) parts.push(firstLine);
+    if(sp.saveAbility) parts.push('TS '+sp.saveAbility);
+    if(sp.concentration) parts.push(T('concentrazione'));
+    if(sp.range) parts.push(sp.range);
+    if((sp.level||0)>0) parts.push('Slot Lv'+sp.level+'+');
+    return parts.join(' | ');
+  }
+  const spellEntries=(C.spells||[]).map(sp=>{const t=normalizeActionType(sp.actionType||'action');return `<div class="action-entry" data-type="${t}">
+    ${actionBadge(t)}
+    <div class="action-entry-body">
+      <div class="action-entry-name">${sp.emoji||''} ${sp.name||''}</div>
+      <div class="action-entry-note">${spellQuickNote(sp)}</div>
+    </div></div>`;}).join('');
+  const weaponEntries=(C.weapons||[]).map(w=>`<div class="action-entry" data-type="action">
+    ${actionBadge('action')}
+    <div class="action-entry-body">
+      <div class="action-entry-name">${w.emoji||''} ${w.name||''}</div>
+      <div class="action-entry-note">${w.attackBonus||''} | ${w.damage||''} ${w.damageType||''}${w.properties?' | '+w.properties:''}</div>
+    </div></div>`).join('');
+  const manualEntries=(C.actions||[]).map((a,i)=>{const t=normalizeActionType(a.type||'action');return `<div class="action-entry" data-type="${t}">
+    ${actionBadge(t)}
+    <div class="action-entry-body">
+      <div class="action-entry-name">${a.emoji||''} ${a.label||a.name||''}</div>
+      <div class="action-entry-note">${a.description||a.note||''}</div>
+    </div>
+    ${EDIT_MODE?`<div style="flex-shrink:0;display:flex;gap:3px;">
+      <button class="btn-edit-sm" onclick="editAction(${i})">✏️</button>
+      <button class="btn-del-sm" onclick="deleteAction(${i})">🗑</button>
+    </div>`:''}
+  </div>`;}).join('');
+  const allEntries=spellEntries+weaponEntries+manualEntries;
+  const actionsCard=`<div class="pn-card" style="margin-top:14px;">
+    <div class="label">${T('azioni')}</div>
+    ${actFilter}
+    <div id="action-list">${allEntries||`<p class="empty-state">${T('noActions')}</p>`}</div>
+    ${EDIT_MODE?`<button class="add-btn edit-only" onclick="addAction()">${T('aggiungiAzione')}</button>`:''}
+  </div>`;
+  // Session save/load
+  const sessionCard=`<div class="pn-card" style="margin-top:14px;">
+    <div class="label">${T('sessione')}</div>
+    <div class="btn-row" style="margin-top:8px;">
+      <button class="btn long-rest" onclick="exportCharacter()">${T('salvaSessione')}</button>
+      <label class="btn short-rest" style="cursor:pointer;">${T('caricaSessione')}<input type="file" id="import-session-click" accept=".json" onchange="importSession(event)" style="display:none;"></label>
+      <button class="btn" onclick="copyToClipboard()">${T('copiaClipboard')}</button>
+    </div>
+    <div style="font-size:.75em;color:var(--text-muted);margin-top:6px;">${T('sessioneNote')}</div>
+  </div>`;
+  // Notes
+  const notesCard=`<div class="pn-card" style="margin-top:14px;">
+    <div class="label">${T('note')}</div>
+    <textarea id="note-rapide" placeholder="${T('notePlaceholder')}">${S.notes||''}</textarea>
+  </div>`;
+  return condSection+restsLog+actionsCard+sessionCard+notesCard;
+}
+// ═══════════════ RENDER SECTIONS ═══════════════
+function renderSections(){
+  const el=document.getElementById('sections-area');
+  if(!CHAR){el.innerHTML='';return;}
+  let html='';
+  html+=renderDatiBase();
+  html+=renderAbilita();
+  (CHAR.features||[]).forEach((f,i)=>{ html+=renderFeature(f,i); });
+  html+=renderSpellsSection();
+  html+=renderWeapons();
+  html+=renderEquipment();
+  html+=renderAlgorithm();
+  el.innerHTML=html;
+  const fq=document.getElementById('footer-quote');
+  fq.innerHTML=CHAR.quote?'🎭 '+md(CHAR.quote):'';
+}
+function renderDatiBase(){
+  const C=CHAR;
+  const pb=C.proficiencyBonus||computedPB(C.level||1);
+  const rows=[
+    [T('lbl_race'),C.race],[T('lbl_class'),C.class],[T('lbl_background'),C.background],
+    [T('lbl_alignment'),C.alignment],[T('lbl_profBonus'),'+'+pb],
+    [T('lbl_speed'),C.speed],[T('lbl_hpMax'),`<span id="stat-hp-max">${(C.hp?.max||0)+(SESSION?.hp?.aidBonus||0)}</span>`],
+    [T('lbl_hitDice'),`${C.level||1}d${C.hitDieType||8}`],
+    [T('lbl_ac'),`${C.ac??C.armorClass??'—'}${C.armorNote?' ('+C.armorNote+')':''}`],
+    [T('lbl_languages'),C.languages]
+  ].filter(r=>r[1]!==undefined&&r[1]!==null&&r[1]!=='');
+  const scores=C.abilityScores||{};
+  const statsRow=DND.abilities.map(a=>{const sc=scores[a]||10;return `<td>${sc} (${modStr(abilityMod(sc))})</td>`;}).join('');
+  // savingThrows: supports both ["DEX","CHA"] (new) and [{ability,bonus,proficient}] (legacy)
+  const profSaves=Array.isArray(C.savingThrows)&&typeof C.savingThrows[0]==='string'
+    ? C.savingThrows
+    : (C.savingThrows||[]).filter(s=>s.proficient).map(s=>s.ability||s);
+  const savesRows=DND.abilities.map(a=>{
+    const prof=profSaves.includes(a);
+    const bonus=abilityMod(scores[a]||10)+(prof?pb:0);
+    return `<tr><td>${abilityShortName(a)}</td>
+      <td>${prof?'<strong>'+modStr(bonus)+'</strong>':modStr(bonus)}</td>
+      <td>${prof?T('competente'):''}</td></tr>`;
+  }).join('');
+  const eb=EDIT_MODE?`<div class="edit-only" style="display:flex!important;gap:6px;margin-bottom:8px;">
+    <button class="btn-edit-sm" onclick="editCharacter()">✏️ ${T('editDatiBase')}</button>
+    <button class="btn-edit-sm" onclick="editSkills()">✏️ ${T('editAbilita')}</button></div>`:'';
+  return `<h2 id="dati-base">${T('datiBase')}</h2><div class="section-header-line"></div>${eb}
+    <table>${rows.map(r=>`<tr><td><strong>${r[0]}</strong></td><td>${r[1]}</td></tr>`).join('')}</table>
+    <h3>${T('caratTitle')}</h3>
+    <table><tr>${DND.abilities.map(a=>`<th>${abilityShortName(a)}</th>`).join('')}</tr><tr>${statsRow}</tr></table>
+    <h3>${T('tsTitle')}</h3><table><tr><th>${T('lbl_tsChar')}</th><th>${T('lbl_bonus')}</th><th></th></tr>${savesRows}</table><hr>`;
+}
+function renderAbilita(){
+  const C=CHAR; const skills=C.skills||[]; if(!skills.length) return '';
+  const pb=C.proficiencyBonus||computedPB(C.level||1);
+  const scores=C.abilityScores||{};
+  // compute bonus: no stored value needed
+  function skillBonus(sk){
+    const base=abilityMod(scores[sk.ability]||10);
+    if(sk.type==='expertise')       return base+pb*2;
+    if(sk.type==='proficient')      return base+pb;
+    if(sk.type==='jackOfAllTrades') return base+Math.floor(pb/2);
+    return base;
+  }
+  const rows=skills.map((sk,i)=>`<tr>
+    <td>${sk.name}${sk.ability?' <span style="font-size:.75em;color:var(--text-muted);">(${abilityShortName(sk.ability)})</span>':''}</td>
+    <td><strong>${modStr(skillBonus(sk))}</strong></td>
+    <td style="font-size:.8em;">${sk.type==='expertise'?T('expertise'):sk.type==='proficient'?T('competente'):sk.type==='jackOfAllTrades'?T('jack'):''}</td>
+    ${EDIT_MODE?`<td><button class="btn-edit-sm" onclick="editSkillItem(${i})">✏️</button> <button class="btn-del-sm" onclick="deleteSkill(${i})">🗑</button></td>`:''}</tr>`).join('');
+  return `<h2 id="abilita">${T('abilita')}${EDIT_MODE?`<button class="btn-edit-sm edit-only" style="margin-left:auto" onclick="editSkills()">✏️</button>`:''}</h2>
+    <div class="section-header-line"></div><p class="note">${T('skillNote')}</p>
+    <table><tr><th>${T('abilita')}</th><th>${T('lbl_bonus')}</th><th></th>${EDIT_MODE?'<th></th>':''}</tr>${rows}</table>
+    ${EDIT_MODE?`<button class="add-btn edit-only" onclick="addSkillItem()">＋ Abilità</button>`:''}
+    <hr>`;
+}
+function renderFeature(f,i){
+  // support both canonical (title/contentBlocks) and legacy (name/content)
+  const title=f.title||f.name||'';
+  const blocks=(f.contentBlocks||f.content||[]).map(b=>renderContentBlock(b)).join('');
+  const eb=EDIT_MODE?`<button class="btn-edit-sm edit-only" onclick="editFeature(${i})">✏️</button>
+    <button class="btn-del-sm edit-only" onclick="deleteFeature(${i})">🗑</button>`:'';
+  const tags=(f.isNew?`<span class="tag-new">NUOVO</span>`:'')+
+             (f.isSecret?`<span class="tag-secret">${f.secretLabel||'SPECIALE'}</span>`:'');
+  return `<h2 id="${f.id||f.sectionId||''}">${f.emoji||''} ${title} ${tags} ${eb}</h2>
+    <div class="section-header-line"></div>${blocks}<hr>`;
+}
+function renderContentBlock(b){
+  if(!b) return '';
+  switch(b.type){
+    case 'paragraph': return `<p>${md(b.text||'')}</p>`;
+    case 'bullets': return `<ul>${(b.bullets||b.items||[]).map(it=>`<li>${md(it)}</li>`).join('')}</ul>`;
+    case 'note': return `<p class="note">${md(b.text||'')}</p>`;
+    case 'header': return `<h3>${md(b.text||b.title||'')}</h3>`;
+    case 'table': return `<table>${b.headers?.length?`<tr>${b.headers.map(h=>`<th>${h}</th>`).join('')}</tr>`:''}
+      ${(b.rows||[]).map(r=>`<tr>${r.map(c=>`<td>${md(String(c))}</td>`).join('')}</tr>`).join('')}</table>`;
+    case 'subfeature': {
+      const stitle=b.title||b.name||'';
+      const sblocks=(b.contentBlocks||b.content||[]).map(renderContentBlock).join('');
+      return `<div class="subfeature-block">
+        <div class="subfeature-header"><span>${b.emoji||''}</span>
+          <span class="subfeature-title">${stitle}</span>
+          ${b.isNew?`<span class="tag-new">NUOVO</span>`:''}
+          ${b.isSecret?`<span class="tag-secret">${b.secretLabel||'SPECIALE'}</span>`:''}
+        </div>${sblocks}</div>`;
+    }
+    default: return '';
+  }
+}
+function renderSpellsSection(){
+  const C=CHAR; if(!C.spellcasting&&!(C.spells||[]).length) return '';
+  const sc=C.spellcasting;
+  const infoBox=sc?`<div class="spellcasting-info-box">
+    <table><tr><td><strong>${T('cdTS')}</strong></td><td>${sc.saveDC||'—'}</td></tr>
+      <tr><td><strong>${T('bonusAttacco')}</strong></td><td>${sc.attackBonus>=0?'+':''}<span>${sc.attackBonus||0}</span></td></tr>
+      <tr><td><strong>${T('focus')}</strong></td><td>${sc.focus||'—'}</td></tr>
+      <tr><td><strong>${T('lbl_ability')}</strong></td><td>${abilityLongName(sc.ability)||sc.ability||'—'}</td></tr></table>
+    ${C.spellSlots?.length?`<h3 style="margin-top:12px;">${T('slotTitle')}</h3>
+      <table><tr><th>${T('slotLivello')}</th><th>${T('slotTot')}</th></tr>
+      ${(C.spellSlots||[]).map(sl=>`<tr><td>Lv ${sl.level}</td><td>${sl.total}</td></tr>`).join('')}</table>`:''}
+    ${EDIT_MODE?`<div class="edit-only" style="display:flex!important;gap:6px;margin-top:8px;">
+      <button class="btn-edit-sm" onclick="editSpellcasting()">✏️ ${T('editMagia')}</button>
+      <button class="btn-edit-sm" onclick="addSpellSlot()">＋ Slot</button></div>`:''}
+  </div>`:'';
+  // Group spells by level
+  const spells=C.spells||[];
+  const levels=[...new Set(spells.map(s=>s.level))].sort((a,b)=>a-b);
+  if(!levels.includes(0)&&spells.some(s=>s.level===0)) levels.unshift(0);
+  let spellSections='';
+  levels.forEach(lv=>{
+    const lvSpells=spells.filter(s=>s.level===lv);
+    const lvTitle=lv===0?T('cantripTitle'):`${T('spellLvPrefix')} ${lv}° ${T('lvSuffix')}`;
+    const lvId=lv===0?'trucchetti':`lv${lv}`;
+    const color=DND.slotColors[lv]||'var(--accent)';
+    const cards=lvSpells.map((sp,rawI)=>{
+      const realIdx=spells.indexOf(sp);
+      const atype=dndTr('actionLabels',normalizeActionType(sp.actionType))||sp.actionType||'';
+      return `<div class="spell-card" style="border-left-color:${color};">
+        <div class="spell-card-header">
+          <span style="font-size:1.1em;">${sp.emoji||''}</span>
+          <span class="spell-card-name">${sp.name||''}</span>
+          ${sp.originalName?`<span class="spell-card-original">(${sp.originalName})</span>`:''}
+          ${sp.isNew?`<span class="tag-new">NUOVO</span>`:''}
+          ${sp.isSecret?`<span class="tag-secret">${sp.secretLabel||'SPECIALE'}</span>`:''}
+          ${EDIT_MODE?`<div style="margin-left:auto;display:flex;gap:3px;">
+            <button class="btn-edit-sm" onclick="editSpell(${realIdx})">✏️</button>
+            <button class="btn-del-sm" onclick="deleteSpell(${realIdx})">🗑</button></div>`:''}
+        </div>
+        <div class="spell-card-meta">
+          ${atype?`<span class="spell-meta-chip">${atype}</span>`:''}
+          ${sp.range?`<span class="spell-meta-chip">📍 ${sp.range}</span>`:''}
+          ${sp.duration?`<span class="spell-meta-chip">⏱ ${sp.duration}</span>`:''}
+          ${sp.concentration?`<span class="spell-meta-chip conc">🔮 ${T('concentrazione')}</span>`:''}
+          ${sp.saveAbility?`<span class="spell-meta-chip">TS ${abilityShortName(sp.saveAbility)}</span>`:''}
+          ${sp.school?`<span class="spell-meta-chip">${dndTr('schools',sp.school)||sp.school}</span>`:''}
+        </div>
+        <div class="spell-card-desc">${md(sp.description||'')}</div>
+        ${sp.scaling?`<div class="spell-card-scaling">📈 ${md(sp.scaling)}</div>`:''}
+        ${sp.notes?`<div class="spell-card-notes">${md(sp.notes)}</div>`:''}
+      </div>`;
+    }).join('');
+    spellSections+=`<div class="spell-level-section">
+      <div class="spell-level-title" id="${lvId}" style="border-bottom-color:${color};">
+        <span style="color:${color};">●</span> ${lvTitle}
+        ${EDIT_MODE?`<button class="btn-edit-sm edit-only" onclick="addSpell(${lv})" style="margin-left:auto;">＋</button>`:''}
+      </div>${cards}</div>`;
+  });
+  return `<h2 id="incantesimi">${T('incantesimi')}${EDIT_MODE?`<button class="btn-edit-sm edit-only" style="margin-left:auto" onclick="addSpell(0)">＋</button>`:''}</h2>
+    <div class="section-header-line"></div>${infoBox}${spellSections||`<p class="empty-state">${T('noSpells')}</p>`}
+    ${EDIT_MODE?`<button class="add-btn edit-only" onclick="addSpell(null)">${T('aggiungiIncantesimo')}</button>`:''}
+    <hr>`;
+}
+function renderWeapons(){
+  const C=CHAR; if(!(C.weapons||[]).length&&!EDIT_MODE) return '';
+  const cards=(C.weapons||[]).map((w,i)=>`<div class="weapon-card">
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px;">
+      <h3 style="margin:0;">${w.emoji||''} ${w.name||''}${w.quantity>1?' (×'+w.quantity+')':''} ${w.isNew?`<span class="tag-new">NUOVO</span>`:''}</h3>
+      ${EDIT_MODE?`<div class="edit-only" style="display:flex!important;gap:4px;">
+        <button class="btn-edit-sm" onclick="editWeapon(${i})">✏️</button>
+        <button class="btn-del-sm" onclick="deleteWeapon(${i})">🗑</button></div>`:''}
+    </div>
+    <table style="margin-top:8px;"><tr><td><strong>${T('dannoCol')}</strong></td><td>${w.damage||'—'} ${w.damageType||''}</td></tr>
+      <tr><td><strong>${T('attaccoCol')}</strong></td><td>${w.attackBonus||'—'} (${abilityShortName(w.attackStat||'')})</td></tr>
+      ${w.properties?`<tr><td><strong>${T('propCol')}</strong></td><td>${w.properties}</td></tr>`:''}
+    </table>
+    ${w.notes?`<p class="note" style="margin-top:6px;">📌 ${md(w.notes)}</p>`:''}
+  </div>`).join('');
+  return `<h2 id="armi">${T('armiTitle')}</h2><div class="section-header-line"></div>
+    ${cards||`<p class="empty-state">${T('noWeapons')}</p>`}
+    ${EDIT_MODE?`<button class="add-btn edit-only" onclick="addWeapon()">${T('aggiungiArma')}</button>`:''}
+    <hr>`;
+}
+function renderEquipment(){
+  const C=CHAR;
+  const rows=(C.equipment||[]).map((e,i)=>`<tr>
+    <td>${e.name||''}</td><td>${e.notes||''}</td>
+    ${EDIT_MODE?`<td><button class="btn-edit-sm" onclick="editEquip(${i})">✏️</button> <button class="btn-del-sm" onclick="deleteEquip(${i})">🗑</button></td>`:''}
+  </tr>`).join('');
+  const goldRow=`<tr><td><strong>${T('lbl_totalGold')}</strong></td>
+    <td><strong><span id="gold-static">${SESSION?.gold||0}</span> GP</strong></td>
+    ${EDIT_MODE?'<td></td>':''}</tr>`;
+  return `<h2 id="equipaggiamento">${T('equipaggiamento')}</h2><div class="section-header-line"></div>
+    <table class="equip-table"><tr><th>${T('oggettoCol')}</th><th>${T('noteCol')}</th>${EDIT_MODE?'<th></th>':''}</tr>
+      ${rows}${goldRow}</table>
+    ${EDIT_MODE?`<button class="add-btn edit-only" onclick="addEquip()">${T('aggiungiEquip')}</button>`:''}
+    <hr>`;
+}
+function renderAlgorithm(){
+  const C=CHAR; if(!(C.combatAlgorithm||[]).length&&!EDIT_MODE) return '';
+  const blocks=(C.combatAlgorithm||[]).map((b,i)=>`<div class="algo-block">
+    <div class="algo-block-title">${b.emoji||''} ${b.title||''} ${EDIT_MODE?`<button class="btn-edit-sm edit-only" onclick="editAlgoBlock(${i})">✏️</button> <button class="btn-del-sm edit-only" onclick="deleteAlgoBlock(${i})">🗑</button>`:''}</div>
+    ${(b.steps||[]).map(st=>`<div class="algo-step${st.indent?' indent':''}">
+      ${st.question?`<div class="algo-step-question">${md(st.question)}</div>`:''}
+      ${(st.bullets||[]).length?`<ul>${st.bullets.map(bl=>`<li>${md(bl)}</li>`).join('')}</ul>`:''}
+    </div>`).join('')}
+  </div>`).join('');
+  return `<h2 id="algoritmo">${T('algoritmo')}${EDIT_MODE?`<button class="btn-edit-sm edit-only" style="margin-left:auto" onclick="addAlgoBlock()">＋</button>`:''}</h2>
+    <div class="section-header-line"></div>
+    <div class="algo">${blocks||`<p class="empty-state">${T('noAlgo')}</p>`}</div>
+    ${EDIT_MODE?`<button class="add-btn edit-only" onclick="addAlgoBlock()">${T('aggiungiBlockAlgo')}</button>`:''}
+    <hr>`;
+}
+// ═══════════════ TRACKER INTERACTIONS ═══════════════
+function addLog(msg,type=''){
+  const w=document.getElementById('log-wrap'); if(!w) return;
+  const empty=w.querySelector('p[style*="font-style:italic"]');if(empty)w.innerHTML='';
+  const p=document.createElement('p'); p.className=type; p.innerHTML=msg;
+  w.prepend(p); while(w.children.length>40) w.removeChild(w.lastChild);
+  SESSION.logEntries=SESSION.logEntries||[];
+  SESSION.logEntries.unshift({msg,type,t:Date.now()});
+  if(SESSION.logEntries.length>40) SESSION.logEntries.pop();
+}
+function updateHPDisplay(){
+  const S=SESSION, C=CHAR;
+  const effMax=(C.hp?.max||0)+(S.hp?.aidBonus||0);
+  const curr=S.hp?.current??0;
+  const pct=effMax>0?Math.max(0,Math.min(100,(curr/effMax)*100)):0;
+  const color=pct>50?'var(--hp-green)':pct>25?'var(--hp-yellow)':'var(--hp-red)';
+  const hc=document.getElementById('hp-curr'); if(hc) hc.textContent=curr;
+  const hm=document.getElementById('hp-max-disp'); if(hm) hm.textContent=effMax;
+  const bar=document.getElementById('hp-bar'); if(bar){bar.style.width=pct+'%';bar.style.background=color;}
+  const th=document.getElementById('temp-hp-disp'); if(th) th.textContent=S.hp?.temp||0;
+  const ad=document.getElementById('aid-disp'); if(ad) ad.textContent=modStr(S.hp?.aidBonus||0);
+  const sm=document.getElementById('stat-hp-max'); if(sm) sm.textContent=effMax;
+}
+function getHPAmount(){const v=parseInt(document.getElementById('hp-amount')?.value)||0; return v;}
+function applyDamage(){
+  let amt=getHPAmount(); if(!amt){showToast(T('errNoAmt'),'error');return;}
+  const S=SESSION.hp;
+  if(S.temp>0){const abs=Math.min(S.temp,amt);S.temp-=abs;amt-=abs;if(abs>0)addLog(`🛡️ ${T('logAbsorb')} ${abs}.`,'log-heal');}
+  S.current=Math.max(0,S.current-amt);
+  if(amt>0) addLog(`${T('logDmg')} ${amt} → PF: ${S.current}`,'log-damage');
+  document.getElementById('hp-amount').value='';
+  updateHPDisplay(); saveAll();
+}
+function applyHeal(){
+  const amt=getHPAmount(); if(!amt){showToast(T('errNoAmt'),'error');return;}
+  const S=SESSION.hp, effMax=(CHAR.hp?.max||0)+(S.aidBonus||0);
+  S.current=Math.min(effMax,S.current+amt);
+  addLog(`${T('logHeal')} ${amt} → PF: ${S.current}`,'log-heal');
+  document.getElementById('hp-amount').value='';
+  updateHPDisplay(); saveAll();
+}
+function applyTempHP(){
+  const amt=getHPAmount(); if(!amt){showToast(T('errNoAmt'),'error');return;}
+  SESSION.hp.temp=Math.max(SESSION.hp.temp,amt);
+  addLog(`${T('logTempHP')}: +${amt}`,'log-heal');
+  document.getElementById('hp-amount').value='';
+  updateHPDisplay(); saveAll();
+}
+function spendHD(){
+  const S=SESSION, C=CHAR, lv=C.level||1;
+  const used=S.hitDice?.used||0;
+  if(used>=lv){addLog('❌ Nessun dado vita rimasto.');return;}
+  const conMod=abilityMod(C.abilityScores?.CON||10);
+  const roll=Math.floor(Math.random()*(C.hitDieType||8))+1+conMod;
+  const effMax=(C.hp?.max||0)+(S.hp?.aidBonus||0);
+  S.hp.current=Math.min(effMax,S.hp.current+roll);
+  S.hitDice.used=(S.hitDice.used||0)+1;
+  addLog(`${T('logHD')} ${roll} ${T('logHDResult')} ${S.hp.current}`,'log-heal');
+  renderPannello(); saveAll();
+}
+function resetHD(){SESSION.hitDice.used=0;renderPannello();addLog('🎲 Dadi vita ripristinati.');saveAll();}
+function clickHDPip(i){
+  const used=SESSION.hitDice?.used||0;
+  if(i<used) SESSION.hitDice.used=i; else SESSION.hitDice.used=i+1;
+  renderPannello(); saveAll();
+}
+function useSlot(lv){
+  const s=SESSION.spellSlots[lv]; if(!s) return;
+  const tot=(CHAR.spellSlots||[]).find(sl=>sl.level===lv)?.total||0;
+  if(s.used>=tot){addLog(`❌ Nessun slot Lv${lv}.`);return;}
+  s.used++;addLog(`${T('logSlot')}${lv} usato. Rimasti: ${tot-s.used}`,'log-damage');
+  renderPannello(); saveAll();
+}
+function resetSlot(lv){
+  if(SESSION.spellSlots[lv]) SESSION.spellSlots[lv].used=0;
+  renderPannello(); saveAll();
+}
+function clickSlotPip(lv,j){
+  const s=SESSION.spellSlots[lv]; if(!s) return;
+  if(j<s.used) s.used=j; else s.used=j+1;
+  renderPannello(); saveAll();
+}
+function useTracker(id){
+  const s=SESSION.trackers[id]; const t=CHAR.trackers?.find(tr=>tr.id===id);
+  if(!s||!t) return;
+  if(s.used>=t.total){addLog(`❌ Nessun uso rimasto: ${t.label}.`);return;}
+  s.used++; addLog(`${t.emoji||''} ${t.label}: usato. Rimasti ${t.total-s.used}`,'log-damage');
+  renderPannello(); saveAll();
+}
+function resetTracker(id){
+  if(SESSION.trackers[id]) SESSION.trackers[id].used=0;
+  renderPannello(); saveAll();
+}
+function clickTrackerPip(id,j){
+  const s=SESSION.trackers[id]; if(!s) return;
+  if(j<s.used) s.used=j; else s.used=j+1;
+  renderPannello(); saveAll();
+}
+function usePotionTracker(id){
+  const s=SESSION.trackers[id]; const t=CHAR.trackers?.find(tr=>tr.id===id);
+  if(!s||!t) return;
+  if(s.used>=t.total){addLog(`❌ Nessuna ${t.label} rimasta.`);return;}
+  const roll=t.potionFormula?rollDice(t.potionFormula):0;
+  const effMax=(CHAR.hp?.max||0)+(SESSION.hp?.aidBonus||0);
+  SESSION.hp.current=Math.min(effMax,SESSION.hp.current+roll);
+  s.used++; addLog(`${t.emoji||''} ${t.label}: ${t.potionFormula||''}=${roll} PF curati → ${SESSION.hp.current}`,'log-heal');
+  renderPannello(); updateHPDisplay(); saveAll();
+}
+function changeGold(d){
+  SESSION.gold=Math.max(0,(SESSION.gold||0)+d);
+  const gi=document.getElementById('gold-input'); if(gi) gi.value=SESSION.gold;
+  const gs=document.getElementById('gold-static'); if(gs) gs.textContent=SESSION.gold;
+  saveAll();
+}
+function changeRound(d){
+  SESSION.round=Math.max(1,(SESSION.round||1)+d);
+  const rv=document.getElementById('round-val'); if(rv) rv.textContent=SESSION.round;
+  saveAll();
+}
+function resetRound(){SESSION.round=1;const rv=document.getElementById('round-val');if(rv)rv.textContent=1;saveAll();}
+function dropConc(){
+  const el=document.getElementById('conc-spell-input');
+  if(el?.value) addLog(`${T('logConc')} "${el.value}" ${T('logConcStop')}`,'log-damage');
+  if(el) el.value=''; SESSION.concentration='';
+  const st=document.getElementById('conc-status');
+  if(st){st.textContent=T('concNone');st.className='conc-status-text';}
+  saveAll();
+}
+function toggleCond(el,name){
+  const active=el.classList.toggle('active');
+  SESSION.conditions=SESSION.conditions||[];
+  if(active){if(!SESSION.conditions.includes(name))SESSION.conditions.push(name);addLog(`${T('logCondOn')} ${name}`,'log-damage');}
+  else{SESSION.conditions=SESSION.conditions.filter(c=>c!==name);addLog(`${T('logCondOff')} ${name}`,'log-heal');}
+  saveAll();
+}
+function toggleDeathPip(el,type,idx){
+  el.classList.toggle('used');
+  SESSION.deathSucc=document.querySelectorAll('.death-pip.succ.used').length;
+  SESSION.deathFail=document.querySelectorAll('.death-pip.fail.used').length;
+  if(SESSION.deathSucc>=3) addLog(T('logDeath3succ'),'log-heal');
+  if(SESSION.deathFail>=3) addLog(T('logDeath3fail'),'log-damage');
+  saveAll();
+}
+function resetDeathSaves(){
+  document.querySelectorAll('.death-pip').forEach(p=>p.classList.remove('used'));
+  SESSION.deathSucc=0; SESSION.deathFail=0; addLog('💀 Tiri salvezza morte resettati.'); saveAll();
+}
+function longRest(){
+  const C=CHAR, S=SESSION;
+  S.hp.current=(C.hp?.max||0); S.hp.temp=0; S.hp.aidBonus=0;
+  S.hitDice.used=0;
+  (C.trackers||[]).forEach(t=>{
+    if(S.trackers[t.id]) S.trackers[t.id].used=0;
+  });
+  (C.spellSlots||[]).forEach(sl=>{if(S.spellSlots[sl.level])S.spellSlots[sl.level].used=0;});
+  S.round=1; S.concentration=''; S.conditions=[];
+  document.querySelectorAll('.death-pip').forEach(p=>p.classList.remove('used'));
+  S.deathSucc=0; S.deathFail=0;
+  renderPannello(); updateHPDisplay(); addLog(T('logLongRest'),'log-heal'); saveAll();
+}
+function shortRest(){addLog(T('logShortRest'),'log-heal');}
+function filterActions(btn,type){
+  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('#action-list .action-entry').forEach(el=>{
+    el.style.display=(type==='all'||el.dataset.type===type)?'flex':'none';
+  });
+}
+// ═══════════════ EXPORT / IMPORT ═══════════════
+function exportCharacter(){
+  if(!CHAR){showToast(T('errNoChar'),'error');return;}
+  const data=buildExportData();
+  const json=JSON.stringify(data,null,2);
+  const name=(CHAR.name||'personaggio').replace(/[^a-z0-9]/gi,'_').toLowerCase();
+  const date=new Date().toISOString().slice(0,10);
+  const filename=`${name}_${date}.json`;
+  try{
+    const blob=new Blob([json],{type:'application/json'});
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement('a');
+    a.href=url;a.download=filename;a.style.display='none';
+    document.body.appendChild(a);a.click();document.body.removeChild(a);
+    setTimeout(()=>URL.revokeObjectURL(url),5000);
+    addLog(T('logExport'),'log-heal');showToast(T('toastExported'),'success');return;
+  }catch(e){}
+  try{
+    const uri='data:application/json;charset=utf-8,'+encodeURIComponent(json);
+    const w=window.open(uri,'_blank');
+    if(w){showToast(T('toastExportFallback'),'info');return;}
+  }catch(e){}
+  copyToClipboard(json);
+}
+function copyToClipboard(text){
+  const json=text||JSON.stringify(buildExportData(),null,2);
+  if(navigator.clipboard&&window.isSecureContext){
+    navigator.clipboard.writeText(json).then(()=>showToast(T('toastCopied'),'success'));
+  }else{
+    const ta=document.createElement('textarea');
+    ta.value=json;ta.style.cssText='position:fixed;top:-9999px';
+    document.body.appendChild(ta);ta.select();document.execCommand('copy');
+    document.body.removeChild(ta);showToast(T('toastCopied'),'success');
+  }
+}
+function importCharacter(event){
+  const file=event.target.files[0];if(!file)return;
+  const reader=new FileReader();
+  reader.onload=function(e){
+    try{
+      const data=JSON.parse(e.target.result);
+      if(!data.character)throw new Error('No character field');
+      CHAR=data.character;
+      if(!CHAR.hp)CHAR.hp={max:CHAR.hpMax||10};
+      SESSION=data.session||createDefaultSession(CHAR);
+      closeWizard();
+      syncSession();saveAll();renderAll();
+      showToast(T('toastImported'),'success');
+    }catch(err){showToast(T('errInvalidJSON')+': '+err.message,'error');}
+    event.target.value='';
+  };
+  reader.readAsText(file);
+}
+function importSession(event){importCharacter(event);}
+// ═══════════════ WIZARD ENGINE ═══════════════
+let WIZ_CONFIG=null, WIZ_STEP=0, WIZ_DATA={}, WIZ_EDIT_IDX=null;
+let WIZ_BLOCKS=[], WIZ_ALGO_STEPS=[];
+
+function openWizard(configKey, editIdx=null, prefill={}){
+  WIZ_CONFIG=WIZARDS[configKey];
+  if(!WIZ_CONFIG){console.error('Unknown wizard:',configKey);return;}
+  WIZ_STEP=0; WIZ_EDIT_IDX=editIdx; WIZ_DATA={...prefill};
+  WIZ_BLOCKS=[...(prefill.contentBlocks||[])];
+  WIZ_ALGO_STEPS=[...(prefill.steps||[])];
+  document.getElementById('wizard-overlay').style.display='flex';
+  renderWizardStep();
+}
+function closeWizard(){
+  document.getElementById('wizard-overlay').style.display='none';
+  WIZ_CONFIG=null; WIZ_DATA={}; WIZ_BLOCKS=[]; WIZ_ALGO_STEPS=[];
+}
+function wizBack(){
+  if(WIZ_STEP>0){WIZ_STEP--;renderWizardStep();}
+}
+function wizNext(){
+  collectStepData();
+  const err=validateStep();
+  if(err){showToast(err,'error');return;}
+  if(WIZ_STEP<WIZ_CONFIG.steps.length-1){WIZ_STEP++;renderWizardStep();}
+  else wizFinish();
+}
+function renderWizardStep(){
+  const step=WIZ_CONFIG.steps[WIZ_STEP];
+  const total=WIZ_CONFIG.steps.length;
+  document.getElementById('wiz-title').textContent=WIZ_CONFIG.title+(WIZ_EDIT_IDX!==null?' (modifica)':'');
+  document.getElementById('wiz-step-label').textContent=`${T('step')} ${WIZ_STEP+1} / ${total}: ${step.label}`;
+  document.getElementById('wiz-progress').style.width=`${((WIZ_STEP+1)/total)*100}%`;
+  const backBtn=document.getElementById('wiz-back');
+  backBtn.disabled=(WIZ_STEP===0);
+  backBtn.style.display=(WIZ_STEP===0)?'none':'';
+  document.getElementById('wiz-next').textContent=(WIZ_STEP===total-1)?T('wizSave'):T('wizNext');
+  let html='';
+  // support _buildFields() for lazy field generation (e.g. language-dependent)
+  const fields=step._buildFields?step._buildFields():(step.fields||[]);
+  fields.forEach(f=>{html+=renderField(f);});
+  if(step.hasContentBlocks) html+=renderContentBlockEditor();
+  if(step.hasAlgoSteps) html+=renderAlgoStepEditor();
+  document.getElementById('wiz-body').innerHTML=html;
+  // Restore values from WIZ_DATA (use lazy fields if defined)
+  const restoreFields=step._buildFields?step._buildFields():(step.fields||[]);
+  restoreFields.forEach(f=>{
+    const el=document.getElementById('wf-'+f.id);
+    if(!el)return;
+    const val=WIZ_DATA[f.id]??f.default??'';
+    if(f.type==='checkbox') el.checked=!!val;
+    else el.value=val;
+  });
+}
+function renderField(f){
+  const lbl=`<label for="wf-${f.id}" class="wiz-label">${f.label}${f.required?` <span style="color:var(--accent)">*</span>`:''}</label>`;
+  const hint=f.hint?`<div class="wiz-hint">${f.hint}</div>`:'';
+  let inp='';
+  const val=WIZ_DATA[f.id]??f.default??'';
+  if(f.type==='text'||f.type==='number'){
+    inp=`<input id="wf-${f.id}" class="wiz-input" type="${f.type}" placeholder="${f.placeholder||''}" value="${val}" ${f.min!==undefined?'min='+f.min:''} ${f.max!==undefined?'max='+f.max:''}>`;
+  }else if(f.type==='textarea'){
+    inp=`<textarea id="wf-${f.id}" class="wiz-input" rows="${f.rows||3}" placeholder="${f.placeholder||''}">${val}</textarea>`;
+  }else if(f.type==='select'){
+    const optArr=typeof f.options==='function'?f.options():(f.options||[]);
+    const opts=optArr.map(o=>`<option value="${o.v}" ${String(val)===String(o.v)?'selected':''}>${o.l}</option>`).join('');
+    inp=`<select id="wf-${f.id}" class="wiz-input">${opts}</select>`;
+  }else if(f.type==='checkbox'){
+    inp=`<label style="display:flex;align-items:center;gap:8px;cursor:pointer;"><input id="wf-${f.id}" type="checkbox" ${val?'checked':''}> ${f.checkLabel||''}</label>`;
+  }else if(f.type==='emoji'){
+    inp=`<input id="wf-${f.id}" class="wiz-input" type="text" maxlength="4" placeholder="🧙" value="${val}" style="font-size:1.6em;width:70px;">`;
+  }
+  return `<div class="wiz-field">${lbl}${hint}${inp}</div>`;
+}
+function collectStepData(){
+  const step=WIZ_CONFIG?.steps[WIZ_STEP];
+  if(!step)return;
+  const fields=step._buildFields?step._buildFields():(step.fields||[]);
+  fields.forEach(f=>{
+    const el=document.getElementById('wf-'+f.id);
+    if(!el)return;
+    if(f.type==='checkbox') WIZ_DATA[f.id]=el.checked;
+    else if(f.type==='number') WIZ_DATA[f.id]=el.value!==''?Number(el.value):null;
+    else WIZ_DATA[f.id]=el.value;
+  });
+}
+function validateStep(){
+  const step=WIZ_CONFIG?.steps[WIZ_STEP];
+  if(!step)return null;
+  const fields=step._buildFields?step._buildFields():(step.fields||[]);
+  for(const f of fields){
+    if(f.required){
+      const el=document.getElementById('wf-'+f.id);
+      if(!el)continue;
+      if(f.type==='checkbox')continue;
+      if(!el.value||el.value.trim()==='') return `${T('wizRequired')}: ${f.label}`;
+    }
+  }
+  return null;
+}
+function wizFinish(){
+  collectStepData();
+  const err=validateStep();
+  if(err){showToast(err,'error');return;}
+  WIZ_CONFIG.onSave(WIZ_DATA, WIZ_EDIT_IDX, WIZ_BLOCKS, WIZ_ALGO_STEPS);
+  closeWizard(); saveAll(); renderAll();
+  showToast(T('wizSaved'),'success');
+}
+// ── Content Block Editor ──
+function renderContentBlockEditor(){
+  let rows=WIZ_BLOCKS.map((b,i)=>`<div class="cb-row" id="cb-row-${i}">
+    <span>${b.emoji||''} <strong>${b.type}</strong>: ${String(b.text||b.title||b.label||b.rows?.length||'').slice(0,50)}</span>
+    <div style="display:flex;gap:4px;">
+      <button class="btn-edit-sm" onclick="editBlock(${i})">✏️</button>
+      <button class="btn-del-sm" onclick="deleteBlock(${i})">🗑</button>
+      ${i>0?`<button class="btn-edit-sm" onclick="moveBlock(${i},-1)">▲</button>`:''}
+      ${i<WIZ_BLOCKS.length-1?`<button class="btn-edit-sm" onclick="moveBlock(${i},1)">▼</button>`:''}
+    </div>
+  </div>`).join('');
+  const typeOpts=Object.entries(DND.blockTypes).map(([k,enV])=>`<option value="${k}">${dndTr('blockTypes',k)||enV}</option>`).join('');
+  return `<div class="wiz-field"><label class="wiz-label">${T('contentBlocks')}</label>
+    <div id="cb-list">${rows}</div>
+    <div style="display:flex;gap:6px;margin-top:8px;flex-wrap:wrap;">
+      <select id="cb-type-sel" class="wiz-input" style="flex:1;">${typeOpts}</select>
+      <button class="btn" onclick="addBlock()">＋ ${T('aggiungiBlock')}</button>
+    </div></div>`;
+}
+function addBlock(){
+  const type=document.getElementById('cb-type-sel')?.value||'paragraph';
+  WIZ_BLOCKS.push({type,text:'',title:'',emoji:'',rows:[]});
+  editBlock(WIZ_BLOCKS.length-1);
+}
+function editBlock(i){
+  const b=WIZ_BLOCKS[i];
+  const val=prompt(`Modifica blocco (${b.type}) - testo/testo principale:`,b.text||b.title||b.label||'');
+  if(val===null)return;
+  if(b.type==='paragraph'||b.type==='note') b.text=val;
+  else if(b.type==='header') b.title=val;
+  else if(b.type==='bullets') b.bullets=(val||'').split('\n').filter(Boolean);
+  else if(b.type==='table'){b.label=val;}
+  else if(b.type==='subfeature'){b.title=val;}
+  refreshCBEditor();
+}
+function deleteBlock(i){WIZ_BLOCKS.splice(i,1);refreshCBEditor();}
+function moveBlock(i,dir){
+  const j=i+dir; if(j<0||j>=WIZ_BLOCKS.length)return;
+  [WIZ_BLOCKS[i],WIZ_BLOCKS[j]]=[WIZ_BLOCKS[j],WIZ_BLOCKS[i]];
+  refreshCBEditor();
+}
+function refreshCBEditor(){
+  const wrap=document.getElementById('cb-list'); if(!wrap)return;
+  wrap.innerHTML=WIZ_BLOCKS.map((b,i)=>`<div class="cb-row" id="cb-row-${i}">
+    <span>${b.emoji||''} <strong>${b.type}</strong>: ${String(b.text||b.title||b.label||b.bullets?.join(', ')||'').slice(0,50)}</span>
+    <div style="display:flex;gap:4px;">
+      <button class="btn-edit-sm" onclick="editBlock(${i})">✏️</button>
+      <button class="btn-del-sm" onclick="deleteBlock(${i})">🗑</button>
+      ${i>0?`<button class="btn-edit-sm" onclick="moveBlock(${i},-1)">▲</button>`:''}
+      ${i<WIZ_BLOCKS.length-1?`<button class="btn-edit-sm" onclick="moveBlock(${i},1)">▼</button>`:''}
+    </div>
+  </div>`).join('');
+}
+// ── Algo Step Editor ──
+function renderAlgoStepEditor(){
+  let rows=WIZ_ALGO_STEPS.map((s,i)=>`<div class="cb-row">
+    <span>${s.question?'❓ '+s.question.slice(0,40):s.bullets?.join(', ').slice(0,40)||'(step)'}</span>
+    <div style="display:flex;gap:4px;">
+      <button class="btn-edit-sm" onclick="editAlgoStep(${i})">✏️</button>
+      <button class="btn-del-sm" onclick="deleteAlgoStep(${i})">🗑</button>
+    </div>
+  </div>`).join('');
+  return `<div class="wiz-field"><label class="wiz-label">${T('algoSteps')}</label>
+    <div id="algo-step-list">${rows}</div>
+    <button class="btn" onclick="addAlgoStep()" style="margin-top:8px;">＋ ${T('aggiungiStep')}</button></div>`;
+}
+function addAlgoStep(){
+  const q=prompt(T('algoStepQuestion'))||'';
+  const bRaw=prompt(T('algoStepBullets'))||'';
+  WIZ_ALGO_STEPS.push({question:q,bullets:bRaw?bRaw.split('\n').filter(Boolean):[],indent:false});
+  refreshAlgoStepEditor();
+}
+function editAlgoStep(i){
+  const s=WIZ_ALGO_STEPS[i];
+  const q=prompt(T('algoStepQuestion'),s.question||'')||'';
+  const bRaw=prompt(T('algoStepBullets'),(s.bullets||[]).join('\n'))||'';
+  WIZ_ALGO_STEPS[i]={...s,question:q,bullets:bRaw?bRaw.split('\n').filter(Boolean):[]};
+  refreshAlgoStepEditor();
+}
+function deleteAlgoStep(i){WIZ_ALGO_STEPS.splice(i,1);refreshAlgoStepEditor();}
+function refreshAlgoStepEditor(){
+  const wrap=document.getElementById('algo-step-list');if(!wrap)return;
+  wrap.innerHTML=WIZ_ALGO_STEPS.map((s,i)=>`<div class="cb-row">
+    <span>${s.question?'❓ '+s.question.slice(0,40):s.bullets?.join(', ').slice(0,40)||'(step)'}</span>
+    <div style="display:flex;gap:4px;">
+      <button class="btn-edit-sm" onclick="editAlgoStep(${i})">✏️</button>
+      <button class="btn-del-sm" onclick="deleteAlgoStep(${i})">🗑</button>
+    </div>
+  </div>`).join('');
+}
+// ═══════════════ WIZARD CONFIGS ═══════════════
+// Helpers
+function abilityOpts(){ return DND.abilities.map(a=>({v:a,l:abilityShortName(a)})); }
+function schoolOpts(){ return DND.schools.map(s=>({v:s,l:dndTr('schools',s)||s})); }
+function diceOpts(){ return DND.dice.map(d=>({v:d,l:d})); }
+function damageOpts(){ return DND.damageTypes.map(d=>({v:d,l:dndTr('damageTypes',d)||d})); }
+function actionTypeOpts(){ return Object.entries(DND.actionLabels).map(([v,enL])=>({v,l:dndTr('actionLabels',v)||enL})); }
+function alignOpts(){ const lbls=DND.tr[currentLang]?.alignments||DND.alignments; return DND.alignments.map((v,i)=>({v,l:lbls[i]||v})); }
+function recoveryOpts(){ return Object.entries(DND.recovery).map(([v,enL])=>({v,l:dndTr('recovery',v)||enL})); }
+function lvOpts(){ return [1,2,3,4,5,6,7,8,9].map(n=>({v:n,l:'Lv '+n})); }
+
+const WIZARDS = {
+// ── Character Creation ──
+'char-create':{
+  title: 'Crea Personaggio',
+  steps:[
+    {label:'Identità', fields:[
+      {id:'name',label:'Nome',type:'text',placeholder:'Es. Arannis',required:true},
+      {id:'race',label:'Razza',type:'text',placeholder:'Es. Elfo, Umano…',required:true},
+      {id:'class',label:'Classe',type:'text',placeholder:'Es. Mago, Guerriero…',required:true},
+      {id:'subclass',label:'Sottoclasse',type:'text',placeholder:'Es. Evocatore'},
+      {id:'level',label:'Livello',type:'number',min:1,max:20,default:1,required:true},
+      {id:'alignment',label:'Allineamento',type:'select',options:()=>alignOpts()},
+      {id:'background',label:'Background',type:'text'},
+      {id:'playerName',label:'Nome Giocatore',type:'text'},
+      {id:'emoji',label:'Emoji PG',type:'emoji',default:'🧙'},
+    ]},
+    {label:'Punteggi Caratteristiche', fields:[
+      {id:'STR',label:'Forza',type:'number',min:1,max:30,default:10,required:true},
+      {id:'DEX',label:'Destrezza',type:'number',min:1,max:30,default:10,required:true},
+      {id:'CON',label:'Costituzione',type:'number',min:1,max:30,default:10,required:true},
+      {id:'INT',label:'Intelligenza',type:'number',min:1,max:30,default:10,required:true},
+      {id:'WIS',label:'Saggezza',type:'number',min:1,max:30,default:10,required:true},
+      {id:'CHA',label:'Carisma',type:'number',min:1,max:30,default:10,required:true},
+    ]},
+    {label:'Combattimento', fields:[
+      {id:'hpMax',label:'PF Massimi',type:'number',min:1,required:true},
+      {id:'hitDieType',label:'Dado Vita',type:'select',options:diceOpts(),default:'d8'},
+      {id:'ac',label:'Classe Armatura',type:'number',min:0,default:10,required:true},
+      {id:'speed',label:'Velocità',type:'text',default:'9m'},
+      {id:'initiative',label:'Bonus Iniziativa',type:'number',default:0},
+      {id:'proficiencyBonus',label:'Bonus Competenza',type:'number',default:2},
+    ]},
+    {label:'Tiri Salvezza', fields:[
+      {id:'savesSTR',label:'TS Forza competente',type:'checkbox'},
+      {id:'savesDEX',label:'TS Destrezza competente',type:'checkbox'},
+      {id:'savesCON',label:'TS Costituzione competente',type:'checkbox'},
+      {id:'savesINT',label:'TS Intelligenza competente',type:'checkbox'},
+      {id:'savesWIS',label:'TS Saggezza competente',type:'checkbox'},
+      {id:'savesCHA',label:'TS Carisma competente',type:'checkbox'},
+    ]},
+  ],
+  onSave(d){
+    CHAR={
+      name:d.name, race:d.race, class:d.class, subclass:d.subclass,
+      level:d.level||1, alignment:d.alignment, background:d.background,
+      playerName:d.playerName, emoji:d.emoji||'🧙',
+      abilityScores:{STR:+d.STR||10,DEX:+d.DEX||10,CON:+d.CON||10,INT:+d.INT||10,WIS:+d.WIS||10,CHA:+d.CHA||10},
+      hp:{max:+d.hpMax||10}, hitDieType:parseInt((d.hitDieType||'d8').replace(/\D/g,''))||8,
+      ac:+d.ac||10, speed:d.speed||'9m', initiative:+d.initiative||0,
+      proficiencyBonus:+d.proficiencyBonus||2,
+      savingThrows:['STR','DEX','CON','INT','WIS','CHA'].filter(a=>d['saves'+a]),
+      skills:[], features:[], spells:[], weapons:[], equipment:[],
+      trackers:[], actions:[], conditions:[...DND.conditions],
+      sidebar:[], combatAlgorithm:[],
+    };
+    SESSION=createDefaultSession(CHAR); syncSession();
+  }
+},
+// ── Spell ──
+'spell':{
+  title:'Incantesimo',
+  steps:[
+    {label:'Base', fields:[
+      {id:'name',label:'Nome (IT)',type:'text',required:true},
+      {id:'originalName',label:'Nome Originale',type:'text'},
+      {id:'emoji',label:'Emoji',type:'emoji'},
+      {id:'level',label:'Livello (0=Trucchetto)',type:'number',min:0,max:9,default:0,required:true},
+      {id:'school',label:'Scuola',type:'select',options:()=>schoolOpts()},
+      {id:'actionType',label:'Tipo Azione',type:'select',options:()=>actionTypeOpts()},
+    ]},
+    {label:'Dettagli', fields:[
+      {id:'range',label:'Gittata',type:'text'},
+      {id:'duration',label:'Durata',type:'text'},
+      {id:'concentration',label:'Concentrazione',type:'checkbox',checkLabel:'Richiede concentrazione'},
+      {id:'saveAbility',label:'Caratteristica TS bersaglio',type:'select',options:()=>[{v:'',l:'—'},...abilityOpts()]},
+      {id:'description',label:'Descrizione (markdown)',type:'textarea',rows:4,required:true},
+      {id:'scaling',label:'Potenziamento',type:'textarea',rows:2},
+      {id:'notes',label:'Note extra',type:'textarea',rows:2},
+      {id:'isNew',label:'Nuova',type:'checkbox',checkLabel:'Segna come NUOVO'},
+      {id:'isSecret',label:'Speciale',type:'checkbox',checkLabel:'Segna come SPECIALE'},
+      {id:'secretLabel',label:'Etichetta speciale',type:'text',placeholder:'SPECIALE'},
+    ]},
+  ],
+  onSave(d,idx){
+    const sp={name:d.name,originalName:d.originalName,emoji:d.emoji,level:+d.level||0,
+      school:d.school,actionType:d.actionType,range:d.range,duration:d.duration,
+      concentration:!!d.concentration,saveAbility:d.saveAbility,description:d.description,
+      scaling:d.scaling,notes:d.notes,isNew:!!d.isNew,isSecret:!!d.isSecret,secretLabel:d.secretLabel};
+    if(!CHAR.spells)CHAR.spells=[];
+    if(idx!==null&&idx!==undefined)CHAR.spells[idx]=sp; else CHAR.spells.push(sp);
+  }
+},
+// ── Weapon ──
+'weapon':{
+  title:'Arma',
+  steps:[{label:'Arma', fields:[
+    {id:'name',label:'Nome',type:'text',required:true},
+    {id:'emoji',label:'Emoji',type:'emoji'},
+    {id:'damage',label:'Danno (es. 1d8+3)',type:'text',required:true},
+    {id:'damageType',label:'Tipo Danno',type:'select',options:()=>damageOpts()},
+    {id:'attackStat',label:'Caratteristica Attacco',type:'select',options:()=>abilityOpts()},
+    {id:'attackBonus',label:'Bonus Attacco totale',type:'text',placeholder:'+5'},
+    {id:'quantity',label:'Quantità',type:'number',min:1,default:1},
+    {id:'properties',label:'Proprietà',type:'text'},
+    {id:'notes',label:'Note',type:'textarea',rows:2},
+    {id:'isNew',label:'Segna come NUOVO',type:'checkbox'},
+  ]}],
+  onSave(d,idx){
+    const w={name:d.name,emoji:d.emoji,damage:d.damage,damageType:d.damageType,
+      attackStat:d.attackStat,attackBonus:d.attackBonus,quantity:+d.quantity||1,
+      properties:d.properties,notes:d.notes,isNew:!!d.isNew};
+    if(!CHAR.weapons)CHAR.weapons=[];
+    if(idx!==null&&idx!==undefined)CHAR.weapons[idx]=w; else CHAR.weapons.push(w);
+  }
+},
+// ── Equipment ──
+'equipment':{
+  title:'Oggetto',
+  steps:[{label:'Oggetto', fields:[
+    {id:'name',label:'Nome',type:'text',required:true},
+    {id:'notes',label:'Note',type:'textarea',rows:2},
+  ]}],
+  onSave(d,idx){
+    const e={name:d.name,notes:d.notes};
+    if(!CHAR.equipment)CHAR.equipment=[];
+    if(idx!==null&&idx!==undefined)CHAR.equipment[idx]=e; else CHAR.equipment.push(e);
+  }
+},
+// ── Feature ──
+'feature':{
+  title:'Tratto / Capacità',
+  steps:[
+    {label:'Intestazione', fields:[
+      {id:'title',label:'Titolo',type:'text',required:true},
+      {id:'emoji',label:'Emoji',type:'emoji'},
+      {id:'subtitle',label:'Sottotitolo',type:'text'},
+      {id:'source',label:'Fonte (es. Classe Lv3)',type:'text'},
+      {id:'isNew',label:'Segna come NUOVO',type:'checkbox'},
+      {id:'isSecret',label:'Segna come SPECIALE',type:'checkbox'},
+      {id:'secretLabel',label:'Etichetta speciale',type:'text'},
+    ]},
+    {label:'Contenuto', hasContentBlocks:true, fields:[]},
+  ],
+  onSave(d,idx,blocks){
+    const f={title:d.title,emoji:d.emoji,subtitle:d.subtitle,source:d.source,
+      isNew:!!d.isNew,isSecret:!!d.isSecret,secretLabel:d.secretLabel,contentBlocks:blocks};
+    if(!CHAR.features)CHAR.features=[];
+    if(idx!==null&&idx!==undefined)CHAR.features[idx]=f; else CHAR.features.push(f);
+  }
+},
+// ── Tracker ──
+'tracker':{
+  title:'Tracker',
+  steps:[{label:'Tracker', fields:[
+    {id:'id',label:'ID (univoco, no spazi)',type:'text',required:true,placeholder:'bardic_inspiration'},
+    {id:'label',label:'Nome',type:'text',required:true},
+    {id:'emoji',label:'Emoji',type:'emoji'},
+    {id:'total',label:'Totale usi',type:'number',min:1,default:1,required:true},
+    {id:'recovery',label:'Ripristino',type:'select',options:()=>recoveryOpts()},
+    {id:'isPotion',label:'È una pozione (usa e cura PF)',type:'checkbox'},
+    {id:'potionFormula',label:'Formula pozione (es. 2d4+2)',type:'text'},
+    {id:'description',label:'Descrizione',type:'textarea',rows:2},
+  ]}],
+  onSave(d,idx){
+    const t={id:d.id,label:d.label,emoji:d.emoji,total:+d.total||1,recovery:d.recovery,
+      isPotion:!!d.isPotion,potionFormula:d.potionFormula,description:d.description};
+    if(!CHAR.trackers)CHAR.trackers=[];
+    if(idx!==null&&idx!==undefined)CHAR.trackers[idx]=t; else CHAR.trackers.push(t);
+    if(!SESSION.trackers[t.id])SESSION.trackers[t.id]={used:0};
+  }
+},
+// ── Action ──
+'action':{
+  title:'Azione Rapida',
+  steps:[{label:'Azione', fields:[
+    {id:'id',label:'ID',type:'text',required:true,placeholder:'firebolt'},
+    {id:'label',label:'Nome',type:'text',required:true},
+    {id:'emoji',label:'Emoji',type:'emoji'},
+    {id:'type',label:'Tipo',type:'select',options:()=>actionTypeOpts()},
+    {id:'description',label:'Descrizione breve',type:'textarea',rows:2},
+    {id:'damage',label:'Formula danno (es. 1d10)',type:'text'},
+    {id:'toHit',label:'Bonus colpire',type:'text'},
+    {id:'dc',label:'CD Tiro Salvezza',type:'number'},
+    {id:'dcAbility',label:'Caratteristica TS',type:'select',options:()=>[{v:'',l:'—'},...abilityOpts()]},
+    {id:'uses',label:'Usi (vuoto=illimitati)',type:'number'},
+    {id:'recovery',label:'Ripristino usi',type:'select',options:()=>recoveryOpts()},
+  ]}],
+  onSave(d,idx){
+    const a={id:d.id,label:d.label,emoji:d.emoji,type:d.type,description:d.description,
+      damage:d.damage,toHit:d.toHit,dc:d.dc?+d.dc:null,dcAbility:d.dcAbility,
+      uses:d.uses?+d.uses:null,recovery:d.recovery};
+    if(!CHAR.actions)CHAR.actions=[];
+    if(idx!==null&&idx!==undefined)CHAR.actions[idx]=a; else CHAR.actions.push(a);
+  }
+},
+// ── Condition ──
+'condition':{
+  title:'Condizione Personalizzata',
+  steps:[{label:'Condizione', fields:[
+    {id:'name',label:'Nome condizione',type:'text',required:true},
+  ]}],
+  onSave(d){
+    if(!CHAR.conditions)CHAR.conditions=[];
+    if(!CHAR.conditions.includes(d.name))CHAR.conditions.push(d.name);
+  }
+},
+// ── Spell Slot ──
+'spellslot':{
+  title:'Slot Incantesimo',
+  steps:[{label:'Slot', fields:[
+    {id:'level',label:'Livello Slot',type:'select',options:lvOpts(),required:true},
+    {id:'total',label:'Totale Slot',type:'number',min:1,default:1,required:true},
+  ]}],
+  onSave(d,idx){
+    if(!CHAR.spellSlots)CHAR.spellSlots=[];
+    const lv=+d.level, tot=+d.total||1;
+    const existing=CHAR.spellSlots.findIndex(s=>s.level===lv);
+    if(existing>=0)CHAR.spellSlots[existing].total=tot;
+    else CHAR.spellSlots.push({level:lv,total:tot});
+    CHAR.spellSlots.sort((a,b)=>a.level-b.level);
+    if(!SESSION.spellSlots[lv])SESSION.spellSlots[lv]={used:0};
+  }
+},
+// ── Algo Block ──
+'algoblock':{
+  title:'Blocco Algoritmo',
+  steps:[
+    {label:'Titolo', fields:[
+      {id:'title',label:'Titolo blocco',type:'text',required:true},
+      {id:'emoji',label:'Emoji',type:'emoji'},
+    ]},
+    {label:'Passi', hasAlgoSteps:true, fields:[]},
+  ],
+  onSave(d,idx,_blocks,steps){
+    const b={title:d.title,emoji:d.emoji,steps:steps};
+    if(!CHAR.combatAlgorithm)CHAR.combatAlgorithm=[];
+    if(idx!==null&&idx!==undefined)CHAR.combatAlgorithm[idx]=b; else CHAR.combatAlgorithm.push(b);
+  }
+},
+// ── Sidebar Link ──
+'sidebarlink':{
+  title:'Link Sidebar',
+  steps:[{label:'Link', fields:[
+    {id:'id',label:'ID ancora (es. incantesimi)',type:'text',required:true},
+    {id:'label',label:'Etichetta',type:'text',required:true},
+    {id:'emoji',label:'Emoji',type:'emoji'},
+  ]}],
+  onSave(d,idx){
+    const s={id:d.id,label:d.label,emoji:d.emoji};
+    if(!CHAR.sidebar)CHAR.sidebar=[];
+    if(idx!==null&&idx!==undefined)CHAR.sidebar[idx]=s; else CHAR.sidebar.push(s);
+  }
+},
+// ── Spellcasting Info ──
+'spellcasting':{
+  title:'Info Magia',
+  steps:[{label:'Magia', fields:[
+    {id:'ability',label:'Caratteristica magia',type:'select',options:()=>abilityOpts()},
+    {id:'saveDC',label:'CD Tiro Salvezza Magia',type:'number'},
+    {id:'attackBonus',label:'Bonus Attacco Magia',type:'number'},
+    {id:'focus',label:'Focus / Componenti',type:'text'},
+  ]}],
+  onSave(d){
+    CHAR.spellcasting={ability:d.ability,saveDC:+d.saveDC||0,attackBonus:+d.attackBonus||0,focus:d.focus};
+  }
+},
+// ── Skills ──
+'skills':{
+  title:'Competenze Abilità',
+  // fields built lazily so currentLang is resolved at open time
+  steps:[{label:'Abilità', fields:[], _buildFields(){
+    return DND.standardSkills.map(sk=>({
+      id:'sk_'+sk.id, label:skillName(sk),
+      type:'select',
+      options:[
+        {v:'none',          l:T('profType_none')},
+        {v:'proficient',    l:T('profType_proficient')},
+        {v:'expertise',     l:T('profType_expertise')},
+        {v:'jackOfAllTrades',l:T('profType_jackOfAllTrades')}
+      ]
+    }));
+  }}],
+  onSave(d){
+    const existing=CHAR.skills||[];
+    const stdNames=new Set(DND.standardSkills.map(sk=>sk.en));
+    // also include Italian names for legacy backward compat
+    DND.standardSkills.forEach(sk=>{ const itName=DND.tr.it?.skills?.[sk.id]; if(itName) stdNames.add(itName); });
+    CHAR.skills=DND.standardSkills
+      .filter(sk=>{
+        const type=d['sk_'+sk.id];
+        if(type && type!=='none') return true; // has proficiency — always include
+        // 'none': keep only if the skill was already in the list
+        const itName=DND.tr.it?.skills?.[sk.id];
+        return existing.some(s=>s.name===sk.en||(itName&&s.name===itName));
+      })
+      .map(sk=>({name:sk.en, ability:sk.ability, type:d['sk_'+sk.id]||'none'}));
+    // re-append any non-standard custom skills
+    const custom=existing.filter(s=>!stdNames.has(s.name));
+    if(custom.length) CHAR.skills.push(...custom);
+  }
+},
+}; // end WIZARDS
+// ═══════════════ EDIT / DELETE HANDLERS ═══════════════
+// Character
+function editCharacter(){ openWizard('char-create',null,flattenChar()); }
+function openCharInfoWizard(){ openWizard('char-create',null,flattenChar()); }
+function openCharCreationWizard(){ openWizard('char-create'); }
+function flattenChar(){
+  const C=CHAR||{}; const sc=C.abilityScores||{};
+  const saves=C.savingThrows||[];
+  return {
+    name:C.name,race:C.race,class:C.class,subclass:C.subclass,level:C.level,
+    alignment:C.alignment,background:C.background,playerName:C.playerName,emoji:C.emoji,
+    STR:sc.STR,DEX:sc.DEX,CON:sc.CON,INT:sc.INT,WIS:sc.WIS,CHA:sc.CHA,
+    hpMax:C.hp?.max,hitDieType:C.hitDieType?'d'+C.hitDieType:'d8',ac:C.ac,speed:C.speed,
+    initiative:C.initiative,proficiencyBonus:C.proficiencyBonus,
+    savesSTR:saves.includes('STR'),savesDEX:saves.includes('DEX'),
+    savesCON:saves.includes('CON'),savesINT:saves.includes('INT'),
+    savesWIS:saves.includes('WIS'),savesCHA:saves.includes('CHA'),
+  };
+}
+// Spells
+function addSpell(level){ openWizard('spell',null,{level:level??0}); }
+function editSpell(idx){ openWizard('spell',idx,{...(CHAR.spells||[])[idx]}); }
+function deleteSpell(idx){ if(!confirm(T('confirmDelete')))return; CHAR.spells.splice(idx,1); saveAll(); renderAll(); }
+// Spellcasting info
+function editSpellcasting(){ openWizard('spellcasting',null,{...(CHAR.spellcasting||{})}); }
+// Spell slots
+function addSpellSlot(){ openWizard('spellslot',null,{}); }
+// Weapons
+function addWeapon(){ openWizard('weapon',null,{}); }
+function editWeapon(idx){ openWizard('weapon',idx,{...(CHAR.weapons||[])[idx]}); }
+function deleteWeapon(idx){ if(!confirm(T('confirmDelete')))return; CHAR.weapons.splice(idx,1); saveAll(); renderAll(); }
+// Equipment
+function addEquip(){ openWizard('equipment',null,{}); }
+function editEquip(idx){ openWizard('equipment',idx,{...(CHAR.equipment||[])[idx]}); }
+function deleteEquip(idx){ if(!confirm(T('confirmDelete')))return; CHAR.equipment.splice(idx,1); saveAll(); renderAll(); }
+// Features
+function addFeature(){ openWizard('feature',null,{}); }
+function editFeature(idx){
+  const f=(CHAR.features||[])[idx];
+  openWizard('feature',idx,{...f},);
+  WIZ_BLOCKS=[...(f.contentBlocks||[])];
+}
+function deleteFeature(idx){ if(!confirm(T('confirmDelete')))return; CHAR.features.splice(idx,1); saveAll(); renderAll(); }
+// Trackers
+function addTracker(){ openWizard('tracker',null,{}); }
+function editTracker(idx){ openWizard('tracker',idx,{...(CHAR.trackers||[])[idx]}); }
+function deleteTracker(idx){ if(!confirm(T('confirmDelete')))return; CHAR.trackers.splice(idx,1); saveAll(); renderAll(); }
+// Actions
+function addAction(){ openWizard('action',null,{}); }
+function editAction(idx){ openWizard('action',idx,{...(CHAR.actions||[])[idx]}); }
+function deleteAction(idx){ if(!confirm(T('confirmDelete')))return; CHAR.actions.splice(idx,1); saveAll(); renderAll(); }
+// Algo blocks
+function addAlgoBlock(){ openWizard('algoblock',null,{}); }
+function editAlgoBlock(idx){
+  const b=(CHAR.combatAlgorithm||[])[idx];
+  openWizard('algoblock',idx,{...b});
+  WIZ_ALGO_STEPS=[...(b.steps||[])];
+}
+function deleteAlgoBlock(idx){ if(!confirm(T('confirmDelete')))return; CHAR.combatAlgorithm.splice(idx,1); saveAll(); renderAll(); }
+// Sidebar
+function addSidebarLink(){ openWizard('sidebarlink',null,{}); }
+function editSidebarLink(idx){ openWizard('sidebarlink',idx,{...(CHAR.sidebar||[])[idx]}); }
+function deleteSidebarLink(idx){ if(!confirm(T('confirmDelete')))return; CHAR.sidebar.splice(idx,1); saveAll(); renderAll(); }
+// Skills
+function editSkills(){ openWizard('skills',null,flattenSkills()); }
+function flattenSkills(){
+  const d={};
+  DND.standardSkills.forEach(sk=>{
+    const itName=DND.tr.it?.skills?.[sk.id];
+    const found=(CHAR.skills||[]).find(s=>s.name===sk.en||(itName&&s.name===itName));
+    d['sk_'+sk.id]=found?.type||'none';
+  });
+  return d;
+}
+// Conditions custom
+function addCustomCondition(){ openWizard('condition',null,{}); }
+// Sidebar item helpers (generic — covers links, separators, and mobile close)
+function closeSidebarMobile(){ onOverlayClick(); }
+function addSidebarSep(){
+  if(!CHAR.sidebar) CHAR.sidebar=[];
+  CHAR.sidebar.push({type:'sep'});
+  saveAll(); renderAll();
+}
+function deleteSidebarItem(idx){
+  if(!confirm(T('confirmDelete'))) return;
+  (CHAR.sidebar||[]).splice(idx,1);
+  saveAll(); renderAll();
+}
+function editSidebarItem(idx){
+  const item=(CHAR.sidebar||[])[idx];
+  if(item && item.type!=='sep') editSidebarLink(idx);
+}
+// Condition CRUD
+function addCondition(){
+  const v=prompt(currentLang==='it'?'Nome condizione:':'Condition name:');
+  if(v && v.trim()){
+    if(!CHAR.conditions) CHAR.conditions=[];
+    CHAR.conditions.push(v.trim());
+    saveAll(); renderAll();
+  }
+}
+function deleteCondition(idx){
+  if(!confirm(T('confirmDelete'))) return;
+  (CHAR.conditions||[]).splice(idx,1);
+  saveAll(); renderAll();
+}
+// Skill CRUD — opens the bulk skills wizard (no per-row wizard needed)
+function editSkillItem(){ openWizard('skills',null,flattenSkills()); }
+function deleteSkill(idx){
+  if(!confirm(T('confirmDelete'))) return;
+  (CHAR.skills||[]).splice(idx,1);
+  saveAll(); renderAll();
+}
+function addSkillItem(){ openWizard('skills',null,flattenSkills()); }
+// Session note
+function saveNote(){
+  const el=document.getElementById('session-notes');
+  if(el){SESSION.notes=el.value; saveAll(); showToast(T('toastNoteSaved'),'success');}
+}
+// ═══════════════ MISC UI ═══════════════
+function toggleTheme(){
+  const root=document.documentElement;
+  const newTheme=root.getAttribute('data-theme')==='dark'?'light':'dark';
+  root.setAttribute('data-theme',newTheme);
+  localStorage.setItem('dnd-theme',newTheme);
+  const btn=document.getElementById('theme-btn');
+  if(btn) btn.textContent=newTheme==='light'?'🌙':'☀️';
+}
+function toggleLang(){
+  currentLang=currentLang==='it'?'en':'it';
+  localStorage.setItem('dnd-lang',currentLang);
+  renderAll();
+}
+function toggleEditMode(){
+  EDIT_MODE=!EDIT_MODE;
+  document.body.classList.toggle('edit-mode',EDIT_MODE);
+  const btn=document.getElementById('edit-mode-btn');
+  if(btn) btn.textContent=EDIT_MODE?T('editOff'):T('editOn');
+  renderAll();
+}
+function toggleSidebar(){
+  const sb=document.getElementById('sidebar');
+  const overlay=document.getElementById('sidebar-overlay');
+  if(!sb)return;
+  const open=sb.classList.toggle('open');
+  if(overlay) overlay.classList.toggle('visible',open);
+}
+function onOverlayClick(event){
+  // Close wizard if the backdrop itself was clicked (not the modal box inside)
+  if(event&&event.target&&event.target.id==='wizard-overlay'){closeWizard();return;}
+  const sb=document.getElementById('sidebar');
+  const overlay=document.getElementById('sidebar-overlay');
+  if(sb) sb.classList.remove('open');
+  if(overlay) overlay.classList.remove('visible');
+}
+function loadPortrait(event){
+  const file=event?.target?.files?.[0];
+  if(!file)return;
+  const reader=new FileReader();
+  reader.onload=function(ev){
+    SESSION.portrait=ev.target.result;
+    const img=document.getElementById('portrait-img');
+    const ph=document.getElementById('portrait-ph');
+    if(img){img.src=ev.target.result;img.style.display='block';}
+    if(ph) ph.style.display='none';
+    saveAll();
+  };
+  reader.readAsDataURL(file);
+}
+function renderSplash(){
+  const set=(id,txt)=>{const e=document.getElementById(id);if(e)e.textContent=txt;};
+  set('splash-sub',        T('splashSub'));
+  set('splash-import-label',T('splashImport'));
+  set('splash-import-desc', T('splashImportDesc'));
+  set('splash-create-label',T('splashCreate'));
+  set('splash-create-desc', T('splashCreateDesc'));
+}
+function showSplash(){
+  const sp=document.getElementById('splash');
+  if(sp) sp.style.display='flex';
+  renderSplash();
+}
+function hideSplash(){
+  const sp=document.getElementById('splash');
+  if(sp) sp.style.display='none';
+}
+function logoutCharacter(){
+  if(!confirm(T('confirmLogout'))) return;
+  CHAR=null; SESSION=null; EDIT_MODE=false;
+  document.body.classList.remove('edit-mode');
+  localStorage.removeItem('dnd_sheet_v2');
+  // Reset rendered content
+  document.getElementById('char-name').textContent='Scheda D&D 2024';
+  ['char-subtitle','char-description','char-quote','sections-area','pannello','nav-links','sidebar-footer'].forEach(id=>{
+    const el=document.getElementById(id); if(el) el.innerHTML='';
+  });
+  const img=document.getElementById('portrait-img'); if(img){img.src='';img.style.display='none';}
+  const ph=document.getElementById('portrait-ph'); if(ph) ph.style.display='';
+  showSplash();
+  updateFixedControls();
+}
+let _toastTimer=null;
+function showToast(msg,type='info'){
+  const tc=document.getElementById('toast-container');
+  if(!tc)return;
+  const t=document.createElement('div');
+  t.className='toast toast-'+type; t.textContent=msg;
+  tc.appendChild(t);
+  requestAnimationFrame(()=>t.classList.add('visible'));
+  setTimeout(()=>{t.classList.remove('visible');setTimeout(()=>t.remove(),400);},3200);
+}
+// ═══════════════ INIT ═══════════════
+function init(){
+  // Theme
+  const savedTheme=localStorage.getItem('dnd-theme')||'dark';
+  document.documentElement.setAttribute('data-theme',savedTheme);
+  const themeBtn=document.getElementById('theme-btn');
+  if(themeBtn) themeBtn.textContent=savedTheme==='light'?'🌙':'☀️';
+  // Lang
+  currentLang=localStorage.getItem('dnd-lang')||'it';
+  // Load data
+  const loaded=loadFromStorage();
+  if(!loaded||!CHAR){
+    showSplash();
+    return;
+  }
+  hideSplash();
+  syncSession();
+  renderAll();
+  // Theme on saved data
+  const btn=document.getElementById('edit-mode-btn');
+  if(btn) btn.textContent=EDIT_MODE?T('editOff'):T('editOn');
+  // Wizard modal close on overlay click
+  // Gold input sync
+  const gi=document.getElementById('gold-input');
+  if(gi){
+    gi.addEventListener('change',function(){
+      SESSION.gold=Math.max(0,parseInt(gi.value)||0);
+      const gs=document.getElementById('gold-static');if(gs)gs.textContent=SESSION.gold;
+      saveAll();
+    });
+  }
+  // Concentration input sync
+  const ci=document.getElementById('conc-spell-input');
+  if(ci){
+    ci.addEventListener('change',function(){
+      SESSION.concentration=ci.value;
+      const st=document.getElementById('conc-status');
+      if(st){
+        st.textContent=ci.value?ci.value:T('concNone');
+        st.className='conc-status-text'+(ci.value?' conc-active':'');
+      }
+      saveAll();
+    });
+  }
+  // HP amount enter key
+  const hpAmt=document.getElementById('hp-amount');
+  if(hpAmt) hpAmt.addEventListener('keydown',function(e){if(e.key==='Enter')applyDamage();});
+}
+// Splash "load file" button
+function splashLoadFile(){
+  document.getElementById('import-char-input')?.click();
+}
+// Splash "new character" button
+function splashNewChar(){
+  hideSplash();
+  openWizard('char-create');
+}
+document.addEventListener('DOMContentLoaded', init);
+</script>
+</body>
+</html>

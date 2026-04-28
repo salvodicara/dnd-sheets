@@ -1,0 +1,579 @@
+{
+  "version": "2.0",
+  "savedAt": "2026-04-28T00:00:00Z",
+  "character": {
+    "name": "Catalion di Sancaldo",
+    "quote": "«Le storie cambiano il mondo. Le spade lo feriscono soltanto.»",
+    "race": "Umano",
+    "class": "Bardo 3 — College of Lore",
+    "background": "Intrattenitore",
+    "alignment": "Neutral Good",
+    "proficiencyBonus": 2,
+    "speed": "9 m",
+    "level": 3,
+    "hitDieType": 8,
+    "ac": 14,
+    "armorNote": "Armatura di cuoio 11 + DES",
+    "hp": { "max": 24 },
+    "languages": "Comune, Nanico",
+    "abilityScores": {
+      "STR": 8, "DEX": 16, "CON": 14,
+      "INT": 8, "WIS": 10, "CHA": 17
+    },
+    "savingThrows": ["DEX", "CHA"],
+    "skills": [
+      { "name": "Acrobatics",      "ability": "DEX", "type": "proficient"      },
+      { "name": "Stealth",         "ability": "DEX", "type": "expertise"       },
+      { "name": "Sleight of Hand", "ability": "DEX", "type": "proficient"      },
+      { "name": "Performance",     "ability": "CHA", "type": "proficient"      },
+      { "name": "Persuasion",      "ability": "CHA", "type": "expertise"       },
+      { "name": "Deception",       "ability": "CHA", "type": "jackOfAllTrades" },
+      { "name": "Intimidation",    "ability": "CHA", "type": "jackOfAllTrades" },
+      { "name": "Perception",      "ability": "WIS", "type": "jackOfAllTrades" },
+      { "name": "Insight",         "ability": "WIS", "type": "jackOfAllTrades" },
+      { "name": "Medicine",        "ability": "WIS", "type": "jackOfAllTrades" },
+      { "name": "Survival",        "ability": "WIS", "type": "jackOfAllTrades" },
+      { "name": "Animal Handling", "ability": "WIS", "type": "jackOfAllTrades" },
+      { "name": "Athletics",       "ability": "STR", "type": "jackOfAllTrades" },
+      { "name": "Arcana",          "ability": "INT", "type": "jackOfAllTrades" },
+      { "name": "Investigation",   "ability": "INT", "type": "jackOfAllTrades" },
+      { "name": "Nature",          "ability": "INT", "type": "jackOfAllTrades" },
+      { "name": "Religion",        "ability": "INT", "type": "jackOfAllTrades" },
+      { "name": "History",         "ability": "INT", "type": "jackOfAllTrades" }
+    ],
+    "spellcasting": {
+      "ability": "CHA",
+      "saveDC": 13,
+      "attackBonus": 5,
+      "focus": "Strumento musicale"
+    },
+    "spellSlots": [
+      { "level": 1, "total": 4 },
+      { "level": 2, "total": 2 }
+    ],
+    "spells": [
+      {
+        "level": 0,
+        "name": "Beffa Crudele",
+        "originalName": "Vicious Mockery",
+        "emoji": "🗣️",
+        "actionType": "action",
+        "school": "Enchantment",
+        "range": "18 m",
+        "concentration": false,
+        "duration": "Istantanea",
+        "saveAbility": "WIS",
+        "description": "1d6 danni psichici\nSvantaggio al prossimo attacco del bersaglio",
+        "scaling": "Liv 5 → 2d6 | Liv 11 → 3d6 | Liv 17 → 4d6",
+        "isNew": false,
+        "isSecret": false,
+        "secretLabel": null,
+        "notes": ""
+      },
+      {
+        "level": 0,
+        "name": "Amicizia",
+        "originalName": "Friends",
+        "emoji": "🙂",
+        "actionType": "action",
+        "school": "Enchantment",
+        "range": "3 m",
+        "concentration": true,
+        "duration": "1 minuto",
+        "saveAbility": "WIS",
+        "description": "TS Saggezza o il bersaglio è Charmed.\nAlla fine della concentrazione, il bersaglio sa che l'hai influenzato.",
+        "scaling": "",
+        "isNew": false,
+        "isSecret": false,
+        "secretLabel": null,
+        "notes": ""
+      },
+      {
+        "level": 0,
+        "name": "Illusione Minore",
+        "originalName": "Minor Illusion",
+        "emoji": "🌫️",
+        "actionType": "action",
+        "school": "Illusion",
+        "range": "9 m",
+        "concentration": false,
+        "duration": "1 minuto",
+        "saveAbility": "",
+        "description": "Crea **un suono** oppure **un'immagine visiva** entro raggio:\n• **Suono:** qualsiasi suono, da un sussurro a una voce alta\n• **Immagine:** un oggetto fisso (max 1,5 m di lato), senza suono né odore\n📌 Chi interagisce può smascherarla con INT (Arcano) CD 13.\n📌 Ottima per distrarre nemici o creare diversivi.",
+        "scaling": "",
+        "isNew": true,
+        "isSecret": false,
+        "secretLabel": null,
+        "notes": ""
+      },
+      {
+        "level": 1,
+        "name": "Parola Curativa",
+        "originalName": "Healing Word",
+        "emoji": "❤️",
+        "actionType": "bonus",
+        "school": "Evocation",
+        "range": "18 m",
+        "concentration": false,
+        "duration": "Istantanea",
+        "saveAbility": "",
+        "description": "Cura **1d4 + CAR PF**. Perfetta per rialzare alleati a 0 PF.",
+        "scaling": "",
+        "isNew": false,
+        "isSecret": false,
+        "secretLabel": null,
+        "notes": ""
+      },
+      {
+        "level": 1,
+        "name": "Sussurri Dissonanti",
+        "originalName": "Dissonant Whispers",
+        "emoji": "😈",
+        "actionType": "action",
+        "school": "Enchantment",
+        "range": "18 m",
+        "concentration": false,
+        "duration": "Istantanea",
+        "saveAbility": "WIS",
+        "description": "3d6 danni psichici.\nIl bersaglio usa la reazione per fuggire → provoca Attacchi di Opportunità.",
+        "scaling": "",
+        "isNew": false,
+        "isSecret": false,
+        "secretLabel": null,
+        "notes": ""
+      },
+      {
+        "level": 1,
+        "name": "Risata Incontenibile di Tasha",
+        "originalName": "Tasha's Hideous Laughter",
+        "emoji": "😂",
+        "actionType": "action",
+        "school": "Enchantment",
+        "range": "9 m",
+        "concentration": true,
+        "duration": "Concentrazione",
+        "saveAbility": "WIS",
+        "description": "Bersaglio **Prono e Incapacitato** finché dura.",
+        "scaling": "",
+        "isNew": false,
+        "isSecret": false,
+        "secretLabel": null,
+        "notes": ""
+      },
+      {
+        "level": 1,
+        "name": "Charme su Persone",
+        "originalName": "Charm Person",
+        "emoji": "💕",
+        "actionType": "action",
+        "school": "Enchantment",
+        "range": "9 m",
+        "concentration": false,
+        "duration": "1 ora",
+        "saveAbility": "WIS",
+        "description": "Bersaglio Charmed per 1 ora.\nHa vantaggio al TS se siete in combattimento.",
+        "scaling": "",
+        "isNew": false,
+        "isSecret": false,
+        "secretLabel": null,
+        "notes": ""
+      },
+      {
+        "level": 2,
+        "name": "Frantuma",
+        "originalName": "Shatter",
+        "emoji": "💥",
+        "actionType": "action",
+        "school": "Evocation",
+        "range": "18 m (sfera 3 m)",
+        "concentration": false,
+        "duration": "Istantanea",
+        "saveAbility": "CON",
+        "description": "3d8 danni tuono (metà se salva).\nOggetti inorganici e nemici in armatura metallica hanno svantaggio al TS.",
+        "scaling": "+1d8 per ogni slot sopra il 2°",
+        "isNew": true,
+        "isSecret": false,
+        "secretLabel": null,
+        "notes": "📌 Usa su gruppi di nemici vicini tra loro."
+      },
+      {
+        "level": 2,
+        "name": "Invisibilità",
+        "originalName": "Invisibility",
+        "emoji": "👁️",
+        "actionType": "action",
+        "school": "Illusion",
+        "range": "Tocco",
+        "concentration": true,
+        "duration": "Fino a 1 ora",
+        "saveAbility": "",
+        "description": "Una creatura diventa **invisibile**. Termina se la creatura attacca o lancia un incantesimo.\n📌 Usa su te stesso se sei in pericolo grave.\n📌 Usala sul Ladro per dargli vantaggio sugli attacchi.",
+        "scaling": "",
+        "isNew": true,
+        "isSecret": false,
+        "secretLabel": null,
+        "notes": ""
+      },
+      {
+        "level": 2,
+        "name": "Aiuto",
+        "originalName": "Aid",
+        "emoji": "❤️‍🩹",
+        "actionType": "action",
+        "school": "Abjuration",
+        "range": "9 m",
+        "concentration": false,
+        "duration": "8 ore",
+        "saveAbility": "",
+        "description": "Fino a 3 creature: **+5 PF massimi e PF attuali** per 8 ore.\n📌 Lancia **prima del combattimento** su Barbaro, Monaco, Paladino.\n📌 Dura tutto il giorno. Non spreca concentrazione.",
+        "scaling": "+5 PF per ogni slot sopra il 2°",
+        "isNew": false,
+        "isSecret": true,
+        "secretLabel": "SEGRETO MAGICO",
+        "notes": ""
+      },
+      {
+        "level": 2,
+        "name": "Ferma Persona",
+        "originalName": "Hold Person",
+        "emoji": "🔒",
+        "actionType": "action",
+        "school": "Enchantment",
+        "range": "18 m",
+        "concentration": true,
+        "duration": "Fino a 1 minuto",
+        "saveAbility": "WIS",
+        "description": "⚠️ **Solo su UMANOIDI** (umani, elfi, nani, orchi, ecc.)\nSe fallisce, il bersaglio è **Paralizzato**:\n• Non può muoversi né parlare\n• Fallisce automaticamente TS su FOR e DES\n• Tutti gli attacchi contro di lui hanno **Vantaggio**\n• Attacchi in mischia entro 1,5 m sono **CRITICI AUTOMATICI**\n📌 Usa sul nemico umanoide più pericoloso del combattimento.\n📌 Il Barbaro, il Monaco e il Paladino faranno danni enormi.",
+        "scaling": "",
+        "isNew": false,
+        "isSecret": true,
+        "secretLabel": "SEGRETO MAGICO",
+        "notes": ""
+      }
+    ],
+    "weapons": [
+      {
+        "name": "Pugnale",
+        "quantity": 2,
+        "emoji": "🗡️",
+        "damage": "1d4 + 3",
+        "damageType": "Piercing",
+        "attackBonus": "+5",
+        "attackStat": "DEX",
+        "properties": "Finesse, Leggera, Lanciabile (6/18 m)",
+        "notes": "Con 2 pugnali puoi usare l'Azione Bonus per attaccare con il secondo (Lotta con due armi).",
+        "isNew": false
+      },
+      {
+        "name": "Lancia",
+        "quantity": 1,
+        "emoji": "🏹",
+        "damage": "1d6 − 1",
+        "damageType": "Piercing",
+        "attackBonus": "+1",
+        "attackStat": "STR",
+        "properties": "Versatile (1d8 − 1), Lanciabile (6/18 m)",
+        "notes": "Arma semplice, sei competente. Statistiche basse perché FOR è −1. Meglio come arma di riserva o da lancio situazionale.",
+        "isNew": true
+      },
+      {
+        "name": "Spada Bella",
+        "quantity": 1,
+        "emoji": "⚔️",
+        "damage": "1d8 + 3 (se Finesse)",
+        "damageType": "Piercing",
+        "attackBonus": "+5 (se Finesse)",
+        "attackStat": "DEX",
+        "properties": "Da definire con il DM",
+        "notes": "Se è uno spadino/rapier (Finesse): Attacco +5, Danno 1d8+3. Chiedi al DM di che arma si tratta esattamente.",
+        "isNew": true
+      }
+    ],
+    "equipment": [
+      { "name": "Armatura di cuoio",       "notes": "Indossata — CA 14"                          },
+      { "name": "2 Pugnali",               "notes": "Armi principali — vedi sezione Armi"         },
+      { "name": "Lancia",                  "notes": "Arma di riserva"                             },
+      { "name": "Spada Bella",             "notes": "Tipo da definire con il DM"                  },
+      { "name": "Liuto",                   "notes": "Focus per gli incantesimi"                   },
+      { "name": "1 Pozione Curativa",      "notes": "Azione Bonus: cura 2d4+2 PF"                },
+      { "name": "Abiti da intrattenitore", "notes": ""                                            },
+      { "name": "2 Costumi",              "notes": ""                                            },
+      { "name": "Profumo",                 "notes": ""                                            },
+      { "name": "Specchio",                "notes": ""                                            },
+      { "name": "Vestiti da viaggiatore",  "notes": ""                                            }
+    ],
+    "features": [
+      {
+        "id": "ispirazione",
+        "title": "Ispirazione Bardica",
+        "emoji": "🎵",
+        "source": "Bardo",
+        "contentBlocks": [
+          { "type": "table", "headers": [], "rows": [
+            ["Dado", "d6"], ["Uso", "Azione Bonus"], ["Raggio", "18 m (60 ft)"],
+            ["Durata", "1 ora"], ["Usi Totali", "3 (pari al modificatore di Carisma)"],
+            ["Recupero", "Riposo Lungo"]
+          ]},
+          { "type": "paragraph", "text": "**Effetto:** una creatura che ti vede o sente ottiene 1 dado di Ispirazione Bardica. Può spenderlo dopo aver fallito un tiro su d20 — aggiunge 1d6 al risultato. Una creatura può avere 1 solo dado alla volta." },
+          { "type": "note", "text": "📈 Progressione: Liv 5 → d8 | Liv 10 → d10 | Liv 15 → d12" }
+        ]
+      },
+      {
+        "id": "expertise",
+        "title": "Expertise (Perizia)",
+        "emoji": "🎓",
+        "source": "Bardo",
+        "contentBlocks": [
+          { "type": "paragraph", "text": "Raddoppi il Bonus di Competenza in 2 abilità scelte." },
+          { "type": "paragraph", "text": "**Scelte di Catalion:** Furtività → +7 | Persuasione → +7" },
+          { "type": "note", "text": "📌 Calcolo: Modificatore + (Bonus Competenza 2 × 2) = +7" }
+        ]
+      },
+      {
+        "id": "jack",
+        "title": "Jack of All Trades",
+        "emoji": "🃏",
+        "source": "Bardo",
+        "contentBlocks": [
+          { "type": "paragraph", "text": "Aggiungi **metà** del Bonus di Competenza (arrotondato per difetto) a tutte le prove abilità in cui NON sei competente." },
+          { "type": "note", "text": "👉 Non si applica a tiri salvezza o attacchi." }
+        ]
+      },
+      {
+        "id": "college-lore",
+        "title": "College of Lore",
+        "emoji": "🎓",
+        "source": "Bardo — Sottoclasse",
+        "contentBlocks": [
+          { "type": "subfeature", "title": "Parole Taglienti (Cutting Words)", "emoji": "🗡️", "isNew": true, "contentBlocks": [
+            { "type": "paragraph", "text": "**REAZIONE | Raggio 18 m**" },
+            { "type": "paragraph", "text": "Quando una creatura entro 18 m fa un **tiro d'attacco**, una **prova di caratteristica** o un **tiro danni**:\n→ Spendi 1 Ispirazione Bardica: il bersaglio **sottrae 1d6 al risultato**." },
+            { "type": "bullets", "bullets": [
+              "📌 Puoi usarlo **dopo** aver visto il tiro, ma **prima** che abbia effetto.",
+              "📌 Ottimo per proteggere il Barbaro o il Monaco quando stanno per ricevere un colpo grosso.",
+              "📌 Non funziona se il bersaglio è immune a essere affascinato."
+            ]}
+          ]},
+          { "type": "subfeature", "title": "Segreti Magici Bonus (Bonus Magical Secrets)", "emoji": "🔮", "isNew": true, "contentBlocks": [
+            { "type": "paragraph", "text": "Apprendi **2 incantesimi da qualsiasi lista di classe**." },
+            { "type": "paragraph", "text": "**Scelte di Catalion:**" },
+            { "type": "bullets", "bullets": [
+              "Ferma Persona — lista Chierico/Druido",
+              "Aiuto — lista Chierico/Paladino"
+            ]}
+          ]}
+        ]
+      },
+      {
+        "id": "feat",
+        "title": "Feat Origin",
+        "emoji": "🎭",
+        "source": "Origin Feat",
+        "contentBlocks": [
+          { "type": "subfeature", "title": "Musicista", "emoji": "🎶", "contentBlocks": [
+            { "type": "paragraph", "text": "Competenza in 3 strumenti musicali (es. liuto, flauto, tamburo)" },
+            { "type": "paragraph", "text": "**Canzone Incoraggiante:** al termine di un Riposo Breve o Lungo, scegli un numero di alleati pari al Bonus di Competenza (2). Ogni alleato ottiene **Ispirazione Eroica** (1 Vantaggio su D20)." }
+          ]},
+          { "type": "subfeature", "title": "Lucky", "emoji": "🍀", "contentBlocks": [
+            { "type": "table", "headers": [], "rows": [
+              ["Punti Fortuna", "2 (pari al Bonus di Competenza)"],
+              ["Recupero", "Riposo Lungo"]
+            ]},
+            { "type": "bullets", "bullets": [
+              "**Vantaggio:** spendi 1 punto → rilanci un d20 con vantaggio",
+              "**Svantaggio:** spendi 1 punto → imponi svantaggio a un nemico che ti colpisce",
+              "Usabile su: attacchi, tiri salvezza, prove abilità"
+            ]}
+          ]}
+        ]
+      }
+    ],
+    "trackers": [
+      {
+        "id": "inspiration",
+        "label": "Ispirazione Bardica",
+        "emoji": "🎵",
+        "die": "d6",
+        "showDie": true,
+        "total": 3,
+        "recovery": "long",
+        "isPotion": false,
+        "potionFormula": "",
+        "potionNotes": ""
+      },
+      {
+        "id": "luck",
+        "label": "Punti Fortuna (Lucky)",
+        "emoji": "🍀",
+        "die": "",
+        "showDie": false,
+        "total": 2,
+        "recovery": "long",
+        "isPotion": false,
+        "potionFormula": "",
+        "potionNotes": ""
+      },
+      {
+        "id": "potions",
+        "label": "Pozione Curativa",
+        "emoji": "🧪",
+        "die": "",
+        "showDie": false,
+        "total": 1,
+        "recovery": "manual",
+        "isPotion": true,
+        "potionFormula": "2d4+2",
+        "potionNotes": "Azione Bonus"
+      }
+    ],
+    "conditions": [
+      "Poisoned", "Incapacitated", "Paralyzed", "Prone",
+      "Charmed", "Frightened", "Blinded", "Restrained",
+      "Stunned", "Invisible",
+      "Aid attivo (+5 PF)", "Concentrazione"
+    ],
+    "actions": [
+      { "type": "bonus",    "label": "Ispirazione Bardica",     "emoji": "🎵", "description": "+1d6 al d20 di un alleato | 18 m | 3 usi / Riposo Lungo" },
+      { "type": "bonus",    "label": "Secondo Attacco",          "emoji": "🗡️", "description": "1d4 perforante (NO mod DES al danno) | richiede attacco col primo pugnale" },
+      { "type": "reaction", "label": "Parole Taglienti",         "emoji": "✂️", "description": "−1d6 a tiro attacco/danno nemico | spendi 1 Ispirazione | 18 m | dopo aver visto il tiro" }
+    ],
+    "combatAlgorithm": [
+      {
+        "emoji": "🔷",
+        "title": "PRIMA DEL COMBATTIMENTO (se hai qualche secondo)",
+        "steps": [
+          {
+            "question": null,
+            "bullets": [
+              "Lancia **Aiuto** su Barbaro + Monaco + Paladino",
+              "Tutti e tre guadagnano +5 PF per 8 ore. Non costa concentrazione."
+            ]
+          }
+        ]
+      },
+      {
+        "emoji": "🔷",
+        "title": "TURNO 1",
+        "steps": [
+          {
+            "question": "C'è un **nemico umanoide pericoloso**?",
+            "bullets": [
+              "**SÌ:** lancia **Ferma Persona** (usa concentrazione)",
+              "**NO:** ci sono almeno 2 nemici vicini tra loro?"
+            ]
+          },
+          {
+            "question": "...almeno 2 nemici vicini tra loro?",
+            "indent": true,
+            "bullets": [
+              "**SÌ:** lancia **Risata di Tasha** oppure **Sussurri Dissonanti**",
+              "**NO:** dai **Ispirazione Bardica** al Barbaro o a chi attacca di più"
+            ]
+          }
+        ]
+      },
+      {
+        "emoji": "🔷",
+        "title": "TURNO 2 IN POI",
+        "steps": [
+          {
+            "question": "Hai una **concentrazione attiva**?",
+            "bullets": [
+              "**SÌ:** mantienila + usa **Beffa Crudele** (gratis, nessun slot)",
+              "**NO:** dai **Ispirazione Bardica** all'alleato più efficace, poi usa **Beffa Crudele**"
+            ]
+          }
+        ]
+      },
+      {
+        "emoji": "🔷",
+        "title": "REAZIONE — controlla ogni round",
+        "steps": [
+          {
+            "question": "Un alleato sta per essere **colpito duramente**?",
+            "bullets": [
+              "**Parole Taglienti:** spendi 1 Ispirazione Bardica.",
+              "Il nemico sottrae 1d6 dal suo tiro d'attacco o danni.",
+              "Puoi trasformare un colpo in un mancato."
+            ]
+          }
+        ]
+      },
+      {
+        "emoji": "🔷",
+        "title": "SLOT ESAURITI (succede spesso senza riposi)",
+        "steps": [
+          {
+            "question": null,
+            "bullets": [
+              "**Beffa Crudele** ogni turno — è gratis, sempre disponibile",
+              "**Ispirazione Bardica** agli alleati",
+              "**Parola Curativa** SOLO se qualcuno va a 0 PF",
+              "**Pozione Curativa** su te stesso se sei sotto il 30% dei PF (meno di 8 PF)"
+            ]
+          }
+        ]
+      },
+      {
+        "emoji": "🔷",
+        "title": "POSIZIONAMENTO — sempre",
+        "steps": [
+          {
+            "question": null,
+            "bullets": [
+              "Mantieni **18 m di distanza** dai nemici",
+              "Stai **dietro** ai personaggi in mischia",
+              "Se sei in pericolo: **Invisibilità** su te stesso (Azione), poi allontanati"
+            ]
+          }
+        ]
+      }
+    ],
+    "sidebar": [
+      { "id": "pannello",       "label": "🎮 Pannello di Gioco"   },
+      { "type": "sep" },
+      { "id": "dati-base",     "label": "🧬 Dati Base"           },
+      { "id": "abilita",       "label": "🎯 Abilità"             },
+      { "type": "sep" },
+      { "id": "ispirazione",   "label": "🎵 Ispirazione Bardica" },
+      { "id": "expertise",     "label": "🎓 Expertise"           },
+      { "id": "jack",          "label": "🃏 Jack of All Trades"  },
+      { "type": "sep" },
+      { "id": "college-lore",  "label": "🎓 College of Lore"     },
+      { "id": "feat",          "label": "🎭 Feat Origin"         },
+      { "type": "sep" },
+      { "id": "incantesimi",   "label": "✨ Incantesimi"         },
+      { "id": "trucchetti",    "label": "🔮 Trucchetti"          },
+      { "id": "lv1",           "label": "✨ Spell Lv. 1"         },
+      { "id": "lv2",           "label": "✨ Spell Lv. 2"         },
+      { "type": "sep" },
+      { "id": "armi",          "label": "🗡️ Armi"                },
+      { "id": "equipaggiamento","label": "🎒 Equipaggiamento"     },
+      { "type": "sep" },
+      { "id": "algoritmo",     "label": "⚔️ Algoritmo"           }
+    ]
+  },
+  "session": {
+    "hp": { "current": 24, "temp": 0, "aidBonus": 0 },
+    "hitDice": { "used": 0 },
+    "trackers": {
+      "inspiration": { "used": 0 },
+      "luck":        { "used": 0 },
+      "potions":     { "used": 0 }
+    },
+    "spellSlots": {
+      "1": { "used": 0 },
+      "2": { "used": 0 }
+    },
+    "gold": 137,
+    "round": 1,
+    "concentration": "",
+    "initiative": "",
+    "conditions": [],
+    "deathSucc": 0,
+    "deathFail": 0,
+    "notes": "",
+    "portrait": null,
+    "logEntries": []
+  }
+}

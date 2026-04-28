@@ -399,6 +399,82 @@
     /* Round tracker */
     .round-row { display: flex; align-items: center; gap: 8px; margin-top: 6px; font-size: 0.85em; }
     .round-val { font-size: 1.5em; font-weight: bold; color: #fff; min-width: 30px; text-align: center; }
+
+    /* PG Portrait */
+    .pannello-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 4px;
+    }
+    .pg-portrait-wrap {
+      flex-shrink: 0;
+      width: 88px;
+      height: 108px;
+      border-radius: 8px;
+      border: 2px solid #3a3a5a;
+      overflow: hidden;
+      background: #2a2a3e;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: border-color 0.15s;
+    }
+    .pg-portrait-wrap:hover { border-color: #7c7cf0; }
+    .pg-portrait-placeholder {
+      font-size: 0.65em;
+      color: #555;
+      text-align: center;
+      line-height: 1.6;
+      padding: 4px;
+    }
+    #pg-portrait-input { display: none; }
+
+    /* Action filter */
+    .action-filter-row {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin: 8px 0 10px;
+    }
+    .filter-btn {
+      background: #2a2a3e;
+      border: 1.5px solid #444;
+      color: #999;
+      border-radius: 14px;
+      padding: 4px 12px;
+      font-size: 0.8em;
+      cursor: pointer;
+      transition: all 0.15s;
+      user-select: none;
+    }
+    .filter-btn.active { background: #3a3a6a; border-color: #7c7cf0; color: #fff; font-weight: bold; }
+    .filter-btn:hover { border-color: #aaa; color: #fff; }
+    .action-entry {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      padding: 7px 0;
+      border-bottom: 1px solid #2a2a3e;
+    }
+    .action-entry:last-child { border-bottom: none; }
+    .action-badge {
+      flex-shrink: 0;
+      font-size: 0.65em;
+      padding: 2px 7px;
+      border-radius: 10px;
+      font-weight: bold;
+      margin-top: 3px;
+      white-space: nowrap;
+    }
+    .badge-azione   { background: #0e2a50; color: #7ab0ff; border: 1px solid #2a4a7a; }
+    .badge-bonus    { background: #2a1a50; color: #b07aff; border: 1px solid #4a2a7a; }
+    .badge-reazione { background: #4a1a00; color: #ffaa55; border: 1px solid #7a3a00; }
+    .action-entry-body { flex: 1; line-height: 1.4; }
+    .action-entry-name { font-weight: bold; color: #eee; font-size: 0.88em; }
+    .action-entry-note { color: #888; font-size: 0.78em; margin-top: 1px; }
   </style>
 </head>
 <body>
@@ -446,7 +522,14 @@ Scheda rapida completa, pensata per giocare senza consultare altri manuali.</p>
      PANNELLO DI GIOCO INTERATTIVO
 ═══════════════════════════════════════ -->
 <div id="pannello">
-  <h2 id="pannello">🎮 Pannello di Gioco</h2>
+  <div class="pannello-header">
+    <h2 id="pannello" style="flex:1; margin-bottom:0;">🎮 Pannello di Gioco</h2>
+    <label class="pg-portrait-wrap" for="pg-portrait-input" title="Clicca per caricare l'immagine del personaggio">
+      <img id="pg-portrait-img" src="" alt="PG" style="display:none; width:100%; height:100%; object-fit:cover;">
+      <div class="pg-portrait-placeholder" id="pg-portrait-ph">🧙<br>Clicca per<br>aggiungere<br>immagine</div>
+      <input type="file" id="pg-portrait-input" accept="image/*" onchange="loadPortrait(event)">
+    </label>
+  </div>
 
   <div class="pn-grid">
 
@@ -580,7 +663,7 @@ Scheda rapida completa, pensata per giocare senza consultare altri manuali.</p>
     <div class="pn-card">
       <div class="label">🪙 Oro (GP)</div>
       <div class="oro-row">
-        <input type="number" id="gold-val" value="137">
+        <input type="number" id="gold-val" value="137" min="0">
         <button class="btn" onclick="changeGold(-1)">−1</button>
         <button class="btn" onclick="changeGold(+1)">+1</button>
         <button class="btn" onclick="changeGold(-10)">−10</button>
@@ -639,9 +722,149 @@ Scheda rapida completa, pensata per giocare senza consultare altri manuali.</p>
     </div>
   </div>
 
+  <!-- AZIONI RAPIDE -->
+  <div class="pn-card" style="margin-top:14px;">
+    <div class="label">⚡ Riferimento Rapido Azioni</div>
+    <div class="action-filter-row">
+      <button class="filter-btn active" onclick="filterActions(this,'all')">Tutte</button>
+      <button class="filter-btn" onclick="filterActions(this,'azione')">⚔️ Azione</button>
+      <button class="filter-btn" onclick="filterActions(this,'bonus')">⚡ Az. Bonus</button>
+      <button class="filter-btn" onclick="filterActions(this,'reazione')">↩️ Reazione</button>
+    </div>
+    <div id="action-list">
+      <div class="action-entry" data-type="azione">
+        <span class="action-badge badge-azione">AZIONE</span>
+        <div class="action-entry-body">
+          <div class="action-entry-name">🗣️ Beffa Crudele</div>
+          <div class="action-entry-note">1d6 psichici | TS SAG | svantaggio prossimo attacco nemico | 18 m</div>
+        </div>
+      </div>
+      <div class="action-entry" data-type="azione">
+        <span class="action-badge badge-azione">AZIONE</span>
+        <div class="action-entry-body">
+          <div class="action-entry-name">😈 Sussurri Dissonanti</div>
+          <div class="action-entry-note">3d6 psichici | TS SAG | fuga + Att. Opportunità | 18 m | Slot Lv1+</div>
+        </div>
+      </div>
+      <div class="action-entry" data-type="azione">
+        <span class="action-badge badge-azione">AZIONE</span>
+        <div class="action-entry-body">
+          <div class="action-entry-name">😂 Risata di Tasha</div>
+          <div class="action-entry-note">Prono + Incapacitato | TS SAG | Concentrazione | 9 m | Slot Lv1+</div>
+        </div>
+      </div>
+      <div class="action-entry" data-type="azione">
+        <span class="action-badge badge-azione">AZIONE</span>
+        <div class="action-entry-body">
+          <div class="action-entry-name">💕 Charme su Persone</div>
+          <div class="action-entry-note">Charmed 1 ora | TS SAG (svant. in combatt.) | 9 m | Slot Lv1+</div>
+        </div>
+      </div>
+      <div class="action-entry" data-type="azione">
+        <span class="action-badge badge-azione">AZIONE</span>
+        <div class="action-entry-body">
+          <div class="action-entry-name">🙂 Amicizia</div>
+          <div class="action-entry-note">Charmed | TS SAG | Concentrazione 1 min | 3 m</div>
+        </div>
+      </div>
+      <div class="action-entry" data-type="azione">
+        <span class="action-badge badge-azione">AZIONE</span>
+        <div class="action-entry-body">
+          <div class="action-entry-name">🌫️ Illusione Minore</div>
+          <div class="action-entry-note">Suono o immagine fissa 1 min | 9 m</div>
+        </div>
+      </div>
+      <div class="action-entry" data-type="azione">
+        <span class="action-badge badge-azione">AZIONE</span>
+        <div class="action-entry-body">
+          <div class="action-entry-name">💥 Frantuma</div>
+          <div class="action-entry-note">3d8 tuono | TS COS | sfera 3 m | svant. armature metalliche | Slot Lv2+</div>
+        </div>
+      </div>
+      <div class="action-entry" data-type="azione">
+        <span class="action-badge badge-azione">AZIONE</span>
+        <div class="action-entry-body">
+          <div class="action-entry-name">👁️ Invisibilità</div>
+          <div class="action-entry-note">Concentrazione 1 ora | tocco | cessa se attacca/incantesimo | Slot Lv2+</div>
+        </div>
+      </div>
+      <div class="action-entry" data-type="azione">
+        <span class="action-badge badge-azione">AZIONE</span>
+        <div class="action-entry-body">
+          <div class="action-entry-name">❤️‍🩹 Aiuto</div>
+          <div class="action-entry-note">+5 PF max+att. | 3 creature | 8 ore | NO concentr. | 9 m | Slot Lv2+</div>
+        </div>
+      </div>
+      <div class="action-entry" data-type="azione">
+        <span class="action-badge badge-azione">AZIONE</span>
+        <div class="action-entry-body">
+          <div class="action-entry-name">🔒 Ferma Persona</div>
+          <div class="action-entry-note">Paralizzato | TS SAG | Solo umanoidi | Conc. 1 min | critici auto in mischia | Slot Lv2+</div>
+        </div>
+      </div>
+      <div class="action-entry" data-type="azione">
+        <span class="action-badge badge-azione">AZIONE</span>
+        <div class="action-entry-body">
+          <div class="action-entry-name">🗡️ Attacco Pugnale</div>
+          <div class="action-entry-note">1d4+3 perforante | +5 attacco | mischia o lancio 6/18 m</div>
+        </div>
+      </div>
+      <div class="action-entry" data-type="bonus">
+        <span class="action-badge badge-bonus">AZ. BONUS</span>
+        <div class="action-entry-body">
+          <div class="action-entry-name">🎵 Ispirazione Bardica</div>
+          <div class="action-entry-note">+1d6 al d20 di un alleato | 18 m | 3 usi / riposo lungo</div>
+        </div>
+      </div>
+      <div class="action-entry" data-type="bonus">
+        <span class="action-badge badge-bonus">AZ. BONUS</span>
+        <div class="action-entry-body">
+          <div class="action-entry-name">❤️ Parola Curativa</div>
+          <div class="action-entry-note">1d4+3 PF | 18 m | ottima per rialzare alleati a 0 | Slot Lv1+</div>
+        </div>
+      </div>
+      <div class="action-entry" data-type="bonus">
+        <span class="action-badge badge-bonus">AZ. BONUS</span>
+        <div class="action-entry-body">
+          <div class="action-entry-name">🗡️ Secondo Attacco (lotta a due armi)</div>
+          <div class="action-entry-note">1d4 perforante (NO mod DES al danno) | richiede attacco col primo pugnale</div>
+        </div>
+      </div>
+      <div class="action-entry" data-type="bonus">
+        <span class="action-badge badge-bonus">AZ. BONUS</span>
+        <div class="action-entry-body">
+          <div class="action-entry-name">🧪 Pozione Curativa</div>
+          <div class="action-entry-note">2d4+2 PF | su se stessi</div>
+        </div>
+      </div>
+      <div class="action-entry" data-type="reazione">
+        <span class="action-badge badge-reazione">REAZIONE</span>
+        <div class="action-entry-body">
+          <div class="action-entry-name">🗡️ Parole Taglienti (Cutting Words)</div>
+          <div class="action-entry-note">−1d6 al tiro di un nemico | spendi 1 Ispirazione Bardica | 18 m | dopo aver visto il tiro</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SALVA / CARICA SESSIONE -->
+  <div class="pn-card" style="margin-top:14px;">
+    <div class="label">💾 Sessione di Gioco</div>
+    <div class="btn-row" style="margin-top:8px;">
+      <button class="btn long-rest" onclick="exportSession()">💾 Salva Sessione (.json)</button>
+      <label class="btn short-rest" style="cursor:pointer;">
+        📂 Carica Sessione
+        <input type="file" id="import-file" accept=".json" onchange="importSession(event)" style="display:none;">
+      </label>
+    </div>
+    <div style="font-size:0.75em; color:#888; margin-top:6px;">
+      Salva tutto in un file JSON. Ricaricalo su qualsiasi browser o PC.
+    </div>
+  </div>
+
   <!-- NOTE RAPIDE -->
   <div class="pn-card" style="margin-top:14px;">
-    <div class="label">📝 Note Rapide (si salvano automaticamente)</div>
+    <div class="label">📝 Note Rapide</div>
     <textarea id="note-rapide" placeholder="Scrivi qui condizioni particolari, nemici importanti, piani, etc..."></textarea>
   </div>
 
@@ -659,7 +882,7 @@ Scheda rapida completa, pensata per giocare senza consultare altri manuali.</p>
   <tr><td><strong>Allineamento</strong></td><td>Neutrale Buono</td></tr>
   <tr><td><strong>Bonus di Competenza</strong></td><td>+2</td></tr>
   <tr><td><strong>Velocità</strong></td><td>9 m</td></tr>
-  <tr><td><strong>PF Massimi</strong></td><td>24</td></tr>
+  <tr><td><strong>PF Massimi</strong></td><td><span id="stat-hp-max">24</span></td></tr>
   <tr><td><strong>Dadi Vita</strong></td><td>3d8</td></tr>
   <tr><td><strong>CA</strong></td><td>14 (Armatura di cuoio 11 + DES)</td></tr>
   <tr><td><strong>Linguaggi</strong></td><td>Comune, Nanico</td></tr>
@@ -961,7 +1184,7 @@ al Bonus di Competenza (2). Ogni alleato ottiene <strong>Ispirazione Eroica</str
   <tr><td>Profumo</td><td></td></tr>
   <tr><td>Specchio</td><td></td></tr>
   <tr><td>Vestiti da viaggiatore</td><td></td></tr>
-  <tr><td><strong>Oro totale</strong></td><td><strong>137 GP</strong> (30 + 25 + 80 + 2)</td></tr>
+  <tr><td><strong>Oro totale</strong></td><td><strong><span id="gold-static">137</span> GP</strong></td></tr>
 </table>
 
 <hr>
@@ -1029,8 +1252,10 @@ al Bonus di Competenza (2). Ogni alleato ottiene <strong>Ispirazione Eroica</str
 
 <script>
 // ═══════════════════════════════════════════
-//  STATO DEL PANNELLO — tutto in memoria
+//  STATO DEL PANNELLO — persistito in localStorage
 // ═══════════════════════════════════════════
+
+const SAVE_KEY = 'catalion_lv3_v1';
 
 const STATE = {
   hp: { curr: 24, max: 24, temp: 0, aidBonus: 0 },
@@ -1039,10 +1264,70 @@ const STATE = {
   slots: { 1: { total: 4, used: 0 }, 2: { total: 2, used: 0 } },
   luck: { total: 2, used: 0 },
   pot: { total: 1, used: 0 },
+  gold: 137,
   round: 1,
   deathSucc: 0,
   deathFail: 0,
 };
+
+// ─── SAVE / LOAD ───
+function saveState() {
+  try {
+    const data = {
+      state: STATE,
+      conditions: [...document.querySelectorAll('.cond-btn.active')].map(el => el.textContent),
+      conc: document.getElementById('conc-spell').value,
+      init: document.getElementById('init-val').value,
+      note: document.getElementById('note-rapide').value,
+      deathSucc: document.querySelectorAll('.death-pip.succ.used').length,
+      deathFail: document.querySelectorAll('.death-pip.fail.used').length,
+    };
+    localStorage.setItem(SAVE_KEY, JSON.stringify(data));
+  } catch(e) {}
+}
+
+function loadState() {
+  try {
+    const raw = localStorage.getItem(SAVE_KEY);
+    if (raw) applyData(JSON.parse(raw));
+  } catch(e) {}
+}
+
+function applyData(data) {
+  const s = data.state;
+  if (s) {
+    if (s.hp)    Object.assign(STATE.hp, s.hp);
+    if (s.hd)    Object.assign(STATE.hd, s.hd);
+    if (s.insp)  Object.assign(STATE.insp, s.insp);
+    if (s.slots) {
+      if (s.slots[1]) Object.assign(STATE.slots[1], s.slots[1]);
+      if (s.slots[2]) Object.assign(STATE.slots[2], s.slots[2]);
+    }
+    if (s.luck)       Object.assign(STATE.luck, s.luck);
+    if (s.pot)        Object.assign(STATE.pot, s.pot);
+    if (s.gold != null) STATE.gold = s.gold;
+    if (s.round != null) STATE.round = s.round;
+  }
+  const concEl = document.getElementById('conc-spell');
+  const concSt = document.getElementById('conc-status');
+  if (data.conc) {
+    concEl.value = data.conc;
+    concSt.textContent = '⚡ In concentrazione: ' + data.conc;
+    concSt.className = 'conc-active';
+  } else {
+    concEl.value = '';
+    concSt.textContent = 'Nessuna concentrazione attiva.';
+    concSt.className = '';
+  }
+  document.getElementById('init-val').value = data.init || '';
+  document.getElementById('note-rapide').value = data.note || '';
+  document.querySelectorAll('.cond-btn').forEach(el => {
+    el.classList.toggle('active', (data.conditions || []).includes(el.textContent));
+  });
+  document.querySelectorAll('.death-pip').forEach(p => p.classList.remove('used'));
+  document.querySelectorAll('.death-pip.succ').forEach((p, i) => { if (i < (data.deathSucc || 0)) p.classList.add('used'); });
+  document.querySelectorAll('.death-pip.fail').forEach((p, i) => { if (i < (data.deathFail || 0)) p.classList.add('used'); });
+}
 
 // ─── LOG ───
 function addLog(msg, type='') {
@@ -1062,6 +1347,9 @@ function renderHP() {
   const effectiveMax = s.max + s.aidBonus;
   document.getElementById('hp-curr').textContent = s.curr;
   document.getElementById('hp-max-disp').textContent = effectiveMax;
+  // propaga PF massimi nella tabella dati base
+  const statHpMax = document.getElementById('stat-hp-max');
+  if (statHpMax) statHpMax.textContent = effectiveMax;
   document.getElementById('temp-hp-disp').textContent = s.temp;
   document.getElementById('aid-disp').textContent = (s.aidBonus >= 0 ? '+' : '') + s.aidBonus;
   const pct = Math.max(0, Math.min(100, (s.curr / effectiveMax) * 100));
@@ -1083,7 +1371,7 @@ function applyDamage() {
   STATE.hp.curr = Math.max(0, STATE.hp.curr - amt);
   if (amt > 0) addLog(`💥 Subiti ${amt} danni → PF: ${STATE.hp.curr}`, 'log-damage');
   document.getElementById('hp-amount').value = '';
-  renderHP();
+  renderHP(); saveState();
 }
 
 function applyHeal() {
@@ -1093,7 +1381,7 @@ function applyHeal() {
   STATE.hp.curr = Math.min(effectiveMax, STATE.hp.curr + amt);
   addLog(`💚 Curati ${amt} PF → PF: ${STATE.hp.curr}`, 'log-heal');
   document.getElementById('hp-amount').value = '';
-  renderHP();
+  renderHP(); saveState();
 }
 
 function applyTempHP() {
@@ -1102,7 +1390,7 @@ function applyTempHP() {
   STATE.hp.temp = Math.max(STATE.hp.temp, amt); // don't stack, take highest
   addLog(`🛡️ +${amt} PF temporanei.`, 'log-heal');
   document.getElementById('hp-amount').value = '';
-  renderHP();
+  renderHP(); saveState();
 }
 
 // ─── HD ───
@@ -1125,10 +1413,10 @@ function spendHD() {
   STATE.hp.curr = Math.min(effectiveMax, STATE.hp.curr + roll);
   STATE.hd.used++;
   addLog(`🎲 Dado vita: d8+2 = ${roll} PF recuperati → PF: ${STATE.hp.curr}`, 'log-heal');
-  renderHD(); renderHP();
+  renderHD(); renderHP(); saveState();
 }
 
-function resetHD() { STATE.hd.used = 0; renderHD(); addLog('🎲 Dadi vita ripristinati.'); }
+function resetHD() { STATE.hd.used = 0; renderHD(); addLog('🎲 Dadi vita ripristinati.'); saveState(); }
 
 // ─── ISPIRAZIONE ───
 function renderInsp() {
@@ -1147,10 +1435,10 @@ function useInsp() {
   if (avail <= 0) { addLog('❌ Nessuna Ispirazione Bardica rimasta.'); return; }
   STATE.insp.used++;
   addLog(`🎵 Ispirazione Bardica usata. Rimaste: ${STATE.insp.total - STATE.insp.used}`, 'log-damage');
-  renderInsp();
+  renderInsp(); saveState();
 }
 
-function resetInsp() { STATE.insp.used = 0; renderInsp(); addLog('🎵 Ispirazioni Bardiche ripristinate (3).'); }
+function resetInsp() { STATE.insp.used = 0; renderInsp(); addLog('🎵 Ispirazioni Bardiche ripristinate (3).'); saveState(); }
 
 // ─── SLOT ───
 function renderSlot(lv) {
@@ -1170,13 +1458,14 @@ function useSlot(lv) {
   if (s.used >= s.total) { addLog(`❌ Nessun slot Lv${lv} rimasto.`); return; }
   s.used++;
   addLog(`✨ Slot Lv${lv} usato. Rimasti: ${s.total - s.used}`, 'log-damage');
-  renderSlot(lv);
+  renderSlot(lv); saveState();
 }
 
 function resetSlot(lv) {
   STATE.slots[lv].used = 0;
   renderSlot(lv);
   addLog(`✨ Slot Lv${lv} ripristinati.`);
+  saveState();
 }
 
 // ─── FORTUNA ───
@@ -1195,10 +1484,10 @@ function useLuck() {
   if (STATE.luck.used >= STATE.luck.total) { addLog('❌ Nessun punto Fortuna rimasto.'); return; }
   STATE.luck.used++;
   addLog(`🍀 Punto Fortuna usato. Rimasti: ${STATE.luck.total - STATE.luck.used}`, 'log-damage');
-  renderLuck();
+  renderLuck(); saveState();
 }
 
-function resetLuck() { STATE.luck.used = 0; renderLuck(); addLog('🍀 Punti Fortuna ripristinati (2).'); }
+function resetLuck() { STATE.luck.used = 0; renderLuck(); addLog('🍀 Punti Fortuna ripristinati (2).'); saveState(); }
 
 // ─── POZIONE ───
 function renderPot() {
@@ -1219,22 +1508,29 @@ function usePot() {
   STATE.hp.curr = Math.min(effectiveMax, STATE.hp.curr + roll);
   STATE.pot.used++;
   addLog(`🧪 Pozione usata: 2d4+2 = ${roll} PF curati → PF: ${STATE.hp.curr}`, 'log-heal');
-  renderPot(); renderHP();
+  renderPot(); renderHP(); saveState();
 }
 
-function resetPot() { STATE.pot.used = 0; renderPot(); addLog('🧪 Pozione ripristinata (1).'); }
+function resetPot() { STATE.pot.used = 0; renderPot(); addLog('🧪 Pozione ripristinata (1).'); saveState(); }
 
 // ─── ROUND ───
 function renderRound() {
   document.getElementById('round-val').textContent = STATE.round;
 }
-function changeRound(d) { STATE.round = Math.max(1, STATE.round + d); renderRound(); }
-function resetRound() { STATE.round = 1; renderRound(); addLog('⚔️ Round di combattimento resettato.'); }
+function changeRound(d) { STATE.round = Math.max(1, STATE.round + d); renderRound(); saveState(); }
+function resetRound() { STATE.round = 1; renderRound(); addLog('⚔️ Round di combattimento resettato.'); saveState(); }
 
 // ─── ORO ───
+function renderGold() {
+  document.getElementById('gold-val').value = STATE.gold;
+  const s = document.getElementById('gold-static');
+  if (s) s.textContent = STATE.gold;
+}
+
 function changeGold(d) {
-  const el = document.getElementById('gold-val');
-  el.value = Math.max(0, (parseInt(el.value) || 0) + d);
+  STATE.gold = Math.max(0, STATE.gold + d);
+  renderGold();
+  saveState();
 }
 
 // ─── CONCENTRAZIONE ───
@@ -1244,6 +1540,7 @@ function dropConc() {
   el.value = '';
   document.getElementById('conc-status').textContent = 'Nessuna concentrazione attiva.';
   document.getElementById('conc-status').className = '';
+  saveState();
 }
 
 document.addEventListener('input', function(e) {
@@ -1256,6 +1553,16 @@ document.addEventListener('input', function(e) {
       st.textContent = 'Nessuna concentrazione attiva.';
       st.className = '';
     }
+    saveState();
+  }
+  if (e.target.id === 'gold-val') {
+    STATE.gold = Math.max(0, parseInt(e.target.value) || 0);
+    const s = document.getElementById('gold-static');
+    if (s) s.textContent = STATE.gold;
+    saveState();
+  }
+  if (e.target.id === 'init-val' || e.target.id === 'note-rapide') {
+    saveState();
   }
 });
 
@@ -1268,17 +1575,20 @@ function toggleCond(el) {
   } else {
     addLog(`✅ Condizione rimossa: ${name}`, 'log-heal');
   }
+  saveState();
 }
 
 // ─── DEATH SAVES ───
 function toggleDeathPip(pip, type) {
   pip.classList.toggle('used');
   checkDeathStatus();
+  saveState();
 }
 
 function resetDeathSaves() {
   document.querySelectorAll('.death-pip').forEach(p => p.classList.remove('used'));
   addLog('💀 Tiri salvezza morte resettati.');
+  saveState();
 }
 
 function checkDeathStatus() {
@@ -1306,6 +1616,7 @@ function longRest() {
   document.querySelectorAll('.death-pip').forEach(p => p.classList.remove('used'));
   renderAll();
   addLog('🌙 Riposo Lungo completato. Tutto ripristinato.', 'log-heal');
+  saveState();
 }
 
 function shortRest() {
@@ -1324,20 +1635,93 @@ function renderAll() {
   renderLuck();
   renderPot();
   renderRound();
+  renderGold();
 }
 
-// ─── NOTE SALVATE IN SESSION STORAGE (best effort) ───
-const noteEl = document.getElementById('note-rapide');
-try {
-  const saved = sessionStorage.getItem('catalion_note');
-  if (saved) noteEl.value = saved;
-} catch(e) {}
-noteEl.addEventListener('input', () => {
-  try { sessionStorage.setItem('catalion_note', noteEl.value); } catch(e) {}
-});
+// ─── EXPORT / IMPORT JSON ───
+function exportSession() {
+  const data = {
+    version: 1,
+    savedAt: new Date().toISOString(),
+    state: STATE,
+    conditions: [...document.querySelectorAll('.cond-btn.active')].map(el => el.textContent),
+    conc: document.getElementById('conc-spell').value,
+    init: document.getElementById('init-val').value,
+    note: document.getElementById('note-rapide').value,
+    deathSucc: document.querySelectorAll('.death-pip.succ.used').length,
+    deathFail: document.querySelectorAll('.death-pip.fail.used').length,
+  };
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  const dateStr = new Date().toISOString().slice(0,16).replace('T','_').replace(':','-');
+  a.href = url;
+  a.download = `catalion_sessione_${dateStr}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+  addLog('💾 Sessione esportata in JSON.', 'log-heal');
+}
+
+function importSession(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      const data = JSON.parse(e.target.result);
+      applyData(data);
+      renderAll();
+      saveState();
+      addLog(`📂 Sessione caricata (salvata il ${data.savedAt ? data.savedAt.replace('T',' ').slice(0,16) : '?'}).`, 'log-heal');
+    } catch(err) {
+      alert('Errore nel caricamento del file JSON: ' + err.message);
+    }
+    event.target.value = '';
+  };
+  reader.readAsText(file);
+}
+
+// ─── PORTRAIT ───
+function loadPortrait(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    const dataUrl = e.target.result;
+    const img = document.getElementById('pg-portrait-img');
+    img.src = dataUrl;
+    img.style.display = 'block';
+    document.getElementById('pg-portrait-ph').style.display = 'none';
+    try { localStorage.setItem('catalion_portrait', dataUrl); } catch(err) {}
+  };
+  reader.readAsDataURL(file);
+  event.target.value = '';
+}
+
+function initPortrait() {
+  try {
+    const saved = localStorage.getItem('catalion_portrait');
+    if (!saved) return;
+    const img = document.getElementById('pg-portrait-img');
+    img.src = saved;
+    img.style.display = 'block';
+    document.getElementById('pg-portrait-ph').style.display = 'none';
+  } catch(e) {}
+}
+
+// ─── ACTION FILTER ───
+function filterActions(btn, type) {
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('#action-list .action-entry').forEach(el => {
+    el.style.display = (type === 'all' || el.dataset.type === type) ? 'flex' : 'none';
+  });
+}
 
 // ─── INIT ───
+loadState();
 renderAll();
+initPortrait();
 </script>
 
 </body>
