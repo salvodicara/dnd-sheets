@@ -97,17 +97,15 @@ Done:
 - addFeature() button wired in sidebar footer (edit mode)
 
 ### Phase 4: Pip Tracker Fix (Both Themes)
-**Status:** IN PROGRESS (~60%)
+**Status:** ✅ COMPLETE
 **Goal:** Filled = available, hollow = used. Clear in both themes.
 
 Done:
 - Light mode pip contrast fix (used pips clearly hollow, available slots solid-filled)
 - --pip-off-bg and --pip-off-border variables added for light mode visibility
-
-Remaining:
-- Death save colors to CSS variables (--death-succ, --death-fail)
-- Pip text color to CSS variable
-- Consistent treatment across all pip types
+- Death save colors to CSS variables (--death-succ, --death-fail) in both themes
+- Pip text color to CSS variable (--pip-text)
+- Consistent treatment: all pip types (tracker, spell slot, HD, death save) use CSS variables
 
 ### Phase 5: Button Overflow & Panel Polish
 **Status:** ✅ COMPLETE
@@ -119,7 +117,7 @@ Done:
 - Hardcoded colors moved to CSS variables
 
 ### Phase 6: Algorithm/Wizard UX
-**Status:** IN PROGRESS (~80%)
+**Status:** ✅ COMPLETE
 **Goal:** Contextual labels, in-modal editing, usability first.
 
 Done:
@@ -131,10 +129,9 @@ Done:
 - Live preview in feature, spell, weapon, and algorithm wizards
 - Hints converted to hover tooltips (title attribute + ⓘ icon)
 - Tag system replaces isNew/isSecret/secretLabel
-
-Remaining:
-- Replace prompt() in algo step editor with inline editing
-- Algo step indent flag not settable via UI
+- Algo step inline editor with question, bullets, indent checkbox (no prompt())
+- setAidBonus() replaced with inline input (zero prompt() calls remain)
+- Subfeature content block tag editor (cbeRenderTagEditor)
 
 ### Phase 7: Feature + Tracker + Action Integration
 **Status:** ✅ COMPLETE
@@ -167,19 +164,23 @@ Done:
 - catalion.json updated: potions moved from trackers[] to equipment[], weapon duplicates removed
 
 ### Phase 8: Spell Preparation & Ritual
-**Status:** NOT STARTED
+**Status:** ✅ COMPLETE
 **Goal:** Class-aware spell preparation, ritual badge.
 
 Prepared caster detection (auto-set from class):
 - Daily preparation (show toggle): Cleric, Druid, Paladin, Ranger, Wizard
 - Always prepared (no toggle): Bard, Sorcerer, Warlock
 
-Tasks:
-1. Add prepared (boolean) and ritual (boolean) to spell data model
-2. Inline toggle on spell cards (does NOT require edit mode)
-3. Unprepared spells render dimmed but visible
-4. Ritual badge ("R") on spell cards
-5. preparedCaster flag in spellcasting config
+Done:
+1. Added `prepared` (boolean) and `ritual` (boolean) to spell data model
+2. Ritual checkbox in spell wizard step 1 (with hint tooltip)
+3. Inline prepared toggle on spell cards (does NOT require edit mode)
+4. Unprepared spells render dimmed (opacity .45, .7 on hover)
+5. Ritual badge ("R Ritual") chip on spell cards and wizard preview
+6. `preparedCaster` flag in spellcasting config (already existed)
+7. Cantrips always treated as prepared (no toggle shown)
+8. Prepared state preserved when editing spells via wizard
+9. setAidBonus() replaced with inline input (last prompt() eliminated)
 
 ### Phase 9: Smart Auto-Calculations
 **Status:** NOT STARTED
@@ -483,16 +484,16 @@ Menu items:
 | ~~longRest() ignores tracker recovery~~ | ~~longRest()~~ | ✅ Fixed (checks recovery field) |
 | ~~Manual trackers reset on long rest~~ | ~~longRest()~~ | ✅ Fixed (skips recovery:'manual') |
 | PB auto-calc shadowed | renderBaseData | Override pattern (Phase 9) |
-| Death save colors hardcoded | CSS | CSS variables (Phase 4) |
-| Gold input color hardcoded | CSS | CSS variable (Phase 5) |
-| Pip text color hardcoded | CSS | CSS variable (Phase 4) |
+| ~~Death save colors hardcoded~~ | ~~CSS~~ | ✅ Fixed (--death-succ/--death-fail) |
+| ~~Gold input color hardcoded~~ | ~~CSS~~ | ✅ Fixed (CSS variable) |
+| ~~Pip text color hardcoded~~ | ~~CSS~~ | ✅ Fixed (--pip-text) |
 | **~~Tracker label shows parent title~~** | ~~buildPanelRow2~~ | ✅ Fixed (trackers[] with label) |
 | **~~Action label shows parent title~~** | ~~quick actions~~ | ✅ Fixed (actions[] with label) |
 | **~~Only 1 tracker/action per feature~~** | ~~data model~~ | ✅ Fixed (trackers[]/actions[] arrays) |
 | **~~cbeRenderTable() not defined~~** | ~~editBlock()~~ | ✅ Fixed |
 | **~~cbeRenderSubfeature() not defined~~** | ~~editBlock()~~ | ✅ Fixed |
 | **~~Sidebar reorder not wired~~** | ~~renderSidebar~~ | ✅ Fixed (drag-drop + trash zone) |
-| **Algo step editor uses prompt()** | addAlgoStep | Inline editing |
+| **Algo step editor uses prompt()** | addAlgoStep | ✅ Fixed (inline editing) |
 
 ---
 

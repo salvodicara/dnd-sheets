@@ -257,6 +257,14 @@ input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;}
 .spell-meta-chip{background:var(--bg-card2);border:1px solid var(--border-light);
   border-radius:5px;padding:1px 7px;}
 .spell-meta-chip.conc{border-color:#b88020;color:#b88020;}
+.spell-meta-chip.ritual{border-color:var(--accent);color:var(--accent);font-weight:600;}
+.spell-card.unprepared{opacity:.45;}
+.spell-card.unprepared:hover{opacity:.7;}
+.spell-prepared-toggle{cursor:pointer;font-size:.85em;padding:2px 8px;border-radius:5px;
+  border:1px solid var(--border-light);background:var(--bg-card2);color:var(--text-muted);
+  transition:all .15s;user-select:none;white-space:nowrap;}
+.spell-prepared-toggle:hover{border-color:var(--accent);color:var(--text);}
+.spell-prepared-toggle.is-prepared{border-color:var(--hp-green);color:var(--hp-green);}
 .spell-card-desc{font-size:.9em;color:var(--text);margin-top:5px;white-space:pre-line;}
 .spell-card-scaling{font-size:.82em;color:var(--text-muted);margin-top:4px;font-style:italic;}
 .spell-card-notes{font-size:.82em;color:var(--text-muted);margin-top:4px;}
@@ -910,6 +918,9 @@ const BASE = {
   wiz_f_spellNameIT:'Name',
   wiz_f_spellLevel:'Level (0=Cantrip)',
   wiz_f_concentrationCheck:'Requires concentration',
+  wiz_f_ritualCheck:'Can be cast as ritual',
+  prepared:'Prepared', unprepared:'Unprepared', ritual:'Ritual',
+  hint_ritual:'Ritual spells can be cast without using a spell slot, taking 10 extra minutes.',
   wiz_f_damageFull:'Damage (e.g. 1d8+3)',
   wiz_f_attackStatLabel:'Attack Ability',
   wiz_f_attackBonusTotal:'Total Attack Bonus',
@@ -1184,6 +1195,9 @@ const TRANSLATIONS = {
     wiz_f_spellNameIT:'Nome (IT)',
     wiz_f_spellLevel:'Livello (0=Trucchetto)',
     wiz_f_concentrationCheck:'Richiede concentrazione',
+    wiz_f_ritualCheck:'Può essere lanciato come rituale',
+    prepared:'Preparato', unprepared:'Non preparato', ritual:'Rituale',
+    hint_ritual:'Gli incantesimi rituali possono essere lanciati senza usare uno slot, impiegando 10 minuti in più.',
     wiz_f_damageFull:'Danno (es. 1d8+3)',
     wiz_f_attackStatLabel:'Caratteristica Attacco',
     wiz_f_attackBonusTotal:'Bonus Attacco totale',
@@ -1794,6 +1808,7 @@ function buildPanelBottom(){
     if(firstLine) parts.push(firstLine);
     if(sp.saveAbility) parts.push(T('ts')+' '+sp.saveAbility);
     if(sp.concentration) parts.push(T('concentration'));
+    if(sp.ritual) parts.push(T('ritual'));
     if(sp.range) parts.push(sp.range);
     if((sp.level||0)>0) parts.push(T('slotLvLabel')+' '+sp.level+'+');
     return parts.join(' | ');
@@ -2025,17 +2040,23 @@ function renderSpellsSection(){
     const cards=lvSpells.map((sp,rawI)=>{
       const realIdx=spells.indexOf(sp);
       const atype=dndTr('actionLabels',normalizeActionType(sp.actionType))||sp.actionType||'';
-      return `<div class="spell-card" style="border-left-color:${color};">
+      const isPrepCaster=!!sc?.preparedCaster;
+      const isCantrip=sp.level===0;
+      const isPrepared=isCantrip||!isPrepCaster||sp.prepared;
+      const unprepCls=!isPrepared?' unprepared':'';
+      const prepToggle=isPrepCaster&&!isCantrip?`<span class="spell-prepared-toggle${sp.prepared?' is-prepared':''}" onclick="togglePrepared(${realIdx})" title="${sp.prepared?T('prepared'):T('unprepared')}">${sp.prepared?'✦ '+T('prepared'):'○ '+T('unprepared')}</span>`:'';
+      return `<div class="spell-card${unprepCls}" style="border-left-color:${color};">
         <div class="spell-card-header">
           <span style="font-size:1.1em;">${sp.emoji||''}</span>
           <span class="spell-card-name">${sp.name||''}</span>
           ${sp.originalName?`<span class="spell-card-original">(${sp.originalName})</span>`:''}
-          ${renderTags(sp.tags)}          ${EDIT_MODE?`<div style="margin-left:auto;display:flex;gap:3px;">
+          ${renderTags(sp.tags)}${prepToggle}          ${EDIT_MODE?`<div style="margin-left:auto;display:flex;gap:3px;">
             <button class="btn-edit-sm" onclick="editSpell(${realIdx})">✏️</button>
             <button class="btn-del-sm" onclick="deleteSpell(${realIdx})">🗑</button></div>`:''}
         </div>
         <div class="spell-card-meta">
           ${atype?`<span class="spell-meta-chip">${atype}</span>`:''}
+          ${sp.ritual?`<span class="spell-meta-chip ritual">R ${T('ritual')}</span>`:''}
           ${sp.range?`<span class="spell-meta-chip">📍 ${sp.range}</span>`:''}
           ${sp.duration?`<span class="spell-meta-chip">⏱ ${sp.duration}</span>`:''}
           ${sp.concentration?`<span class="spell-meta-chip conc">🔮 ${T('concentration')}</span>`:''}
@@ -2270,11 +2291,14 @@ function changeGold(d){
   saveAll();
 }
 function setAidBonus(){
+  const el=document.getElementById('aid-disp'); if(!el) return;
+  if(el.querySelector('input')) return;
   const cur=SESSION.hp?.aidBonus||0;
-  const v=prompt(T('aidBonus'),cur);
-  if(v===null) return;
-  SESSION.hp.aidBonus=parseInt(v)||0;
-  updateHPDisplay(); saveAll();
+  el.innerHTML=`<input type="number" id="aid-input" value="${cur}" style="width:50px;font-size:.9em;padding:1px 4px;border:1px solid var(--accent);border-radius:4px;background:var(--bg-input);color:var(--text);text-align:center;">`;
+  const inp=document.getElementById('aid-input'); inp.focus(); inp.select();
+  const save=()=>{SESSION.hp.aidBonus=parseInt(inp.value)||0;updateHPDisplay();saveAll();};
+  inp.addEventListener('blur',save);
+  inp.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();save();}if(e.key==='Escape'){el.textContent=modStr(cur);}});
 }
 function changeRound(d){
   SESSION.round=Math.max(1,(SESSION.round||1)+d);
@@ -2542,6 +2566,7 @@ function renderSpellPreview(){
   const range=el('range')?.value||WIZ_DATA.range||'';
   const duration=el('duration')?.value||WIZ_DATA.duration||'';
   const conc=el('concentration')?.checked??WIZ_DATA.concentration??false;
+  const rit=el('ritual')?.checked??WIZ_DATA.ritual??false;
   const saveAb=el('saveAbility')?.value||WIZ_DATA.saveAbility||'';
   const desc=el('description')?.value||WIZ_DATA.description||'';
   const scaling=el('scaling')?.value||WIZ_DATA.scaling||'';
@@ -2552,7 +2577,7 @@ function renderSpellPreview(){
   const atype=dndTr('actionLabels',normalizeActionType(actionType))||actionType||'';
   return `<div id="wiz-preview" class="wiz-preview"><div class="wiz-preview-label">${T('wizPreview')}</div><div class="wiz-preview-content"><div class="spell-card" style="border-left-color:${color};margin:0;">
     <div class="spell-card-header"><span style="font-size:1.1em;">${emoji}</span> <span class="spell-card-name">${name||'...'}</span> ${origName?`<span class="spell-card-original">(${origName})</span>`:''} ${tags}</div>
-    <div class="spell-card-meta">${atype?`<span class="spell-meta-chip">${atype}</span>`:''}${range?`<span class="spell-meta-chip">📍 ${range}</span>`:''}${duration?`<span class="spell-meta-chip">⏱ ${duration}</span>`:''}${conc?`<span class="spell-meta-chip conc">🔮 ${T('concentration')}</span>`:''}${saveAb?`<span class="spell-meta-chip">TS ${abilityShortName(saveAb)}</span>`:''}${school?`<span class="spell-meta-chip">${dndTr('schools',school)||school}</span>`:''}</div>
+    <div class="spell-card-meta">${atype?`<span class="spell-meta-chip">${atype}</span>`:''}${rit?`<span class="spell-meta-chip ritual">R ${T('ritual')}</span>`:''}${range?`<span class="spell-meta-chip">📍 ${range}</span>`:''}${duration?`<span class="spell-meta-chip">⏱ ${duration}</span>`:''}${conc?`<span class="spell-meta-chip conc">🔮 ${T('concentration')}</span>`:''}${saveAb?`<span class="spell-meta-chip">TS ${abilityShortName(saveAb)}</span>`:''}${school?`<span class="spell-meta-chip">${dndTr('schools',school)||school}</span>`:''}</div>
     ${desc?`<div class="spell-card-desc">${md(desc)}</div>`:''}${scaling?`<div class="spell-card-scaling">📈 ${md(scaling)}</div>`:''}${notes?`<div class="spell-card-notes">${md(notes)}</div>`:''}
   </div></div></div>`;
 }
@@ -3321,6 +3346,7 @@ const WIZARDS = {
       {id:'range',label:'f_range',type:'text',hint:'hint_spellRange'},
       {id:'duration',label:'f_duration',type:'text',hint:'hint_spellDuration'},
       {id:'concentration',label:'f_concentration',type:'checkbox',checkLabel:'wiz_f_concentrationCheck'},
+      {id:'ritual',label:'ritual',type:'checkbox',checkLabel:'wiz_f_ritualCheck',hint:'hint_ritual'},
       {id:'saveAbility',label:'f_saveAbility',type:'select',options:()=>[{v:'',l:'—'},...abilityOpts()],hint:'hint_spellSaveAbility'},
     ], _afterRender(){
       injectSpellPreview();
@@ -3332,6 +3358,8 @@ const WIZARDS = {
       });
       const cb=document.getElementById('wf-concentration');
       if(cb) cb.addEventListener('change',injectSpellPreview);
+      const rb=document.getElementById('wf-ritual');
+      if(rb) rb.addEventListener('change',injectSpellPreview);
     }},
     {label:'wiz_step_spellDesc', fields:[
       {id:'description',label:'f_desc',type:'textarea',rows:4,required:true,hint:'hint_spellDesc'},
@@ -3349,11 +3377,15 @@ const WIZARDS = {
   onSave(d,idx){
     const sp={name:d.name,originalName:d.originalName,emoji:d.emoji,level:+d.level||0,
       school:d.school,actionType:d.actionType,range:d.range,duration:d.duration,
-      concentration:!!d.concentration,saveAbility:d.saveAbility,description:d.description,
+      concentration:!!d.concentration,ritual:!!d.ritual,saveAbility:d.saveAbility,description:d.description,
       scaling:d.scaling,notes:d.notes};
     if(WIZ_TAGS.length) sp.tags=[...WIZ_TAGS];
     if(!CHAR.spells)CHAR.spells=[];
-    if(idx!==null&&idx!==undefined)CHAR.spells[idx]=sp; else CHAR.spells.push(sp);
+    // Preserve prepared state from existing spell on edit
+    if(idx!==null&&idx!==undefined){
+      if(CHAR.spells[idx]?.prepared) sp.prepared=true;
+      CHAR.spells[idx]=sp;
+    } else { CHAR.spells.push(sp); }
   }
 },
 // ── Weapon ──
@@ -3624,6 +3656,10 @@ function flattenChar(){
 function addSpell(level){ openWizard('spell',null,{level:level??0}); }
 function editSpell(idx){ openWizard('spell',idx,{...(CHAR.spells||[])[idx]}); }
 function deleteSpell(idx){ if(!confirm(T('confirmDelete')))return; CHAR.spells.splice(idx,1); saveAll(); renderAll(); }
+function togglePrepared(idx){
+  const sp=(CHAR.spells||[])[idx]; if(!sp) return;
+  sp.prepared=!sp.prepared; saveAll(); renderAll();
+}
 // Spellcasting info
 function editSpellcasting(){ openWizard('spellcasting',null,{...(CHAR.spellcasting||{})}); }
 // Spell slots
