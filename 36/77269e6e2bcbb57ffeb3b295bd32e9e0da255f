@@ -1,0 +1,26 @@
+index.html
+  793001d33677b9d6 260-267,921-923,1198-1200,1811,2043-2048,2053,2059,2294-2295,2297-2301,2569,2580,3349,3361-3362,3380,3384-3388,3659-3662
+DESIGN.md
+  793001d33677b9d6 100,106-108,120,132-134,167,174-183,487-489,496
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.3.4",
+  "base_commit_sha": "3677269e6e2bcbb57ffeb3b295bd32e9e0da255f",
+  "prompts": {
+    "793001d33677b9d6": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_22cc853b7ffePNKQ89N1OAFh65",
+        "model": "github-copilot/claude-opus-4.6"
+      },
+      "human_author": "Salvatore Di Cara",
+      "messages": [],
+      "total_additions": 69,
+      "total_deletions": 32,
+      "accepted_lines": 3935,
+      "overriden_lines": 0,
+      "messages_url": "https://usegitai.com/cas/f4bc588ea17ed01813eb0cb7c969ea8df5a83124695500c11046d5778bbf4439"
+    }
+  }
+}
