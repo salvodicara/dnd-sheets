@@ -2,7 +2,7 @@
 
 ## Project Overview
 
-**D&D Sheets** is a zero-dependency, single-file (HTML+CSS+JS) digital character sheet for D&D 2024 players. The entire application lives in `character-sheet.html` (~3,680 lines). There is no build system, no framework, no server. Open the file in a browser and it works.
+**D&D Sheets** is a zero-dependency, single-file (HTML+CSS+JS) digital character sheet for D&D 2024 players. The entire application lives in `character-sheet.html` (~3,830 lines). There is no build system, no framework, no server. Open the file in a browser and it works.
 
 ## Golden Rules
 
@@ -74,11 +74,25 @@ CB_EDIT_DATA  -- deep clone of block being edited (for cancel/restore)
 - `renderSections()` iterates `CHAR.sidebar` and calls registered renderers.
 - `renderSidebar()` renders the sidebar nav from `CHAR.sidebar` via `resolveSidebarItem()`.
 - `ensureSidebar()` auto-adds missing built-in sections and features, removes stale entries.
-- Game Panel (`#panel`) is pinned at top -- NOT in `SECTION_REGISTRY`, NOT in `CHAR.sidebar`.
-- Built-in section IDs: `base-data`, `skills`, `spells`, `weapons`, `equipment`, `algorithm`.
+- Game Panel (`game-panel`) is a regular built-in section in `SECTION_REGISTRY` and `CHAR.sidebar`. Draggable/reorderable like all other sections. No section header (visually distinct card container). `renderPanel()` fills its `<div id="game-panel">` placeholder and binds live listeners; called by `renderSections()` after innerHTML and by tracker interactions.
+- Built-in section IDs: `game-panel`, `base-data`, `skills`, `spells`, `weapons`, `equipment`, `algorithm`.
 - Custom features: resolved by matching `slugify(feature.title)` against sidebar IDs.
 - Separators: `{type:'sep'}` objects in the sidebar array.
-- In edit mode, sidebar items show reorder (up/down) and delete controls.
+- In edit mode, sidebar items show drag handles for reorder and a trash drop zone for deletion.
+
+#### Equipment-Based Tracking
+- Standalone `CHAR.trackers[]` was removed. All trackers are now either feature-embedded or equipment-based.
+- Equipment items with `tracked: true` show as pip trackers in the game panel.
+- Equipment tracker session IDs use `eq-` prefix: `eq-${slugify(e.name)}`.
+- Equipment wizard conditionally shows tracker fields (quantity, emoji, recovery, isPotion, potionFormula) when "Track quantity" is checked.
+- `deleteEquip()` cleans up SESSION tracker data.
+- `longRest()` resets equipment trackers respecting the `recovery` field.
+
+#### Weapons in Equipment
+- Weapons auto-appear in the equipment table as derived rows — no manual duplication.
+- Weapon rows show damage/properties as notes, styled with `.equip-weapon-row` (italic, muted).
+- Edit/delete on weapon rows call `editWeapon(idx)` / `deleteWeapon(idx)` — goes through weapon wizard.
+- Single source of truth: weapons array is authoritative, equipment just renders them.
 
 #### Wizard System
 - All create/edit operations use the generic wizard engine.

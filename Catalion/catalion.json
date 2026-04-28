@@ -235,11 +235,10 @@
 
     "equipment": [
       { "name": "Armatura di cuoio",       "notes": "Indossata — CA 14" },
-      { "name": "2 Pugnali",               "notes": "Armi principali — vedi sezione Armi" },
-      { "name": "Lancia",                  "notes": "Arma di riserva" },
-      { "name": "Spada Bella",             "notes": "Tipo da definire con il DM" },
       { "name": "Liuto",                   "notes": "Focus per gli incantesimi" },
-      { "name": "1 Pozione Curativa",      "notes": "Azione Bonus: cura 2d4+2 PF" },
+      { "name": "Pozione Curativa",        "notes": "Azione Bonus: cura 2d4+2 PF",
+        "tracked": true, "quantity": 1, "emoji": "🧪", "recovery": "manual",
+        "isPotion": true, "potionFormula": "2d4+2" },
       { "name": "Abiti da intrattenitore" },
       { "name": "2 Costumi" },
       { "name": "Profumo" },
@@ -342,17 +341,6 @@
       }
     ],
 
-    "trackers": [
-      {
-        "label": "Pozione Curativa",
-        "emoji": "🧪",
-        "total": 1,
-        "recovery": "manual",
-        "isPotion": true,
-        "potionFormula": "2d4+2"
-      }
-    ],
-
     "customConditions": ["Aid attivo (+5 PF)"],
 
     "combatAlgorithm": [
@@ -446,6 +434,7 @@
     ],
 
     "sidebar": [
+      "game-panel",
       "base-data",
       "skills",
       { "type": "sep" },
@@ -472,7 +461,7 @@
     "trackers": {
       "ispirazione-bardica": { "used": 0 },
       "feat-origin": { "used": 0 },
-      "pozione-curativa": { "used": 0 }
+      "eq-pozione-curativa": { "used": 0 }
     },
     "spellSlots": {
       "1": { "used": 0 },

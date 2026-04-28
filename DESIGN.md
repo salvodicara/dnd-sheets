@@ -78,7 +78,7 @@ Done:
 - die/showDie fields added to tracker wizard
 
 ### Phase 3: Sidebar + Section Architecture Redesign
-**Status:** IN PROGRESS (~70%)
+**Status:** ✅ COMPLETE
 **Goal:** Sidebar and main view always in sync (Google Docs TOC style).
 
 Done:
@@ -88,26 +88,26 @@ Done:
 - renderSections() iterates CHAR.sidebar and calls registered renderers
 - ensureSidebar() auto-adds missing built-in sections, removes stale entries
 - resolveSidebarItem() resolves sidebar entry to full metadata
-- Game Panel pinned at top (NOT in sidebar/registry)
-- Delete controls on sidebar items in edit mode
+- Game Panel is a regular built-in section (`game-panel` in SECTION_REGISTRY), draggable/reorderable
+- Game Panel has no section header (visually distinct card container)
+- renderPanel() fills `<div id="game-panel">` placeholder, binds live listeners
+- Sidebar drag-and-drop reorder in edit mode (drag handle + trash drop zone)
+- moveSidebarItem() calls both renderSidebar() and renderSections() for sync
+- Delete controls: built-in sections protected, separators delete instantly, custom features confirm + cascade
 - addFeature() button wired in sidebar footer (edit mode)
-- moveSidebarItem() / drag-drop functions exist but NOT wired to UI
-
-Remaining:
-- Sidebar reorder UI: add up/down arrows (or wire draggable attributes) in edit mode
-- moveSidebarItem() must also call renderSections() to keep view in sync
-- Verify sidebar ↔ section order stays consistent after reorder
 
 ### Phase 4: Pip Tracker Fix (Both Themes)
-**Status:** NOT STARTED
+**Status:** IN PROGRESS (~60%)
 **Goal:** Filled = available, hollow = used. Clear in both themes.
 
-Tasks:
-1. New CSS vars: --pip-on, --pip-off-bg (transparent), --pip-off-border, --pip-text
-2. Remove opacity:.5 hack. Hollow appearance for used pips.
-3. Death save colors to CSS variables (--death-succ, --death-fail)
-4. Spell slot pips: keep per-level colors, used = clearly hollow
-5. Consistent treatment across all pip types
+Done:
+- Light mode pip contrast fix (used pips clearly hollow, available slots solid-filled)
+- --pip-off-bg and --pip-off-border variables added for light mode visibility
+
+Remaining:
+- Death save colors to CSS variables (--death-succ, --death-fail)
+- Pip text color to CSS variable
+- Consistent treatment across all pip types
 
 ### Phase 5: Button Overflow & Panel Polish
 **Status:** ✅ COMPLETE
@@ -147,18 +147,24 @@ Architecture:
 - label/emoji are optional — default to parent feature's title/emoji when omitted
 - A feature can have MULTIPLE trackers and MULTIPLE actions (e.g. subclass grants several)
 - Session tracker IDs: slugify(t.label || f.title)
-- CHAR.trackers[] only for standalone trackers (potions, generic resources)
+- **Standalone CHAR.trackers[] REMOVED** — replaced by equipment-based tracking
+- Equipment items with `tracked: true` appear as pip trackers in game panel
+- Equipment tracker IDs: `eq-` + slugify(e.name)
 - CHAR.actions[] array REMOVED — all actions come from features
-- Panel renders trackers/actions by scanning features + standalone trackers
+- Panel renders trackers by scanning features + tracked equipment items
+- **Weapons auto-derive in equipment table** — no manual duplication needed
 
 Done:
 - Features embed plural trackers[]/actions[] arrays
 - Feature wizard step 3 rewritten as list editor (add/edit/delete)
 - Tracker/action editing uses page-replacement UX (replaces wizard body)
 - editFeature() flattens trackers/actions for prefill
-- Standalone trackers fully working
-- syncSession, findTrackerById, longRest, tracker rendering, action rendering updated
-- catalion.json updated with new array format
+- Equipment wizard: optional tracker fields (tracked, quantity, emoji, recovery, isPotion, potionFormula)
+- Equipment tracker pips rendered in game panel, respecting recovery on rest
+- deleteEquip() cleans up SESSION tracker data
+- Weapons auto-appear in equipment table (derived rows, edit/delete go through weapon wizard)
+- syncSession, findTrackerById, longRest, tracker rendering updated for equipment-based trackers
+- catalion.json updated: potions moved from trackers[] to equipment[], weapon duplicates removed
 
 ### Phase 8: Spell Preparation & Ritual
 **Status:** NOT STARTED
@@ -228,7 +234,7 @@ Tasks:
 **Goal:** Central content addition, edit mode only, context-aware.
 
 Menu items:
-- Always: Add Feature, Add Equipment, Add Weapon, Add Tracker, Add Algo Block
+- Always: Add Feature, Add Equipment, Add Weapon, Add Algo Block
 - If spellcasting: Add Spell, Add Spell Slot
 - If NOT: Set up Spellcasting
 - If Algorithm hidden: Show Algorithm
@@ -323,7 +329,13 @@ Menu items:
     tags?: [{ label, color }]
   }],
 
-  equipment: [{ name, notes? }],
+  equipment: [{
+    name, notes?,
+    // Optional tracker fields (e.g. potions, scrolls)
+    tracked?, quantity?, emoji?,
+    recovery?,                   // manual/short/long
+    isPotion?, potionFormula?
+  }],
 
   features: [{
     title, emoji, source?,
@@ -337,14 +349,6 @@ Menu items:
     // label/emoji default to parent feature's title/emoji when omitted
   }],
 
-  // Standalone trackers only (not tied to features)
-  trackers: [{
-    label, emoji?, total, recovery,
-    die?, showDie?,
-    isPotion?, potionFormula?
-    // id auto-generated from slugify(label)
-  }],
-
   customConditions: ["Aid attivo (+5 PF)"],
 
   combatAlgorithm: [{
@@ -353,7 +357,7 @@ Menu items:
   }],
 
   // IDs only — labels/emojis derived from registry or features
-  sidebar: ["base-data", {type:"sep"}, "skills", "spells", "weapons", ...]
+  sidebar: ["game-panel", "base-data", {type:"sep"}, "skills", "spells", "weapons", ...]
 }
 ```
 
@@ -365,7 +369,7 @@ Menu items:
   hitDice: { used },
   trackers: {
     "slugified-feature-title": { used: 0 },  // feature trackers
-    "slugified-label": { used: 0 }            // standalone trackers
+    "eq-slugified-item-name": { used: 0 }     // equipment trackers
   },
   spellSlots: { "1": { used: 0 }, "2": { used: 0 } },
   gold, round, concentration, initiative,
@@ -386,6 +390,7 @@ Menu items:
 - CHAR.actions[] array -> embedded in features as .action
 - feature+tracker duplication -> tracker embedded in feature
 - CHAR.conditions (full list) -> CHAR.customConditions (custom only)
+- CHAR.trackers[] standalone array -> equipment-based tracking (tracked flag on equipment items)
 - tracker/action manual id fields -> auto-generated via slugify()
 - empty/null fields -> omitted, engine handles defaults
 
@@ -405,7 +410,7 @@ Menu items:
 | 8 | Sidebar architecture | TOC-style: sidebar order = view order |
 | 9 | Sidebar separators | Simple lines, no labels |
 | 10 | Section deletion | Only custom features deletable |
-| 11 | Game panel position | Pinned at top always |
+| 11 | Game panel position | Regular built-in section, draggable, first by default |
 | 12 | Prompt dialogs | Replace with in-modal editing |
 | 13 | Feature+tracker | Integrated final step in feature wizard |
 | 14 | Feature+action | Embedded in features, CHAR.actions[] removed |
@@ -450,13 +455,17 @@ Menu items:
 | 53 | select-or-custom field type | Fixed list + "Custom..." option for homebrew in wizards |
 | 54 | Feature trackers/actions | Arrays (plural) with per-entry label+emoji, not singular |
 | 55 | Content block inline editing | Replace all prompt() with in-modal editing |
-| 56 | Sidebar reorder | Needs arrows or drag-drop wired + renderSections() sync |
+| 56 | Sidebar reorder | Drag-drop with trash zone + renderSections() sync |
 | 57 | Tag system | tags:[{label,color}] replaces isNew/isSecret/secretLabel |
 | 58 | Live wizard preview | Feature/spell/weapon/algo wizards show live preview at bottom |
 | 59 | Field hints | Hover tooltips (title attr + ⓘ icon), not visible divs |
 | 60 | Tracker/action editing | Page-replacement UX (replaces wiz-body, not inline row edit) |
 | 61 | Character emoji | Removed (dead data — stored but never displayed) |
 | 62 | Skill proficiency levels | none/proficient/expertise/halfProficiency (renamed from jackOfAllTrades) |
+| 64 | Equipment tracking | Equipment items with `tracked:true` show as pip trackers in game panel |
+| 65 | Standalone trackers | Removed — use equipment tracking or feature-embedded trackers instead |
+| 66 | Weapons in equipment | Weapons auto-derive in equipment table (single source of truth, no duplication) |
+| 67 | Game panel header | No section header (visually distinct card container) |
 | 63 | Skills display | Always show all 18, non-proficient at 55% opacity |
 
 ---
@@ -471,8 +480,8 @@ Menu items:
 | ~~Tracker die/showDie not in wizard~~ | ~~WIZARDS.tracker~~ | ✅ Fixed |
 | ~~Action ID is dead code~~ | ~~WIZARDS.action~~ | ✅ Fixed (removed) |
 | shortRest() is a no-op | shortRest() | Full implementation (Phase 12) |
-| longRest() ignores tracker recovery | longRest() | Check recovery field |
-| Manual trackers reset on long rest | longRest() | Skip recovery:'manual' |
+| ~~longRest() ignores tracker recovery~~ | ~~longRest()~~ | ✅ Fixed (checks recovery field) |
+| ~~Manual trackers reset on long rest~~ | ~~longRest()~~ | ✅ Fixed (skips recovery:'manual') |
 | PB auto-calc shadowed | renderBaseData | Override pattern (Phase 9) |
 | Death save colors hardcoded | CSS | CSS variables (Phase 4) |
 | Gold input color hardcoded | CSS | CSS variable (Phase 5) |
@@ -482,7 +491,7 @@ Menu items:
 | **~~Only 1 tracker/action per feature~~** | ~~data model~~ | ✅ Fixed (trackers[]/actions[] arrays) |
 | **~~cbeRenderTable() not defined~~** | ~~editBlock()~~ | ✅ Fixed |
 | **~~cbeRenderSubfeature() not defined~~** | ~~editBlock()~~ | ✅ Fixed |
-| **Sidebar reorder not wired** | renderSidebar | Wire arrows + renderSections sync |
+| **~~Sidebar reorder not wired~~** | ~~renderSidebar~~ | ✅ Fixed (drag-drop + trash zone) |
 | **Algo step editor uses prompt()** | addAlgoStep | Inline editing |
 
 ---

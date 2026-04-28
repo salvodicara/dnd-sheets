@@ -16,8 +16,8 @@ Open `character-sheet.html` in any browser. No server, no build step, no interne
 - **Hit Dice** -- clickable pip UI for tracking usage
 - **Death Saving Throws** -- success/failure pip toggles
 - **Spell Slots** -- per-level pip trackers, color-coded (9 levels)
-- **Custom Resource Trackers** -- bardic inspiration, sorcery points, etc.
-- **Potion Tracker** -- auto-heals on use via dice formula
+- **Custom Resource Trackers** -- feature-embedded (bardic inspiration, etc.) or equipment-based (potions, scrolls)
+- **Potion Tracker** -- auto-heals on use via dice formula (configured in equipment wizard)
 - **Concentration** -- toggle with visual indicator
 - **Round & Initiative Counter**
 - **Gold Tracker** -- custom amount input with +/- buttons
@@ -44,7 +44,8 @@ Open `character-sheet.html` in any browser. No server, no build step, no interne
 - Combat Algorithm -- decision-tree blocks for turn planning
 
 ### Equipment & Features
-- Equipment table with quantity tracking
+- Equipment table with optional quantity/usage tracking (pip trackers in game panel)
+- Weapons auto-appear in equipment table (single source of truth, no duplication)
 - Feature sections with recursive content blocks (paragraph, bullets, table, note, header, subfeature)
 - Features can embed trackers and quick actions (rendered in the game panel)
 - Custom color tags (up to 3 per feature)
@@ -54,7 +55,7 @@ Open `character-sheet.html` in any browser. No server, no build step, no interne
 - English / Italian language toggle (extensible i18n system)
 - Edit mode -- togglable add/edit/delete controls throughout the sheet
 - Responsive mobile layout (hamburger menu at 768px)
-- Sidebar navigation with section ordering
+- Sidebar navigation with drag-and-drop section reordering
 - Live wizard preview -- see how your feature/spell/weapon will look as you fill in fields
 - Toast notifications for feedback
 - Modal wizard system for all CRUD operations
@@ -63,7 +64,7 @@ Open `character-sheet.html` in any browser. No server, no build step, no interne
 
 ```
 dnd-sheets/
-  character-sheet.html          Main application (single file, ~3,680 lines)
+  character-sheet.html          Main application (single file, ~3,830 lines)
   CLAUDE.md                     AI steering document (golden rules, architecture)
   DESIGN.md                     Design decisions, phase plan, data model
   Catalion/
@@ -97,7 +98,7 @@ Top-level structure:
     "spellSlots": [{ "level": 1, "total": 2 }],
     "spells": [{ "name": "...", "level": 0, "school": "Evocation", "tags": [] }],
     "weapons": [{ "name": "...", "damageDie": "1d8", "damageType": "Slashing", "tags": [] }],
-    "equipment": [{ "name": "..." }],
+    "equipment": [{ "name": "...", "tracked": true, "quantity": 1, "emoji": "🧪", "isPotion": true, "potionFormula": "2d4+2" }],
     "features": [{
       "title": "...", "emoji": "...", "source": "Fighter",
       "contentBlocks": [],
@@ -105,9 +106,8 @@ Top-level structure:
       "actions": [{ "type": "action", "description": "..." }],
       "tags": [{ "label": "New", "color": "green" }]
     }],
-    "trackers": [],
     "combatAlgorithm": [],
-    "sidebar": ["base-data", "skills", "spells", "weapons", "equipment"]
+    "sidebar": ["game-panel", "base-data", "skills", "spells", "weapons", "equipment"]
   },
   "session": {
     "hp": { "current": 30, "temp": 0, "aidBonus": 0 },
