@@ -2,7 +2,7 @@
 
 A zero-dependency, single-file digital character sheet for D&D 2024, built with vanilla HTML, CSS, and JavaScript.
 
-Open `character-sheet.html` in any browser. No server, no build step, no internet required.
+Open `index.html` in any browser. No server, no build step, no internet required.
 
 ## Features
 
@@ -64,12 +64,11 @@ Open `character-sheet.html` in any browser. No server, no build step, no interne
 
 ```
 dnd-sheets/
-  character-sheet.html          Main application (single file, ~3,830 lines)
+  index.html                    Main application (single file, ~3,830 lines)
   CLAUDE.md                     AI steering document (golden rules, architecture)
   DESIGN.md                     Design decisions, phase plan, data model
-  Catalion/
+    Catalion/
     catalion.json               Example character data (v3.0 format)
-    Catalion_Livello3.html      Legacy v1 prototype (deprecated)
 ```
 
 ## Data Format

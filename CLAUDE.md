@@ -2,12 +2,12 @@
 
 ## Project Overview
 
-**D&D Sheets** is a zero-dependency, single-file (HTML+CSS+JS) digital character sheet for D&D 2024 players. The entire application lives in `character-sheet.html` (~3,830 lines). There is no build system, no framework, no server. Open the file in a browser and it works.
+**D&D Sheets** is a zero-dependency, single-file (HTML+CSS+JS) digital character sheet for D&D 2024 players. The entire application lives in `index.html` (~3,830 lines). There is no build system, no framework, no server. Open the file in a browser and it works.
 
 ## Golden Rules
 
 1. **MAIN GOAL: Full UI completeness.** Every single piece of character data must be creatable, editable, and deletable through the UI wizards. A user starting from a blank sheet must be able to build any character (like Catalion) entirely through the app -- no JSON editing, ever. If a data field exists in the model but has no wizard path to set it, that is a **critical bug**. `catalion.json` is the reference: if the wizards can't reproduce it, the app is incomplete.
-2. **Single file only.** All code (CSS, HTML, JS) must stay in `character-sheet.html`. Never split into separate files.
+2. **Single file only.** All code (CSS, HTML, JS) must stay in `index.html`. Never split into separate files.
 3. **Zero dependencies.** No libraries, frameworks, CDNs, or npm packages. Vanilla JS/CSS/HTML only.
 4. **Never exceed 100 lines per write operation.** The writing tool fails on large writes. Always use targeted edits or write in small chunks.
 5. **Preserve the existing architecture.** Follow the patterns already in the code (see below). Do not introduce new paradigms.
@@ -23,7 +23,7 @@
 
 ## Architecture
 
-### File Structure (inside character-sheet.html)
+### File Structure (inside index.html)
 
 The file is organized in this order:
 1. `<style>` block -- CSS with theme variables, component styles, responsive rules

@@ -496,7 +496,7 @@ Menu items:
 
 ---
 
-## Key Line References (character-sheet.html)
+## Key Line References (index.html)
 
 > **Note:** Line numbers are approximate and shift frequently. Use grep/search
 > to find components. These are kept as rough landmarks only.
