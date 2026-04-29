@@ -173,19 +173,31 @@ CB_EDIT_DATA  -- deep clone of block being edited (for cancel/restore)
 
 ## AI Assistant (`assistant.html`)
 
-A standalone ~700-line HTML file (same zero-dependency constraint). Communicates with `index.html` exclusively via `localStorage` key `dnd_sheet_v2`.
+A standalone ~1000-line HTML file (same zero-dependency constraint). Communicates with `index.html` exclusively via `localStorage` key `dnd_sheet_v2`.
 
 ### State
 ```
-HISTORY    -- OpenAI-format message array [{role, content}]
-CHAR       -- full character object loaded from localStorage ({version, character, session})
-CHAR_DONE  -- boolean flag: has the character been injected into HISTORY yet?
+HISTORY      -- OpenAI-format message array [{role, content}]
+CHAR         -- full character object loaded from localStorage ({version, character, session})
+CHAR_DONE    -- boolean flag: has the character been injected into HISTORY yet?
+STAGED_FILE  -- {name, text} when a document is attached; null otherwise
 ```
 
 ### Send Flow
 1. On first send, inject character as synthetic `HISTORY[0/1]` (user+assistant turns), stripping `session.portrait` (base64) and `session.logEntries` (unbounded) to save tokens. Set `CHAR_DONE = true`.
 2. Append the real user message and call the provider API.
 3. After the AI responds, push the assistant reply to `HISTORY`.
+
+### Document Import Flow
+- Paperclip button (`#btn-attach`) triggers a hidden file input (`#doc-file`, accepts `.txt,.pdf,.docx`).
+- File is parsed client-side by `parseDocumentFile(file)` → dispatches to `extractPdfText()`, `extractDocxText()`, or `file.text()`.
+- PDF extraction: Method 1 = AcroForm `/V` field scanner (handles official WotC fillable PDFs with UTF-16BE encoding); Method 2 = BT/ET text fallback for simple PDFs.
+- DOCX extraction: ZIP local header parser → `DecompressionStream('deflate-raw')` → `<w:t>` XML text extraction.
+- Parsed text is stored in `STAGED_FILE`; a chip shows the filename with a ✕ to remove it.
+- **On send, two modes:**
+  - **No user text** → build mode: clears `HISTORY`, uses `sysBuild` system prompt, AI outputs a full `json-char` block for import.
+  - **User text present** → context mode: document injected into the message, history preserved, regular system prompt used.
+- `importChar(uid)` normalizes the parsed JSON, preserves portrait/logEntries, sets `session.hp.current = hp.max`, saves to localStorage, updates `#cname`, resets `CHAR_DONE = false`.
 
 ### JSON Patch Protocol
 - AI is always instructed to return a ` ```json-patch` `` ` block (RFC 6902 ops array) at the end of every character-update response, after the prose and wizard steps.
@@ -197,7 +209,9 @@ CHAR_DONE  -- boolean flag: has the character been injected into HISTORY yet?
 |---|---|---|
 | ` ```json-patch` `` ` | Valid ops array | "Apply changes" button |
 | ` ```json-patch` `` ` | Malformed / truncated | Subtle `⚠` hint in user's language |
+| ` ```json-char` `` ` | Valid character object | "Import character" button |
 | ` ```json` `` ` | Array of `{op,path}` objects | Auto-detected as patch → Apply button |
+| ` ```json` `` ` | Object with `.character` or `.version:'3.0'` | Auto-detected as character → Import button |
 | ` ```json` `` ` | Anything else | Silently dropped (no output) |
 | Prose | `### heading` | Rendered as `<strong>` bold |
 | Prose | `**bold**` / `*italic*` | Standard inline formatting |
@@ -208,7 +222,8 @@ CHAR_DONE  -- boolean flag: has the character been injected into HISTORY yet?
 3. `localStorage.setItem('dnd_sheet_v2', ...)` — saves updated character.
 4. `CHAR = updated` — keeps in-memory state fresh.
 5. `HISTORY[0]` overwritten in-place with the updated character JSON (re-sync without history bloat).
-6. `toast(UI('applyToast'))` — stays in chat, no redirect.
+6. `#cname` panel updated immediately.
+7. `toast(UI('applyToast'))` — stays in chat, no redirect.
 
 ### i18n (`STRINGS` + `UI()`)
 Same pattern as `index.html` but independent. `STRINGS.en` and `STRINGS.it` hold all user-visible strings. `UI(key, ...args)` resolves with fallback to English. Function-valued keys (e.g. `modelInfo`) receive args via spread.
@@ -225,11 +240,18 @@ Same pattern as `index.html` but independent. `STRINGS.en` and `STRINGS.it` hold
 ### Key Functions (`assistant.html`)
 | Function | Purpose |
 |---|---|
-| `send()` | Build message, call provider, render response |
+| `send()` | Build/context/normal message dispatch, call provider, render response |
 | `render(text)` | Parse code blocks + markdown, return HTML |
-| `applyPatch(uid)` | Apply stored RFC 6902 ops, save, re-sync |
+| `applyPatch(uid)` | Apply stored RFC 6902 ops, save, re-sync, update `#cname` |
+| `importChar(uid)` | Import full character object, reset session HP, update `#cname` |
 | `applyJsonPatch(obj, ops)` | Pure RFC 6902 engine (add/remove/replace) |
 | `mergeSession(jsonStr)` | Re-inject portrait + logEntries before save |
+| `stageFile(event)` | Pick file, parse it, show chip |
+| `clearStagedFile()` | Clear STAGED_FILE and hide chip |
+| `parseDocumentFile(file)` | Dispatch to txt/pdf/docx extractor |
+| `extractPdfText(buf)` | AcroForm field scanner + BT/ET fallback |
+| `extractDocxText(buf)` | ZIP + deflate-raw + XML `<w:t>` extractor |
+| `decodePdfStr(s)` | UTF-16BE + PDF octal escape decoder |
 | `toast(msg)` | Transient notification (stays in chat) |
 | `fetchPollinationsLimits()` | Fetch live model info for settings hint |
 | `UI(key, ...args)` | Translated string lookup with en fallback |

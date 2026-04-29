@@ -55,6 +55,13 @@ a{color:var(--accent);}
 .chip:hover{border-color:var(--accent);background:var(--bg2);}
 .toast-notif{position:fixed;bottom:4.5rem;left:50%;transform:translateX(-50%) translateY(8px);background:var(--bg-card);color:var(--text);border:1px solid var(--accent);border-radius:8px;padding:.45rem 1.1rem;font-size:.82rem;font-weight:600;opacity:0;transition:opacity .22s,transform .22s;pointer-events:none;z-index:999;white-space:nowrap;}
 .toast-notif.show{opacity:1;transform:translateX(-50%) translateY(0);}
+#btn-attach{width:38px;height:38px;border-radius:7px;font-size:1.1rem;padding:0;flex-shrink:0;background:var(--bg3);border:1px solid var(--border-light);color:var(--muted);cursor:pointer;transition:border-color .15s,color .15s;}
+#btn-attach:hover{border-color:var(--accent);color:var(--accent);}
+.att-chip{display:flex;align-items:center;gap:.4rem;background:var(--bg3);border:1px solid var(--border);border-radius:6px;padding:.18rem .55rem;font-size:.76rem;color:var(--text);margin:.3rem 1.1rem 0;align-self:flex-start;}
+.att-chip-icon{font-size:.85rem;}
+.att-chip-name{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:220px;}
+.att-chip-rm{background:none;border:none;color:var(--muted);cursor:pointer;padding:0 0 0 .2rem;font-size:1rem;line-height:1;transition:color .12s;}
+.att-chip-rm:hover{color:var(--accent);}
   </style>
 </head>
 <body>
@@ -77,10 +84,13 @@ a{color:var(--accent);}
   </details>
   <div class="chat" id="chat"></div>
   <div class="chips" id="chips" style="display:none"></div>
+  <div id="att-area" style="display:none"></div>
   <div class="ibar">
+    <button id="btn-attach" title="Attach document" onclick="document.getElementById('doc-file').click()">📎</button>
     <textarea id="ui" onkeydown="onKey(event)" oninput="resize(this)"></textarea>
     <button class="btn ba" id="sb" onclick="send()">&#9658;</button>
   </div>
+  <input type="file" id="doc-file" accept=".txt,.pdf,.docx" style="display:none" onchange="stageFile(event)">
   <script type="text/x-prompt" id="sys">You are an expert D&D 2024 assistant. You help with two things equally well:
 
 1. General D&D 2024 questions — rules, spells, classes, subclasses, feats, monsters, conditions, action economy, combat, exploration, social pillars, magic items, multiclassing, and anything else from the 2024 core rules.
@@ -297,6 +307,8 @@ const STRINGS={
     applyBtn:'Apply changes',
     applyToast:'Changes applied ✓',
     applyError:'Could not apply patch',
+    importBtn:'Import character',
+    importToast:'Character imported ✓',
     loadingModel:'Loading model info…',
     modelInfo:(name,desc,tier)=>'Model: '+name+(desc?' ('+desc+')':'')+', tier: '+(tier||'anonymous')+'. Context limited to 6 messages — for best results use a provider with an API key.',
     modelLimitsFallback:'Context limited to 6 messages — for best results use a provider with an API key.',
@@ -326,6 +338,8 @@ const STRINGS={
     applyBtn:'Applica modifiche',
     applyToast:'Modifiche applicate ✓',
     applyError:'Impossibile applicare la patch',
+    importBtn:'Importa personaggio',
+    importToast:'Personaggio importato ✓',
     loadingModel:'Caricamento modello…',
     modelInfo:(name,desc,tier)=>'Modello: '+name+(desc?' ('+desc+')':'')+', tier: '+(tier||'anonymous')+'. Contesto limitato a 6 messaggi — usa un provider con chiave API per risultati migliori.',
     modelLimitsFallback:'Contesto limitato a 6 messaggi — usa un provider con chiave API per risultati migliori.',
@@ -349,6 +363,7 @@ For rules questions: just answer. Use **bold** for D&D terms. Verify: http://dnd
 };
 // ── State ───────────────────────────────────────────────────────────────
 let HISTORY=[], CHAR=null, CHAR_DONE=false;
+let STAGED_FILE=null; // {name, text} when a document is attached
 let currentLang=localStorage.getItem('dnd-lang')||'it';
 function UI(key,...args){const s=(STRINGS[currentLang]||STRINGS.en)[key]||(STRINGS.en[key]||key);return typeof s==='function'?s(...args):s;}
 // ── Theme ────────────────────────────────────────────────────────────────
@@ -519,6 +534,26 @@ function loadFile(e){
   const f=e.target.files[0]; if(!f)return;
   const r=new FileReader(); r.onload=ev=>{document.getElementById('cjson').value=ev.target.result;setChar();}; r.readAsText(f);
 }
+// ── Document attach (build mode) ──────────────────────────────────────────
+async function stageFile(e){
+  const f=e.target.files[0]; if(!f)return;
+  e.target.value=''; // reset so same file can be re-selected
+  const area=document.getElementById('att-area');
+  area.style.display='flex'; area.style.alignItems='center';
+  area.innerHTML='<div class="att-chip"><span class="att-chip-icon">📎</span><span class="att-chip-name">'+esc(f.name)+'</span><span style="color:var(--muted);font-size:.74rem;margin-left:.15rem;">parsing…</span></div>';
+  try{
+    const text=await parseDocumentFile(f);
+    if(!text.trim()){area.innerHTML='<div class="att-chip" style="color:var(--muted)">⚠ Could not extract text from file</div>';return;}
+    STAGED_FILE={name:f.name,text};
+    area.innerHTML='<div class="att-chip"><span class="att-chip-icon">📎</span><span class="att-chip-name">'+esc(f.name)+'</span><button class="att-chip-rm" onclick="clearStagedFile()" title="Remove">✕</button></div>';
+    document.getElementById('ui').focus();
+  }catch(err){area.innerHTML='<div class="att-chip" style="color:var(--muted)">⚠ '+esc(err.message)+'</div>';}
+}
+function clearStagedFile(){
+  STAGED_FILE=null;
+  const area=document.getElementById('att-area');
+  area.style.display='none'; area.innerHTML='';
+}
 function setChar(){
   const raw=(document.getElementById('cjson')||{}).value?.trim(); if(!raw)return;
   try{
@@ -546,14 +581,14 @@ function updMsg(id,text){
 }
 function render(text){
   const parts=[]; let last=0;
-  const re=/```(json(?:-patch)?)\s*([\s\S]*?)```/g; let m;
+  const re=/```(json(?:-patch|-char)?)\s*([\s\S]*?)```/g; let m;
   while((m=re.exec(text))!==null){
     if(m.index>last)parts.push({t:'md',v:text.slice(last,m.index)});
     parts.push({t:m[1],v:m[2].trim()}); last=m.index+m[0].length;
   }
   if(last<text.length){
     const tail=text.slice(last);
-    const unc=/```(json(?:-patch)?)\s*([\s\S]*)/.exec(tail);
+    const unc=/```(json(?:-patch|-char)?)\s*([\s\S]*)/.exec(tail);
     if(unc){
       if(unc.index>0)parts.push({t:'md',v:tail.slice(0,unc.index)});
       parts.push({t:unc[1],v:unc[2].trim()});
@@ -572,6 +607,17 @@ function render(text){
       }catch(e){}
       return '<p class="hint" style="margin-top:.3rem;">⚠ '+UI('patchFailed')+'</p>';
     }
+    if(p.t==='json-char'){
+      try{
+        const parsed=JSON.parse(p.v);
+        if(parsed&&(parsed.character||parsed.name)){
+          const uid='c'+Date.now()+Math.random().toString(36).slice(2,7);
+          window[uid]=parsed;
+          return '<button class="btn bload" onclick="importChar(\''+uid+'\')">&#10011; '+UI('importBtn')+'</button>';
+        }
+      }catch(e){}
+      return '<p class="hint" style="margin-top:.3rem;">⚠ '+UI('patchFailed')+'</p>';
+    }
     if(p.t==='json'){
       try{
         let parsed=JSON.parse(p.v);
@@ -580,6 +626,12 @@ function render(text){
           const uid='p'+Date.now()+Math.random().toString(36).slice(2,7);
           window[uid]=parsed;
           return '<button class="btn bload" onclick="applyPatch(\''+uid+'\')">&#10003; '+UI('applyBtn')+'</button>';
+        }
+        // Detect full character object (model used ```json instead of ```json-char)
+        if(parsed&&!Array.isArray(parsed)&&(parsed.character||parsed.version==='3.0')){
+          const uid='c'+Date.now()+Math.random().toString(36).slice(2,7);
+          window[uid]=parsed;
+          return '<button class="btn bload" onclick="importChar(\''+uid+'\')">&#10011; '+UI('importBtn')+'</button>';
         }
       }catch(e){}
       return '';
@@ -651,6 +703,9 @@ function applyPatch(uid){
     }
     localStorage.setItem('dnd_sheet_v2',JSON.stringify(updated));
     CHAR=updated;
+    // Update character panel name (bug fix: works even when starting from null)
+    const name=updated.character?.name||''; const lvl=updated.character?.level||'';
+    if(name) document.getElementById('cname').textContent='— '+name+(lvl?' lv'+lvl:'');
     if(CHAR_DONE&&HISTORY.length>=2){
       const c4ai=JSON.parse(JSON.stringify(CHAR));
       if(c4ai.session){c4ai.session.portrait=null;c4ai.session.logEntries=[];}
@@ -658,6 +713,37 @@ function applyPatch(uid){
     }
     saveHistory();
     toast(UI('applyToast'));
+  }catch(e){alert(UI('applyError')+': '+e.message);}
+}
+function importChar(uid){
+  try{
+    const raw=window[uid]; if(!raw)throw new Error('Data not found');
+    // Normalize: support {version,character,session} or bare character object
+    let normalized;
+    if(raw.character){
+      normalized={version:'3.0',savedAt:new Date().toISOString(),...raw};
+      if(!normalized.session) normalized.session={};
+    }else{
+      normalized={version:'3.0',savedAt:new Date().toISOString(),character:raw,session:{}};
+    }
+    // Preserve portrait and logEntries from existing session
+    if(CHAR&&CHAR.session){
+      if(CHAR.session.portrait)normalized.session.portrait=CHAR.session.portrait;
+      if(CHAR.session.logEntries&&CHAR.session.logEntries.length)normalized.session.logEntries=CHAR.session.logEntries;
+    }
+    // Ensure session has default hp.current = hp.max
+    if(!normalized.session.hp){
+      const maxHp=normalized.character?.hp?.max||0;
+      normalized.session.hp={current:maxHp,temp:0,aidBonus:0};
+    }
+    localStorage.setItem('dnd_sheet_v2',JSON.stringify(normalized));
+    CHAR=normalized; CHAR_DONE=false;
+    const name=normalized.character?.name||''; const lvl=normalized.character?.level||'';
+    document.getElementById('cname').textContent=(name?'— '+name+(lvl?' lv'+lvl:''):'');
+    // Reset history — on next send, the new character will be injected
+    HISTORY=[]; localStorage.removeItem('dnd_ai_history');
+    toast(UI('importToast'));
+    addMsg('a',UI('charLoaded',name||'character',lvl));
   }catch(e){alert(UI('applyError')+': '+e.message);}
 }
 function toast(msg){
@@ -669,6 +755,130 @@ function toast(msg){
 }
 // ── API calls ─────────────────────────────────────────────────────────────
 const getSys=()=>document.getElementById('sys').textContent.trim();
+// ── Build-mode system prompt ──────────────────────────────────────────────
+const sysBuild=`You are a D&D 2024 character builder for the D&D Sheets app.
+The user shares a document with their character info. Extract ALL data and output a complete JSON.
+YOU MUST output a \`\`\`json-char\`\`\` code block — this is mandatory, no exceptions. Even if info is partial, produce the best possible character from what is available.
+Output ONLY: 1-2 sentence summary, then the \`\`\`json-char\`\`\` block. NO wizard steps. NO json-patch blocks.
+
+## D&D 5e PDF AcroForm fields (lines like "FieldName: value")
+If the document contains these field names, map them as follows:
+CharacterName→name, Race→race, ClassLevel→parse class+level+subclass (e.g."Bardo 3 (Lore)"→class=Bardo,level=3,subclass=College of Lore), Background→background, Alignment→alignment, PlayerName→playerName, Age/Height/Weight/Eyes/Hair/Skin→ignore (flavor only)
+STR/DEX/CON/INT/WIS/CHA→abilityScores (integers), AC→ac, HPMax→hp.max, HD→hitDieType (parse die from "3d8"→8), Speed→speed, ProfBonus→proficiencyBonusOverride (null=auto), Initiative→ignore (derived)
+ST Strength/Dexterity/Constitution/Intelligence/Wisdom/Charisma→savingThrows[] (include if value = base mod + ProfBonus)
+Skills: ACRO=acrobatics, ANIM=animalHandling, ARC=arcana, ATH=athletics, DEC=deception, HIST=history, INS=insight, INTI=intimidation, INV=investigation, MED=medicine, NAT=nature, PERC=perception, PERF=performance, PERS=persuasion, REL=religion, SLE=sleightOfHand, STLTH=stealth, SURV=survival. Infer proficiency by comparing value to (ability mod + PB): equal→proficient, +PB→expertise, +PB/2→halfProficiency.
+SpellcastingAbility 2→spellcasting.ability (CAR→CHA, INT→INT, WIS→WIS), SpellSaveDC→spellDCOverride, SpellAtkBonus→spellAttackOverride, Spellcasting Class→spellcasting focus class
+SlotsTotal N→spell slots (use D&D knowledge to map total=4,2,... to levels 1,2,...), Spells 10XY→spell names (use D&D knowledge to determine level from name)
+Equipment→parse as equipment[] list, Wpn Name/Damage/AtkBonus→weapons[], Features and Traits→features[], PersonalityTraits/Ideals/Bonds/Flaws→quote or feature blocks, Backstory→feature contentBlock, ProficienciesLang→languages+toolProficiencies
+
+## REQUIRED json-char structure (version:"3.0", savedAt:ISO string):
+character fields: name,quote,race,class,subclass,level(1-20),background,alignment,playerName,speed(e.g."9 m"),ac,armorNote,hp:{max},hitDieType(4|6|8|10|12),languages,toolProficiencies,abilityBudget:27,proficiencyBonusOverride:null
+abilityScores:{STR,DEX,CON,INT,WIS,CHA}
+savingThrows:string[] of ability codes
+skills:{acrobatics|animalHandling|arcana|athletics|deception|history|insight|intimidation|investigation|medicine|nature|perception|performance|persuasion|religion|sleightOfHand|stealth|survival -> "proficient"|"expertise"|"halfProficiency"}
+spellcasting:{ability:"CHA"|"INT"|"WIS",preparedCaster:bool,focus:str,spellDCOverride:null,spellAttackOverride:null}
+spellSlots:[{level:1-9,total,pactMagic?:true}]
+spells:[{level,name,originalName(English),emoji,actionType:"action"|"bonus"|"reaction"|"free",school,range,concentration?:true,duration,saveAbility?,description,scaling?,notes?,tags:[{label,color:"green"|"blue"|"purple"|"red"|"orange"}]}]
+weapons:[{name,quantity,emoji,damageDie,damageType,attackStat:"STR"|"DEX",attackBonusOverride:null,damageModOverride:null,properties,notes,tags:[{label,color}]}]
+equipment:[{name,emoji?,notes,tracked?:bool,quantity?,recovery?:"long"|"short"|"manual",isPotion?:bool,potionFormula?:str}]
+features:[{title,emoji,source,tags:[{label,color}],contentBlocks:[{type:"paragraph"|"note"|"bullets"|"table",text?:str,bullets?:str[],rows?:str[][]}],trackers?:[{label?,emoji?,total,recovery:"long"|"short"|"manual",die?:str,showDie?:bool}],actions?:[{label?,emoji?,type:"action"|"bonus"|"reaction"|"free",description:str}]}]
+combatAlgorithm:[]
+customConditions:[]
+sidebar:["game-panel","base-data","skills","spells","weapons","equipment","algorithm",...slugify each feature title]
+DO NOT set sectionId on features. session:{hp:{current:<hp.max>,temp:0,aidBonus:0},hitDice:{used:0},trackers:{},spellSlots:{},gold:0,round:1,concentration:"",initiative:"",conditions:[],deathSucc:0,deathFail:0,notes:"",portrait:null,logEntries:[],showGettingStarted:false,hdDialog:false}
+slugify: lowercase, replace spaces+special chars with hyphens, collapse multiple hyphens.
+Infer anything missing from class/level (hit die, save proficiencies, spellcasting ability, spell slots). Use **bold** for D&D terms. Verify mechanics: http://dnd2024.wikidot.com/`;
+// ── Document parsing ──────────────────────────────────────────────────────
+function decodePdfStr(s){
+  // Detect UTF-16BE BOM (bytes 0xFE 0xFF stored as Latin-1 chars 254 255)
+  if(s.charCodeAt(0)===0xFE&&s.charCodeAt(1)===0xFF){
+    const bytes=[];
+    for(let i=2;i<s.length;i++){
+      if(s[i]==='\\'&&i+1<s.length){
+        const n=s[i+1];
+        if(n>='0'&&n<='7'){
+          let oct='',j=i+1;
+          while(j<i+4&&j<s.length&&s[j]>='0'&&s[j]<='7'){oct+=s[j++];}
+          bytes.push(parseInt(oct,8));i=j-1;
+        }else{const em={n:10,r:13,t:9,b:8,f:12};bytes.push(em[n]??s.charCodeAt(i+1));i++;}
+      }else{bytes.push(s.charCodeAt(i));}
+    }
+    let out='';
+    for(let j=0;j<bytes.length-1;j+=2){
+      const cp=(bytes[j]<<8)|bytes[j+1];
+      if(cp===0x0D||cp===0x0A){out+='\n';}else if(cp>0x001F){out+=String.fromCodePoint(cp);}
+    }
+    return out.replace(/\n{3,}/g,'\n\n').trim();
+  }
+  // Plain string: decode PDF escape sequences
+  return s.replace(/\\([0-7]{1,3})/g,(_,o)=>String.fromCharCode(parseInt(o,8)))
+    .replace(/\\n/g,'\n').replace(/\\r/g,'\n').replace(/\\t/g,'\t').replace(/\\(.)/g,'$1').trim();
+}
+function extractPdfText(buf){
+  const latin1=new TextDecoder('latin1').decode(buf);
+  // Method 1: AcroForm fields — works for all official D&D 5e fillable PDFs
+  const fields=[];
+  const objRe=/\d+ \d+ obj([\s\S]*?)endobj/g; let om;
+  while((om=objRe.exec(latin1))!==null){
+    const blk=om[1];
+    if(!blk.includes('/T')||!blk.includes('/V'))continue;
+    const tM=/\/T\s*\(([^)\\]*(?:\\.[^)\\]*)*)\)/.exec(blk);
+    const vM=/\/V\s*\(([^)\\]*(?:\\.[^)\\]*)*)\)/.exec(blk);
+    if(tM&&vM){const val=decodePdfStr(vM[1]);if(val)fields.push(tM[1].trim()+': '+val);}
+  }
+  if(fields.length>4)return fields.join('\n').slice(0,12000);
+  // Method 2: BT/ET blocks (uncompressed simple PDFs)
+  const parts=[];
+  const btRe=/BT\s+([\s\S]*?)ET/g; let m;
+  while((m=btRe.exec(latin1))!==null){
+    const blk=m[1];
+    const tjRe=/\(([^)\\]*(?:\\.[^)\\]*)*)\)\s*Tj/g; let t;
+    while((t=tjRe.exec(blk))!==null){const v=decodePdfStr(t[1]);if(v)parts.push(v);}
+    const tjARe=/\[([^\]]*)\]\s*TJ/g;
+    while((t=tjARe.exec(blk))!==null){const sRe=/\(([^)\\]*(?:\\.[^)\\]*)*)\)/g;let q;while((q=sRe.exec(t[1]))!==null){const v=decodePdfStr(q[1]);if(v.trim())parts.push(v);}}
+  }
+  const r=parts.join(' ').replace(/\s+/g,' ').trim();
+  return r.length>100?r.slice(0,12000):'';
+}
+async function extractDocxText(buf){
+  try{
+    const u8=new Uint8Array(buf),view=new DataView(buf);
+    let off=0;
+    while(off<u8.length-4){
+      if(view.getUint32(off,true)!==0x04034b50){off++;continue;}
+      const comp=view.getUint16(off+8,true);
+      const csz=view.getUint32(off+18,true);
+      const fnLen=view.getUint16(off+26,true);
+      const exLen=view.getUint16(off+28,true);
+      const fn=new TextDecoder().decode(u8.slice(off+30,off+30+fnLen));
+      const dOff=off+30+fnLen+exLen;
+      if(fn==='word/document.xml'){
+        const raw=u8.slice(dOff,dOff+csz);
+        let xml='';
+        if(comp===0){xml=new TextDecoder().decode(raw);}
+        else if(comp===8){
+          const ds=new DecompressionStream('deflate-raw');
+          const w=ds.writable.getWriter(); w.write(raw); w.close();
+          const chunks=[]; const rd=ds.readable.getReader();
+          while(true){const{done,value}=await rd.read();if(done)break;chunks.push(value);}
+          const merged=new Uint8Array(chunks.reduce((a,c)=>a+c.length,0));
+          let p=0; for(const c of chunks){merged.set(c,p);p+=c.length;}
+          xml=new TextDecoder().decode(merged);
+        }
+        return xml.replace(/<w:t[^>]*>/g,'').replace(/<\/w:t>/g,' ').replace(/<[^>]+>/g,'').replace(/\s+/g,' ').trim();
+      }
+      off=dOff+csz;
+    }
+  }catch(e){}
+  return '';
+}
+async function parseDocumentFile(file){
+  const ext=file.name.split('.').pop().toLowerCase();
+  if(ext==='txt'){return await file.text();}
+  if(ext==='pdf'){const buf=await file.arrayBuffer();return extractPdfText(buf);}
+  if(ext==='docx'){const buf=await file.arrayBuffer();return await extractDocxText(buf);}
+  return await file.text();
+}
 async function callGemini(key,sys,history){
   const r=await fetch(PROVS.gemini.ep+'?key='+key,{method:'POST',headers:{'Content-Type':'application/json'},
     body:JSON.stringify({systemInstruction:{parts:[{text:sys}]},contents:history.map(m=>({role:m.role==='assistant'?'model':'user',parts:[{text:m.content}]})),generationConfig:{maxOutputTokens:8192}})});
@@ -719,9 +929,37 @@ async function streamOAI(p,key,messages,onChunk){
 }
 // ── Send ──────────────────────────────────────────────────────────────────
 async function send(){
-  const ta=document.getElementById('ui'), text=ta.value.trim(); if(!text)return;
+  const ta=document.getElementById('ui'), text=ta.value.trim();
+  // Build mode: document attached — require no text OR allow text as extra context
+  if(!text&&!STAGED_FILE)return;
   document.getElementById('chips').style.display='none';
   ta.value=''; resize(ta); document.getElementById('sb').disabled=true;
+  // ── Document attached ─────────────────────────────────────────────────
+  if(STAGED_FILE){
+    const sf=STAGED_FILE; clearStagedFile();
+    const docContent='Document: '+sf.name+'\n\n---\n'+sf.text.slice(0,12000);
+    const buildMode=!text; // no user text → treat as character sheet import
+    const userMsg=buildMode?docContent:(text+'\n\n'+docContent);
+    if(buildMode) HISTORY=[]; // fresh context for character import only
+    HISTORY.push({role:'user',content:userMsg});
+    addMsg('u','📎 '+sf.name+(text?' — '+text:''));
+    const mid='m'+Date.now(); const el=addMsg('a','',mid); el.classList.add('thinking');
+    try{
+      const p=gProv(), key=gKey(p), info=PROVS[p];
+      const lang=currentLang==='it'?'Italian':'English';
+      const sys=buildMode?(sysBuild+'\n\nRespond in '+lang+'.'):((info.sysShort||getSys())+'\n\nRespond in '+lang+'.');
+      if(!info.noKey&&!key)throw new Error(UI('sendError'));
+      let resp='';
+      if(p==='gemini'){resp=await callGemini(key,sys,[...HISTORY]);}
+      else if(info.noStream){resp=await callOAI(p,key,[{role:'system',content:sys},...HISTORY]);}
+      else{resp=await streamOAI(p,key,[{role:'system',content:sys},...HISTORY],t=>updMsg(mid,t||'…'));}
+      if(!resp)resp=UI('emptyResp');
+      updMsg(mid,resp); HISTORY.push({role:'assistant',content:resp});
+      saveHistory();
+    }catch(e){updMsg(mid,'**Error:** '+e.message);}
+    document.getElementById('sb').disabled=false; return;
+  }
+  // ── Normal mode ───────────────────────────────────────────────────────
   if(CHAR&&!CHAR_DONE){
     const c4ai=JSON.parse(JSON.stringify(CHAR));
     if(c4ai.session){c4ai.session.portrait=null;c4ai.session.logEntries=[];}

@@ -71,6 +71,7 @@ A companion chat page that connects to the character sheet via localStorage.
 - Portrait and session log are stripped before sending (token efficiency) and restored on apply
 - Works with multiple AI providers: free (Pollinations, no account needed), Gemini, Groq, OpenRouter, OpenAI
 - Dynamic model info for the free tier (fetched live from Pollinations API)
+- **Document import** — attach a PDF, TXT, or DOCX character sheet via the paperclip button; with no extra text the AI reads it and builds a full importable character; with extra text the document is used as conversation context instead
 - Fully bilingual (English / Italian)
 
 ## Project Structure
