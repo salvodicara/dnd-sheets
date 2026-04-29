@@ -394,6 +394,7 @@ input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;}
 .edit-only{display:none!important;}
 body.edit-mode .edit-only{display:inline-flex!important;}
 body.edit-mode .edit-only-block{display:block!important;}
+body.edit-mode::after{content:'';position:fixed;inset:0;pointer-events:none;box-shadow:inset 0 0 0 3px var(--edit-mode-color);z-index:9999;opacity:.55;}
 .edit-only-block{display:none!important;}
 .btn-edit-sm{background:var(--bg-card2);border:1px solid var(--border-light);color:var(--text-muted);
   border-radius:5px;padding:2px 8px;font-size:.75em;cursor:pointer;transition:all .13s;
@@ -466,6 +467,36 @@ body.edit-mode .edit-only-block{display:block!important;}
   box-shadow:var(--shadow-sm);}
 .ctrl-btn:hover{border-color:var(--accent);color:var(--accent);}
 .ctrl-btn.active{background:var(--accent-dim);border-color:var(--accent);color:var(--accent);}
+/* ── FAB ── */
+#fab-wrap{position:fixed;bottom:24px;right:24px;z-index:300;display:flex;flex-direction:column;align-items:flex-end;gap:8px;}
+#fab-btn{width:52px;height:52px;border-radius:50%;background:var(--accent);border:none;color:#fff;font-size:1.5em;cursor:pointer;box-shadow:0 3px 12px rgba(0,0,0,.35);transition:transform .15s,background .15s;line-height:1;}
+#fab-btn:hover{background:var(--accent-hover,var(--accent));transform:scale(1.08);}
+#fab-btn.open{transform:rotate(45deg);}
+#fab-menu{display:none;flex-direction:column;align-items:flex-end;gap:6px;margin-bottom:4px;}
+#fab-menu.open{display:flex;}
+.fab-item{background:var(--bg-card);border:1px solid var(--border);border-radius:20px;padding:6px 16px;font-size:.88em;cursor:pointer;color:var(--text);white-space:nowrap;box-shadow:0 2px 8px rgba(0,0,0,.18);transition:border-color .12s,color .12s;}
+.fab-item:hover{border-color:var(--accent);color:var(--accent);}
+/* ── Getting Started Card ── */
+.gs-card{background:var(--bg-card);border:2px solid var(--accent);border-radius:12px;padding:20px 24px;margin-bottom:24px;max-width:660px;}
+.gs-card h3{margin:0 0 6px;color:var(--accent);font-size:1.1em;}
+.gs-card p{margin:0 0 14px;color:var(--text-muted);font-size:.9em;}
+.gs-actions{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px;}
+.gs-btn{background:var(--accent-dim);border:1px solid var(--accent);border-radius:8px;padding:7px 14px;cursor:pointer;color:var(--text);font-size:.88em;transition:background .12s;}
+.gs-btn:hover{background:var(--accent);color:#fff;}
+.gs-dismiss{background:none;border:none;color:var(--text-muted);font-size:.82em;cursor:pointer;text-decoration:underline dotted;padding:0;}
+.gs-dismiss:hover{color:var(--text);}
+/* ── Level-Up Checklist Card ── */
+.lu-card{background:var(--bg-card);border:2px solid var(--accent);border-radius:12px;padding:20px 24px;margin-bottom:24px;max-width:660px;}
+.lu-card h3{margin:0 0 4px;color:var(--accent);font-size:1.05em;}
+.lu-card .lu-sub{color:var(--text-muted);font-size:.85em;margin:0 0 14px;}
+.lu-item{display:flex;align-items:flex-start;gap:10px;padding:7px 0;border-bottom:1px solid var(--border-light);cursor:pointer;}
+.lu-item:last-of-type{border-bottom:none;}
+.lu-item input[type=checkbox]{margin-top:2px;accent-color:var(--accent);cursor:pointer;flex-shrink:0;}
+.lu-item label{cursor:pointer;font-size:.92em;line-height:1.4;}
+.lu-item.done label{text-decoration:line-through;color:var(--text-muted);}
+.lu-footer{display:flex;justify-content:flex-end;margin-top:12px;}
+.lu-dismiss{background:none;border:none;color:var(--text-muted);font-size:.82em;cursor:pointer;text-decoration:underline dotted;}
+.lu-dismiss:hover{color:var(--text);}
 .sidebar-footer{margin-top:auto;padding:10px 14px;border-top:1px solid var(--border-light);}
 .sidebar-footer .btn-edit-sm{width:100%;justify-content:center;margin:3px 0;}
 .conc-status-text{margin-top:4px;font-size:.8em;color:var(--text-muted);}
@@ -873,7 +904,23 @@ const BASE = {
   lbl_speed:'Speed', lbl_hpMax:'Max HP', lbl_hitDice:'Hit Dice',
   lbl_ac:'AC', lbl_languages:'Languages', lbl_tsChar:'Ability',
   lbl_ability:'Ability', lbl_bonus:'Bonus', lbl_totalGold:'Total Gold',
-  editBaseData:'Base Data', editSkills:'Skills', editMagic:'Spellcasting', setupMagic:'＋ Set Up Spellcasting',
+  editBaseData:'Base Data', editSkills:'Skills', editMagic:'Spellcasting', setupMagic:'＋ Set Up Spellcasting', showAlgorithm:'＋ Show Algorithm',
+  editBannerLabel:'✏️ Editing', editBannerDone:'Done ✓',
+  gsTitle:'🎉 Character created!', gsDesc:'Here are some quick actions to get you started. Each one opens the relevant wizard.',
+  gsAddWeapon:'⚔️ Add Weapon', gsAddEquip:'🎒 Add Equipment', gsAddFeature:'📋 Add Feature',
+  gsAddSpell:'✨ Add Spell', gsSetupMagic:'✨ Set Up Spellcasting', gsDismiss:'I\'m all set — dismiss this card',
+  wiz_levelUp_title:'Level Up', wiz_levelUp_step1:'HP Increase', wiz_levelUp_step2:'Checklist',
+  wiz_levelUp_hpGain:'HP gained', wiz_levelUp_avg:'Average', wiz_levelUp_useAvgCheck:'Use average HP instead of rolling',
+  hint_levelUp_hpGain:'Roll your hit die + CON modifier, or check "Use average" to auto-fill.',
+  lu_check_features:'Review new class features for this level',
+  lu_check_spells:'Add any new spells you\'ve learned',
+  lu_check_slots:'Update your spell slots if they changed',
+  lu_check_pb:'Proficiency Bonus increased to +{PB} — update attack bonuses, skills, saves',
+  lu_check_asis:'Check for Ability Score Improvements or Feats (levels 4, 8, 12, 16, 19)',
+  lu_remindersDesc:'Close this wizard and work through these reminders before your next session:',
+  lu_cardTitle:'⬆️ Level {N} — To Do', lu_cardSub:'Check items off as you complete them.',
+  lu_dismiss:'All done — dismiss',
+  logLevelUp:'⬆️ Level up → {N}!', fabLevelUp:'⬆️ Level Up',
   step:'Step', wizSave:'Save', wizNext:'Next →',
   wizRequired:'Required field', wizSaved:'✅ Saved!', wizEdit:'edit', wizPreview:'Preview',
   contentBlocks:'Content Blocks', addBlock:'＋ Block',
@@ -1190,7 +1237,23 @@ const TRANSLATIONS = {
     lbl_speed:'Velocità', lbl_hpMax:'PF Massimi', lbl_hitDice:'Dadi Vita',
     lbl_ac:'CA', lbl_languages:'Linguaggi', lbl_tsChar:'Car.',
     lbl_ability:'Caratteristica', lbl_bonus:'Bonus', lbl_totalGold:'Oro totale',
-    editBaseData:'Dati Base', editSkills:'Abilità', editMagic:'Magia', setupMagic:'＋ Configura Magia',
+    editBaseData:'Dati Base', editSkills:'Abilità', editMagic:'Magia', setupMagic:'＋ Configura Magia', showAlgorithm:'＋ Mostra Algoritmo',
+    editBannerLabel:'✏️ Modifica in corso', editBannerDone:'Fatto ✓',
+    gsTitle:'🎉 Personaggio creato!', gsDesc:'Ecco alcune azioni rapide per iniziare. Ognuna apre il wizard corrispondente.',
+    gsAddWeapon:'⚔️ Aggiungi arma', gsAddEquip:'🎒 Aggiungi equipaggiamento', gsAddFeature:'📋 Aggiungi caratteristica',
+    gsAddSpell:'✨ Aggiungi incantesimo', gsSetupMagic:'✨ Configura magia', gsDismiss:'Sono pronto — chiudi questa scheda',
+    wiz_levelUp_title:'Sali di Livello', wiz_levelUp_step1:'Aumento PF', wiz_levelUp_step2:'Lista di controllo',
+    wiz_levelUp_hpGain:'PF guadagnati', wiz_levelUp_avg:'Media', wiz_levelUp_useAvgCheck:'Usa la media PF invece di tirare',
+    hint_levelUp_hpGain:'Tira il tuo dado vita + modificatore COS, oppure spunta "Usa media" per compilare automaticamente.',
+    lu_check_features:'Controlla le nuove capacità di classe per questo livello',
+    lu_check_spells:'Aggiungi eventuali nuovi incantesimi appresi',
+    lu_check_slots:'Aggiorna gli slot incantesimo se sono cambiati',
+    lu_check_pb:'Il Bonus di Competenza è salito a +{PB} — aggiorna tiri di attacco, abilità, tiri salvezza',
+    lu_check_asis:'Controlla Miglioramenti dei Punteggi di Caratteristica o Talenti (livelli 4, 8, 12, 16, 19)',
+    lu_remindersDesc:'Chiudi questo wizard e completa questi promemoria prima della prossima sessione:',
+    lu_cardTitle:'⬆️ Livello {N} — Da fare', lu_cardSub:'Spunta le voci man mano che le completi.',
+    lu_dismiss:'Tutto fatto — chiudi',
+    logLevelUp:'⬆️ Salita di livello → {N}!', fabLevelUp:'⬆️ Sali di Livello',
     step:'Passo', wizSave:'Salva', wizNext:'Avanti →',
     wizRequired:'Campo obbligatorio', wizSaved:'✅ Salvato!', wizEdit:'modifica', wizPreview:'Anteprima',
     contentBlocks:'Blocchi di Contenuto', addBlock:'＋ Blocco',
@@ -1399,6 +1462,19 @@ function syncSession(){
   // Feature-embedded trackers (plural array)
   (CHAR.features||[]).forEach(f=>{ (f.trackers||[]).forEach(t=>{ const tid=slugify(t.label||f.title); if(tid && !SESSION.trackers[tid]) SESSION.trackers[tid]={used:0}; }); });
   (CHAR.spellSlots||[]).forEach(sl=>{ if(!SESSION.spellSlots[sl.level]) SESSION.spellSlots[sl.level]={used:0}; });
+  // Migrate levelUpChecklist from SESSION → CHAR (old saves)
+  if(SESSION.levelUpChecklist && !CHAR.levelUpChecklist){
+    CHAR.levelUpChecklist=SESSION.levelUpChecklist;
+  }
+  delete SESSION.levelUpChecklist;
+  // Remove stale tracker entries (deleted equipment/features)
+  const validTrackerIds=new Set();
+  (CHAR.equipment||[]).forEach(e=>{ if(e.tracked) validTrackerIds.add('eq-'+slugify(e.name)); });
+  (CHAR.features||[]).forEach(f=>{ (f.trackers||[]).forEach(t=>{ validTrackerIds.add(slugify(t.label||f.title)); }); });
+  Object.keys(SESSION.trackers).forEach(id=>{ if(!validTrackerIds.has(id)) delete SESSION.trackers[id]; });
+  // Remove stale spell slot entries (deleted slots)
+  const validSlotLevels=new Set((CHAR.spellSlots||[]).map(sl=>sl.level));
+  Object.keys(SESSION.spellSlots).forEach(lv=>{ if(!validSlotLevels.has(+lv)) delete SESSION.spellSlots[lv]; });
 }
 function saveAll(){
   if(!CHAR) return;
@@ -1450,6 +1526,38 @@ function updateFixedControls(){
   const editBtn=document.getElementById('btn-edit');
   if(logoutBtn){ logoutBtn.style.display=hasChar?'':'none'; logoutBtn.title=T('titleHome'); }
   if(editBtn){ editBtn.style.display=hasChar?'':'none'; editBtn.textContent=EDIT_MODE?T('editModeActive'):T('editMode'); editBtn.classList.toggle('active',EDIT_MODE); editBtn.title=T('titleEdit'); }
+  renderFAB();
+}
+function renderFAB(){
+  const wrap=document.getElementById('fab-wrap');
+  if(!wrap) return;
+  if(!EDIT_MODE||!CHAR){wrap.innerHTML='';return;}
+  const items=[];
+  items.push({label:T('fabLevelUp'),fn:"openWizard('level-up');closeFAB()"});
+  items.push({label:T('addFeature'),fn:"addFeature();closeFAB()"});
+  items.push({label:T('addItem'),fn:"addEquip();closeFAB()"});
+  if(CHAR.spellcasting?.ability){
+    items.push({label:T('addSpell'),fn:"addSpell(0);closeFAB()"});
+  }
+  const menuHTML=items.map(it=>`<button class="fab-item" onclick="${it.fn}">${it.label}</button>`).join('');
+  wrap.innerHTML=`<div id="fab-menu">${menuHTML}</div><button id="fab-btn" onclick="toggleFAB()" title="Add content">＋</button>`;
+}
+function toggleFAB(){
+  const menu=document.getElementById('fab-menu');
+  const btn=document.getElementById('fab-btn');
+  if(!menu||!btn) return;
+  const open=menu.classList.toggle('open');
+  btn.classList.toggle('open',open);
+}
+function closeFAB(){
+  const menu=document.getElementById('fab-menu');
+  const btn=document.getElementById('fab-btn');
+  if(menu) menu.classList.remove('open');
+  if(btn) btn.classList.remove('open');
+}
+function showAlgorithmSection(){
+  if(!(CHAR.sidebar||[]).includes('algorithm')) CHAR.sidebar.push('algorithm');
+  saveAll(); renderSidebar(); renderSections();
 }
 
 // ─── SIDEBAR UTILITIES ───
@@ -1945,11 +2053,66 @@ function buildPanelBottom(){
   return condSection+restsLog+actionsCard+sessionCard+notesCard;
 }
 // ═══════════════ RENDER SECTIONS ═══════════════
+function buildLevelUpChecks(C,newLv,pbChanged,isCaster){
+  return [
+    T('lu_check_features'),
+    isCaster?T('lu_check_spells'):null,
+    isCaster?T('lu_check_slots'):null,
+    pbChanged?T('lu_check_pb').replace('{PB}',computedPB(newLv)):null,
+    T('lu_check_asis'),
+  ].filter(Boolean);
+}
+function renderLevelUpChecklist(){
+  const list=CHAR?.levelUpChecklist;
+  if(!list?.length) return '';
+  const title=T('lu_cardTitle').replace('{N}',CHAR?.level||'');
+  const items=list.map((item,i)=>`
+    <div class="lu-item${item.done?' done':''}" onclick="toggleLevelUpCheck(${i})">
+      <input type="checkbox" ${item.done?'checked':''} onclick="event.stopPropagation();toggleLevelUpCheck(${i})">
+      <label>${item.text}</label>
+    </div>`).join('');
+  return `<div class="lu-card"><h3>${title}</h3><p class="lu-sub">${T('lu_cardSub')}</p>${items}<div class="lu-footer"><button class="lu-dismiss" onclick="dismissLevelUpChecklist()">${T('lu_dismiss')}</button></div></div>`;
+}
+function toggleLevelUpCheck(i){
+  if(!CHAR?.levelUpChecklist) return;
+  CHAR.levelUpChecklist[i].done=!CHAR.levelUpChecklist[i].done;
+  saveAll(); renderSections();
+}
+function dismissLevelUpChecklist(){
+  if(CHAR) CHAR.levelUpChecklist=null;
+  saveAll(); renderSections();
+}
+function renderGettingStarted(){
+  if(!SESSION?.showGettingStarted||!CHAR) return '';
+  const hasMagic=!!(CHAR.spellcasting?.ability);
+  const btns=[
+    {label:T('gsAddWeapon'),fn:"gsAction('addWeapon')"},
+    {label:T('gsAddEquip'),fn:"gsAction('addEquip')"},
+    {label:T('gsAddFeature'),fn:"gsAction('addFeature')"},
+    hasMagic
+      ?{label:T('gsAddSpell'),fn:"gsAction('addSpell0')"}
+      :{label:T('gsSetupMagic'),fn:"gsAction('editSpellcasting')"}
+  ];
+  const btnHTML=btns.map(b=>`<button class="gs-btn" onclick="${b.fn}">${b.label}</button>`).join('');
+  return `<div class="gs-card"><h3>${T('gsTitle')}</h3><p>${T('gsDesc')}</p><div class="gs-actions">${btnHTML}</div><button class="gs-dismiss" onclick="dismissGettingStarted()">${T('gsDismiss')}</button></div>`;
+}
+function gsAction(key){
+  if(!EDIT_MODE){EDIT_MODE=true;document.body.classList.add('edit-mode');renderAll();}
+  if(key==='addWeapon') addWeapon();
+  else if(key==='addEquip') addEquip();
+  else if(key==='addFeature') addFeature();
+  else if(key==='addSpell0') addSpell(0);
+  else if(key==='editSpellcasting') editSpellcasting();
+}
+function dismissGettingStarted(){
+  SESSION.showGettingStarted=false;
+  saveAll(); renderSections();
+}
 function renderSections(){
   const el=document.getElementById('sections-area');
   if(!CHAR){el.innerHTML='';return;}
   ensureSidebar();
-  let html='';
+  let html=renderGettingStarted()+renderLevelUpChecklist();
   for(const item of CHAR.sidebar||[]){
     if(typeof item==='object' && item.type==='sep'){
       html+='<hr class="section-sep">';
@@ -1996,7 +2159,8 @@ function renderBaseData(){
       <td>${prof?'<strong>'+modStr(bonus)+'</strong>':modStr(bonus)}</td>
       <td>${prof?T('proficient'):''}</td></tr>`;
   }).join('');
-  return `${sectionHeader('base-data',EDIT_MODE?`<button class="btn-edit-sm edit-only" style="margin-left:auto" onclick="editCharacter()">✏️</button>`:'')}
+   return `${sectionHeader('base-data',EDIT_MODE?`<button class="btn-edit-sm edit-only" onclick="openWizard('level-up')" style="margin-left:auto;" title="${T('fabLevelUp')}">⬆️</button> <button class="btn-edit-sm edit-only" onclick="editCharacter()">✏️</button>`:'')}
+
     <div class="section-header-line"></div>
     <table>${rows.map(r=>`<tr><td><strong>${r[0]}</strong></td><td>${r[1]}</td></tr>`).join('')}</table>
     <h3>${T('abilitiesTitle')}</h3>
@@ -2532,6 +2696,31 @@ function copyToClipboard(text){
     document.body.removeChild(ta);showToast(T('toastCopied'),'success');
   }
 }
+function validateAndMigrateChar(c){
+  if(!c||typeof c!=='object') throw new Error('Not a valid character object');
+  if(!c.name||typeof c.name!=='string'||!c.name.trim()) throw new Error('Missing character name');
+  // Safe defaults for arrays
+  if(!Array.isArray(c.features))       c.features=[];
+  if(!Array.isArray(c.spells))         c.spells=[];
+  if(!Array.isArray(c.weapons))        c.weapons=[];
+  if(!Array.isArray(c.equipment))      c.equipment=[];
+  if(!Array.isArray(c.spellSlots))     c.spellSlots=[];
+  if(!Array.isArray(c.sidebar))        c.sidebar=[...DEFAULT_SIDEBAR];
+  if(!Array.isArray(c.combatAlgorithm))c.combatAlgorithm=[];
+  if(!Array.isArray(c.customConditions))c.customConditions=[];
+  if(!Array.isArray(c.savingThrows))   c.savingThrows=[];
+  // Level
+  c.level=Math.max(1,Math.min(20,Math.floor(+c.level||1)));
+  // HP
+  if(!c.hp||typeof c.hp!=='object') c.hp={max:10};
+  if(!(c.hp.max>0)) c.hp.max=10;
+  // Ability scores
+  if(!c.abilityScores||typeof c.abilityScores!=='object'||Array.isArray(c.abilityScores)) c.abilityScores={};
+  DND.abilities.forEach(a=>{ if(typeof c.abilityScores[a]!=='number'||c.abilityScores[a]<1) c.abilityScores[a]=10; });
+  // Skills: must be a plain map, not an array (legacy migration)
+  if(Array.isArray(c.skills)||typeof c.skills!=='object') c.skills={};
+  return c;
+}
 function importCharacter(event){
   const file=event.target.files[0];if(!file)return;
   const reader=new FileReader();
@@ -2539,8 +2728,7 @@ function importCharacter(event){
     try{
       const data=JSON.parse(e.target.result);
       if(!data.character)throw new Error('No character field');
-      CHAR=data.character;
-      if(!CHAR.hp)CHAR.hp={max:CHAR.hpMax||10};
+      CHAR=validateAndMigrateChar(data.character);
       SESSION=data.session||createDefaultSession(CHAR);
       closeWizard();
       syncSession();saveAll();renderAll();
@@ -3517,6 +3705,7 @@ const WIZARDS = {
       if(SESSION?.hp) SESSION.hp.max=+d.hpMax||SESSION.hp.max;
     }
     CHAR=base; syncSession();
+    if(!isEdit) SESSION.showGettingStarted=true;
   }
 },
 // ── Spell ──
@@ -3845,6 +4034,51 @@ const WIZARDS = {
     CHAR.skills=skills;
   }
 },
+'level-up':{
+  title:'wiz_levelUp_title',
+  steps:[
+    {label:'wiz_levelUp_step1',fields:[
+      {id:'hpGain',label:'wiz_levelUp_hpGain',type:'number',min:0,required:true,hint:'hint_levelUp_hpGain'},
+      {id:'useAverage',label:'wiz_levelUp_step1',type:'checkbox',checkLabel:'wiz_levelUp_useAvgCheck'},
+    ],
+     _afterRender(){
+       const C=CHAR||{}; const die=C.hitDieType||8;
+       const conMod=abilityMod(C.abilityScores?.CON||10);
+       const avg=Math.floor(die/2)+1+conMod;
+       const hdModStr=conMod>=0?`+${conMod}`:String(conMod);
+       const hintEl=document.querySelector('#wf-hpGain')?.closest('.wiz-field')?.querySelector('.field-hint');
+       if(hintEl) hintEl.textContent=`1d${die}${hdModStr} | ${T('wiz_levelUp_avg')}: ${Math.max(1,avg)}`;
+        const cb=document.getElementById('wf-useAverage');
+        const inp=document.getElementById('wf-hpGain');
+        if(cb&&inp){
+          cb.checked=true; inp.value=Math.max(1,avg);
+          cb.addEventListener('change',()=>{if(cb.checked) inp.value=Math.max(1,avg);});
+        }
+     }},
+    {label:'wiz_levelUp_step2',fields:[],
+     _renderStep(){
+       const C=CHAR||{}; const newLv=(C.level||1)+1;
+       const pbChanged=computedPB(newLv)!==computedPB(C.level||1);
+       const isCaster=!!(C.spellcasting?.ability);
+       const checks=buildLevelUpChecks(C,newLv,pbChanged,isCaster);
+       return `<p style="color:var(--accent);font-weight:700;font-size:1.1em;margin:0 0 6px;">⬆️ Level ${C.level||1} → ${newLv}</p>`
+         +`<p style="color:var(--text-muted);font-size:.88em;margin:0 0 14px;">${T('lu_remindersDesc')}</p>`
+         +checks.map(c=>`<div style="padding:7px 0;border-bottom:1px solid var(--border-light);font-size:.92em;">→ ${c}</div>`).join('');
+     }}
+  ],
+  onSave(d){
+    const gain=Math.max(0,+d.hpGain||0);
+    CHAR.level=(CHAR.level||1)+1;
+    if(!CHAR.hp) CHAR.hp={max:10};
+    CHAR.hp.max=(CHAR.hp.max||10)+gain;
+    if(SESSION?.hp) SESSION.hp.current=Math.min(CHAR.hp.max,(SESSION.hp.current||0)+gain);
+    addLog(T('logLevelUp').replace('{N}',CHAR.level)+(gain?` +${gain} ${T('hpAbbr')}`:''),'log-heal');
+    const pbChanged=computedPB(CHAR.level)!==computedPB(CHAR.level-1);
+    const isCaster=!!(CHAR.spellcasting?.ability);
+    CHAR.levelUpChecklist=buildLevelUpChecks(CHAR,CHAR.level,pbChanged,isCaster)
+      .map(text=>({text,done:false}));
+  }
+},
 }; // end WIZARDS
 // ═══════════════ EDIT / DELETE HANDLERS ═══════════════
 // Character
@@ -4024,12 +4258,23 @@ function loadPortrait(event){
   if(!file)return;
   const reader=new FileReader();
   reader.onload=function(ev){
-    SESSION.portrait=ev.target.result;
-    const img=document.getElementById('portrait-img');
-    const ph=document.getElementById('portrait-ph');
-    if(img){img.src=ev.target.result;img.style.display='block';}
-    if(ph) ph.style.display='none';
-    saveAll();
+    const src=ev.target.result;
+    const tmp=new Image();
+    tmp.onload=function(){
+      const MAX=512;
+      const scale=Math.min(1,MAX/Math.max(tmp.width,tmp.height));
+      const w=Math.round(tmp.width*scale), h=Math.round(tmp.height*scale);
+      const canvas=document.createElement('canvas');
+      canvas.width=w; canvas.height=h;
+      canvas.getContext('2d').drawImage(tmp,0,0,w,h);
+      SESSION.portrait=canvas.toDataURL('image/jpeg',0.8);
+      const img=document.getElementById('portrait-img');
+      const ph=document.getElementById('portrait-ph');
+      if(img){img.src=SESSION.portrait;img.style.display='block';}
+      if(ph) ph.style.display='none';
+      saveAll();
+    };
+    tmp.src=src;
   };
   reader.readAsDataURL(file);
 }
@@ -4139,5 +4384,6 @@ function splashNewChar(){
 }
 document.addEventListener('DOMContentLoaded', init);
 </script>
+<div id="fab-wrap"></div>
 </body>
 </html>

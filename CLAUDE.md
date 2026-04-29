@@ -45,9 +45,17 @@ The file is organized in this order:
 #### Global State
 ```
 CHAR    -- character definition (abilities, spells, weapons, features, etc.)
+            Also holds: levelUpChecklist [{text,done}] (persisted until dismissed),
+                        showGettingStarted flag is in SESSION (cleared after first-time card)
 SESSION -- mutable game state (HP, slots used, log, conditions, etc.)
+            Includes: hp.current/temp/aidBonus, hitDice.used, trackers{}, spellSlots{},
+                      gold, round, concentration, initiative, conditions[], deathSucc/Fail,
+                      notes, portrait, logEntries[], showGettingStarted, hdDialog
 ```
 Both are plain objects. All mutations must call `saveAll()` afterward.
+Both `CHAR` and `SESSION` are saved to localStorage on every `saveAll()` and included in
+every JSON export — so mid-session state (current HP, spent slots, tracker uses) is always
+fully persisted across reloads and device transfers.
 
 Wizard-related globals (managed by wizard lifecycle):
 ```

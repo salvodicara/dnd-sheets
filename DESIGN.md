@@ -228,39 +228,45 @@ Done:
 - **syncSession():** backward compatible — existing saves without `hdDialog` default to `false` via `??` pattern.
 
 ### Phase 13: FAB (Floating Action Button)
-**Status:** NOT STARTED
-**Goal:** Central content addition, edit mode only, context-aware.
-
-Menu items:
-- Always: Add Feature, Add Equipment, Add Weapon, Add Algo Block
-- If spellcasting: Add Spell, Add Spell Slot
-- If NOT: Set up Spellcasting
-- If Algorithm hidden: Show Algorithm
-- Sidebar: Add Section, Add Separator
+**Status:** COMPLETE
+- Floating `＋` button bottom-right, edit mode only. Rotates on open/close.
+- Menu simplified to 4 items: Level Up, Add Feature, Add Item, Add Spell (only if spellcasting configured).
+- `renderFAB()` called from `updateFixedControls()`. `closeFAB()` called by each item's onclick.
 
 ### Phase 14: Edit Mode Banner
-**Status:** NOT STARTED
-**Goal:** Banner + visual tint when editing. "Done" button. FAB appears.
+**Status:** COMPLETE (scope reduced)
+- Banner removed per user decision — orange inset glow (`body.edit-mode::after`) is sufficient visual feedback.
 
 ### Phase 15: Getting Started Card
-**Status:** NOT STARTED
-**Goal:** One-time interactive card after char creation. Quick-action buttons auto-enable edit mode.
+**Status:** COMPLETE
+- One-time card shown after new character creation (`SESSION.showGettingStarted=true` set in char-create `onSave`).
+- Buttons: Add Weapon, Add Equipment, Add Feature, Add Spell / Set up Spellcasting.
+- `gsAction(key)` enables edit mode + calls `renderAll()` before opening wizard.
+- `dismissGettingStarted()` clears the flag. Rendered at top of `renderSections()`.
 
 ### Phase 16: Basic Level-Up Wizard (v1 limited)
-**Status:** NOT STARTED
-**Goal:** Increment level, HP increase (roll or average), checklist reminders.
+**Status:** COMPLETE
+- 2-step wizard: Step 1 = HP gain (number field + "Use average" checkbox, **checked by default**, auto-fills average value). Step 2 = preview checklist.
+- `onSave`: increments `CHAR.level`, adds HP to `CHAR.hp.max` and `SESSION.hp.current`, stores `CHAR.levelUpChecklist` as `[{text, done:false}]`.
+- Checklist lives in **`CHAR`** (not SESSION) so it survives reloads and JSON exports until manually dismissed.
+- `buildLevelUpChecks(C, newLv, pbChanged, isCaster)` — shared helper used by wizard preview and `onSave`.
+- Persistent checklist card rendered above sections. Items toggle individually; "All done" button dismisses.
+- Triggered from FAB and ⬆️ button in base-data section header.
+- `syncSession()` silently migrates old saves that stored checklist in `SESSION`.
 
 ### Phase 17: Session Cleanup
-**Status:** NOT STARTED
-**Goal:** syncSession() removes stale tracker/slot SESSION entries.
+**Status:** COMPLETE
+- `syncSession()` prunes stale `SESSION.trackers` entries for deleted features/equipment.
+- `syncSession()` prunes stale `SESSION.spellSlots` entries for deleted slot levels.
 
 ### Phase 18: Portrait Size Cap
-**Status:** NOT STARTED
-**Goal:** Canvas resize to 512px max, JPEG 0.8 compression.
+**Status:** COMPLETE
+- `loadPortrait()` resizes via canvas to 512px max, encodes as JPEG quality 0.8.
 
 ### Phase 19: Import Validation
-**Status:** NOT STARTED
-**Goal:** Validate imported JSON, add defaults for new fields.
+**Status:** COMPLETE
+- `validateAndMigrateChar(c)` validates required fields (throws on missing name / invalid structure).
+- Ensures all arrays are arrays, clamps level 1–20, defaults ability scores to 10, migrates legacy skills format.
 
 ---
 
