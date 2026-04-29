@@ -216,19 +216,16 @@ Done:
 - Added `toastNoSlot` and `toastAddSlot` i18n keys in BASE and TRANSLATIONS.it.
 
 ### Phase 12: Rest System Fix
-**Status:** NOT STARTED
+**Status:** ✅ COMPLETE
 **Goal:** Rests work per D&D 2024 rules.
 
-Bugs to fix:
-- shortRest() is a no-op (just logs)
-- longRest() ignores tracker recovery field
-- Manual trackers reset on long rest (shouldn't)
-
-Tasks:
-1. Short rest: reset recovery:'short' trackers, show HD spending dialog with quantity buttons
-2. Long rest: only reset recovery:'long' and recovery:'short'. Never reset recovery:'manual'.
-3. Pact Magic: add pactMagic flag to spell slots. Short rest resets pact magic slots.
-4. Recovery summary toast for both rest types.
+Done:
+- **longRest() bug fixed:** feature trackers with `recovery:'short'` were incorrectly excluded from long rest reset. Long rest now resets all non-manual trackers (both short and long recovery).
+- **longRest() toast:** shows `🌙 Long rest — fully restored!` after completion.
+- **shortRest() fully implemented:** resets `recovery:'short'` equipment and feature trackers, resets Pact Magic spell slots, opens HD spending dialog.
+- **HD spending dialog:** replaces the rests card in the game panel when active. Shows available HD count + die type, −/+ quantity buttons, "Roll & Heal" button (rolls Nd_max + CON mod, heals HP, logs result, shows `+N HP` toast), and "Skip" button (shows skipped toast). Uses `SESSION.hdDialog` flag to trigger re-render.
+- **Pact Magic spell slots:** `pactMagic` boolean flag added to spell slot wizard (checkbox). `onSave` saves the flag. `editSpellSlot()` prefills it. Pact Magic slots display their own label instead of "Lv N" in the spells section. Short rest resets pact magic slots; long rest resets all slots (as before).
+- **syncSession():** backward compatible — existing saves without `hdDialog` default to `false` via `??` pattern.
 
 ### Phase 13: FAB (Floating Action Button)
 **Status:** NOT STARTED

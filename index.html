@@ -203,6 +203,10 @@ input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;}
 .btn.long-rest:hover{filter:brightness(1.1);}
 .btn.short-rest{background:var(--btn-shortrest-bg);border-color:var(--btn-shortrest-border);color:var(--btn-shortrest-text);font-weight:600;}
 .btn.short-rest:hover{filter:brightness(1.1);}
+.hd-qty-row{display:flex;align-items:center;gap:10px;margin:8px 0;}
+.hd-qty-row .hd-qty-val{font-size:1.4em;font-weight:700;min-width:28px;text-align:center;}
+.btn-qty{background:var(--bg-card);border:1px solid var(--border);border-radius:6px;padding:2px 10px;font-size:1.1em;cursor:pointer;color:var(--text);}
+.btn-qty:hover{border-color:var(--accent);}
 .inline-field{display:flex;align-items:center;gap:8px;margin-top:7px;font-size:.85em;color:var(--text-muted);}
 .inline-field input{background:var(--bg-input);border:1px solid var(--border-light);color:var(--text);
   border-radius:5px;padding:3px 8px;font-size:.95em;}
@@ -818,6 +822,17 @@ const BASE = {
   logUsed:' used. Remaining:', logRestored:'restored',
   logLongRest:'🌙 Long Rest complete. Everything restored.',
   logShortRest:'☕ Short Rest. Spend Hit Dice to recover HP.',
+  toastLongRest:'🌙 Long rest — fully restored!',
+  toastShortRest:'☕ Short rest — +{N} HP',
+  toastShortRestSkipped:'☕ Short rest taken.',
+  hdDialogTitle:'Spend Hit Dice ({A} available — {D})',
+  hdRollHeal:'Roll & Heal',
+  hdSkip:'Skip',
+  hdNoHD:'No Hit Dice available.',
+  pactMagic:'Pact Magic',
+  wiz_f_pactMagic:'Pact Magic',
+  wiz_f_pactMagicCheck:'Warlock Pact Magic (recovers on short rest)',
+  hint_pactMagic:'Warlock Pact Magic slots recover on short rest, not long rest.',
   logHD:'🎲 Hit die:', logHDResult:'HP recovered → HP:',
   logConc:'🔮 Concentration on', logConcStop:'ended.',
   logDeath3succ:'✅ Stabilized! 3 successes.', logDeath3fail:'💀 DEAD. 3 failures.',
@@ -1122,6 +1137,17 @@ const TRANSLATIONS = {
     logUsed:' usato. Rimasti:', logRestored:'ripristinati',
     logLongRest:'🌙 Riposo Lungo completato. Tutto ripristinato.',
     logShortRest:'☕ Riposo Breve. Spendi i Dadi Vita per recuperare PF.',
+    toastLongRest:'🌙 Riposo lungo — tutto ripristinato!',
+    toastShortRest:'☕ Riposo breve — +{N} PF',
+    toastShortRestSkipped:'☕ Riposo breve completato.',
+    hdDialogTitle:'Spendi Dadi Vita ({A} disponibili — {D})',
+    hdRollHeal:'Lancia e Cura',
+    hdSkip:'Salta',
+    hdNoHD:'Nessun Dado Vita disponibile.',
+    pactMagic:'Magia del Patto',
+    wiz_f_pactMagic:'Magia del Patto',
+    wiz_f_pactMagicCheck:'Magia del Patto Warlock (si recupera con riposo breve)',
+    hint_pactMagic:'Gli slot Magia del Patto si recuperano con riposo breve, non lungo.',
     logHD:'🎲 Dado vita:', logHDResult:'PF recuperati → PF:',
     logConc:'🔮 Concentrazione su', logConcStop:'interrotta.',
     logDeath3succ:'✅ Stabilizzato! 3 successi.', logDeath3fail:'💀 MORTO. 3 fallimenti.',
@@ -1815,15 +1841,26 @@ function buildPanelBottom(){
     ${EDIT_MODE?`<button class="add-btn edit-only" onclick="addCondition()" style="margin-top:8px;">${T('addCondition')}</button>`:''}
   </div>`;
   // Rests + Log
-  const restsLog=`<div class="pn-grid">
-    <div class="pn-card">
-      <div class="label">${T('rests')}</div>
+  const available=(C.level||1)-(S.hitDice?.used||0);
+  const hdType='d'+(C.hitDieType||8);
+  const restsCardContent=S.hdDialog
+    ?(available>0
+      ?`<div class="label">${T('hdDialogTitle').replace('{A}',available).replace('{D}',hdType)}</div>
+        <div class="hd-qty-row"><button class="btn-qty" onclick="adjustHDQty(-1)">−</button>
+          <span class="hd-qty-val" id="hd-qty">1</span>
+          <button class="btn-qty" onclick="adjustHDQty(1)">＋</button></div>
+        <div class="btn-row"><button class="btn heal" onclick="commitHDSpend()">${T('hdRollHeal')}</button>
+          <button class="btn" onclick="closeHDDialog(true)">${T('hdSkip')}</button></div>`
+      :`<div class="label">${T('hdNoHD')}</div>
+        <div class="btn-row"><button class="btn" onclick="closeHDDialog(true)">${T('hdSkip')}</button></div>`)
+    :`<div class="label">${T('rests')}</div>
       <div class="btn-row" style="margin-top:8px;">
         <button class="btn long-rest" onclick="longRest()">${T('longRest')}</button>
         <button class="btn short-rest" onclick="shortRest()">${T('shortRest')}</button>
       </div>
-      <div style="font-size:.75em;color:var(--text-muted);margin-top:6px;">${T('longRestNote')}<br>${T('shortRestNote')}</div>
-    </div>
+      <div style="font-size:.75em;color:var(--text-muted);margin-top:6px;">${T('longRestNote')}<br>${T('shortRestNote')}</div>`;
+  const restsLog=`<div class="pn-grid">
+    <div class="pn-card">${restsCardContent}</div>
     <div class="pn-card" style="grid-column:span 2;">
       <div class="label">${T('log')}</div>
       <div id="log-wrap"><p style="color:var(--text-faint);font-style:italic;">${T('logEmpty')}</p></div>
@@ -2059,7 +2096,7 @@ function renderSpellsSection(){
       <tr><td><strong>${T('lbl_ability')}</strong></td><td>${abilityLongName(sc.ability)||sc.ability||'—'}</td></tr></table>
     ${C.spellSlots?.length?`<h3 style="margin-top:12px;">${T('slotTitle')}</h3>
       <table><tr><th>${T('slotLevel')}</th><th>${T('slotTot')}</th>${EDIT_MODE?'<th></th>':''}</tr>
-      ${(C.spellSlots||[]).map((sl,i)=>`<tr><td>${T('slotLvLabel')} ${sl.level}</td><td>${sl.total}</td>${EDIT_MODE?`<td><button class="btn-edit-sm" onclick="editSpellSlot(${i})">✏️</button> <button class="btn-del-sm" onclick="deleteSpellSlot(${i})">🗑</button></td>`:''}</tr>`).join('')}</table>`:''}
+      ${(C.spellSlots||[]).map((sl,i)=>`<tr><td>${sl.pactMagic?`<span title="${T('hint_pactMagic')}">${T('pactMagic')}</span>`:`${T('slotLvLabel')} ${sl.level}`}</td><td>${sl.total}</td>${EDIT_MODE?`<td><button class="btn-edit-sm" onclick="editSpellSlot(${i})">✏️</button> <button class="btn-del-sm" onclick="deleteSpellSlot(${i})">🗑</button></td>`:''}</tr>`).join('')}</table>`:''}
     ${EDIT_MODE?`<div class="edit-only" style="display:flex!important;gap:6px;margin-top:8px;flex-wrap:wrap;">
       <button class="btn-edit-sm" onclick="editSpellcasting()">✏️ ${T('editMagic')}</button>
       <button class="btn-edit-sm" onclick="addSpellSlot()">${T('addSlot')}</button></div>`:''}\n  </div>`:'';
@@ -2380,11 +2417,11 @@ function longRest(){
     const tid='eq-'+slugify(e.name);
     if(tid && S.trackers[tid] && e.recovery!=='manual') S.trackers[tid].used=0;
   });
-  // Reset feature-embedded trackers (plural array)
+  // Reset feature-embedded trackers (plural array) — long rest resets short AND long recovery
   (C.features||[]).forEach(f=>{
     (f.trackers||[]).forEach(t=>{
       const tid=slugify(t.label||f.title);
-      if(tid && S.trackers[tid] && t.recovery!=='manual' && t.recovery!=='short') S.trackers[tid].used=0;
+      if(tid && S.trackers[tid] && t.recovery!=='manual') S.trackers[tid].used=0;
     });
   });
   (C.spellSlots||[]).forEach(sl=>{if(S.spellSlots[sl.level])S.spellSlots[sl.level].used=0;});
@@ -2392,8 +2429,62 @@ function longRest(){
   document.querySelectorAll('.death-pip').forEach(p=>p.classList.remove('used'));
   S.deathSucc=0; S.deathFail=0;
   renderPanel(); updateHPDisplay(); addLog(T('logLongRest'),'log-heal'); saveAll();
+  showToast(T('toastLongRest'),'success');
 }
-function shortRest(){addLog(T('logShortRest'),'log-heal');}
+function shortRest(){
+  const C=CHAR, S=SESSION;
+  // Reset short-rest equipment trackers
+  (C.equipment||[]).forEach(e=>{
+    if(!e.tracked||e.recovery!=='short') return;
+    const tid='eq-'+slugify(e.name);
+    if(S.trackers[tid]) S.trackers[tid].used=0;
+  });
+  // Reset short-rest feature trackers
+  (C.features||[]).forEach(f=>{
+    (f.trackers||[]).forEach(t=>{
+      if(t.recovery!=='short') return;
+      const tid=slugify(t.label||f.title);
+      if(S.trackers[tid]) S.trackers[tid].used=0;
+    });
+  });
+  // Reset Pact Magic spell slots
+  (C.spellSlots||[]).forEach(sl=>{
+    if(sl.pactMagic && S.spellSlots?.[sl.level]) S.spellSlots[sl.level].used=0;
+  });
+  addLog(T('logShortRest'),'log-heal');
+  S.hdDialog=true;
+  renderPanel(); saveAll();
+}
+function adjustHDQty(delta){
+  const el=document.getElementById('hd-qty'); if(!el) return;
+  const available=(CHAR.level||1)-(SESSION.hitDice?.used||0);
+  el.textContent=Math.max(1,Math.min(available,+el.textContent+delta));
+}
+function commitHDSpend(){
+  const S=SESSION, C=CHAR;
+  const el=document.getElementById('hd-qty');
+  const qty=el?+el.textContent:1;
+  const available=(C.level||1)-(S.hitDice?.used||0);
+  const n=Math.min(qty,available);
+  if(n<=0){closeHDDialog();return;}
+  const conMod=abilityMod(C.abilityScores?.CON||10);
+  const max=C.hitDieType||8;
+  let total=0; const rolls=[];
+  for(let i=0;i<n;i++){const r=Math.floor(Math.random()*max)+1;rolls.push(r);total+=r+conMod;}
+  const effMax=(C.hp?.max||0)+(S.hp?.aidBonus||0);
+  const before=S.hp.current||0;
+  S.hp.current=Math.min(effMax,before+Math.max(0,total));
+  S.hitDice.used=(S.hitDice.used||0)+n;
+  const healed=S.hp.current-before;
+  addLog(`${T('logHD')} ${n}d${max}: [${rolls.join(',')}]+${conMod*n} → +${healed} ${T('hpAbbr')}`,'log-heal');
+  showToast(T('toastShortRest').replace('{N}',healed),'success');
+  closeHDDialog();
+}
+function closeHDDialog(skipped=false){
+  SESSION.hdDialog=false;
+  renderPanel(); updateHPDisplay(); saveAll();
+  if(skipped) showToast(T('toastShortRestSkipped'),'info');
+}
 function filterActions(btn,type){
   document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
@@ -3664,13 +3755,15 @@ const WIZARDS = {
   steps:[{label:'wiz_spellslot_title', fields:[
     {id:'level',label:'wiz_f_slotLevel',type:'select',options:lvOpts(),required:true},
     {id:'total',label:'wiz_f_slotTotal',type:'number',min:1,default:1,required:true},
+    {id:'pactMagic',label:'wiz_f_pactMagic',type:'checkbox',checkLabel:'wiz_f_pactMagicCheck',hint:'hint_pactMagic'},
   ]}],
   onSave(d,idx){
     if(!CHAR.spellSlots)CHAR.spellSlots=[];
     const lv=+d.level, tot=+d.total||1;
+    const slot={level:lv,total:tot};
+    if(d.pactMagic) slot.pactMagic=true;
     const existing=CHAR.spellSlots.findIndex(s=>s.level===lv);
-    if(existing>=0)CHAR.spellSlots[existing].total=tot;
-    else CHAR.spellSlots.push({level:lv,total:tot});
+    if(existing>=0)CHAR.spellSlots[existing]=slot; else CHAR.spellSlots.push(slot);
     CHAR.spellSlots.sort((a,b)=>a.level-b.level);
     if(!SESSION.spellSlots[lv])SESSION.spellSlots[lv]={used:0};
   }
@@ -3790,7 +3883,7 @@ function editSpellcasting(){ openWizard('spellcasting',null,{...(CHAR.spellcasti
 
 // Spell slots
 function addSpellSlot(){ openWizard('spellslot',null,{}); }
-function editSpellSlot(idx){ const sl=(CHAR.spellSlots||[])[idx]; if(sl) openWizard('spellslot',idx,{level:sl.level,total:sl.total}); }
+function editSpellSlot(idx){ const sl=(CHAR.spellSlots||[])[idx]; if(sl) openWizard('spellslot',idx,{level:sl.level,total:sl.total,pactMagic:!!sl.pactMagic}); }
 function deleteSpellSlot(idx){ if(!confirm(T('confirmDelete')))return; CHAR.spellSlots.splice(idx,1); saveAll(); renderAll(); }
 // Weapons
 function addWeapon(){ openWizard('weapon',null,{}); }
