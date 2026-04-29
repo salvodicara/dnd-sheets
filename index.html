@@ -631,6 +631,10 @@ const DND = {
     Wizard:['Abjurer','Diviner','Evoker','Illusionist'],
   },
   slotColors:  ['','#3a6adf','#7a3adf','#2a8a4a','#c04040','#b08010','#208080','#b030b0','#c06020','#909090'],
+  // Spellcasting ability by class (D&D 2024). Classes not listed here are non-casters.
+  casterAbility:{ Bard:'CHA',Cleric:'WIS',Druid:'WIS',Paladin:'CHA',Ranger:'WIS',Sorcerer:'CHA',Warlock:'CHA',Wizard:'INT' },
+  // Prepared casters prepare spells daily; others always have their spells available.
+  preparedCasters:['Cleric','Druid','Paladin','Ranger','Wizard'],
   standardSkills:[
     {id:'acrobatics',    en:'Acrobatics',     ability:'DEX'},
     {id:'animalHandling',en:'Animal Handling', ability:'WIS'},
@@ -847,7 +851,7 @@ const BASE = {
   lbl_speed:'Speed', lbl_hpMax:'Max HP', lbl_hitDice:'Hit Dice',
   lbl_ac:'AC', lbl_languages:'Languages', lbl_tsChar:'Ability',
   lbl_ability:'Ability', lbl_bonus:'Bonus', lbl_totalGold:'Total Gold',
-  editBaseData:'Base Data', editSkills:'Skills', editMagic:'Magic',
+  editBaseData:'Base Data', editSkills:'Skills', editMagic:'Spellcasting', setupMagic:'＋ Set Up Spellcasting',
   step:'Step', wizSave:'Save', wizNext:'Next →',
   wizRequired:'Required field', wizSaved:'✅ Saved!', wizEdit:'edit', wizPreview:'Preview',
   contentBlocks:'Content Blocks', addBlock:'＋ Block',
@@ -904,6 +908,9 @@ const BASE = {
   wiz_step_abilityScores:'Ability Scores',
   wiz_step_combat:'Combat',
   wiz_step_savingThrows:'Saving Throws',
+  wiz_step_skills:'Skills',
+  wiz_step_spellSetup:'Spellcasting (Optional)',
+  wiz_step_spellSetupDesc:'Set up spellcasting if your class casts spells. Leave blank to skip.',
   wiz_step_spellBase:'Base',
   wiz_step_spellDesc:'Description & Notes',
   wiz_step_header:'Header',
@@ -990,6 +997,16 @@ const BASE = {
   hint_attackStat:'The ability score added to attack and damage rolls.',
   hint_magicBonus:'Bonus from magical enchantment (+1, +2, +3). Added to attack and damage.',
   hint_weaponProperties:'E.g. Finesse, Light, Thrown (6/18m).',
+  wiz_f_atkBonusOverride:'Custom Attack Bonus (override)',
+  wiz_f_dmgOverride:'Custom Damage (override)',
+  wiz_f_saveDCOverride:'Custom Spell Save DC (override)',
+  wiz_f_spellAtkOverride:'Custom Spell Attack Bonus (override)',
+  wiz_f_profBonusOverride:'Custom Proficiency Bonus (override)',
+  hint_atkBonusOverride:'Leave empty to auto-compute (PB + ability mod + magic bonus).',
+  hint_dmgOverride:'Leave empty to auto-compute (damage die + ability mod + magic bonus). E.g. 1d8+5.',
+  hint_saveDCOverride:'Leave empty to auto-compute (8 + PB + ability modifier).',
+  hint_spellAtkOverride:'Leave empty to auto-compute (PB + ability modifier).',
+  hint_profBonusOverride:'Leave empty to auto-compute from level. Use only for homebrew or special cases.',
   // Wizard hints — tracker
   hint_trackerLabel:'The name shown on the game panel pip tracker.',
   hint_trackerTotal:'How many uses before a rest is needed.',
@@ -1136,7 +1153,7 @@ const TRANSLATIONS = {
     lbl_speed:'Velocità', lbl_hpMax:'PF Massimi', lbl_hitDice:'Dadi Vita',
     lbl_ac:'CA', lbl_languages:'Linguaggi', lbl_tsChar:'Car.',
     lbl_ability:'Caratteristica', lbl_bonus:'Bonus', lbl_totalGold:'Oro totale',
-    editBaseData:'Dati Base', editSkills:'Abilità', editMagic:'Magia',
+    editBaseData:'Dati Base', editSkills:'Abilità', editMagic:'Magia', setupMagic:'＋ Configura Magia',
     step:'Passo', wizSave:'Salva', wizNext:'Avanti →',
     wizRequired:'Campo obbligatorio', wizSaved:'✅ Salvato!', wizEdit:'modifica', wizPreview:'Anteprima',
     contentBlocks:'Blocchi di Contenuto', addBlock:'＋ Blocco',
@@ -1182,6 +1199,9 @@ const TRANSLATIONS = {
     wiz_step_abilityScores:'Punteggi Caratteristiche',
     wiz_step_combat:'Combattimento',
     wiz_step_savingThrows:'Tiri Salvezza',
+    wiz_step_skills:'Abilità',
+    wiz_step_spellSetup:'Magia (Opzionale)',
+    wiz_step_spellSetupDesc:'Configura la magia se la tua classe lancia incantesimi. Lascia vuoto per saltare.',
     wiz_step_spellBase:'Base',
     wiz_step_spellDesc:'Descrizione e Note',
     wiz_step_header:'Intestazione',
@@ -1265,6 +1285,16 @@ const TRANSLATIONS = {
     hint_attackStat:'La caratteristica aggiunta ai tiri di attacco e danno.',
     hint_magicBonus:'Bonus da incantamento magico (+1, +2, +3). Aggiunto ad attacco e danno.',
     hint_weaponProperties:'Es. Finezza, Leggera, Da lancio (6/18m).',
+    wiz_f_atkBonusOverride:'Bonus Attacco personalizzato (override)',
+    wiz_f_dmgOverride:'Danno personalizzato (override)',
+    wiz_f_saveDCOverride:'CD Incantesimo personalizzata (override)',
+    wiz_f_spellAtkOverride:'Bonus Attacco Incantesimo personalizzato (override)',
+    wiz_f_profBonusOverride:'Bonus Competenza personalizzato (override)',
+    hint_atkBonusOverride:'Lascia vuoto per calcolo automatico (BC + mod caratteristica + bonus magico).',
+    hint_dmgOverride:'Lascia vuoto per calcolo automatico (dado + mod caratteristica + bonus magico). Es. 1d8+5.',
+    hint_saveDCOverride:'Lascia vuoto per calcolo automatico (8 + BC + modificatore caratteristica).',
+    hint_spellAtkOverride:'Lascia vuoto per calcolo automatico (BC + modificatore caratteristica).',
+    hint_profBonusOverride:'Lascia vuoto per calcolo automatico dal livello. Usa solo per homebrew o casi speciali.',
     hint_trackerLabel:'Il nome mostrato nel tracker del pannello di gioco.',
     hint_trackerTotal:'Quanti usi prima che serva un riposo.',
     hint_trackerRecovery:'Quando gli usi vengono ripristinati (riposo breve, lungo o manuale).',
@@ -1819,7 +1849,7 @@ function buildPanelBottom(){
       <div class="action-entry-name">${sp.emoji||''} ${sp.name||''}</div>
       <div class="action-entry-note">${spellQuickNote(sp)}</div>
     </div></div>`;}).join('');
-  const pb=C.proficiencyBonus||computedPB(C.level||1);
+  const pb=C.proficiencyBonusOverride??(C.proficiencyBonus||computedPB(C.level||1));
   const scores=C.abilityScores||{};
   const weaponEntries=(C.weapons||[]).map(w=>{
     const atkMod=abilityMod(scores[w.attackStat]||10);
@@ -1900,7 +1930,7 @@ function renderSections(){
 }
 function renderBaseData(){
   const C=CHAR;
-  const pb=C.proficiencyBonus||computedPB(C.level||1);
+  const pb=C.proficiencyBonusOverride??(C.proficiencyBonus||computedPB(C.level||1));
   const rows=[
     [T('lbl_race'),dndTr('races',C.race)],[T('lbl_class'),dndTr('classes',C.class)],[T('lbl_subclass'),dndTr('subclasses',C.subclass)],[T('lbl_background'),dndTr('backgrounds',C.background)],
     [T('lbl_alignment'),alignmentName(C.alignment)],[T('lbl_player'),C.playerName],[T('lbl_profBonus'),'+'+pb],
@@ -1931,7 +1961,7 @@ function renderBaseData(){
 }
 function renderSkills(){
   const C=CHAR; const skillsMap=C.skills||{};
-  const pb=C.proficiencyBonus||computedPB(C.level||1);
+  const pb=C.proficiencyBonusOverride??(C.proficiencyBonus||computedPB(C.level||1));
   const scores=C.abilityScores||{};
   function skillBonus(ability, type){
     const base=abilityMod(scores[ability]||10);
@@ -2003,13 +2033,13 @@ function renderSpellsSection(){
       <div class="section-header-line"></div>
       <p class="empty-state">${T('noSpells')}</p>
       <div style="display:flex;gap:8px;justify-content:center;margin:12px 0;">
-        <button class="add-btn" onclick="editSpellcasting()">✏️ ${T('editMagic')}</button>
+        <button class="add-btn" onclick="editSpellcasting()">${T('setupMagic')}</button>
         <button class="add-btn" onclick="addSpell(0)">${T('addSpell')}</button>
       </div><hr>`;
   }
   const sc=C.spellcasting;
   // Auto-compute DC and attack bonus from ability + PB
-  const pb=C.proficiencyBonus||computedPB(C.level||1);
+  const pb=C.proficiencyBonusOverride??(C.proficiencyBonus||computedPB(C.level||1));
   const abilMod=sc?.ability?abilityMod(C.abilityScores?.[sc.ability]||10):0;
   const dc=sc?.saveDCOverride??(8+pb+abilMod);
   const atk=sc?.attackBonusOverride??(pb+abilMod);
@@ -2023,10 +2053,9 @@ function renderSpellsSection(){
     ${C.spellSlots?.length?`<h3 style="margin-top:12px;">${T('slotTitle')}</h3>
       <table><tr><th>${T('slotLevel')}</th><th>${T('slotTot')}</th>${EDIT_MODE?'<th></th>':''}</tr>
       ${(C.spellSlots||[]).map((sl,i)=>`<tr><td>${T('slotLvLabel')} ${sl.level}</td><td>${sl.total}</td>${EDIT_MODE?`<td><button class="btn-edit-sm" onclick="editSpellSlot(${i})">✏️</button> <button class="btn-del-sm" onclick="deleteSpellSlot(${i})">🗑</button></td>`:''}</tr>`).join('')}</table>`:''}
-    ${EDIT_MODE?`<div class="edit-only" style="display:flex!important;gap:6px;margin-top:8px;">
+    ${EDIT_MODE?`<div class="edit-only" style="display:flex!important;gap:6px;margin-top:8px;flex-wrap:wrap;">
       <button class="btn-edit-sm" onclick="editSpellcasting()">✏️ ${T('editMagic')}</button>
-      <button class="btn-edit-sm" onclick="addSpellSlot()">${T('addSlot')}</button></div>`:''}
-  </div>`:'';
+      <button class="btn-edit-sm" onclick="addSpellSlot()">${T('addSlot')}</button></div>`:''}\n  </div>`:'';
   // Group spells by level
   const spells=C.spells||[];
   const levels=[...new Set(spells.map(s=>s.level))].sort((a,b)=>a-b);
@@ -2081,7 +2110,7 @@ function renderSpellsSection(){
 }
 function renderWeapons(){
   const C=CHAR;
-  const pb=C.proficiencyBonus||computedPB(C.level||1);
+  const pb=C.proficiencyBonusOverride??(C.proficiencyBonus||computedPB(C.level||1));
   const scores=C.abilityScores||{};
   function weaponAtk(w){
     if(w.attackBonusOverride!=null) return modStr(w.attackBonusOverride);
@@ -2603,7 +2632,7 @@ function renderWeaponPreview(){
   const tags=renderTags(WIZ_TAGS);
   if(!name&&!damageDie) return '';
   const scores=CHAR?.abilityScores||{};
-  const pb=CHAR?.proficiencyBonus||computedPB(CHAR?.level||1);
+  const pb=CHAR?.proficiencyBonusOverride??(CHAR?.proficiencyBonus||computedPB(CHAR?.level||1));
   const atkMod=abilityMod(scores[attackStat]||10);
   const atk=modStr(pb+atkMod+magicBonus);
   const dmgMod=atkMod+magicBonus;
@@ -3299,6 +3328,7 @@ const WIZARDS = {
       {id:'ac',label:'f_ac',type:'number',min:0,default:10,required:true,hint:'hint_ac'},
       {id:'armorNote',label:'f_acDesc',type:'text',placeholder:'wiz_ph_armorNote',hint:'hint_armorNote'},
       {id:'speed',label:'f_speed',type:'text',default:'9m',hint:'hint_speed'},
+      {id:'proficiencyBonusOverride',label:'wiz_f_profBonusOverride',type:'number',hint:'hint_profBonusOverride'},
     ]},
     {label:'wiz_step_savingThrows', fields:[], _buildFields(){
       return DND.abilities.map(a=>({
@@ -3306,9 +3336,44 @@ const WIZARDS = {
         checkLabel:abilityShortName(a)
       }));
     }},
+    {label:'wiz_step_skills', fields:[], _buildFields(){
+      return DND.standardSkills.map(sk=>({
+        id:'sk_'+sk.id, label:skillName(sk),
+        type:'select',
+        options:[
+          {v:'none',          l:T('profType_none')},
+          {v:'proficient',    l:T('profType_proficient')},
+          {v:'expertise',     l:T('profType_expertise')},
+          {v:'halfProficiency',l:T('profType_halfProficiency')}
+        ]
+      }));
+    }},
+    {label:'wiz_step_spellSetup', fields:[
+      {id:'sc_ability',label:'wiz_f_magicAbility',type:'select',options:()=>[{v:'',l:'—'},...abilityOpts()],hint:'hint_magicAbility'},
+      {id:'sc_focus',label:'wiz_f_magicFocus',type:'text',hint:'hint_magicFocus'},
+      {id:'sc_preparedCaster',label:'wiz_f_preparedCaster',type:'checkbox',hint:'hint_preparedCaster'},
+    ], _afterRender(data){
+      // Auto-fill ability and preparedCaster based on class chosen in step 1
+      const cls=data.class||WIZ_DATA.class;
+      const autoAbility=DND.casterAbility[cls];
+      const desc=document.getElementById('wiz-body');
+      if(desc&&!desc.querySelector('.wiz-spellsetup-desc')){
+        desc.insertAdjacentHTML('afterbegin',`<p class="wiz-step-desc wiz-spellsetup-desc">${T('wiz_step_spellSetupDesc')}</p>`);
+      }
+      if(autoAbility){
+        const sel=document.getElementById('wf-sc_ability');
+        if(sel&&!sel.value) sel.value=autoAbility;
+        // Auto-set preparedCaster only if the field hasn't been manually touched yet
+        const cb=document.getElementById('wf-sc_preparedCaster');
+        if(cb && data.sc_preparedCaster===undefined){
+          cb.checked=DND.preparedCasters.includes(cls);
+        }
+      }
+    }},
   ],
   onSave(d){
     const isEdit=!!CHAR;
+    const oldClass=isEdit?(CHAR.class||''):'';
     const base=isEdit?CHAR:{};
     base.name=d.name; base.race=d.race; base.class=d.class; base.subclass=d.subclass;
     base.level=d.level||1; base.alignment=d.alignment; base.background=d.background;
@@ -3320,9 +3385,28 @@ const WIZARDS = {
     base.hp={max:+d.hpMax||10}; base.hitDieType=parseInt((d.hitDieType||'d8').replace(/\D/g,''))||8;
     base.ac=+d.ac||10; if(d.armorNote) base.armorNote=d.armorNote; else delete base.armorNote;
     base.speed=d.speed||'9m';
+    if(d.proficiencyBonusOverride!==''&&d.proficiencyBonusOverride!=null) base.proficiencyBonusOverride=+d.proficiencyBonusOverride;
+    else delete base.proficiencyBonusOverride;
     base.savingThrows=['STR','DEX','CON','INT','WIS','CHA'].filter(a=>d['saves'+a]);
+    // Skills: always update from wizard data (both new and edit)
+    const skills={};
+    DND.standardSkills.forEach(sk=>{ const t=d['sk_'+sk.id]; if(t&&t!=='none') skills[sk.id]=t; });
+    base.skills=skills;
+    // Spellcasting: if an ability was selected, update spellcasting info
+    if(d.sc_ability){
+      const prev=base.spellcasting||{};
+      base.spellcasting={ability:d.sc_ability,focus:d.sc_focus||'',preparedCaster:!!d.sc_preparedCaster};
+      if(prev.saveDCOverride!=null) base.spellcasting.saveDCOverride=prev.saveDCOverride;
+      if(prev.attackBonusOverride!=null) base.spellcasting.attackBonusOverride=prev.attackBonusOverride;
+    }
+    // Auto-clear spellcasting when class changes from a known caster to a known non-caster
+    if(isEdit && d.class!==oldClass && DND.casterAbility[oldClass] && !DND.casterAbility[d.class]){
+      delete base.spellcasting; delete base.spellSlots;
+      if(SESSION) delete SESSION.spellSlots;
+    }
     if(!isEdit){
-      base.skills={}; base.features=[]; base.spells=[]; base.weapons=[]; base.equipment=[];
+      if(!base.skills) base.skills={};
+      base.features=[]; base.spells=[]; base.weapons=[]; base.equipment=[];
       base.customConditions=[];
       base.sidebar=[...DEFAULT_SIDEBAR]; base.combatAlgorithm=[];
       SESSION=createDefaultSession(base);
@@ -3401,6 +3485,8 @@ const WIZARDS = {
     {id:'quantity',label:'f_quantity',type:'number',min:1,default:1},
     {id:'properties',label:'f_properties',type:'text',hint:'hint_weaponProperties'},
     {id:'notes',label:'f_notes',type:'textarea',rows:2},
+    {id:'attackBonusOverride',label:'wiz_f_atkBonusOverride',type:'number',hint:'hint_atkBonusOverride'},
+    {id:'damageOverride',label:'wiz_f_dmgOverride',type:'text',hint:'hint_dmgOverride'},
     ], _afterRender(data){
       const body=document.getElementById('wiz-body');
       if(body){
@@ -3423,6 +3509,8 @@ const WIZARDS = {
       properties:d.properties,notes:d.notes};
     if(WIZ_TAGS.length) w.tags=[...WIZ_TAGS];
     if(+d.magicBonus) w.magicBonus=+d.magicBonus;
+    if(d.attackBonusOverride!==''&&d.attackBonusOverride!=null) w.attackBonusOverride=+d.attackBonusOverride;
+    if(d.damageOverride) w.damageOverride=d.damageOverride;
     if(!CHAR.weapons)CHAR.weapons=[];
     if(idx!==null&&idx!==undefined)CHAR.weapons[idx]=w; else CHAR.weapons.push(w);
   }
@@ -3597,12 +3685,22 @@ const WIZARDS = {
     {id:'ability',label:'wiz_f_magicAbility',type:'select',options:()=>abilityOpts(),hint:'hint_magicAbility'},
     {id:'focus',label:'wiz_f_magicFocus',type:'text',hint:'hint_magicFocus'},
     {id:'preparedCaster',label:'wiz_f_preparedCaster',type:'checkbox',hint:'hint_preparedCaster'},
-  ]}],
+    {id:'saveDCOverride',label:'wiz_f_saveDCOverride',type:'number',hint:'hint_saveDCOverride'},
+    {id:'attackBonusOverride',label:'wiz_f_spellAtkOverride',type:'number',hint:'hint_spellAtkOverride'},
+  ], _afterRender(data){
+    // Auto-set preparedCaster from class when first setting up spellcasting
+    const cls=CHAR?.class;
+    if(cls && data.preparedCaster===undefined){
+      const cb=document.getElementById('wf-preparedCaster');
+      if(cb) cb.checked=DND.preparedCasters.includes(cls);
+    }
+  }}],
   onSave(d){
-    const prev=CHAR.spellcasting||{};
     CHAR.spellcasting={ability:d.ability,focus:d.focus,preparedCaster:!!d.preparedCaster};
-    if(prev.saveDCOverride!=null) CHAR.spellcasting.saveDCOverride=prev.saveDCOverride;
-    if(prev.attackBonusOverride!=null) CHAR.spellcasting.attackBonusOverride=prev.attackBonusOverride;
+    const dc=d.saveDCOverride!==''&&d.saveDCOverride!=null?+d.saveDCOverride:null;
+    const atk=d.attackBonusOverride!==''&&d.attackBonusOverride!=null?+d.attackBonusOverride:null;
+    if(dc!=null) CHAR.spellcasting.saveDCOverride=dc;
+    if(atk!=null) CHAR.spellcasting.attackBonusOverride=atk;
   }
 },
 // ── Skills ──
@@ -3647,9 +3745,18 @@ function flattenChar(){
     STR:sc.STR,DEX:sc.DEX,CON:sc.CON,INT:sc.INT,WIS:sc.WIS,CHA:sc.CHA,
     abilityBudget:C.abilityBudget||PB_DEFAULT_BUDGET,
     hpMax:C.hp?.max,hitDieType:C.hitDieType?'d'+C.hitDieType:'d8',ac:C.ac,armorNote:C.armorNote,speed:C.speed,
+    proficiencyBonusOverride:C.proficiencyBonusOverride??null,
     savesSTR:saves.includes('STR'),savesDEX:saves.includes('DEX'),
     savesCON:saves.includes('CON'),savesINT:saves.includes('INT'),
     savesWIS:saves.includes('WIS'),savesCHA:saves.includes('CHA'),
+    // Skills — flatten map {id:'proficiency'} -> {'sk_id':'proficiency'}
+    ...Object.fromEntries(DND.standardSkills.map(sk=>[
+      'sk_'+sk.id, (C.skills||{})[sk.id]||'none'
+    ])),
+    // Spellcasting step prefill (prefixed with sc_ to avoid collision)
+    sc_ability:(C.spellcasting?.ability||''),
+    sc_focus:(C.spellcasting?.focus||''),
+    sc_preparedCaster:!!(C.spellcasting?.preparedCaster),
   };
 }
 // Spells
@@ -3662,6 +3769,7 @@ function togglePrepared(idx){
 }
 // Spellcasting info
 function editSpellcasting(){ openWizard('spellcasting',null,{...(CHAR.spellcasting||{})}); }
+
 // Spell slots
 function addSpellSlot(){ openWizard('spellslot',null,{}); }
 function editSpellSlot(idx){ const sl=(CHAR.spellSlots||[])[idx]; if(sl) openWizard('spellslot',idx,{level:sl.level,total:sl.total}); }

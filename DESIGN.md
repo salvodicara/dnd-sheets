@@ -183,33 +183,26 @@ Done:
 9. setAidBonus() replaced with inline input (last prompt() eliminated)
 
 ### Phase 9: Smart Auto-Calculations
-**Status:** NOT STARTED
+**Status:** ✅ COMPLETE
 **Goal:** PB, DC, attack bonus, weapon stats all auto-computed with override option.
 
-Tasks:
-1. PB: CHAR.proficiencyBonusOverride (optional). Rendering uses computedPB(level).
-2. Spell DC: auto 8+PB+mod. Override: spellcasting.dcOverride.
-3. Spell attack: auto PB+mod. Override: spellcasting.attackBonusOverride.
-4. Weapons: store damageDie, attackStat, magicBonus. Compute attackBonus and damage.
-   Overrides: attackBonusOverride, damageOverride per weapon.
-5. Remove manual PB/DC/attack fields from wizards. Show computed values.
-6. Weapon wizard shows preview of computed values before saving.
+Done:
+- `proficiencyBonusOverride` field added to char-create wizard (Combat step), `flattenChar()`, and `onSave`. All 6 PB computation sites updated to check override first.
+- Spell Save DC and Spell Attack Bonus overrides (`saveDCOverride`, `attackBonusOverride`) were already computed and displayed; added wizard fields in spellcasting wizard so users can now set them via UI. `onSave` updated (no longer blindly preserves old value).
+- Weapon `attackBonusOverride` (number) and `damageOverride` (text) added to weapon wizard and `onSave`. `editWeapon()` already spreads full object so prefill works automatically.
+- All override fields are optional: empty = auto-compute, non-empty = use override value.
+- Backward compatible: new fields are additive, old saves without overrides work unchanged.
 
 ### Phase 10: 6-Step Character Creation
-**Status:** NOT STARTED
+**Status:** ✅ COMPLETE
 **Goal:** Comprehensive creation with spellcaster auto-detection.
 
-Spellcaster class mapping:
-Bard->CHA, Cleric->WIS, Druid->WIS, Paladin->CHA,
-Ranger->WIS, Sorcerer->CHA, Warlock->CHA, Wizard->INT
-
-Steps:
-1. Identity (name, race, class, subclass, level, alignment, background, player, emoji)
-2. Ability Scores (point buy widget)
-3. Combat (HP max, hit die, AC, speed, initiative bonus)
-4. Saving Throws (6 checkboxes)
-5. Skills (18 dropdowns with proficiency options)
-6. Spellcasting (conditional — auto-fill ability, auto-calc DC/attack, focus field)
+Done:
+- Added `DND.casterAbility` map: `{Bard:'CHA', Cleric:'WIS', Druid:'WIS', Paladin:'CHA', Ranger:'WIS', Sorcerer:'CHA', Warlock:'CHA', Wizard:'INT'}`.
+- Added **Step 5: Skills** to char-create wizard using the same `_buildFields()` pattern as the standalone skills wizard. 18 dropdowns, same proficiency levels.
+- Added **Step 6: Spellcasting (Optional)** — fields `sc_ability`, `sc_focus`, `sc_preparedCaster`. `_afterRender` hook auto-fills the ability dropdown based on `WIZ_DATA.class` + `DND.casterAbility`. Description note explains step is optional for non-casters.
+- `onSave` updated: always writes skills from wizard data (both create and edit). Updates `CHAR.spellcasting` only if an ability was selected; preserves existing `saveDCOverride`/`attackBonusOverride`.
+- `flattenChar()` updated: flattens `CHAR.skills` map to `sk_*` prefixed keys, adds `sc_*` prefixed spellcasting fields. Editing a character now correctly prefills all 6 steps.
 
 ### Phase 11: Smart Spell Slot Prompt
 **Status:** NOT STARTED
@@ -449,7 +442,7 @@ Menu items:
 | 46 | Conditions data model | Custom-only (standard from DND.conditions) |
 | 47 | Omit empty fields | Yes, engine handles defaults |
 | 48 | Spell sidebar sub-links | Auto-generated per spell level |
-| 49 | Backward compat | Not required (v3 breaking changes OK) |
+| 49 | Backward compat | Required — app is deployed, users have saved JSON. New fields OK with defaults, never remove/rename existing fields. Migrate in syncSession()/ensureSidebar() if needed. |
 | 50 | No redundancy | Auto-compute + override everywhere |
 | 51 | v1.1 class tables | Bard, Monk, Barbarian, Paladin, Rogue, Wizard |
 | 52 | English canonical D&D names | Stored in English, localized via dndTr() at display time |

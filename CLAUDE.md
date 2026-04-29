@@ -10,16 +10,17 @@
 2. **Single file only.** All code (CSS, HTML, JS) must stay in `index.html`. Never split into separate files.
 3. **Zero dependencies.** No libraries, frameworks, CDNs, or npm packages. Vanilla JS/CSS/HTML only.
 4. **Never exceed 100 lines per write operation.** The writing tool fails on large writes. Always use targeted edits or write in small chunks.
-5. **Preserve the existing architecture.** Follow the patterns already in the code (see below). Do not introduce new paradigms.
-6. **Always test in context.** After any change, mentally verify that `renderAll()` will still produce correct output and that event handlers will bind properly.
-7. **Usability first.** Never ask users for technical information (IDs, slugs, anchors). Auto-generate from user-friendly inputs. Wizards should guide step-by-step with contextual labels.
-8. **Auto-compute + override.** Every derived value (PB, spell DC, weapon attack, etc.) is auto-calculated. Each has an optional `*Override` field for custom values (magic items, homebrew).
-9. **No redundancy in data.** The JSON should store only unique, non-derivable data. The engine is smart. See `DESIGN.md` for the v3.0 data model.
-10. **Read DESIGN.md first.** For any new implementation work, read `DESIGN.md` before starting -- it contains all design decisions, the v1 phase plan, and the target data model.
-11. **English source code.** ALL identifiers (variable names, function names, CSS classes/IDs, translation keys, section IDs) must be English. Only the string VALUES in `TRANSLATIONS.it` are Italian. If you encounter Italian identifiers in the codebase, rename them to English immediately.
-12. **English canonical D&D names.** All fixed D&D names (races, classes, backgrounds, subclasses, conditions, schools, damage types, etc.) are stored in English in the data model. Localization happens only at display time via `dndTr()`. The char-create wizard uses `select-or-custom` fields for these, with a "Custom..." option for homebrew.
-13. **No backward compatibility required.** The engine targets v3.0 data format only. When data model changes, update `catalion.json` directly instead of writing migration code.
-14. **No commits unless told to.** Never create git commits unless the user explicitly asks.
+5. **Always syntax-check after edits.** After any JS change, run `just check` from the project root. Never leave a session without a clean check. Common pitfall: mixing `??` with `||`/`&&` requires explicit parentheses.
+6. **Preserve the existing architecture.** Follow the patterns already in the code (see below). Do not introduce new paradigms.
+7. **Always test in context.** After any change, mentally verify that `renderAll()` will still produce correct output and that event handlers will bind properly.
+8. **Usability first.** Never ask users for technical information (IDs, slugs, anchors). Auto-generate from user-friendly inputs. Wizards should guide step-by-step with contextual labels.
+9. **Auto-compute + override.** Every derived value (PB, spell DC, weapon attack, etc.) is auto-calculated. Each has an optional `*Override` field for custom values (magic items, homebrew).
+10. **No redundancy in data.** The JSON should store only unique, non-derivable data. The engine is smart. See `DESIGN.md` for the v3.0 data model.
+11. **Read DESIGN.md first.** For any new implementation work, read `DESIGN.md` before starting -- it contains all design decisions, the v1 phase plan, and the target data model.
+12. **English source code.** ALL identifiers (variable names, function names, CSS classes/IDs, translation keys, section IDs) must be English. Only the string VALUES in `TRANSLATIONS.it` are Italian. If you encounter Italian identifiers in the codebase, rename them to English immediately.
+13. **English canonical D&D names.** All fixed D&D names (races, classes, backgrounds, subclasses, conditions, schools, damage types, etc.) are stored in English in the data model. Localization happens only at display time via `dndTr()`. The char-create wizard uses `select-or-custom` fields for these, with a "Custom..." option for homebrew.
+14. **Backward compatibility: ask before breaking.** The app is deployed and real users have saved JSON. Prefer additive changes (new fields with safe defaults). If a breaking data model change would lead to significantly better design, **ask the user first** — don't just do it. If approved, add a silent migration in `syncSession()` / `ensureSidebar()` so old data upgrades automatically.
+15. **No commits unless told to.** Never create git commits unless the user explicitly asks.
 
 ## Architecture
 
