@@ -1,0 +1,28 @@
+CLAUDE.md
+  dd521f8d69e7cf25 48-49,51-53,56-58
+index.html
+  dd521f8d69e7cf25 397,470-499,907-923,1240-1256,1465-1477,1529-1560,2056-2110,2115,2162-2163,2699-2723,2731,3708,4037-4081,4261-4277,4387
+DESIGN.md
+  dd521f8d69e7cf25 231-234,237-238,241-245,248-255,258-260,263-264,267-269
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.3.4",
+  "base_commit_sha": "8b737a44f1de9c73df6e8bb70df1964ab2315638",
+  "prompts": {
+    "dd521f8d69e7cf25": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_227764a31ffe94FPCdwSf7NJWb",
+        "model": "github-copilot/claude-sonnet-4.6"
+      },
+      "human_author": "Salvatore Di Cara",
+      "messages": [],
+      "total_additions": 355,
+      "total_deletions": 95,
+      "accepted_lines": 293,
+      "overriden_lines": 0,
+      "messages_url": "https://usegitai.com/cas/e03ac5e9bfdd3c0ceb5860da2ce7d8f3c57e9666aadea14acb775e0dc33e2095"
+    }
+  }
+}
