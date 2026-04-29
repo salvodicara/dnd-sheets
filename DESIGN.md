@@ -205,8 +205,15 @@ Done:
 - `flattenChar()` updated: flattens `CHAR.skills` map to `sk_*` prefixed keys, adds `sc_*` prefixed spellcasting fields. Editing a character now correctly prefills all 6 steps.
 
 ### Phase 11: Smart Spell Slot Prompt
-**Status:** NOT STARTED
+**Status:** ✅ COMPLETE
 **Goal:** Toast with action button when adding spell at level with no slots.
+
+Done:
+- On new spell save (not edit), if level > 0 and no `CHAR.spellSlots` entry exists for that level, a deferred `info` toast appears with "＋ Add Slot" button that opens the spell slot wizard pre-filled to that level.
+- Extended `showToast(msg, type, btn)` with optional `btn={label, fn}` argument that renders a `.toast-btn` inside the toast.
+- Fixed pre-existing bug: `showToast` was setting class `toast toast-info` but CSS expected `.toast.info`. Fixed to `toast info`.
+- Added `.toast-btn` CSS (border, cursor, inherit color).
+- Added `toastNoSlot` and `toastAddSlot` i18n keys in BASE and TRANSLATIONS.it.
 
 ### Phase 12: Rest System Fix
 **Status:** NOT STARTED

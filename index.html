@@ -452,6 +452,9 @@ body.edit-mode .edit-only-block{display:block!important;}
 .toast.success{border-color:var(--toast-success-border);background:var(--toast-success-bg);}
 .toast.error{border-color:var(--toast-err-border);background:var(--toast-err-bg);}
 .toast.info{border-color:var(--toast-info-border);background:var(--toast-info-bg);}
+.toast{display:flex;align-items:center;gap:8px;}
+.toast-btn{background:none;border:1px solid currentColor;border-radius:4px;padding:2px 8px;cursor:pointer;font-size:.8em;white-space:nowrap;color:inherit;opacity:.85;flex-shrink:0;}
+.toast-btn:hover{opacity:1;}
 @keyframes toastIn{from{opacity:0;transform:translateX(20px);}to{opacity:1;transform:none;}}
 #fixed-controls{position:fixed;top:14px;right:16px;z-index:1050;display:flex;gap:7px;}
 .ctrl-btn{background:var(--bg-card);border:1px solid var(--border-light);color:var(--text);
@@ -827,6 +830,8 @@ const BASE = {
   toastSaved:'💾 Saved!',
   toastCopied:'📋 JSON copied to clipboard!',
   toastExported:'💾 Download started!',
+  toastNoSlot:'No Lv. {L} slot configured —',
+  toastAddSlot:'＋ Add Slot',
   toastExportFallback:'📱 On iOS: long-press → Download (or copy to clipboard)',
    confirmDelete:'Delete this element?',
    confirmLogout:'Go back to home screen? Unsaved changes will be lost.',
@@ -1129,6 +1134,8 @@ const TRANSLATIONS = {
     toastSaved:'💾 Salvato!',
     toastCopied:'📋 JSON copiato negli appunti!',
     toastExported:'💾 Download avviato!',
+    toastNoSlot:'Nessuno slot per Lv. {L} —',
+    toastAddSlot:'＋ Aggiungi Slot',
     toastExportFallback:'📱 Su iOS: tieni premuto → Scarica (oppure copia negli appunti)',
      confirmDelete:'Eliminare questo elemento?',
      confirmLogout:'Tornare alla schermata iniziale? Le modifiche non salvate andranno perse.',
@@ -3469,7 +3476,18 @@ const WIZARDS = {
     if(idx!==null&&idx!==undefined){
       if(CHAR.spells[idx]?.prepared) sp.prepared=true;
       CHAR.spells[idx]=sp;
-    } else { CHAR.spells.push(sp); }
+    } else {
+      CHAR.spells.push(sp);
+      // Phase 11: if no slot exists for this level, prompt to add one
+      const lv=sp.level;
+      if(lv>0){
+        const hasSlot=(CHAR.spellSlots||[]).some(s=>s.level===lv);
+        if(!hasSlot) setTimeout(()=>showToast(
+          T('toastNoSlot').replace('{L}',lv),'info',
+          {label:T('toastAddSlot'),fn:()=>openWizard('spellslot',null,{level:lv})}
+        ),50);
+      }
+    }
   }
 },
 // ── Weapon ──
@@ -3950,11 +3968,18 @@ function logoutCharacter(){
   updateFixedControls();
 }
 let _toastTimer=null;
-function showToast(msg,type='info'){
+function showToast(msg,type='info',btn=null){
   const tc=document.getElementById('toast-container');
   if(!tc)return;
   const t=document.createElement('div');
-  t.className='toast toast-'+type; t.textContent=msg;
+  t.className='toast '+type;
+  const span=document.createElement('span');span.textContent=msg;t.appendChild(span);
+  if(btn){
+    const b=document.createElement('button');
+    b.className='toast-btn';b.textContent=btn.label;
+    b.onclick=()=>{btn.fn();t.remove();};
+    t.appendChild(b);
+  }
   tc.appendChild(t);
   requestAnimationFrame(()=>t.classList.add('visible'));
   setTimeout(()=>{t.classList.remove('visible');setTimeout(()=>t.remove(),400);},3200);
