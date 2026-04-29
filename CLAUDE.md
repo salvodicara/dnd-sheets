@@ -11,7 +11,8 @@
 3. **Zero dependencies.** No libraries, frameworks, CDNs, or npm packages. Vanilla JS/CSS/HTML only.
 4. **Never exceed 100 lines per write operation.** The writing tool fails on large writes. Always use targeted edits or write in small chunks.
 5. **Always syntax-check after edits.** After any JS change, run `just check` from the project root. Never leave a session without a clean check. Common pitfall: mixing `??` with `||`/`&&` requires explicit parentheses.
-6. **Preserve the existing architecture.** Follow the patterns already in the code (see below). Do not introduce new paradigms.
+6. **No dice rolling.** The app never rolls dice. Players always roll in an external window/app. Any feature that needs a dice result must show the formula (e.g. `2d8+3`) and let the user enter the rolled result manually. Never use `Math.random()` for dice. Remove `rollDice()` if found.
+7. **Preserve the existing architecture.** Follow the patterns already in the code (see below). Do not introduce new paradigms.
 7. **Always test in context.** After any change, mentally verify that `renderAll()` will still produce correct output and that event handlers will bind properly.
 8. **Usability first.** Never ask users for technical information (IDs, slugs, anchors). Auto-generate from user-friendly inputs. Wizards should guide step-by-step with contextual labels.
 9. **Auto-compute + override.** Every derived value (PB, spell DC, weapon attack, etc.) is auto-calculated. Each has an optional `*Override` field for custom values (magic items, homebrew).

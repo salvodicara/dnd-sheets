@@ -826,7 +826,9 @@ const BASE = {
   toastShortRest:'☕ Short rest — +{N} HP',
   toastShortRestSkipped:'☕ Short rest taken.',
   hdDialogTitle:'Spend Hit Dice ({A} available — {D})',
-  hdRollHeal:'Roll & Heal',
+  hdApply:'Apply Healing',
+  hdEnterResult:'HP healed (enter result)',
+  toastRollFormula:'Roll externally:',
   hdSkip:'Skip',
   hdNoHD:'No Hit Dice available.',
   pactMagic:'Pact Magic',
@@ -1141,7 +1143,9 @@ const TRANSLATIONS = {
     toastShortRest:'☕ Riposo breve — +{N} PF',
     toastShortRestSkipped:'☕ Riposo breve completato.',
     hdDialogTitle:'Spendi Dadi Vita ({A} disponibili — {D})',
-    hdRollHeal:'Lancia e Cura',
+    hdApply:'Applica Cura',
+    hdEnterResult:'PF curati (inserisci il risultato)',
+    toastRollFormula:'Lancia esternamente:',
     hdSkip:'Salta',
     hdNoHD:'Nessun Dado Vita disponibile.',
     pactMagic:'Magia del Patto',
@@ -1368,14 +1372,6 @@ function md(text){
     .replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>')
     .replace(/\*(.+?)\*/g,'<em>$1</em>')
     .replace(/\n/g,'<br>');
-}
-function rollDice(formula){
-  // parse NdM+K
-  const m = formula.match(/(\d+)d(\d+)([+-]\d+)?/i);
-  if(!m) return parseInt(formula)||0;
-  let r=0; for(let i=0;i<+m[1];i++) r+=Math.floor(Math.random()*+m[2])+1;
-  if(m[3]) r+=parseInt(m[3]);
-  return r;
 }
 function createDefaultSession(char){
   const s={
@@ -1843,13 +1839,17 @@ function buildPanelBottom(){
   // Rests + Log
   const available=(C.level||1)-(S.hitDice?.used||0);
   const hdType='d'+(C.hitDieType||8);
+  const conMod=abilityMod(C.abilityScores?.CON||10);
+  const modStr=conMod>=0?`+${conMod}`:String(conMod);
   const restsCardContent=S.hdDialog
     ?(available>0
       ?`<div class="label">${T('hdDialogTitle').replace('{A}',available).replace('{D}',hdType)}</div>
         <div class="hd-qty-row"><button class="btn-qty" onclick="adjustHDQty(-1)">−</button>
           <span class="hd-qty-val" id="hd-qty">1</span>
-          <button class="btn-qty" onclick="adjustHDQty(1)">＋</button></div>
-        <div class="btn-row"><button class="btn heal" onclick="commitHDSpend()">${T('hdRollHeal')}</button>
+          <button class="btn-qty" onclick="adjustHDQty(1)">＋</button>
+          <span id="hd-formula" style="font-size:.8em;color:var(--text-muted);margin-left:4px;">1${hdType}${modStr}</span></div>
+        <input type="number" id="hd-result" min="0" placeholder="${T('hdEnterResult')}" style="width:72px;margin:6px 0;padding:4px 6px;border:1px solid var(--border);border-radius:5px;background:var(--bg-card);color:var(--text);">
+        <div class="btn-row"><button class="btn heal" onclick="applyHDResult()">${T('hdApply')}</button>
           <button class="btn" onclick="closeHDDialog(true)">${T('hdSkip')}</button></div>`
       :`<div class="label">${T('hdNoHD')}</div>
         <div class="btn-row"><button class="btn" onclick="closeHDDialog(true)">${T('hdSkip')}</button></div>`)
@@ -2288,11 +2288,11 @@ function spendHD(){
   const used=S.hitDice?.used||0;
   if(used>=lv){addLog(T('logNoHD'));return;}
   const conMod=abilityMod(C.abilityScores?.CON||10);
-  const roll=Math.floor(Math.random()*(C.hitDieType||8))+1+conMod;
-  const effMax=(C.hp?.max||0)+(S.hp?.aidBonus||0);
-  S.hp.current=Math.min(effMax,S.hp.current+roll);
+  const max=C.hitDieType||8;
+  const modStr=conMod>=0?`+${conMod}`:String(conMod);
   S.hitDice.used=(S.hitDice.used||0)+1;
-  addLog(`${T('logHD')} ${roll} ${T('logHDResult')} ${S.hp.current}`,'log-heal');
+  addLog(`${T('logHD')} 1d${max}${modStr}`,'log-heal');
+  showToast(`${T('toastRollFormula')} 1d${max}${modStr}`,'info');
   renderPanel(); saveAll();
 }
 function resetHD(){SESSION.hitDice.used=0;renderPanel();addLog(T('logHDReset'));saveAll();}
@@ -2349,10 +2349,10 @@ function usePotionTracker(id){
   const s=SESSION.trackers[id]; const t=findTrackerById(id);
   if(!s||!t) return;
   if(s.used>=t.total){addLog(`${T('logNoPotionLeft')} ${t.label} ${T('logNoPotionRight')}`);return;}
-  const roll=t.potionFormula?rollDice(t.potionFormula):0;
-  const effMax=(CHAR.hp?.max||0)+(SESSION.hp?.aidBonus||0);
-  SESSION.hp.current=Math.min(effMax,SESSION.hp.current+roll);
-  s.used++; addLog(`${t.emoji||''} ${t.label}: ${t.potionFormula||''}=${roll} ${T('logPotionHealed')} ${SESSION.hp.current}`,'log-heal');
+  s.used++;
+  const formula=t.potionFormula||'';
+  addLog(`${t.emoji||''} ${t.label}${formula?' ('+formula+')':''}`,'log-heal');
+  if(formula) showToast(`${T('toastRollFormula')} ${formula}`,'info');
   renderPanel(); updateHPDisplay(); saveAll();
 }
 function changeGold(d){
@@ -2457,27 +2457,32 @@ function shortRest(){
 }
 function adjustHDQty(delta){
   const el=document.getElementById('hd-qty'); if(!el) return;
-  const available=(CHAR.level||1)-(SESSION.hitDice?.used||0);
-  el.textContent=Math.max(1,Math.min(available,+el.textContent+delta));
+  const C=CHAR;
+  const available=(C.level||1)-(SESSION.hitDice?.used||0);
+  const qty=Math.max(1,Math.min(available,+el.textContent+delta));
+  el.textContent=qty;
+  const conMod=abilityMod(C.abilityScores?.CON||10);
+  const modStr=conMod>=0?`+${conMod}`:String(conMod);
+  const fEl=document.getElementById('hd-formula');
+  if(fEl) fEl.textContent=`${qty}d${C.hitDieType||8}${modStr}`;
 }
-function commitHDSpend(){
+function applyHDResult(){
   const S=SESSION, C=CHAR;
-  const el=document.getElementById('hd-qty');
-  const qty=el?+el.textContent:1;
+  const qtyEl=document.getElementById('hd-qty');
+  const resultEl=document.getElementById('hd-result');
+  const qty=qtyEl?+qtyEl.textContent:1;
+  const healed=resultEl?+resultEl.value:0;
+  if(!resultEl?.value.trim()){showToast(T('hdEnterResult'),'error');return;}
   const available=(C.level||1)-(S.hitDice?.used||0);
   const n=Math.min(qty,available);
   if(n<=0){closeHDDialog();return;}
-  const conMod=abilityMod(C.abilityScores?.CON||10);
-  const max=C.hitDieType||8;
-  let total=0; const rolls=[];
-  for(let i=0;i<n;i++){const r=Math.floor(Math.random()*max)+1;rolls.push(r);total+=r+conMod;}
   const effMax=(C.hp?.max||0)+(S.hp?.aidBonus||0);
   const before=S.hp.current||0;
-  S.hp.current=Math.min(effMax,before+Math.max(0,total));
+  S.hp.current=Math.min(effMax,before+Math.max(0,healed));
   S.hitDice.used=(S.hitDice.used||0)+n;
-  const healed=S.hp.current-before;
-  addLog(`${T('logHD')} ${n}d${max}: [${rolls.join(',')}]+${conMod*n} → +${healed} ${T('hpAbbr')}`,'log-heal');
-  showToast(T('toastShortRest').replace('{N}',healed),'success');
+  const actualHealed=S.hp.current-before;
+  addLog(`${T('logHD')} ${n}d${C.hitDieType||8} → +${actualHealed} ${T('hpAbbr')}`,'log-heal');
+  showToast(T('toastShortRest').replace('{N}',actualHealed),'success');
   closeHDDialog();
 }
 function closeHDDialog(skipped=false){
