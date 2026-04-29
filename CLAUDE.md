@@ -171,7 +171,71 @@ CB_EDIT_DATA  -- deep clone of block being edited (for cancel/restore)
 | `injectWizPreview()` | Dispatch live preview update for current wizard |
 | `translateSource(src)` | Translate feature source for display |
 
-## Design Philosophy
+## AI Assistant (`assistant.html`)
+
+A standalone ~700-line HTML file (same zero-dependency constraint). Communicates with `index.html` exclusively via `localStorage` key `dnd_sheet_v2`.
+
+### State
+```
+HISTORY    -- OpenAI-format message array [{role, content}]
+CHAR       -- full character object loaded from localStorage ({version, character, session})
+CHAR_DONE  -- boolean flag: has the character been injected into HISTORY yet?
+```
+
+### Send Flow
+1. On first send, inject character as synthetic `HISTORY[0/1]` (user+assistant turns), stripping `session.portrait` (base64) and `session.logEntries` (unbounded) to save tokens. Set `CHAR_DONE = true`.
+2. Append the real user message and call the provider API.
+3. After the AI responds, push the assistant reply to `HISTORY`.
+
+### JSON Patch Protocol
+- AI is always instructed to return a ` ```json-patch` `` ` block (RFC 6902 ops array) at the end of every character-update response, after the prose and wizard steps.
+- AI must **never** expose technical details (array indices, JSON paths, field names) in prose — only in the patch block.
+- For pure rules questions with no sheet change, the patch block is omitted.
+
+### `render(text)` Pipeline
+| Code block type | Content | Result |
+|---|---|---|
+| ` ```json-patch` `` ` | Valid ops array | "Apply changes" button |
+| ` ```json-patch` `` ` | Malformed / truncated | Subtle `⚠` hint in user's language |
+| ` ```json` `` ` | Array of `{op,path}` objects | Auto-detected as patch → Apply button |
+| ` ```json` `` ` | Anything else | Silently dropped (no output) |
+| Prose | `### heading` | Rendered as `<strong>` bold |
+| Prose | `**bold**` / `*italic*` | Standard inline formatting |
+
+### Apply Flow (`applyPatch(uid)`)
+1. `applyJsonPatch(CHAR, ops)` — minimal RFC 6902 (`add`, `remove`, `replace`). For `add`, missing intermediate paths are auto-created.
+2. `mergeSession()` — re-inject `portrait` and `logEntries` from in-memory `CHAR` (the AI never sees or modifies these).
+3. `localStorage.setItem('dnd_sheet_v2', ...)` — saves updated character.
+4. `CHAR = updated` — keeps in-memory state fresh.
+5. `HISTORY[0]` overwritten in-place with the updated character JSON (re-sync without history bloat).
+6. `toast(UI('applyToast'))` — stays in chat, no redirect.
+
+### i18n (`STRINGS` + `UI()`)
+Same pattern as `index.html` but independent. `STRINGS.en` and `STRINGS.it` hold all user-visible strings. `UI(key, ...args)` resolves with fallback to English. Function-valued keys (e.g. `modelInfo`) receive args via spread.
+
+### Provider Config (`PROVS`)
+| Provider | Auth | Notes |
+|---|---|---|
+| `pollinations` | None (`noKey:true`) | `maxHistory:6`, uses `sysShort` prompt, fetches live model info from `https://text.pollinations.ai/models` |
+| `gemini` | API key | Non-streaming, Gemini format |
+| `groq` | API key | Streaming SSE, OpenAI-compat |
+| `openrouter` | API key | Streaming SSE, OpenAI-compat |
+| `openai` | API key | Streaming SSE |
+
+### Key Functions (`assistant.html`)
+| Function | Purpose |
+|---|---|
+| `send()` | Build message, call provider, render response |
+| `render(text)` | Parse code blocks + markdown, return HTML |
+| `applyPatch(uid)` | Apply stored RFC 6902 ops, save, re-sync |
+| `applyJsonPatch(obj, ops)` | Pure RFC 6902 engine (add/remove/replace) |
+| `mergeSession(jsonStr)` | Re-inject portrait + logEntries before save |
+| `toast(msg)` | Transient notification (stays in chat) |
+| `fetchPollinationsLimits()` | Fetch live model info for settings hint |
+| `UI(key, ...args)` | Translated string lookup with en fallback |
+| `buildSetup()` | Render provider settings panel |
+
+
 
 This app is designed for **hours-long D&D sessions**. Every visual choice prioritizes eye comfort and readability.
 
@@ -209,6 +273,197 @@ Always verify game mechanics (point buy costs, spell slot recovery, ability modi
 - Group related fields logically; use the final step for optional advanced settings.
 - In-modal editing for all sub-content (no browser `prompt()` dialogs).
 
+## Full JSON Schema
+
+This is the canonical schema for both development reference and the AI assistant's system prompt (`assistant.html`). Keep both in sync when adding new fields.
+
+The exported file shape: `{ version:"3.0", savedAt, character:{...}, session:{...} }`
+
+### CHAR — top-level fields
+```
+name                      string
+quote                     string (flavor text / motto)
+race                      string
+class                     string
+subclass                  string
+level                     integer 1–20
+background                string
+alignment                 string
+playerName                string
+speed                     string — e.g. "9 m"
+ac                        number
+armorNote                 string — e.g. "Leather +DEX"
+hp                        { max: number }
+hitDieType                number — 4|6|8|10|12
+initiativeBonus           number (optional flat bonus on top of DEX mod)
+languages                 string (comma-separated)
+toolProficiencies         string
+abilityBudget             number (default 27)
+proficiencyBonusOverride  number|null  (null = auto from level)
+levelUpChecklist          [{text:string, done:boolean}] | null
+```
+
+### CHAR.abilityScores
+```
+{ STR, DEX, CON, INT, WIS, CHA }   all integers
+```
+
+### CHAR.savingThrows
+```
+string[]   ability codes with save proficiency — e.g. ["DEX","CHA"]
+```
+
+### CHAR.skills
+Map of skill → proficiency. Omit skills with no proficiency.
+```
+Keys: acrobatics · animalHandling · arcana · athletics · deception · history
+      insight · intimidation · investigation · medicine · nature · perception
+      performance · persuasion · religion · sleightOfHand · stealth · survival
+Values: "proficient" | "expertise" | "halfProficiency"
+```
+
+### CHAR.spellcasting
+```
+ability              "CHA"|"INT"|"WIS"
+preparedCaster       boolean  (Cleric/Druid/Paladin/Wizard prepare from list)
+focus                string — e.g. "Arcane focus", "Musical instrument"
+spellDCOverride      number|null
+spellAttackOverride  number|null
+```
+
+### CHAR.spellSlots[] (each slot tier)
+```
+level      integer 1–9
+total      integer
+pactMagic  boolean (omit if false) — recovers on short rest
+```
+
+### CHAR.spells[] (each spell)
+```
+level          0=cantrip, 1–9
+name           localized display name
+originalName   English D&D 2024 name (ALWAYS present, ALWAYS English)
+emoji          string
+actionType     "action"|"bonus"|"reaction"|"free"
+school         Evocation|Enchantment|Illusion|Abjuration|Conjuration|Divination|Necromancy|Transmutation
+range          string — e.g. "18 m", "Touch", "Self"
+concentration  boolean (omit field entirely if false)
+duration       string — e.g. "Instantaneous", "1 minute", "Concentration, up to 1 hour"
+saveAbility    "STR"|"DEX"|"CON"|"INT"|"WIS"|"CHA"  (omit if no saving throw)
+description    string — supports **bold**, *italic*, \n line breaks
+scaling        string (omit if no upcast scaling) — e.g. "+1d6 per slot above 1st"
+notes          string (omit if none) — "📌 tactical tip"
+tags           [{label:string, color:"green"|"blue"|"purple"|"red"|"orange"}]
+prepared       boolean (omit unless preparedCaster:true)
+```
+
+### CHAR.weapons[] (each weapon)
+```
+name                string
+quantity            integer
+emoji               string
+damageDie           string — e.g. "1d8"
+damageType          string — e.g. "Piercing", "Slashing", "Bludgeoning"
+attackStat          "STR"|"DEX"
+attackBonusOverride number|null  (null = auto: stat mod + PB)
+damageModOverride   number|null  (null = auto: stat mod)
+properties          string — e.g. "Finesse, Versatile (1d10), Thrown (6/18 m)"
+notes               string
+tags                [{label, color}]
+```
+
+### CHAR.equipment[] (each item)
+```
+name           string
+emoji          string (optional)
+notes          string
+tracked        boolean — if true, shows pip tracker in game panel
+quantity       integer  (required if tracked)
+recovery       "long"|"short"|"manual"  (required if tracked)
+isPotion       boolean (optional) — tapping auto-heals via potionFormula
+potionFormula  string (required if isPotion) — e.g. "2d4+2"
+```
+
+### CHAR.features[] (each feature / class ability)
+```
+title      string
+emoji      string
+source     string — e.g. "Bard", "College of Lore", "Origin Feat", "Combat Rule"
+sectionId  string (auto-generated by slugify — never set manually in JSON)
+tags       [{label, color}]
+contentBlocks  array of content block objects (see below)
+trackers       array of tracker objects (see below) — omit if none
+actions        array of action objects (see below) — omit if none
+```
+
+Content block types:
+```
+{type:"paragraph", text:"..."}
+{type:"note",      text:"📌 ..."}
+{type:"bullets",   bullets:["item 1","item 2"]}
+{type:"table",     rows:[["Label","Value"], ["Range","18 m"]]}
+{type:"subfeature", title, emoji, tags:[], contentBlocks:[...]}
+```
+
+Tracker object (within a feature):
+```
+label     string (optional — shown as pip label)
+emoji     string (optional)
+total     integer
+recovery  "long"|"short"|"manual"
+die       string (optional) — e.g. "d6", displayed on the pip
+showDie   boolean (optional)
+```
+
+Action object (within a feature — shown in game panel action bar):
+```
+label       string (optional)
+emoji       string (optional)
+type        "action"|"bonus"|"reaction"|"free"
+description string — short one-line summary for the action badge
+```
+
+### CHAR.combatAlgorithm[] (decision-tree combat guide)
+```
+emoji   string
+title   string — e.g. "TURN 1", "REACTION"
+steps   [{question?:string, indent?:boolean, bullets:string[]}]
+```
+
+### CHAR.customConditions
+```
+string[]   extra condition labels shown in game panel — e.g. "Aid active (+5 HP)"
+```
+
+### CHAR.sidebar
+```
+(string | {type:"sep"})[]
+Built-in IDs: "game-panel" "base-data" "skills" "spells" "weapons" "equipment" "algorithm"
+Feature IDs:  slugify(feature.title)
+Separators:   {type:"sep"}
+```
+
+### SESSION object
+```
+hp              { current, temp, aidBonus }
+hitDice         { used }
+trackers        { [id:string]: { used } }   — id = slugify(label||featureTitle) or "eq-"+slugify(name)
+spellSlots      { [level:string]: { used } }
+gold            number
+round           number
+concentration   string
+initiative      string
+conditions      string[]
+deathSucc       number
+deathFail       number
+notes           string
+portrait        string|null  (base64 data URL — preserve exactly, never truncate)
+logEntries      [{text, type, ts}]
+showGettingStarted  boolean
+hdDialog        boolean
+```
+
+---
 ## Auto-Compute + Override Pattern
 
 Every derived value follows the same pattern:

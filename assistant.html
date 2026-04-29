@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>D&D Sheets — AI Assistant</title>
+  <style>
+:root{--bg:#1a1a2e;--bg2:#22223a;--bg3:#2e2e4a;--text:#d8d8e8;--muted:#8888aa;--accent:#9090e0;--border:#3a3a5c;--bl:#2a2a44;--green:#2d7a2d;--on-accent:#1a1a2e;--bg-card:#222238;--border-light:#30304a;--accent-dim:#2a2a50;--shadow-sm:0 2px 8px rgba(0,0,0,.25);}
+[data-theme="light"]{--bg:#f0efe8;--bg2:#fafaf6;--bg3:#e8e7e0;--text:#2a2a34;--muted:#5a5a6a;--accent:#5858b8;--border:#c8c6b8;--bl:#d8d6cc;--green:#226622;--on-accent:#ffffff;--bg-card:#fafaf6;--border-light:#d8d6cc;--accent-dim:#e8e6f4;--shadow-sm:0 1px 6px rgba(40,40,60,.06);}
+*{box-sizing:border-box;margin:0;padding:0;}
+html,body{height:100%;overflow:hidden;}
+body{background:var(--bg);color:var(--text);font-family:system-ui,sans-serif;line-height:1.5;display:flex;flex-direction:column;max-width:800px;margin:0 auto;}
+.hdr{padding:.7rem 1.1rem .4rem;border-bottom:1px solid var(--bl);flex-shrink:0;display:flex;justify-content:space-between;align-items:center;gap:.6rem;}
+.hdr h1{color:var(--accent);font-size:1.15rem;white-space:nowrap;}
+.hdr-links{display:flex;gap:.5rem;align-items:center;}
+.ctrl-btn{background:var(--bg-card);border:1px solid var(--border-light);color:var(--text);border-radius:8px;padding:7px 11px;font-size:.9em;cursor:pointer;transition:all .15s;box-shadow:var(--shadow-sm);text-decoration:none;display:inline-flex;align-items:center;font-family:inherit;white-space:nowrap;}
+.ctrl-btn:hover{border-color:var(--accent);color:var(--accent);}
+.ctrl-btn.active{background:var(--accent-dim);border-color:var(--accent);color:var(--accent);}
+[data-theme="light"] .ctrl-btn{box-shadow:0 1px 6px rgba(0,0,0,.08);}
+details.panel{border-bottom:1px solid var(--bl);flex-shrink:0;}
+details.panel>summary{padding:.48rem 1.1rem;cursor:pointer;list-style:none;color:var(--accent);font-size:.84rem;font-weight:600;display:flex;justify-content:space-between;align-items:center;user-select:none;}
+details.panel>summary::-webkit-details-marker{display:none;}
+details.panel>summary::after{content:'▾';color:var(--muted);font-weight:400;}
+details[open].panel>summary::after{content:'▴';}
+.pb{padding:.55rem 1.1rem .8rem;background:var(--bg2);}
+.row{display:flex;gap:.4rem;align-items:center;flex-wrap:wrap;margin-bottom:.38rem;}
+label{font-size:.78rem;color:var(--muted);white-space:nowrap;}
+select,input[type=password]{background:var(--bg3);color:var(--text);border:1px solid var(--border);border-radius:5px;padding:.26rem .52rem;font-size:.82rem;flex:1;min-width:0;outline:none;}
+select:focus,input:focus{border-color:var(--accent);}
+textarea.jta{width:100%;height:65px;background:var(--bg3);color:var(--text);border:1px solid var(--border);border-radius:5px;padding:.4rem .52rem;font-family:monospace;font-size:.71rem;resize:vertical;display:block;outline:none;}
+textarea.jta:focus{border-color:var(--accent);}
+.btn{border:none;border-radius:5px;padding:.28rem .8rem;font-size:.79rem;font-weight:700;cursor:pointer;transition:opacity .15s;white-space:nowrap;}
+.btn:hover{opacity:.82;}.btn:disabled{opacity:.4;cursor:default;}
+.ba{background:var(--accent);color:var(--on-accent);}.bg{background:var(--bg3);color:var(--text);border:1px solid var(--border);}
+.bdl{background:var(--green);color:#fff;width:100%;margin-top:.4rem;padding:.38rem;font-size:.82rem;}
+.bload{background:var(--accent);color:var(--on-accent);width:100%;margin-top:.3rem;padding:.38rem;font-size:.82rem;}
+.bsm{padding:.18rem .58rem;font-size:.74rem;}
+.chat{flex:1;overflow-y:auto;padding:.65rem 1.1rem;display:flex;flex-direction:column;gap:.55rem;min-height:0;}
+.msg{display:flex;flex-direction:column;max-width:92%;}
+.msg.u{align-self:flex-end;align-items:flex-end;}.msg.a{align-self:flex-start;align-items:flex-start;}
+.bbl{padding:.5rem .8rem;border-radius:11px;font-size:.85rem;line-height:1.55;word-break:break-word;}
+.msg.u .bbl{background:var(--accent);color:var(--on-accent);}.msg.a .bbl{background:var(--bg2);border:1px solid var(--bl);}
+.bbl pre{background:var(--bg3);border:1px solid var(--border);border-radius:5px;padding:.45rem;font-size:.71rem;overflow-x:auto;white-space:pre-wrap;margin:.3rem 0;max-height:180px;}
+.ibar{border-top:1px solid var(--bl);padding:.55rem 1.1rem;display:flex;gap:.48rem;align-items:flex-end;flex-shrink:0;}
+#ui{flex:1;background:var(--bg2);color:var(--text);border:1px solid var(--border);border-radius:7px;padding:.42rem .7rem;font-size:.86rem;font-family:inherit;resize:none;height:38px;max-height:100px;outline:none;line-height:1.45;}
+#ui:focus{border-color:var(--accent);}
+#sb{width:38px;height:38px;border-radius:7px;font-size:1rem;padding:0;flex-shrink:0;}
+.hint{color:var(--muted);font-size:.75rem;margin-top:.26rem;}
+.cbdg{color:var(--accent);font-size:.73rem;font-weight:400;}
+a{color:var(--accent);}
+@keyframes blink{0%,100%{opacity:.15;}50%{opacity:.85;}}
+.thinking .bbl::after{content:' ● ● ●';animation:blink 1.4s infinite;color:var(--muted);font-size:.68rem;}
+.chips{padding:.35rem 1.1rem .2rem;display:flex;flex-wrap:wrap;gap:.35rem;flex-shrink:0;}
+.chip{background:var(--bg3);color:var(--accent);border:1px solid var(--border);border-radius:12px;padding:.22rem .7rem;font-size:.76rem;cursor:pointer;transition:border-color .15s;}
+.chip:hover{border-color:var(--accent);background:var(--bg2);}
+.toast-notif{position:fixed;bottom:4.5rem;left:50%;transform:translateX(-50%) translateY(8px);background:var(--bg-card);color:var(--text);border:1px solid var(--accent);border-radius:8px;padding:.45rem 1.1rem;font-size:.82rem;font-weight:600;opacity:0;transition:opacity .22s,transform .22s;pointer-events:none;z-index:999;white-space:nowrap;}
+.toast-notif.show{opacity:1;transform:translateX(-50%) translateY(0);}
+  </style>
+</head>
+<body>
+  <div class="hdr">
+    <h1>D&D Sheets — AI</h1>
+    <div class="hdr-links">
+      <button class="ctrl-btn" id="btn-clear" onclick="clearChat()"></button>
+      <button class="ctrl-btn" id="btn-lang" onclick="toggleLang()"></button>
+      <button class="ctrl-btn" id="btn-theme" onclick="toggleTheme()"></button>
+      <a class="ctrl-btn" href="index.html" id="btn-back"></a>
+    </div>
+  </div>
+  <details class="panel" id="setup">
+    <summary><span id="lbl-settings"></span> <span class="cbdg" id="kstat"></span></summary>
+    <div class="pb" id="setup-body"></div>
+  </details>
+  <details class="panel" id="cpanel">
+    <summary><span id="lbl-character"></span> <span class="cbdg" id="cname"></span></summary>
+    <div class="pb" id="char-body"></div>
+  </details>
+  <div class="chat" id="chat"></div>
+  <div class="chips" id="chips" style="display:none"></div>
+  <div class="ibar">
+    <textarea id="ui" onkeydown="onKey(event)" oninput="resize(this)"></textarea>
+    <button class="btn ba" id="sb" onclick="send()">&#9658;</button>
+  </div>
+  <script type="text/x-prompt" id="sys">You are an expert D&D 2024 assistant. You help with two things equally well:
+
+1. General D&D 2024 questions — rules, spells, classes, subclasses, feats, monsters, conditions, action economy, combat, exploration, social pillars, magic items, multiclassing, and anything else from the 2024 core rules.
+2. Character sheet updates — adding spells, features, equipment, weapons, levelling up, updating stats, etc. for the D&D Sheets app (https://salvodicara.github.io/dnd-sheets/).
+
+For general questions, just answer clearly and accurately.
+For character updates, always respond in this exact order:
+1. **Explanation** — what you are changing and why (1–3 sentences).
+2. **Wizard steps** — numbered instructions for doing this manually via the app's UI wizards.
+3. **JSON Patch** — a ```json-patch``` block at the very end. See output format section below.
+If no character has been shared yet, still give explanation + wizard steps + a full creation patch: an ops array with one op — [{"op":"add","path":"/character","value":{...}}] — containing a complete, schema-valid character object (all fields from the schema below).
+
+## Style rules (for character content)
+1. Match the language of existing JSON content (Italian descriptions → write in Italian).
+2. Use **bold** for key D&D terms: damage types, conditions, action types, spell names.
+3. Use 📌 prefix for tactical tips — short and play-relevant, not rulebook text.
+4. Descriptions are concise reference text — read mid-session, not for learning.
+5. Spells: always put the English D&D 2024 name in originalName, even if name is localized.
+6. Meaningful emojis: 🔥 fire · ❤️ healing · ⚔️ melee · 🔒 control · 💥 AoE · 🛡️ defense · 🎵 bardic · 👁️ illusion · ⚡ lightning · ❄️ cold · ☠️ necrotic · ✨ radiant · 🌿 nature
+7. Verify mechanics at: http://dnd2024.wikidot.com/
+8. Never expose technical details in prose or wizard steps: no array indices, no JSON paths, no field names, no "position N", no "op: remove". Speak only in plain D&D terms (e.g. "I'll remove the Invisibility Potion from your equipment", not "I'll remove item at index 9").
+
+## Complete JSON schema
+
+Exported file shape: { version:"3.0", savedAt, character:{...}, session:{...} }
+
+### character — top-level fields
+name, quote, race, class, subclass, level (1–20), background, alignment, playerName
+speed (e.g. "9 m"), ac (number), armorNote (e.g. "Leather +DEX")
+hp: { max: number }
+hitDieType: 4|6|8|10|12
+initiativeBonus: number (optional flat bonus on top of DEX)
+languages (comma-separated string), toolProficiencies (string)
+abilityBudget: number (default 27)
+proficiencyBonusOverride: number|null (null = auto from level)
+levelUpChecklist: [{text:string, done:boolean}] | null
+
+### character.abilityScores
+{ STR, DEX, CON, INT, WIS, CHA }  — all integers
+
+### character.savingThrows
+string[] — ability codes with save proficiency, e.g. ["DEX","CHA"]
+
+### character.skills
+Map of skill → proficiency. Omit skills with no proficiency.
+Keys: acrobatics · animalHandling · arcana · athletics · deception · history · insight · intimidation · investigation · medicine · nature · perception · performance · persuasion · religion · sleightOfHand · stealth · survival
+Values: "proficient" | "expertise" | "halfProficiency"
+
+### character.spellcasting
+ability: "CHA"|"INT"|"WIS"
+preparedCaster: boolean (Cleric/Druid/Paladin/Wizard = true; Bard/Warlock/Sorcerer = false)
+focus: string (e.g. "Arcane focus", "Musical instrument")
+spellDCOverride: number|null
+spellAttackOverride: number|null
+
+### character.spellSlots[] — each slot tier
+level: integer 1–9
+total: integer
+pactMagic: boolean (omit if false) — recovers on short rest
+
+### character.spells[] — each spell
+level: 0=cantrip, 1–9
+name: localized display name
+originalName: English D&D 2024 name (ALWAYS present, ALWAYS English)
+emoji: string
+actionType: "action"|"bonus"|"reaction"|"free"
+school: Evocation|Enchantment|Illusion|Abjuration|Conjuration|Divination|Necromancy|Transmutation
+range: string (e.g. "18 m", "Touch", "Self")
+concentration: boolean (omit entirely if false)
+duration: string (e.g. "Instantaneous", "1 minute", "Concentration, up to 1 hour")
+saveAbility: "STR"|"DEX"|"CON"|"INT"|"WIS"|"CHA" (omit if no saving throw)
+description: string — **bold** key terms, \n for line breaks
+scaling: string (omit if no upcast) — e.g. "+1d6 per slot above 1st"
+notes: string (omit if none) — "📌 tactical tip"
+tags: [{label:string, color:"green"|"blue"|"purple"|"red"|"orange"}]
+prepared: boolean (omit unless preparedCaster:true)
+
+### character.weapons[] — each weapon
+name, quantity (integer), emoji
+damageDie: string (e.g. "1d8")
+damageType: string (e.g. "Piercing", "Slashing", "Bludgeoning")
+attackStat: "STR"|"DEX"
+attackBonusOverride: number|null (null = auto: stat mod + PB)
+damageModOverride: number|null (null = auto: stat mod)
+properties: string (e.g. "Finesse, Versatile (1d10), Thrown (6/18 m)")
+notes: string
+tags: [{label, color}]
+
+### character.equipment[] — each item
+name, emoji (optional), notes
+tracked: boolean — if true, shows pip tracker in game panel
+  quantity: integer (required if tracked)
+  recovery: "long"|"short"|"manual" (required if tracked)
+  isPotion: boolean (optional) — tapping auto-heals via potionFormula
+  potionFormula: string (required if isPotion, e.g. "2d4+2")
+
+### character.features[] — each feature / class ability
+title, emoji
+source: string (e.g. "Bard", "College of Lore", "Origin Feat", "Combat Rule")
+sectionId: auto-generated by app — DO NOT set this field manually
+tags: [{label, color}]
+contentBlocks: array of blocks — use whatever mix fits:
+  {type:"paragraph", text:"..."}
+  {type:"note", text:"📌 ..."}
+  {type:"bullets", bullets:["item 1","item 2"]}
+  {type:"table", rows:[["Label","Value"],["Range","18 m"]]}
+  {type:"subfeature", title, emoji, tags:[], contentBlocks:[...]}
+trackers: (omit if none) [{label?, emoji?, total, recovery:"long"|"short"|"manual", die?:"d6", showDie?:true}]
+actions: (omit if none) [{label?, emoji?, type:"action"|"bonus"|"reaction"|"free", description}]
+
+### character.combatAlgorithm[] — decision-tree combat guide
+emoji, title (e.g. "TURN 1", "REACTION")
+steps: [{question?:string, indent?:boolean, bullets:string[]}]
+
+### character.customConditions
+string[] — extra condition labels in game panel (e.g. "Aid active (+5 HP)")
+
+### character.sidebar
+Array of section IDs and separators.
+Built-in IDs: "game-panel" "base-data" "skills" "spells" "weapons" "equipment" "algorithm"
+Feature IDs: slugify(feature.title) — lowercase-kebab-case
+Separators: {type:"sep"}
+
+### session object — preserve as-is in Mode A
+hp: { current, temp, aidBonus }
+hitDice: { used }
+trackers: { [id]: { used } } — id = slugify(tracker label or feature title), or "eq-"+slugify(name) for equipment
+spellSlots: { [level]: { used } } — level as string key
+gold, round, concentration, initiative (all primitives)
+conditions: string[]
+deathSucc, deathFail: number
+notes: string
+portrait: string|null — base64 data URL, preserve exactly
+logEntries: [{text, type, ts}]
+showGettingStarted: boolean
+hdDialog: boolean
+
+## Wizard steps (Mode B)
+
+Enter edit mode: ✏️ top-right or ＋ FAB bottom-right (edit mode only).
+
+Level Up (＋ → Level Up):
+  Step 1 — HP increase: "Use average" pre-checked; uncheck to enter rolled value
+  Step 2 — Checklist: review, then close wizard and work through items
+
+Add Spell (＋ → Add Spell):
+  Step 1: Level · Name · Original English name · Emoji · Action type · School
+  Step 2: Range · Duration · Concentration checkbox · Save ability · Description · Scaling · Notes
+  Step 3: Tags (optional)
+
+Add Feature (＋ → Add Feature):
+  Step 1: Title · Emoji · Source
+  Step 2: Content blocks — add each block one at a time (paragraph / note / bullets / table / sub-feature)
+  Step 3: Trackers · Actions
+
+Add Weapon (＋ → Add Weapon):
+  Step 1: Name · Quantity · Emoji · Damage die · Damage type · Attack stat · Properties · Notes
+  Step 2: Tags (optional)
+
+Add Equipment (＋ → Add Item):
+  Name · Emoji · Notes · "Track quantity" checkbox
+  If tracked: Quantity · Recovery (Long/Short/Manual) · "Is a potion" · Healing formula
+
+Edit Base Data (✏️ in Base Data header):
+  All identity fields, ability scores, saving throws, AC, HP max, speed, spellcasting setup
+
+Edit Skills (✏️ in Skills header): set proficiency level for all 18 skills
+
+Edit Spell Slots (✏️ per slot row): level, total, pact magic toggle
+
+## JSON Patch output format (RFC 6902)
+End EVERY character update response with a ```json-patch``` block — a JSON array of patch operations.
+Always try to produce a complete patch; the app handles malformed patches gracefully.
+Output the block directly after the wizard steps, with NO heading or label before it.
+- Append to array: {"op":"add","path":"/character/spells/-","value":{...}}
+- Update a field:  {"op":"replace","path":"/character/abilityScores/STR","value":18}
+- Remove an item:  {"op":"remove","path":"/character/spells/2"}
+
+Rules:
+- Use /character/... or /session/... as the path prefix
+- Append to arrays with /- ; use /N (0-based index) to replace/remove
+- Never modify session.portrait or session.logEntries
+- Do not add sectionId to features (the app auto-generates it)
+- If hp.max changes by N, also adjust session.hp.current by the same N
+- For complex changes, use targeted ops — do NOT output the full JSON
+- For pure rules questions (no sheet change), omit the json-patch block entirely
+
+## Wizard steps format
+Number each step. Reference exact UI labels.
+Show exact values for every field.
+Separate multiple additions into separate numbered sequences.
+
+Now share your character JSON (or describe your sheet) and tell me what to add or change.</script>
+  <script>// ── Translations ──────────────────────────────────────────────────────────
+const STRINGS={
+  en:{
+    settings:'Settings', character:'Character', back:'← App',
+    provLabel:'Provider', keyLabel:'API Key', keyPlaceholder:'Paste your key here',
+    saveBtn:'Save', loadFile:'Load file', useChar:'Use this character',
+    noKeyMsg:'✓ No key needed — just start chatting!',
+    charHint:'If you opened the main app in this browser, your character is already loaded automatically.',
+    inputPlaceholder:'Ask anything — rules, what to pick, what to add…',
+    freeStatus:'✓ free', keySavedStatus:'✓ key saved',
+    langToggle:'🇮🇹 IT', titleTheme:'Toggle theme', titleLang:'Passa all\'italiano',
+    keySavedMsg:'Key saved! Ask a question or describe what to add to your character.',
+    charError:'Not a valid character file. Export from the app\'s Save button.',
+    sendError:'No API key. Open Settings or switch to the free provider.',
+    emptyResp:'(empty response — try rephrasing)',
+    chips:['What should I pick at my next level up?','What are my best options in combat?','Help me understand my class features','What does concentration mean?','Explain the action economy','What gear should I carry?'],
+    welcomeChar:(n,l)=>'I can see **'+n+(l?', level '+l:'')+'** from your app.\n\nAsk me anything — rules, what to pick at level up, or what to add and I\'ll guide you step by step.',
+    welcomeReady:'Ready! Ask me any D&D 2024 question.\n\nTo also update your character, open the main app first — it will load here automatically.',
+    welcomeSetup:'Hello! Open **Settings** above to pick a provider.\n\nThe first option (free, no account needed) is the easiest way to start.',
+    charLoaded:(n,l)=>'Got it — **'+n+(l?', level '+l:'')+'** loaded. What would you like to know or change?',
+    applyBtn:'Apply changes',
+    applyToast:'Changes applied ✓',
+    applyError:'Could not apply patch',
+    loadingModel:'Loading model info…',
+    modelInfo:(name,desc,tier)=>'Model: '+name+(desc?' ('+desc+')':'')+', tier: '+(tier||'anonymous')+'. Context limited to 6 messages — for best results use a provider with an API key.',
+    modelLimitsFallback:'Context limited to 6 messages — for best results use a provider with an API key.',
+    modelLimitsFail:'Context limited to 6 messages. Responses may be truncated on long character sheets.',
+    patchFailed:'Could not apply automatically — follow the wizard steps above.',
+    rateLimited:'The free service is temporarily busy. Wait a moment and try again, or use a provider with an API key (Settings).',
+    clearChat:'Clear chat',
+  },
+  it:{
+    settings:'Impostazioni', character:'Personaggio', back:'← App',
+    provLabel:'Provider', keyLabel:'Chiave API', keyPlaceholder:'Incolla la chiave qui',
+    saveBtn:'Salva', loadFile:'Carica file', useChar:'Usa questo personaggio',
+    noKeyMsg:'✓ Nessuna chiave — inizia a chattare!',
+    charHint:'Se hai aperto l\'app principale in questo browser, il tuo personaggio è già caricato automaticamente.',
+    inputPlaceholder:'Chiedi qualcosa — regole, cosa scegliere, cosa aggiungere…',
+    freeStatus:'✓ gratuito', keySavedStatus:'✓ chiave salvata',
+    langToggle:'🇬🇧 EN', titleTheme:'Cambia tema', titleLang:'Switch to English',
+    keySavedMsg:'Chiave salvata! Fai una domanda o descrivi cosa aggiungere al tuo personaggio.',
+    charError:'File non valido. Esportalo dall\'app con il pulsante Salva.',
+    sendError:'Nessuna chiave API. Apri Impostazioni o passa al provider gratuito.',
+    emptyResp:'(risposta vuota — prova a riformulare)',
+    chips:['Cosa scelgo al prossimo livello?','Quali sono le mie opzioni migliori in combattimento?','Spiega le mie abilità di classe','Cosa significa concentrazione?','Spiega l\'economia delle azioni','Che equipaggiamento dovrei portare?'],
+    welcomeChar:(n,l)=>'Vedo **'+n+(l?', livello '+l:'')+'** dalla tua app.\n\nChiedimi tutto — regole, cosa scegliere al prossimo livello, o dimmi cosa aggiungere e ti guido passo dopo passo.',
+    welcomeReady:'Pronto! Chiedimi qualsiasi cosa sul D&D 2024.\n\nPer aggiornare il tuo personaggio, apri prima l\'app principale — si caricherà qui automaticamente.',
+    welcomeSetup:'Ciao! Apri **Impostazioni** qui sopra per scegliere un provider.\n\nLa prima opzione (gratis, senza account) è il modo più semplice per iniziare.',
+    charLoaded:(n,l)=>'Perfetto — **'+n+(l?', livello '+l:'')+'** caricato. Cosa vuoi sapere o modificare?',
+    applyBtn:'Applica modifiche',
+    applyToast:'Modifiche applicate ✓',
+    applyError:'Impossibile applicare la patch',
+    loadingModel:'Caricamento modello…',
+    modelInfo:(name,desc,tier)=>'Modello: '+name+(desc?' ('+desc+')':'')+', tier: '+(tier||'anonymous')+'. Contesto limitato a 6 messaggi — usa un provider con chiave API per risultati migliori.',
+    modelLimitsFallback:'Contesto limitato a 6 messaggi — usa un provider con chiave API per risultati migliori.',
+    modelLimitsFail:'Contesto limitato a 6 messaggi. Le risposte potrebbero essere troncate su personaggi complessi.',
+    patchFailed:'Impossibile applicare automaticamente — segui i passi guidati qui sopra.',
+    rateLimited:'Il servizio gratuito è momentaneamente occupato. Attendi un momento e riprova, o usa un provider con chiave API (Impostazioni).',
+    clearChat:'Pulisci chat',
+  },
+};
+// ── Config ──────────────────────────────────────────────────────────────
+const PROVS={
+  pollinations:{name:'Free — no key needed',hint:'Works instantly. No account or sign-up. Powered by Pollinations.ai.',ep:'https://text.pollinations.ai/openai?referrer=dnd-sheets',model:'openai',noKey:true,noStream:true,maxHistory:6,
+    sysShort:`You are a D&D 2024 assistant for the D&D Sheets app.
+For updates: 1) explain briefly in plain D&D language (no array indices, no JSON paths, no technical terms), 2) give numbered wizard steps (UI path), 3) always end with a \`\`\`json-patch\`\`\` block (RFC 6902 ops array). Paths: /character/... or /session/..., use /- to append, /N to replace/remove. Only omit for pure rules questions.
+If no character JSON has been shared yet, still output a creation patch — an ops array with one op: [{"op":"add","path":"/character","value":{...}}] with these key fields: name, race, class, subclass, level, background, abilityScores:{STR,DEX,CON,INT,WIS,CHA} (integers), savingThrows (string[]), skills (map to "proficient"|"expertise"), hp:{max}, hitDieType (4|6|8|10|12), speed, languages, sidebar:["game-panel","base-data","skills","spells","weapons","equipment","algorithm"].
+For rules questions: just answer. Use **bold** for D&D terms. Verify: http://dnd2024.wikidot.com/`},
+  gemini:{name:'Google Gemini 2.0 Flash (free tier)',hint:'Free tier, generous context. Get key at aistudio.google.com — no credit card.',klink:'https://aistudio.google.com/app/apikey',ep:'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent'},
+  groq:{name:'Groq — Llama 3.3 70B (free)',hint:'Free & fast. Context limit may affect large characters.',klink:'https://console.groq.com/keys',ep:'https://api.groq.com/openai/v1/chat/completions',model:'llama-3.3-70b-versatile'},
+  openrouter:{name:'OpenRouter (free models)',hint:'Various free models available.',klink:'https://openrouter.ai/settings/keys',ep:'https://openrouter.ai/api/v1/chat/completions',model:'meta-llama/llama-3.3-70b-instruct:free'},
+  openai:{name:'OpenAI GPT-4o-mini',hint:'Best quality. Requires a paid OpenAI account.',klink:'https://platform.openai.com/api-keys',ep:'https://api.openai.com/v1/chat/completions',model:'gpt-4o-mini'},
+};
+// ── State ───────────────────────────────────────────────────────────────
+let HISTORY=[], CHAR=null, CHAR_DONE=false;
+let currentLang=localStorage.getItem('dnd-lang')||'it';
+function UI(key,...args){const s=(STRINGS[currentLang]||STRINGS.en)[key]||(STRINGS.en[key]||key);return typeof s==='function'?s(...args):s;}
+// ── Theme ────────────────────────────────────────────────────────────────
+function applyTheme(t){
+  document.documentElement.setAttribute('data-theme',t||'dark');
+  const btn=document.getElementById('btn-theme');
+  if(btn) btn.textContent=(t==='light')?'🌙':'☀️';
+}
+function toggleTheme(){
+  const cur=document.documentElement.getAttribute('data-theme')||'dark';
+  const next=cur==='dark'?'light':'dark';
+  localStorage.setItem('dnd-theme',next);
+  applyTheme(next);
+}
+// ── Language ─────────────────────────────────────────────────────────────
+function applyLang(){
+  const lBtn=document.getElementById('btn-lang');
+  const tBtn=document.getElementById('btn-theme');
+  const backBtn=document.getElementById('btn-back');
+  const clearBtn=document.getElementById('btn-clear');
+  if(lBtn){lBtn.textContent=UI('langToggle');lBtn.title=UI('titleLang');}
+  if(tBtn) tBtn.title=UI('titleTheme');
+  if(backBtn) backBtn.textContent=UI('back');
+  if(clearBtn) clearBtn.textContent=UI('clearChat');
+  const s=document.getElementById('lbl-settings'); if(s) s.textContent=UI('settings');
+  const c=document.getElementById('lbl-character'); if(c) c.textContent=UI('character');
+  const inp=document.getElementById('ui'); if(inp) inp.placeholder=UI('inputPlaceholder');
+}
+function toggleLang(){
+  currentLang=currentLang==='it'?'en':'it';
+  localStorage.setItem('dnd-lang',currentLang);
+  buildSetup();
+  buildCharPanel();
+  const chips=document.getElementById('chips');
+  if(chips&&chips.style.display!=='none') showChips();
+  applyLang();
+}
+function clearChat(){
+  HISTORY=[]; CHAR_DONE=false;
+  localStorage.removeItem('dnd_ai_history');
+  document.getElementById('chat').innerHTML='';
+  document.getElementById('chips').style.display='none';
+  const p=gProv(), info=PROVS[p], hasKey=info.noKey||(!!gKey(p));
+  const charName=CHAR?.character?.name||'', charLvl=CHAR?.character?.level||'';
+  if(charName&&hasKey){addMsg('a',UI('welcomeChar',charName,charLvl));showChips();}
+  else if(hasKey){addMsg('a',UI('welcomeReady'));showChips();}
+  else{addMsg('a',UI('welcomeSetup'));}
+}
+function saveHistory(){
+  try{localStorage.setItem('dnd_ai_history',JSON.stringify({history:HISTORY,charDone:CHAR_DONE,charName:CHAR?.character?.name||''}));}catch(e){}
+}
+function restoreHistory(){
+  try{
+    const raw=localStorage.getItem('dnd_ai_history'); if(!raw)return false;
+    const saved=JSON.parse(raw);
+    if(!Array.isArray(saved.history)||!saved.history.length)return false;
+    if((saved.charName||'')!==(CHAR?.character?.name||''))return false;
+    HISTORY=saved.history; CHAR_DONE=saved.charDone;
+    for(const msg of HISTORY){
+      if(msg.content.startsWith('Here is my full character JSON:'))continue;
+      if(msg.content==='Got it — I have your full character. What would you like to change?')continue;
+      addMsg(msg.role==='user'?'u':'a',msg.content);
+    }
+    return true;
+  }catch(e){return false;}
+}
+// ── Persistence ─────────────────────────────────────────────────────────
+const gKey=p=>localStorage.getItem('dnd_k_'+p)||'';
+const sKey=(p,v)=>localStorage.setItem('dnd_k_'+p,v);
+const gProv=()=>localStorage.getItem('dnd_prov')||'pollinations';
+const sProv=p=>localStorage.setItem('dnd_prov',p);
+// ── Suggestion chips ─────────────────────────────────────────────────────
+function showChips(){
+  const el=document.getElementById('chips');
+  el.innerHTML=UI('chips').map(c=>'<button class="chip" onclick="sendChip(this)">'+esc(c)+'</button>').join('');
+  el.style.display='';
+}
+function sendChip(btn){
+  document.getElementById('ui').value=btn.textContent;
+  document.getElementById('chips').style.display='none';
+  send();
+}
+// ── Build panels ─────────────────────────────────────────────────────────
+function buildSetup(){
+  const p=gProv(), info=PROVS[p];
+  const keyRow=info.noKey
+    ?'<p class="hint" style="color:var(--green);font-weight:600;margin-top:.2rem;">'+UI('noKeyMsg')+'</p>'
+     +'<p class="hint" id="pollinations-limits" style="margin-top:.3rem;">'+UI('loadingModel')+'</p>'
+    :'<div class="row"><label>'+UI('keyLabel')+'</label>'
+     +'<input type="password" id="akey" placeholder="'+UI('keyPlaceholder')+'">'
+     +'<button class="btn ba bsm" onclick="saveKey()">'+UI('saveBtn')+'</button></div>'
+     +'<p class="hint" id="khint"></p>';
+  document.getElementById('setup-body').innerHTML=
+    '<div class="row"><label>'+UI('provLabel')+'</label>'
+    +'<select id="prov" onchange="onProv()">'
+    +'<option value="pollinations">Free — no key needed (Pollinations.ai)</option>'
+    +'<option value="gemini">Google Gemini 2.0 Flash (free tier, needs key)</option>'
+    +'<option value="groq">Groq — Llama 3 (free tier, needs key)</option>'
+    +'<option value="openrouter">OpenRouter (free models, needs key)</option>'
+    +'<option value="openai">OpenAI GPT-4o-mini (paid, needs key)</option>'
+    +'</select></div>'+keyRow;
+  document.getElementById('prov').value=p;
+  if(!info.noKey){document.getElementById('akey').value=gKey(p);updHint(p);}
+  if(info.noKey) fetchPollinationsLimits();
+}
+async function fetchPollinationsLimits(){
+  const el=document.getElementById('pollinations-limits');
+  if(!el)return;
+  try{
+    const r=await fetch('https://text.pollinations.ai/models');
+    const models=await r.json();
+    const m=models.find(x=>Array.isArray(x.aliases)&&x.aliases.includes(PROVS.pollinations.model))||models[0];
+    el.textContent=m?UI('modelInfo',m.name,m.description,m.tier):UI('modelLimitsFallback');
+  }catch(e){
+    el.textContent=UI('modelLimitsFail');
+  }
+}
+function buildCharPanel(){
+  document.getElementById('char-body').innerHTML=
+    '<p class="hint" style="margin-bottom:.35rem;">'+UI('charHint')+'</p>'
+    +'<textarea class="jta" id="cjson" placeholder=\'{"version":"3.0","character":{...}}\'></textarea>'
+    +'<div class="row" style="margin-top:.32rem;">'
+    +'<button class="btn bg bsm" onclick="document.getElementById(\'fin\').click()">'+UI('loadFile')+'</button>'
+    +'<button class="btn ba bsm" onclick="setChar()">'+UI('useChar')+'</button>'
+    +'<input type="file" id="fin" accept=".json" style="display:none" onchange="loadFile(event)"></div>';
+}
+// ── Init ─────────────────────────────────────────────────────────────────
+window.addEventListener('load',()=>{
+  applyTheme(localStorage.getItem('dnd-theme')||'dark');
+  buildSetup();
+  buildCharPanel();
+  let charName='', charLvl='';
+  try{
+    const raw=localStorage.getItem('dnd_sheet_v2');
+    if(raw){
+      const d=JSON.parse(raw);
+      if(d.character){CHAR=d;CHAR_DONE=false;charName=d.character.name||'';charLvl=d.character.level||'';
+        document.getElementById('cname').textContent='— '+charName+(charLvl?' lv'+charLvl:'');}
+    }
+  }catch(e){}
+  const p=gProv(), info=PROVS[p], hasKey=info.noKey||(!!gKey(p));
+  document.getElementById('kstat').textContent=info.noKey?UI('freeStatus'):gKey(p)?UI('keySavedStatus'):'';
+  if(!restoreHistory()){
+    if(charName&&hasKey){addMsg('a',UI('welcomeChar',charName,charLvl));showChips();}
+    else if(hasKey){addMsg('a',UI('welcomeReady'));showChips();}
+    else{addMsg('a',UI('welcomeSetup'));document.getElementById('setup').open=true;}
+  }
+  applyLang();
+});
+function onProv(){
+  const p=document.getElementById('prov').value;
+  sProv(p);
+  buildSetup();
+  document.getElementById('kstat').textContent=PROVS[p].noKey?UI('freeStatus'):gKey(p)?UI('keySavedStatus'):'';
+}
+function updHint(p){
+  const i=PROVS[p], el=document.getElementById('khint');
+  if(el) el.innerHTML=i.hint+(i.klink?' <a href="'+i.klink+'" target="_blank">Get key ↗</a>':'');
+  document.getElementById('kstat').textContent=gKey(p)?UI('keySavedStatus'):'';
+}
+function saveKey(){
+  const p=document.getElementById('prov').value, k=document.getElementById('akey').value.trim();
+  sKey(p,k); updHint(p); document.getElementById('setup').open=false;
+  if(k&&!HISTORY.length) addMsg('a',UI('keySavedMsg'));
+}
+// ── Character ────────────────────────────────────────────────────────────
+function loadFile(e){
+  const f=e.target.files[0]; if(!f)return;
+  const r=new FileReader(); r.onload=ev=>{document.getElementById('cjson').value=ev.target.result;setChar();}; r.readAsText(f);
+}
+function setChar(){
+  const raw=(document.getElementById('cjson')||{}).value?.trim(); if(!raw)return;
+  try{
+    CHAR=JSON.parse(raw);
+    const c=CHAR.character||CHAR, name=c.name||'character', lvl=c.level||'';
+    if(!CHAR.character) CHAR={character:CHAR,session:{}};
+    document.getElementById('cname').textContent='— '+name+(lvl?' lv'+lvl:'');
+    document.getElementById('cpanel').open=false;
+    HISTORY=[]; CHAR_DONE=false;
+    localStorage.removeItem('dnd_ai_history');
+    addMsg('a',UI('charLoaded',name,lvl));
+  }catch(e){addMsg('a','**Error:** '+UI('charError'));}
+}
+// ── Chat rendering ────────────────────────────────────────────────────────
+function addMsg(role,text,id){
+  const chat=document.getElementById('chat');
+  const d=document.createElement('div'); d.className='msg '+(role==='u'?'u':'a'); if(id)d.id=id;
+  d.innerHTML='<div class="bbl">'+(text?render(text):'')+'</div>';
+  chat.appendChild(d); chat.scrollTop=chat.scrollHeight; return d;
+}
+function updMsg(id,text){
+  const el=document.getElementById(id); if(!el)return;
+  el.classList.remove('thinking'); el.querySelector('.bbl').innerHTML=render(text);
+  document.getElementById('chat').scrollTop=document.getElementById('chat').scrollHeight;
+}
+function render(text){
+  const parts=[]; let last=0;
+  const re=/```(json(?:-patch)?)\s*([\s\S]*?)```/g; let m;
+  while((m=re.exec(text))!==null){
+    if(m.index>last)parts.push({t:'md',v:text.slice(last,m.index)});
+    parts.push({t:m[1],v:m[2].trim()}); last=m.index+m[0].length;
+  }
+  if(last<text.length){
+    const tail=text.slice(last);
+    const unc=/```(json(?:-patch)?)\s*([\s\S]*)/.exec(tail);
+    if(unc){
+      if(unc.index>0)parts.push({t:'md',v:tail.slice(0,unc.index)});
+      parts.push({t:unc[1],v:unc[2].trim()});
+    }else parts.push({t:'md',v:tail});
+  }
+  return(parts.length?parts:[{t:'md',v:text}]).map(p=>{
+    if(p.t==='json-patch'){
+      try{
+        let parsed=JSON.parse(p.v);
+        if(parsed&&!Array.isArray(parsed)&&parsed.op&&parsed.path) parsed=[parsed];
+        if(Array.isArray(parsed)&&parsed.length>0&&parsed[0].op&&parsed[0].path){
+          const uid='p'+Date.now()+Math.random().toString(36).slice(2,7);
+          window[uid]=parsed;
+          return '<button class="btn bload" onclick="applyPatch(\''+uid+'\')">&#10003; '+UI('applyBtn')+'</button>';
+        }
+      }catch(e){}
+      return '<p class="hint" style="margin-top:.3rem;">⚠ '+UI('patchFailed')+'</p>';
+    }
+    if(p.t==='json'){
+      try{
+        let parsed=JSON.parse(p.v);
+        if(parsed&&!Array.isArray(parsed)&&parsed.op&&parsed.path) parsed=[parsed];
+        if(Array.isArray(parsed)&&parsed.length>0&&parsed[0].op&&parsed[0].path){
+          const uid='p'+Date.now()+Math.random().toString(36).slice(2,7);
+          window[uid]=parsed;
+          return '<button class="btn bload" onclick="applyPatch(\''+uid+'\')">&#10003; '+UI('applyBtn')+'</button>';
+        }
+      }catch(e){}
+      return '';
+    }
+    return esc(p.v)
+      .replace(/^#{1,3} (.+)$/gm,'<strong>$1</strong>')
+      .replace(/\*\*([^*\n]{1,80})\*\*/g,'<strong>$1</strong>')
+      .replace(/\*([^*\n]{1,60})\*/g,'<em>$1</em>')
+      .replace(/\n/g,'<br>');
+  }).join('');
+}
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+// Re-inject fields stripped before sending to AI (portrait is base64, logEntries are session-only)
+function mergeSession(jsonStr){
+  const j=JSON.parse(jsonStr);
+  if(CHAR&&CHAR.session){
+    if(!j.session) j.session={};
+    if(CHAR.session.portrait!==undefined) j.session.portrait=CHAR.session.portrait;
+    if(CHAR.session.logEntries!==undefined) j.session.logEntries=CHAR.session.logEntries;
+  }
+  return j;
+}
+// ── JSON Patch (RFC 6902) ─────────────────────────────────────────────────
+function applyJsonPatch(obj,ops){
+  // Navigate to parent. For 'add', auto-creates missing intermediate nodes.
+  function nav(root,path,create){
+    const segs=path.replace(/^\//,'').split('/').map(s=>s.replace(/~1/g,'/').replace(/~0/g,'~'));
+    const last=segs.pop();
+    let cur=root;
+    for(let i=0;i<segs.length;i++){
+      const s=segs[i];
+      if(cur==null)throw new Error('Path not found: '+path);
+      if(create&&cur[s]==null){
+        const next=segs[i+1]||last;
+        cur[s]=(next==='-'||/^\d+$/.test(next))?[]:{};
+      }
+      cur=Array.isArray(cur)?cur[parseInt(s,10)]:cur[s];
+    }
+    if(cur==null)throw new Error('Parent not found for path: '+path);
+    return{parent:cur,key:last};
+  }
+  const result=JSON.parse(JSON.stringify(obj));
+  for(const op of ops){
+    const{parent,key}=nav(result,op.path,op.op==='add');
+    if(op.op==='add'){
+      if(Array.isArray(parent)&&key==='-')parent.push(op.value);
+      else if(Array.isArray(parent))parent.splice(parseInt(key,10),0,op.value);
+      else parent[key]=op.value;
+    }else if(op.op==='replace'){
+      if(Array.isArray(parent))parent[parseInt(key,10)]=op.value;
+      else parent[key]=op.value;
+    }else if(op.op==='remove'){
+      if(Array.isArray(parent))parent.splice(parseInt(key,10),1);
+      else delete parent[key];
+    }
+  }
+  return result;
+}
+function applyPatch(uid){
+  try{
+    const ops=window[uid];
+    if(!ops||!Array.isArray(ops))throw new Error('Patch data not found');
+    const base=CHAR||{version:'3.0',character:{},session:{}};
+    let updated=applyJsonPatch(base,ops);
+    if(base.session){
+      if(!updated.session)updated.session={};
+      if(base.session.portrait!==undefined)updated.session.portrait=base.session.portrait;
+      if(base.session.logEntries!==undefined)updated.session.logEntries=base.session.logEntries;
+    }
+    localStorage.setItem('dnd_sheet_v2',JSON.stringify(updated));
+    CHAR=updated;
+    if(CHAR_DONE&&HISTORY.length>=2){
+      const c4ai=JSON.parse(JSON.stringify(CHAR));
+      if(c4ai.session){c4ai.session.portrait=null;c4ai.session.logEntries=[];}
+      HISTORY[0]={role:'user',content:'Here is my full character JSON:\n```json\n'+JSON.stringify(c4ai)+'\n```'};
+    }
+    saveHistory();
+    toast(UI('applyToast'));
+  }catch(e){alert(UI('applyError')+': '+e.message);}
+}
+function toast(msg){
+  const t=document.createElement('div');
+  t.className='toast-notif';t.textContent=msg;
+  document.body.appendChild(t);
+  setTimeout(()=>t.classList.add('show'),10);
+  setTimeout(()=>{t.classList.remove('show');setTimeout(()=>t.remove(),300);},2500);
+}
+// ── API calls ─────────────────────────────────────────────────────────────
+const getSys=()=>document.getElementById('sys').textContent.trim();
+async function callGemini(key,sys,history){
+  const r=await fetch(PROVS.gemini.ep+'?key='+key,{method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({systemInstruction:{parts:[{text:sys}]},contents:history.map(m=>({role:m.role==='assistant'?'model':'user',parts:[{text:m.content}]})),generationConfig:{maxOutputTokens:8192}})});
+  const d=await r.json(); if(d.error)throw new Error(d.error.message);
+  return d.candidates?.[0]?.content?.parts?.[0]?.text||'';
+}
+async function callOAI(p,key,messages){
+  const info=PROVS[p];
+  const hdrs={'Content-Type':'application/json'};
+  if(!info.noKey) hdrs['Authorization']='Bearer '+key;
+  if(p==='openrouter'){hdrs['HTTP-Referer']='https://salvodicara.github.io/dnd-sheets/';hdrs['X-Title']='D&D Sheets';}
+  const r=await fetch(info.ep,{method:'POST',headers:hdrs,body:JSON.stringify({model:info.model,messages})});
+  if(!r.ok){
+    if(r.status===429){const err=new Error(UI('rateLimited'));err.status=429;throw err;}
+    const t=await r.text().catch(()=>'');
+    let msg='HTTP '+r.status;
+    try{const e=JSON.parse(t);msg=e.error?.message||msg;}catch(_){if(t)msg+=' — '+t.slice(0,200);}
+    throw new Error(msg);
+  }
+  const d=await r.json();
+  return d.choices?.[0]?.message?.content||'';
+}
+async function streamOAI(p,key,messages,onChunk){
+  const info=PROVS[p];
+  const hdrs={'Content-Type':'application/json'};
+  if(!info.noKey) hdrs['Authorization']='Bearer '+key;
+  if(p==='openrouter'){hdrs['HTTP-Referer']='https://salvodicara.github.io/dnd-sheets/';hdrs['X-Title']='D&D Sheets';}
+  const r=await fetch(info.ep,{method:'POST',headers:hdrs,body:JSON.stringify({model:info.model,messages,stream:true})});
+  if(!r.ok){
+    if(r.status===429){const err=new Error(UI('rateLimited'));err.status=429;throw err;}
+    const t=await r.text().catch(()=>'');
+    let msg='HTTP '+r.status;
+    try{const e=JSON.parse(t);msg=e.error?.message||msg;}catch(_){if(t)msg+=' — '+t.slice(0,200);}
+    throw new Error(msg);
+  }
+  const reader=r.body.getReader(),dec=new TextDecoder(); let buf='',full='';
+  while(true){
+    const{done,value}=await reader.read(); if(done)break;
+    buf+=dec.decode(value,{stream:true}); let nl;
+    while((nl=buf.indexOf('\n'))!==-1){
+      const line=buf.slice(0,nl).trim(); buf=buf.slice(nl+1);
+      if(line.startsWith('data: ')&&line!=='data: [DONE]'){
+        try{const d=JSON.parse(line.slice(6));const c=d.choices?.[0]?.delta?.content||'';if(c){full+=c;onChunk(full);}}catch(e){}
+      }
+    }
+  }
+  return full;
+}
+// ── Send ──────────────────────────────────────────────────────────────────
+async function send(){
+  const ta=document.getElementById('ui'), text=ta.value.trim(); if(!text)return;
+  document.getElementById('chips').style.display='none';
+  ta.value=''; resize(ta); document.getElementById('sb').disabled=true;
+  if(CHAR&&!CHAR_DONE){
+    const c4ai=JSON.parse(JSON.stringify(CHAR));
+    if(c4ai.session){c4ai.session.portrait=null;c4ai.session.logEntries=[];}
+    HISTORY.push({role:'user',content:'Here is my full character JSON:\n```json\n'+JSON.stringify(c4ai)+'\n```'});
+    HISTORY.push({role:'assistant',content:'Got it — I have your full character. What would you like to change?'});
+    CHAR_DONE=true;
+  }
+  HISTORY.push({role:'user',content:text}); addMsg('u',text);
+  const mid='m'+Date.now(); const el=addMsg('a','',mid); el.classList.add('thinking');
+  try{
+    const p=gProv(), key=gKey(p), info=PROVS[p];
+    const lang=currentLang==='it'?'Italian':'English';
+    const sys=(info.sysShort||getSys())+'\n\nRespond in '+lang+'.';
+    const hist=info.maxHistory?HISTORY.slice(-info.maxHistory):HISTORY;
+    if(!info.noKey&&!key) throw new Error(UI('sendError'));
+    let resp='';
+    if(p==='gemini'){
+      resp=await callGemini(key,sys,[...hist]);
+      updMsg(mid,resp);
+    }else if(info.noStream){
+      const msgs=[{role:'system',content:sys},...hist];
+      resp=await callOAI(p,key,msgs);
+      updMsg(mid,resp);
+    }else{
+      const msgs=[{role:'system',content:sys},...hist];
+      resp=await streamOAI(p,key,msgs,t=>updMsg(mid,t||'…'));
+    }
+    if(!resp) resp=UI('emptyResp');
+    updMsg(mid,resp); HISTORY.push({role:'assistant',content:resp});
+    saveHistory();
+  }catch(e){updMsg(mid,'**Error:** '+e.message);}
+  document.getElementById('sb').disabled=false;
+}
+function onKey(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();send();}}
+function resize(el){el.style.height='auto';el.style.height=Math.min(el.scrollHeight,100)+'px';}
+  </script>
+</body>
+</html>

@@ -464,7 +464,7 @@ body.edit-mode::after{content:'';position:fixed;inset:0;pointer-events:none;box-
 #fixed-controls{position:fixed;top:14px;right:16px;z-index:1050;display:flex;gap:7px;}
 .ctrl-btn{background:var(--bg-card);border:1px solid var(--border-light);color:var(--text);
   border-radius:8px;padding:7px 11px;font-size:.9em;cursor:pointer;transition:all .15s;
-  box-shadow:var(--shadow-sm);}
+  box-shadow:var(--shadow-sm);text-decoration:none;display:inline-flex;align-items:center;}
 .ctrl-btn:hover{border-color:var(--accent);color:var(--accent);}
 .ctrl-btn.active{background:var(--accent-dim);border-color:var(--accent);color:var(--accent);}
 /* ── FAB ── */
@@ -625,6 +625,7 @@ body.edit-mode::after{content:'';position:fixed;inset:0;pointer-events:none;box-
 
 <!-- FIXED CONTROLS -->
 <div id="fixed-controls">
+  <a class="ctrl-btn" href="assistant.html" title="AI Assistant" id="btn-ai">AI</a>
   <button class="ctrl-btn" id="btn-logout" onclick="logoutCharacter()" title="Home" style="display:none">🏠</button>
   <button class="ctrl-btn" id="btn-theme" onclick="toggleTheme()" title="Tema"></button>
   <button class="ctrl-btn" id="btn-lang" onclick="toggleLang()" title="Lingua"></button>
@@ -1416,6 +1417,7 @@ let currentLang = localStorage.getItem('dnd-lang')||'it';
 const T = k => TRANSLATIONS[currentLang]?.[k] ?? BASE[k] ?? k;
 // ═══════════════ DATA MODEL ═══════════════
 const SAVE_KEY = 'dnd_sheet_v2';
+const SCHEMA_VERSION = '3.0';
 let CHAR = null;
 let SESSION = null;
 let EDIT_MODE = false;
@@ -1480,7 +1482,7 @@ function saveAll(){
   if(!CHAR) return;
   try{
     localStorage.setItem(SAVE_KEY, JSON.stringify({
-      version:'2.0', savedAt:new Date().toISOString(),
+      version:SCHEMA_VERSION, savedAt:new Date().toISOString(),
       character:CHAR, session:SESSION
     }));
   }catch(e){console.warn('localStorage full',e);}
@@ -1498,7 +1500,7 @@ function loadFromStorage(){
   }catch(e){return false;}
 }
 function buildExportData(){
-  return {version:'2.0',savedAt:new Date().toISOString(),character:CHAR,session:SESSION};
+  return {version:SCHEMA_VERSION,savedAt:new Date().toISOString(),character:CHAR,session:SESSION};
 }
 // ═══════════════ RENDER UTILS ═══════════════
 function renderAll(){

@@ -268,9 +268,32 @@ Done:
 - `validateAndMigrateChar(c)` validates required fields (throws on missing name / invalid structure).
 - Ensures all arrays are arrays, clamps level 1–20, defaults ability scores to 10, migrates legacy skills format.
 
+### Phase 20: AI Assistant (`assistant.html`)
+**Status:** COMPLETE
+
+A standalone companion page that lets users ask D&D 2024 questions and apply character changes directly from a chat interface, with no manual JSON editing.
+
+Architecture decisions:
+- **JSON Patch (RFC 6902)** instead of full-JSON regeneration. AI always returns targeted ops; client applies them. Eliminates token bloat and truncation risk.
+- **Prose-only chat display.** The patch block is never shown to the user. Chat shows only explanation + wizard instructions. A single "Apply changes" button appears when a valid patch is found.
+- **Patch-failed hint.** If the AI attempted a `json-patch` block but it's malformed, a subtle `⚠` note in the user's language appears instead of the Apply button. The user follows wizard steps as fallback.
+- **Auto-detect `json` blocks.** If the AI uses ` ```json` `` ` instead of ` ```json-patch` `` ` but the content is patch ops, it's silently treated the same way. Other `json` blocks are silently dropped (no data-loss risk).
+- **Silent apply, stay in chat.** `applyPatch()` updates localStorage, re-syncs HISTORY[0] in-place with fresh character state (no history bloat), shows a toast. No redirect.
+- **Portrait + logEntries stripping.** Stripped before sending to AI (token waste); merged back from in-memory CHAR on apply via `mergeSession()`.
+- **No technical language in prose.** Style rule enforced in both `sys` and `sysShort`: AI never mentions array indices, JSON paths, or field names in explanation or wizard steps.
+- **Dynamic free-model info.** Fetches `https://text.pollinations.ai/models` on load to display actual model name, description, and tier in the settings hint.
+
+Done:
+- `applyJsonPatch(obj, ops)` — pure RFC 6902 engine (add/remove/replace) with auto-create for missing intermediate paths on `add`
+- `applyPatch(uid)` — applies ops, merges session fields, saves, re-syncs HISTORY[0], toasts
+- `render(text)` — handles `json-patch` and `json` blocks, renders headings as bold, no raw JSON ever shown
+- `fetchPollinationsLimits()` — live model info fetch with i18n fallbacks
+- Full i18n of all UI strings in `assistant.html` (`applyBtn`, `applyToast`, `applyError`, `patchFailed`, `modelInfo`, `loadingModel`, etc.)
+- System prompt (`sys` + `sysShort`) updated: always-output-patch contract, no-technical-language rule
+
 ---
 
-## v1.1 Scope (Deferred)
+
 
 ### Full Level-Up Wizard
 - ASI step at levels 4, 8, 12, 16, 19: +/- on abilities (2 points)
@@ -471,6 +494,15 @@ Done:
 | 66 | Weapons in equipment | Weapons auto-derive in equipment table (single source of truth, no duplication) |
 | 67 | Game panel header | No section header (visually distinct card container) |
 | 63 | Skills display | Always show all 18, non-proficient at 55% opacity |
+| 68 | AI output format | JSON Patch RFC 6902 (not full JSON regeneration) |
+| 69 | AI chat display | Prose + wizard steps only; patch block invisible; Apply button if valid |
+| 70 | Patch failure UX | Subtle `⚠` hint in user language; no Apply button; user follows wizard steps |
+| 71 | Legacy json blocks | Auto-detect patch ops → Apply button; other json silently dropped |
+| 72 | Apply behavior | Silent in-chat apply; HISTORY[0] overwritten in-place; toast confirmation; no redirect |
+| 73 | Portrait/logEntries | Stripped before AI send; merged back from in-memory CHAR on apply |
+| 74 | AI technical language | Banned from prose/wizard steps (style rule 8); allowed only in patch block |
+| 75 | Free model limits | Dynamic fetch from Pollinations /models API; shown in settings hint with i18n fallback |
+| 76 | Patch omit rule | AI may omit patch only for pure rules questions; no "too complex" escape hatch |
 
 ---
 

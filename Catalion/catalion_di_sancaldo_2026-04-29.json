@@ -1,6 +1,6 @@
 {
   "version": "2.0",
-  "savedAt": "2026-04-28T18:56:21.008Z",
+  "savedAt": "2026-04-29T15:52:37.793Z",
   "character": {
     "name": "Catalion di Sancaldo",
     "quote": "«Le storie cambiano il mondo. Le spade lo feriscono soltanto.»",
@@ -690,9 +690,6 @@
     },
     "trackers": {
       "ispirazione-bardica": {
-        "used": 0
-      },
-      "feat-origin": {
         "used": 0
       },
       "eq-pozione-curativa": {

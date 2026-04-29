@@ -60,11 +60,25 @@ Open `index.html` in any browser. No server, no build step, no internet required
 - Toast notifications for feedback
 - Modal wizard system for all CRUD operations
 
+### AI Assistant (`assistant.html`)
+A companion chat page that connects to the character sheet via localStorage.
+
+- Ask D&D 2024 rules questions or request character changes in plain language
+- AI returns a plain-language explanation + step-by-step wizard instructions
+- Changes are applied directly to the sheet via **JSON Patch (RFC 6902)** — no full JSON regeneration, no copy-pasting
+- One-click **Apply changes** button; stays in chat after applying (no redirect)
+- If the patch is malformed, a subtle hint guides the user to follow the wizard steps manually
+- Portrait and session log are stripped before sending (token efficiency) and restored on apply
+- Works with multiple AI providers: free (Pollinations, no account needed), Gemini, Groq, OpenRouter, OpenAI
+- Dynamic model info for the free tier (fetched live from Pollinations API)
+- Fully bilingual (English / Italian)
+
 ## Project Structure
 
 ```
 dnd-sheets/
   index.html                    Main application (single file, ~3,830 lines)
+  assistant.html                AI assistant companion page (~700 lines)
   CLAUDE.md                     AI steering document (golden rules, architecture)
   DESIGN.md                     Design decisions, phase plan, data model
     Catalion/
