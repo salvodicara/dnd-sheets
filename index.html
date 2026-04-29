@@ -1840,14 +1840,14 @@ function buildPanelBottom(){
   const available=(C.level||1)-(S.hitDice?.used||0);
   const hdType='d'+(C.hitDieType||8);
   const conMod=abilityMod(C.abilityScores?.CON||10);
-  const modStr=conMod>=0?`+${conMod}`:String(conMod);
+  const hdModStr=conMod>=0?`+${conMod}`:String(conMod);
   const restsCardContent=S.hdDialog
     ?(available>0
       ?`<div class="label">${T('hdDialogTitle').replace('{A}',available).replace('{D}',hdType)}</div>
         <div class="hd-qty-row"><button class="btn-qty" onclick="adjustHDQty(-1)">−</button>
           <span class="hd-qty-val" id="hd-qty">1</span>
           <button class="btn-qty" onclick="adjustHDQty(1)">＋</button>
-          <span id="hd-formula" style="font-size:.8em;color:var(--text-muted);margin-left:4px;">1${hdType}${modStr}</span></div>
+          <span id="hd-formula" style="font-size:.8em;color:var(--text-muted);margin-left:4px;">1${hdType}${hdModStr}</span></div>
         <input type="number" id="hd-result" min="0" placeholder="${T('hdEnterResult')}" style="width:72px;margin:6px 0;padding:4px 6px;border:1px solid var(--border);border-radius:5px;background:var(--bg-card);color:var(--text);">
         <div class="btn-row"><button class="btn heal" onclick="applyHDResult()">${T('hdApply')}</button>
           <button class="btn" onclick="closeHDDialog(true)">${T('hdSkip')}</button></div>`
