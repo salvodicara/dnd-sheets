@@ -1,0 +1,24 @@
+index.html
+  dd521f8d69e7cf25 1843,1850
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.3.4",
+  "base_commit_sha": "99d03cd5eea1249b8a43c6519ffa797890551f0d",
+  "prompts": {
+    "dd521f8d69e7cf25": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_227764a31ffe94FPCdwSf7NJWb",
+        "model": "github-copilot/claude-sonnet-4.6"
+      },
+      "human_author": "Salvatore Di Cara",
+      "messages": [],
+      "total_additions": 2,
+      "total_deletions": 2,
+      "accepted_lines": 2,
+      "overriden_lines": 0,
+      "messages_url": "https://usegitai.com/cas/2bda48263823ede5c17a3fe508a37c326994702bf94a3ebe12df6e03a5e648fa"
+    }
+  }
+}
