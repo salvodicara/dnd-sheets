@@ -1,0 +1,26 @@
+index.html
+  dd521f8d69e7cf25 455-457,833-834,1137-1138,3479-3490,3971,3975-3982
+DESIGN.md
+  dd521f8d69e7cf25 208,211-216
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.3.4",
+  "base_commit_sha": "5c33115958968ae0524482ca8c95133ffca9ad95",
+  "prompts": {
+    "dd521f8d69e7cf25": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_227764a31ffe94FPCdwSf7NJWb",
+        "model": "github-copilot/claude-sonnet-4.6"
+      },
+      "human_author": "Salvatore Di Cara",
+      "messages": [],
+      "total_additions": 36,
+      "total_deletions": 4,
+      "accepted_lines": 36,
+      "overriden_lines": 0,
+      "messages_url": "https://usegitai.com/cas/96b10726bc8f9a363cd1dfb476bc7482c72299b44f96cd885f7aa90e5856f868"
+    }
+  }
+}
