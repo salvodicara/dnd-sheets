@@ -5,24 +5,102 @@
   <meta name="viewport" content="width=device-width,initial-scale=1.0">
   <title>D&D Sheets — AI Assistant</title>
   <style>
-:root{--bg:#1a1a2e;--bg2:#22223a;--bg3:#2e2e4a;--text:#d8d8e8;--muted:#8888aa;--accent:#9090e0;--border:#3a3a5c;--bl:#2a2a44;--green:#2d7a2d;--on-accent:#1a1a2e;--bg-card:#222238;--border-light:#30304a;--accent-dim:#2a2a50;--shadow-sm:0 2px 8px rgba(0,0,0,.25);}
-[data-theme="light"]{--bg:#f0efe8;--bg2:#fafaf6;--bg3:#e8e7e0;--text:#2a2a34;--muted:#5a5a6a;--accent:#5858b8;--border:#c8c6b8;--bl:#d8d6cc;--green:#226622;--on-accent:#ffffff;--bg-card:#fafaf6;--border-light:#d8d6cc;--accent-dim:#e8e6f4;--shadow-sm:0 1px 6px rgba(40,40,60,.06);}
+:root{--bg:#1a1a2e;--bg-card:#222238;--bg2:#222238;--bg3:#2a2a42;--bg-input:#1e1e34;
+  --text:#d8d8e8;--text-muted:#8888a8;--text-faint:#55557a;--muted:#8888a8;
+  --accent:#9090e0;--accent-dim:#2a2a50;--accent-glow:rgba(144,144,224,.18);
+  --border:#3a3a58;--border-light:#30304a;--bl:#30304a;
+  --shadow:0 4px 24px rgba(0,0,0,.4);--shadow-sm:0 2px 8px rgba(0,0,0,.25);
+  --sidebar-bg:#16162a;--sidebar-text:#b0b0cc;--sidebar-hover:#26264a;
+  --green:#2d7a2d;--on-accent:#1a1a2e;--overlay:rgba(0,0,0,.45);}
+[data-theme="light"]{--bg:#f0efe8;--bg-card:#fafaf6;--bg2:#fafaf6;--bg3:#f0efe8;--bg-input:#e8e7e0;
+  --text:#2a2a34;--text-muted:#5a5a6a;--text-faint:#9090a0;--muted:#5a5a6a;
+  --accent:#5858b8;--accent-dim:#e8e6f4;--accent-glow:rgba(88,88,184,.12);
+  --border:#c8c6b8;--border-light:#d8d6cc;--bl:#d8d6cc;
+  --shadow:0 2px 16px rgba(40,40,60,.10);--shadow-sm:0 1px 6px rgba(40,40,60,.06);
+  --sidebar-bg:#e8e7e0;--sidebar-text:#3a3a4a;--sidebar-hover:#dcdad0;
+  --green:#226622;--on-accent:#ffffff;--overlay:rgba(0,0,0,.3);}
 *{box-sizing:border-box;margin:0;padding:0;}
 html,body{height:100%;overflow:hidden;}
-body{background:var(--bg);color:var(--text);font-family:system-ui,sans-serif;line-height:1.5;display:flex;flex-direction:column;max-width:800px;margin:0 auto;}
-.hdr{padding:.7rem 1.1rem .4rem;border-bottom:1px solid var(--bl);flex-shrink:0;display:flex;justify-content:space-between;align-items:center;gap:.6rem;}
-.hdr h1{color:var(--accent);font-size:1.15rem;white-space:nowrap;}
-.hdr-links{display:flex;gap:.5rem;align-items:center;}
-.ctrl-btn{background:var(--bg-card);border:1px solid var(--border-light);color:var(--text);border-radius:8px;padding:7px 11px;font-size:.9em;cursor:pointer;transition:all .15s;box-shadow:var(--shadow-sm);text-decoration:none;display:inline-flex;align-items:center;font-family:inherit;white-space:nowrap;}
+body{background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+  font-size:16px;line-height:1.5;-webkit-font-smoothing:antialiased;}
+#app-header{position:fixed;top:0;left:0;right:0;height:48px;z-index:1010;
+  background:var(--bg-card);border-bottom:1px solid var(--border-light);
+  display:flex;align-items:center;padding:0 10px;gap:8px;box-shadow:var(--shadow-sm);}
+.hdr-tabs{display:flex;gap:2px;margin:0 6px;}
+.hdr-tab{color:var(--text-muted);font-size:.84em;padding:5px 11px;border-radius:6px;
+  text-decoration:none;font-weight:500;transition:color .15s,background .15s;white-space:nowrap;}
+.hdr-tab:hover{color:var(--text);background:var(--bg3);}
+.hdr-tab.active{color:var(--accent);font-weight:600;}
+.hdr-right{display:flex;gap:5px;margin-left:auto;}
+.ctrl-btn{background:var(--bg-card);border:1px solid var(--border-light);color:var(--text);
+  border-radius:8px;padding:7px 11px;font-size:.9em;cursor:pointer;transition:all .15s;
+  box-shadow:var(--shadow-sm);text-decoration:none;display:inline-flex;align-items:center;
+  font-family:inherit;white-space:nowrap;}
 .ctrl-btn:hover{border-color:var(--accent);color:var(--accent);}
 .ctrl-btn.active{background:var(--accent-dim);border-color:var(--accent);color:var(--accent);}
-[data-theme="light"] .ctrl-btn{box-shadow:0 1px 6px rgba(0,0,0,.08);}
-details.panel{border-bottom:1px solid var(--bl);flex-shrink:0;}
-details.panel>summary{padding:.48rem 1.1rem;cursor:pointer;list-style:none;color:var(--accent);font-size:.84rem;font-weight:600;display:flex;justify-content:space-between;align-items:center;user-select:none;}
-details.panel>summary::-webkit-details-marker{display:none;}
-details.panel>summary::after{content:'▾';color:var(--muted);font-weight:400;}
-details[open].panel>summary::after{content:'▴';}
-.pb{padding:.55rem 1.1rem .8rem;background:var(--bg2);}
+.hdr-logo{color:var(--accent);font-weight:700;font-size:.95em;text-decoration:none;
+  white-space:nowrap;padding:2px 4px;flex-shrink:0;letter-spacing:-.01em;}
+.hdr-logo:hover{opacity:.8;}
+#ai-sidebar{position:fixed;left:0;top:48px;width:var(--ai-sb-w,240px);height:calc(100vh - 48px);
+  background:var(--sidebar-bg);border-right:1px solid var(--border-light);
+  display:flex;flex-direction:column;overflow-y:auto;z-index:200;transition:width .2s ease;}
+#ai-sidebar.collapsed{overflow:hidden;}
+#ai-overlay{display:none;position:fixed;inset:0;background:var(--overlay);z-index:150;}
+#ai-overlay.visible{display:block;}
+#hamburger-ai{display:none;background:none;border:none;color:var(--text-muted);
+  font-size:1.2em;cursor:pointer;padding:5px 7px;border-radius:6px;flex-shrink:0;line-height:1;}
+#hamburger-ai:hover{background:var(--bg3);color:var(--text);}
+/* Sidebar top row: collapse toggle */
+.ai-sb-top{display:flex;align-items:center;justify-content:flex-end;padding:6px 8px;
+  flex-shrink:0;border-bottom:1px solid var(--border-light);}
+#ai-sidebar.collapsed .ai-sb-top{justify-content:center;}
+.ai-sb-toggle{background:none;border:none;color:var(--sidebar-text);cursor:pointer;
+  font-size:1rem;width:28px;height:28px;border-radius:6px;display:flex;align-items:center;
+  justify-content:center;transition:color .15s,background .15s;line-height:1;}
+.ai-sb-toggle:hover{background:var(--sidebar-hover);color:var(--text);}
+/* Sidebar panels */
+.ai-panel{flex-shrink:0;border-bottom:1px solid var(--border-light);}
+.ai-panel-hdr{display:flex;align-items:center;gap:8px;padding:9px 12px;cursor:pointer;
+  color:var(--sidebar-text);font-size:.8rem;font-weight:600;transition:background .15s;
+  user-select:none;min-height:38px;}
+.ai-panel-hdr:hover{background:var(--sidebar-hover);}
+.ai-panel-icon{font-size:.9rem;flex-shrink:0;width:18px;text-align:center;}
+.ai-panel-label{flex:1;white-space:nowrap;overflow:hidden;color:var(--sidebar-text);}
+.ai-panel-badge{color:var(--accent);font-size:.72rem;font-weight:400;white-space:nowrap;
+  overflow:hidden;text-overflow:ellipsis;max-width:90px;flex-shrink:0;}
+.ai-panel-arrow{font-size:.7rem;color:var(--text-faint);transition:transform .2s;flex-shrink:0;}
+.ai-panel.open .ai-panel-arrow{transform:rotate(180deg);}
+.ai-panel-content{overflow:hidden;display:none;}
+.ai-panel.open .ai-panel-content{display:block;}
+#ai-sidebar.collapsed .ai-panel-label,
+#ai-sidebar.collapsed .ai-panel-badge,
+#ai-sidebar.collapsed .ai-panel-arrow,
+#ai-sidebar.collapsed .ai-panel-content{display:none;}
+#ai-sidebar.collapsed .ai-panel-hdr{justify-content:center;padding:9px 0;}
+#ai-sb-resize{position:absolute;right:0;top:0;width:5px;height:100%;cursor:col-resize;z-index:10;
+  background:transparent;transition:background .15s;}
+#ai-sb-resize:hover,#ai-sb-resize.dragging{background:var(--accent-glow);}
+#ai-sidebar.collapsed #ai-sb-resize{display:none;}
+/* Main chat area */
+#ai-main{margin-left:var(--ai-sb-w,240px);margin-top:48px;display:flex;flex-direction:column;
+  height:calc(100vh - 48px);overflow:hidden;transition:margin-left .2s ease;}
+/* Dismissable disclaimer */
+.ai-disclaimer{color:var(--text-muted);font-size:.72rem;padding:.3rem .9rem;flex-shrink:0;
+  border-top:1px solid var(--border-light);background:var(--bg-card);
+  display:flex;align-items:center;gap:.5rem;}
+.ai-disclaimer-text{flex:1;text-align:center;}
+.ai-disclaimer-close{background:none;border:none;color:var(--text-faint);cursor:pointer;
+  font-size:1rem;line-height:1;padding:0 2px;transition:color .15s;flex-shrink:0;}
+.ai-disclaimer-close:hover{color:var(--text-muted);}
+html.disclaimer-dismissed #ai-disclaimer{display:none;}
+/* Mobile */
+@media(max-width:768px){
+  #ai-sidebar{transform:translateX(-100%);transition:transform .25s ease,width .2s ease;}
+  #ai-sidebar.mobile-open{transform:translateX(0);width:260px!important;}
+  #ai-main{margin-left:0;}
+  #hamburger-ai{display:flex;}
+}
+.pb{padding:.55rem .9rem .8rem;background:var(--bg3);}
 .row{display:flex;gap:.4rem;align-items:center;flex-wrap:wrap;margin-bottom:.38rem;}
 label{font-size:.78rem;color:var(--muted);white-space:nowrap;}
 select,input[type=password]{background:var(--bg3);color:var(--text);border:1px solid var(--border);border-radius:5px;padding:.26rem .52rem;font-size:.82rem;flex:1;min-width:0;outline:none;}
@@ -41,10 +119,24 @@ textarea.jta:focus{border-color:var(--accent);}
 .bbl{padding:.5rem .8rem;border-radius:11px;font-size:.85rem;line-height:1.55;word-break:break-word;}
 .msg.u .bbl{background:var(--accent);color:var(--on-accent);}.msg.a .bbl{background:var(--bg2);border:1px solid var(--bl);}
 .bbl pre{background:var(--bg3);border:1px solid var(--border);border-radius:5px;padding:.45rem;font-size:.71rem;overflow-x:auto;white-space:pre-wrap;margin:.3rem 0;max-height:180px;}
-.ibar{border-top:1px solid var(--bl);padding:.55rem 1.1rem;display:flex;gap:.48rem;align-items:flex-end;flex-shrink:0;}
-#ui{flex:1;background:var(--bg2);color:var(--text);border:1px solid var(--border);border-radius:7px;padding:.42rem .7rem;font-size:.86rem;font-family:inherit;resize:none;height:38px;max-height:100px;outline:none;line-height:1.45;}
-#ui:focus{border-color:var(--accent);}
-#sb{width:38px;height:38px;border-radius:7px;font-size:1rem;padding:0;flex-shrink:0;}
+.ibar{padding:.6rem .9rem .7rem;flex-shrink:0;background:var(--bg);}
+.ibar-box{background:var(--bg-card);border:1.5px solid var(--border-light);border-radius:12px;
+  overflow:hidden;transition:border-color .2s;}
+.ibar-box:focus-within{border-color:var(--accent);}
+#ui{width:100%;background:transparent;color:var(--text);border:none;
+  padding:.65rem .9rem .3rem;font-size:.88rem;font-family:inherit;resize:none;
+  height:42px;max-height:130px;outline:none;line-height:1.5;display:block;}
+.ibar-row{display:flex;align-items:center;padding:.3rem .45rem;gap:.3rem;
+  border-top:1px solid var(--border-light);}
+.ibar-icon-btn{background:none;border:none;color:var(--text-muted);cursor:pointer;
+  font-size:.95rem;width:30px;height:30px;border-radius:6px;transition:color .15s,background .15s;
+  display:inline-flex;align-items:center;justify-content:center;font-family:inherit;}
+.ibar-icon-btn:hover{color:var(--text);background:var(--bg3);}
+.ibar-send{margin-left:auto;background:var(--accent);color:var(--on-accent);border:none;
+  border-radius:7px;width:32px;height:32px;cursor:pointer;font-size:1rem;
+  transition:opacity .15s,transform .1s;display:flex;align-items:center;justify-content:center;}
+.ibar-send:hover{opacity:.85;}
+.ibar-send:active{transform:scale(.95);}
 .hint{color:var(--muted);font-size:.75rem;margin-top:.26rem;}
 .cbdg{color:var(--accent);font-size:.73rem;font-weight:400;}
 a{color:var(--accent);}
@@ -55,40 +147,89 @@ a{color:var(--accent);}
 .chip:hover{border-color:var(--accent);background:var(--bg2);}
 .toast-notif{position:fixed;bottom:4.5rem;left:50%;transform:translateX(-50%) translateY(8px);background:var(--bg-card);color:var(--text);border:1px solid var(--accent);border-radius:8px;padding:.45rem 1.1rem;font-size:.82rem;font-weight:600;opacity:0;transition:opacity .22s,transform .22s;pointer-events:none;z-index:999;white-space:nowrap;}
 .toast-notif.show{opacity:1;transform:translateX(-50%) translateY(0);}
-#btn-attach{width:38px;height:38px;border-radius:7px;font-size:1.1rem;padding:0;flex-shrink:0;background:var(--bg3);border:1px solid var(--border-light);color:var(--muted);cursor:pointer;transition:border-color .15s,color .15s;}
-#btn-attach:hover{border-color:var(--accent);color:var(--accent);}
+.ibar-icon-btn:focus{outline:none;box-shadow:0 0 0 2px var(--accent-glow);}
 .att-chip{display:flex;align-items:center;gap:.4rem;background:var(--bg3);border:1px solid var(--border);border-radius:6px;padding:.18rem .55rem;font-size:.76rem;color:var(--text);margin:.3rem 1.1rem 0;align-self:flex-start;}
 .att-chip-icon{font-size:.85rem;}
 .att-chip-name{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:220px;}
 .att-chip-rm{background:none;border:none;color:var(--muted);cursor:pointer;padding:0 0 0 .2rem;font-size:1rem;line-height:1;transition:color .12s;}
 .att-chip-rm:hover{color:var(--accent);}
   </style>
+  <script>
+    // Apply persisted states before first paint to avoid flash
+    (function(){
+      var t=localStorage.getItem('dnd-theme')||'dark';
+      document.documentElement.setAttribute('data-theme',t);
+      if(localStorage.getItem('aiSidebarCollapsed')==='1'){
+        document.documentElement.style.setProperty('--ai-sb-w','48px');
+      } else {
+        var w=localStorage.getItem('aiSidebarWidth');
+        if(w) document.documentElement.style.setProperty('--ai-sb-w',w);
+      }
+      if(localStorage.getItem('aiDisclaimerDismissed')==='1')
+        document.documentElement.classList.add('disclaimer-dismissed');
+    })();
+  </script>
 </head>
 <body>
-  <div class="hdr">
-    <h1>D&D Sheets — AI</h1>
-    <div class="hdr-links">
-      <button class="ctrl-btn" id="btn-clear" onclick="clearChat()"></button>
-      <button class="ctrl-btn" id="btn-lang" onclick="toggleLang()"></button>
-      <button class="ctrl-btn" id="btn-theme" onclick="toggleTheme()"></button>
-      <a class="ctrl-btn" href="index.html" id="btn-back"></a>
+  <header id="app-header">
+    <button id="hamburger-ai" onclick="toggleAiSidebar()">☰</button>
+    <a class="hdr-logo" href="index.html">⚔️ D&amp;D Sheets</a>
+    <nav class="hdr-tabs">
+      <a class="hdr-tab" id="hdr-tab-char" href="index.html"></a>
+      <a class="hdr-tab active" id="hdr-tab-ai" href="assistant.html"></a>
+    </nav>
+    <div class="hdr-right">
+      <button class="ctrl-btn" id="btn-theme" onclick="toggleTheme()">☀️</button>
+      <button class="ctrl-btn" id="btn-lang" onclick="toggleLang()">IT</button>
     </div>
-  </div>
-  <details class="panel" id="setup">
-    <summary><span id="lbl-settings"></span> <span class="cbdg" id="kstat"></span></summary>
-    <div class="pb" id="setup-body"></div>
-  </details>
-  <details class="panel" id="cpanel">
-    <summary><span id="lbl-character"></span> <span class="cbdg" id="cname"></span></summary>
-    <div class="pb" id="char-body"></div>
-  </details>
-  <div class="chat" id="chat"></div>
-  <div class="chips" id="chips" style="display:none"></div>
-  <div id="att-area" style="display:none"></div>
-  <div class="ibar">
-    <button id="btn-attach" title="Attach document" onclick="document.getElementById('doc-file').click()">📎</button>
-    <textarea id="ui" onkeydown="onKey(event)" oninput="resize(this)"></textarea>
-    <button class="btn ba" id="sb" onclick="send()">&#9658;</button>
+  </header>
+  <div id="ai-overlay" onclick="toggleAiSidebar()"></div>
+  <nav id="ai-sidebar">
+    <div id="ai-sb-resize"></div>
+    <div class="ai-sb-top">
+      <button class="ai-sb-toggle" id="ai-sb-toggle-btn" onclick="toggleAiSidebar()" title="Toggle sidebar">‹</button>
+    </div>
+    <div class="ai-panel" id="setup-panel">
+      <div class="ai-panel-hdr" onclick="toggleAiPanel('setup')">
+        <span class="ai-panel-icon">⚙️</span>
+        <span class="ai-panel-label" id="lbl-settings"></span>
+        <span class="ai-panel-badge cbdg" id="kstat"></span>
+        <span class="ai-panel-arrow">▾</span>
+      </div>
+      <div class="ai-panel-content">
+        <div class="pb" id="setup-body"></div>
+      </div>
+    </div>
+    <div class="ai-panel" id="cpanel-panel">
+      <div class="ai-panel-hdr" onclick="toggleAiPanel('cpanel')">
+        <span class="ai-panel-icon">🧙</span>
+        <span class="ai-panel-label" id="lbl-character"></span>
+        <span class="ai-panel-badge cbdg" id="cname"></span>
+        <span class="ai-panel-arrow">▾</span>
+      </div>
+      <div class="ai-panel-content">
+        <div class="pb" id="char-body"></div>
+      </div>
+    </div>
+  </nav>
+  <div id="ai-main">
+    <div class="chat" id="chat"></div>
+    <div class="chips" id="chips" style="display:none"></div>
+    <div id="att-area" style="display:none"></div>
+    <div class="ai-disclaimer" id="ai-disclaimer">
+      <span class="ai-disclaimer-text" id="ai-disclaimer-text"></span>
+      <button class="ai-disclaimer-close" onclick="dismissDisclaimer()" title="Dismiss">×</button>
+    </div>
+    <div class="ibar">
+      <div class="ibar-box">
+        <textarea id="ui" onkeydown="onKey(event)" oninput="resize(this)"></textarea>
+        <div class="ibar-row">
+          <button class="ibar-icon-btn" id="btn-attach" title="Attach document" onclick="document.getElementById('doc-file').click()">📎</button>
+          <button class="ibar-icon-btn" id="btn-clear" onclick="clearChat()">🗑</button>
+          <button class="ibar-send" id="sb" onclick="send()">&#9658;</button>
+        </div>
+      </div>
+    </div>
   </div>
   <input type="file" id="doc-file" accept=".txt,.pdf,.docx" style="display:none" onchange="stageFile(event)">
   <script type="text/x-prompt" id="sys">You are an expert D&D 2024 assistant. You help with two things equally well:
@@ -288,6 +429,7 @@ Now share your character JSON (or describe your sheet) and tell me what to add o
 const STRINGS={
   en:{
     settings:'Settings', character:'Character', back:'← App',
+    hdrCharacter:'⚔️ Character', hdrAIAssistant:'✨ AI Assistant',
     provLabel:'Provider', keyLabel:'API Key', keyPlaceholder:'Paste your key here',
     saveBtn:'Save', loadFile:'Load file', useChar:'Use this character',
     noKeyMsg:'✓ No key needed — just start chatting!',
@@ -316,9 +458,11 @@ const STRINGS={
     patchFailed:'Could not apply automatically — follow the wizard steps above.',
     rateLimited:'The free service is temporarily busy. Wait a moment and try again, or use a provider with an API key (Settings).',
     clearChat:'Clear chat',
+    disclaimer:'⚠️ AI can make mistakes — review all changes carefully before applying them to your sheet.',
   },
   it:{
     settings:'Impostazioni', character:'Personaggio', back:'← App',
+    hdrCharacter:'⚔️ Personaggio', hdrAIAssistant:'✨ Assistente AI',
     provLabel:'Provider', keyLabel:'Chiave API', keyPlaceholder:'Incolla la chiave qui',
     saveBtn:'Salva', loadFile:'Carica file', useChar:'Usa questo personaggio',
     noKeyMsg:'✓ Nessuna chiave — inizia a chattare!',
@@ -347,6 +491,7 @@ const STRINGS={
     patchFailed:'Impossibile applicare automaticamente — segui i passi guidati qui sopra.',
     rateLimited:'Il servizio gratuito è momentaneamente occupato. Attendi un momento e riprova, o usa un provider con chiave API (Impostazioni).',
     clearChat:'Pulisci chat',
+    disclaimer:'⚠️ L\'AI può sbagliare — controlla sempre le modifiche con attenzione prima di applicarle alla scheda.',
   },
 };
 // ── Config ──────────────────────────────────────────────────────────────
@@ -382,15 +527,19 @@ function toggleTheme(){
 function applyLang(){
   const lBtn=document.getElementById('btn-lang');
   const tBtn=document.getElementById('btn-theme');
-  const backBtn=document.getElementById('btn-back');
   const clearBtn=document.getElementById('btn-clear');
+  const disc=document.getElementById('ai-disclaimer-text');
   if(lBtn){lBtn.textContent=UI('langToggle');lBtn.title=UI('titleLang');}
   if(tBtn) tBtn.title=UI('titleTheme');
-  if(backBtn) backBtn.textContent=UI('back');
-  if(clearBtn) clearBtn.textContent=UI('clearChat');
+  if(clearBtn) clearBtn.title=UI('clearChat');
+  if(disc) disc.textContent=UI('disclaimer');
   const s=document.getElementById('lbl-settings'); if(s) s.textContent=UI('settings');
   const c=document.getElementById('lbl-character'); if(c) c.textContent=UI('character');
   const inp=document.getElementById('ui'); if(inp) inp.placeholder=UI('inputPlaceholder');
+  const tabChar=document.getElementById('hdr-tab-char');
+  const tabAI=document.getElementById('hdr-tab-ai');
+  if(tabChar) tabChar.textContent=UI('hdrCharacter');
+  if(tabAI) tabAI.textContent=UI('hdrAIAssistant');
 }
 function toggleLang(){
   currentLang=currentLang==='it'?'en':'it';
@@ -446,6 +595,79 @@ function sendChip(btn){
   document.getElementById('chips').style.display='none';
   send();
 }
+// ── AI Sidebar / Panel controls ──────────────────────────────────────────
+function openAiPanel(id){
+  const panel=document.getElementById(id+'-panel');
+  if(panel) panel.classList.add('open');
+}
+function closeAiPanel(id){
+  const panel=document.getElementById(id+'-panel');
+  if(panel) panel.classList.remove('open');
+}
+function toggleAiPanel(id){
+  const sb=document.getElementById('ai-sidebar');
+  if(sb&&sb.classList.contains('collapsed')){
+    // Expand sidebar, then open the panel
+    sb.classList.remove('collapsed');
+    document.documentElement.style.setProperty('--ai-sb-w','240px');
+    localStorage.removeItem('aiSidebarCollapsed');
+    const btn=document.getElementById('ai-sb-toggle-btn');
+    if(btn) btn.textContent='‹';
+    openAiPanel(id);
+    return;
+  }
+  const panel=document.getElementById(id+'-panel');
+  if(panel) panel.classList.toggle('open');
+}
+function toggleAiSidebar(){
+  const sb=document.getElementById('ai-sidebar');
+  const overlay=document.getElementById('ai-overlay');
+  if(!sb) return;
+  if(window.innerWidth<=768){
+    const open=sb.classList.toggle('mobile-open');
+    if(overlay) overlay.classList.toggle('visible',open);
+  } else {
+    const collapsed=sb.classList.toggle('collapsed');
+    const w=collapsed?'48px':'240px';
+    document.documentElement.style.setProperty('--ai-sb-w',w);
+    localStorage.setItem('aiSidebarCollapsed',collapsed?'1':'');
+    const btn=document.getElementById('ai-sb-toggle-btn');
+    if(btn) btn.textContent=collapsed?'›':'‹';
+  }
+}
+function dismissDisclaimer(){
+  const d=document.getElementById('ai-disclaimer');
+  if(d) d.style.display='none';
+  localStorage.setItem('aiDisclaimerDismissed','1');
+}
+// ── AI sidebar resize ──────────────────────────────────────────────────────
+let _aiSbDrag=null;
+function initAiSbResize(){
+  const handle=document.getElementById('ai-sb-resize');
+  if(!handle) return;
+  handle.addEventListener('mousedown',function(e){
+    e.preventDefault();
+    const sb=document.getElementById('ai-sidebar');
+    _aiSbDrag={startX:e.clientX,startW:sb?sb.getBoundingClientRect().width:240};
+    handle.classList.add('dragging');
+    document.addEventListener('mousemove',_onAiSbDrag);
+    document.addEventListener('mouseup',_onAiSbDragEnd);
+  });
+}
+function _onAiSbDrag(e){
+  if(!_aiSbDrag) return;
+  const newW=Math.min(400,Math.max(160,_aiSbDrag.startW+(e.clientX-_aiSbDrag.startX)));
+  document.documentElement.style.setProperty('--ai-sb-w',newW+'px');
+}
+function _onAiSbDragEnd(){
+  if(!_aiSbDrag) return;
+  const w=document.documentElement.style.getPropertyValue('--ai-sb-w');
+  if(w) localStorage.setItem('aiSidebarWidth',w);
+  _aiSbDrag=null;
+  document.getElementById('ai-sb-resize')?.classList.remove('dragging');
+  document.removeEventListener('mousemove',_onAiSbDrag);
+  document.removeEventListener('mouseup',_onAiSbDragEnd);
+}
 // ── Build panels ─────────────────────────────────────────────────────────
 function buildSetup(){
   const p=gProv(), info=PROVS[p];
@@ -493,6 +715,12 @@ function buildCharPanel(){
 // ── Init ─────────────────────────────────────────────────────────────────
 window.addEventListener('load',()=>{
   applyTheme(localStorage.getItem('dnd-theme')||'dark');
+  // Restore sidebar collapsed state (CSS var already set inline in <head>)
+  if(localStorage.getItem('aiSidebarCollapsed')==='1'){
+    document.getElementById('ai-sidebar')?.classList.add('collapsed');
+    const btn=document.getElementById('ai-sb-toggle-btn');
+    if(btn) btn.textContent='›';
+  }
   buildSetup();
   buildCharPanel();
   let charName='', charLvl='';
@@ -509,8 +737,9 @@ window.addEventListener('load',()=>{
   if(!restoreHistory()){
     if(charName&&hasKey){addMsg('a',UI('welcomeChar',charName,charLvl));showChips();}
     else if(hasKey){addMsg('a',UI('welcomeReady'));showChips();}
-    else{addMsg('a',UI('welcomeSetup'));document.getElementById('setup').open=true;}
+    else{addMsg('a',UI('welcomeSetup'));openAiPanel('setup');}
   }
+  initAiSbResize();
   applyLang();
 });
 function onProv(){
@@ -526,7 +755,7 @@ function updHint(p){
 }
 function saveKey(){
   const p=document.getElementById('prov').value, k=document.getElementById('akey').value.trim();
-  sKey(p,k); updHint(p); document.getElementById('setup').open=false;
+  sKey(p,k); updHint(p); closeAiPanel('setup');
   if(k&&!HISTORY.length) addMsg('a',UI('keySavedMsg'));
 }
 // ── Character ────────────────────────────────────────────────────────────
@@ -561,7 +790,7 @@ function setChar(){
     const c=CHAR.character||CHAR, name=c.name||'character', lvl=c.level||'';
     if(!CHAR.character) CHAR={character:CHAR,session:{}};
     document.getElementById('cname').textContent='— '+name+(lvl?' lv'+lvl:'');
-    document.getElementById('cpanel').open=false;
+    closeAiPanel('cpanel');
     HISTORY=[]; CHAR_DONE=false;
     localStorage.removeItem('dnd_ai_history');
     addMsg('a',UI('charLoaded',name,lvl));
@@ -994,7 +1223,7 @@ async function send(){
   document.getElementById('sb').disabled=false;
 }
 function onKey(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();send();}}
-function resize(el){el.style.height='auto';el.style.height=Math.min(el.scrollHeight,100)+'px';}
+function resize(el){el.style.height='42px';el.style.height=Math.min(el.scrollHeight,130)+'px';}
   </script>
 </body>
 </html>

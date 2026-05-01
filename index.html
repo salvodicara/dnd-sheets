@@ -108,11 +108,28 @@ tr.skill-none{opacity:.55;}
 .section-header h2{margin-top:0;border-bottom:none;padding-bottom:0;flex:1;}
 .section-header-line{border-bottom:2px solid var(--border);margin-bottom:14px;padding-bottom:4px;}
 /* ═══════════════ LAYOUT ═══════════════ */
-#sidebar{position:fixed;left:0;top:0;width:200px;height:100vh;overflow-y:auto;
+/* ═══════════════ APP HEADER ═══════════════ */
+#app-header{position:fixed;top:0;left:0;right:0;height:48px;z-index:1010;
+  background:var(--bg-card);border-bottom:1px solid var(--border-light);
+  display:flex;align-items:center;padding:0 10px;gap:8px;box-shadow:var(--shadow-sm);}
+#hamburger{display:none;background:none;border:none;color:var(--text-muted);
+  font-size:1.2em;cursor:pointer;padding:5px 7px;border-radius:6px;flex-shrink:0;line-height:1;}
+#hamburger:hover{background:var(--bg-card2);color:var(--text);}
+.hdr-logo{color:var(--accent);font-weight:700;font-size:.95em;text-decoration:none;
+  white-space:nowrap;padding:2px 4px;flex-shrink:0;letter-spacing:-.01em;}
+.hdr-logo:hover{opacity:.8;}
+.hdr-tabs{display:flex;gap:2px;margin:0 6px;}
+.hdr-tab{color:var(--text-muted);font-size:.84em;padding:5px 11px;border-radius:6px;
+  text-decoration:none;font-weight:500;transition:color .15s,background .15s;white-space:nowrap;}
+.hdr-tab:hover{color:var(--text);background:var(--bg-card2);}
+.hdr-tab.active{color:var(--accent);font-weight:600;}
+.hdr-right{display:flex;gap:5px;margin-left:auto;}
+#sidebar{position:fixed;left:0;top:48px;width:var(--sidebar-w,200px);height:calc(100vh - 48px);overflow-y:auto;
   background:var(--sidebar-bg);padding:16px 0 24px;z-index:200;
   transition:transform .25s ease;display:flex;flex-direction:column;}
-#sidebar .nav-title{color:var(--text-muted);font-size:.7em;text-transform:uppercase;
-  letter-spacing:2px;padding:0 14px 10px;border-bottom:1px solid var(--border-light);margin-bottom:6px;}
+#sb-resize{position:absolute;right:0;top:0;width:5px;height:100%;cursor:col-resize;z-index:10;
+  background:transparent;transition:background .15s;}
+#sb-resize:hover,#sb-resize.dragging{background:var(--accent-glow);}
 #sidebar a{display:block;color:var(--sidebar-text);text-decoration:none;
   padding:5px 14px;font-size:.82em;border-left:3px solid transparent;transition:all .15s;}
 #sidebar a:hover{background:var(--sidebar-hover);color:var(--text);border-left-color:var(--accent);}
@@ -121,16 +138,13 @@ tr.skill-none{opacity:.55;}
 .nav-sub-link{font-size:.85em!important;padding:4px 12px 4px 24px!important;opacity:.8;}
 .nav-sub-link:hover{opacity:1;}
 .section-sep{border:none;border-top:1px solid var(--border-light);margin:24px 0;}
-#main{margin-left:200px;max-width:920px;padding:32px 32px 80px;}
-#hamburger{display:none;position:fixed;top:12px;left:12px;z-index:300;
-  background:var(--bg-card);border:1px solid var(--border-light);color:var(--text);
-  border-radius:8px;padding:8px 12px;font-size:1.1em;cursor:pointer;}
+#main{margin-left:var(--sidebar-w,200px);margin-top:48px;max-width:920px;padding:32px 32px 80px;}
 #sidebar-overlay{display:none;position:fixed;inset:0;background:var(--overlay);z-index:150;}
+#sidebar-overlay.visible{display:block;}
 @media(max-width:768px){
-  #hamburger{display:block;}
+  #hamburger{display:flex!important;align-items:center;}
   #sidebar{transform:translateX(-100%);width:220px;z-index:220;}
   #sidebar.open{transform:translateX(0);}
-  #sidebar-overlay.open{display:block;}
   #main{margin-left:0;padding:16px 14px 80px;}
   h1{font-size:1.4em;}
   table{font-size:.82em;}
@@ -461,10 +475,33 @@ body.edit-mode::after{content:'';position:fixed;inset:0;pointer-events:none;box-
 .toast-btn{background:none;border:1px solid currentColor;border-radius:4px;padding:2px 8px;cursor:pointer;font-size:.8em;white-space:nowrap;color:inherit;opacity:.85;flex-shrink:0;}
 .toast-btn:hover{opacity:1;}
 @keyframes toastIn{from{opacity:0;transform:translateX(20px);}to{opacity:1;transform:none;}}
-#fixed-controls{position:fixed;top:14px;right:16px;z-index:1050;display:flex;gap:7px;}
+/* ── Sidebar character block ── */
+.sb-char-block{padding:10px 12px 8px;border-bottom:1px solid var(--border-light);}
+.sb-char-info{display:flex;align-items:center;gap:8px;margin-bottom:6px;}
+.sb-portrait{width:32px;height:32px;border-radius:50%;object-fit:cover;flex-shrink:0;
+  border:1.5px solid var(--border-light);}
+.sb-portrait-ph{width:32px;height:32px;border-radius:50%;background:var(--bg-card2);
+  border:1.5px solid var(--border-light);display:flex;align-items:center;
+  justify-content:center;font-size:.95em;flex-shrink:0;}
+.sb-char-text{flex:1;min-width:0;}
+.sb-char-name{font-size:.84em;font-weight:600;color:var(--text);line-height:1.2;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.sb-char-sub{font-size:.71em;color:var(--text-muted);margin-top:1px;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.sb-change-char{width:100%;background:none;border:1px solid var(--border-light);
+  border-radius:5px;color:var(--text-muted);font-size:.71em;padding:3px 8px;
+  cursor:pointer;text-align:left;transition:border-color .15s,color .15s;display:block;}
+.sb-change-char:hover{border-color:var(--accent);color:var(--accent);}
+/* ── Sidebar edit button ── */
+.sb-edit-btn{width:100%;background:none;border:1.5px solid var(--border-light);border-radius:7px;
+  color:var(--text-muted);font-size:.78em;padding:7px 12px;cursor:pointer;
+  transition:all .18s;font-family:inherit;text-align:center;display:block;margin-top:4px;}
+.sb-edit-btn:hover{border-color:var(--accent);color:var(--accent);}
+.sb-edit-btn.on{background:var(--accent-dim);border-color:var(--accent);color:var(--accent);font-weight:600;}
 .ctrl-btn{background:var(--bg-card);border:1px solid var(--border-light);color:var(--text);
   border-radius:8px;padding:7px 11px;font-size:.9em;cursor:pointer;transition:all .15s;
-  box-shadow:var(--shadow-sm);text-decoration:none;display:inline-flex;align-items:center;}
+  box-shadow:var(--shadow-sm);text-decoration:none;display:inline-flex;align-items:center;
+  font-family:inherit;white-space:nowrap;}
 .ctrl-btn:hover{border-color:var(--accent);color:var(--accent);}
 .ctrl-btn.active{background:var(--accent-dim);border-color:var(--accent);color:var(--accent);}
 /* ── FAB ── */
@@ -497,7 +534,7 @@ body.edit-mode::after{content:'';position:fixed;inset:0;pointer-events:none;box-
 .lu-footer{display:flex;justify-content:flex-end;margin-top:12px;}
 .lu-dismiss{background:none;border:none;color:var(--text-muted);font-size:.82em;cursor:pointer;text-decoration:underline dotted;}
 .lu-dismiss:hover{color:var(--text);}
-.sidebar-footer{margin-top:auto;padding:10px 14px;border-top:1px solid var(--border-light);}
+.sidebar-footer{margin-top:auto;padding:8px 12px 4px;border-top:1px solid var(--border-light);}
 .sidebar-footer .btn-edit-sm{width:100%;justify-content:center;margin:3px 0;}
 .conc-status-text{margin-top:4px;font-size:.8em;color:var(--text-muted);}
 @media(max-width:500px){.ability-grid{grid-template-columns:repeat(3,1fr);}
@@ -541,13 +578,25 @@ body.edit-mode::after{content:'';position:fixed;inset:0;pointer-events:none;box-
   </style>
 </head>
 <body>
-<!-- HAMBURGER -->
-<button id="hamburger" onclick="toggleSidebar()">☰</button>
+<!-- APP HEADER -->
+<header id="app-header">
+  <button id="hamburger" onclick="toggleSidebar()" title="Menu">☰</button>
+  <a class="hdr-logo" href="index.html">⚔️ D&amp;D Sheets</a>
+  <nav class="hdr-tabs">
+    <a class="hdr-tab active" id="hdr-tab-char" href="index.html"></a>
+    <a class="hdr-tab" id="hdr-tab-ai" href="assistant.html"></a>
+  </nav>
+  <div class="hdr-right">
+    <button class="ctrl-btn" id="btn-theme" onclick="toggleTheme()">☀️</button>
+    <button class="ctrl-btn" id="btn-lang" onclick="toggleLang()">IT</button>
+  </div>
+</header>
 <div id="sidebar-overlay" onclick="toggleSidebar()"></div>
 
 <!-- SIDEBAR -->
 <nav id="sidebar">
-  <div class="nav-title" id="nav-title">📜 Indice</div>
+  <div id="sb-resize"></div>
+  <div class="sb-char-block" id="sb-char-block"></div>
   <div id="nav-links"></div>
   <div class="sidebar-footer" id="sidebar-footer"></div>
 </nav>
@@ -622,15 +671,6 @@ body.edit-mode::after{content:'';position:fixed;inset:0;pointer-events:none;box-
 
 <!-- TOAST -->
 <div id="toast-container"></div>
-
-<!-- FIXED CONTROLS -->
-<div id="fixed-controls">
-  <a class="ctrl-btn" href="assistant.html" title="AI Assistant" id="btn-ai">AI</a>
-  <button class="ctrl-btn" id="btn-logout" onclick="logoutCharacter()" title="Home" style="display:none">🏠</button>
-  <button class="ctrl-btn" id="btn-theme" onclick="toggleTheme()" title="Tema"></button>
-  <button class="ctrl-btn" id="btn-lang" onclick="toggleLang()" title="Lingua"></button>
-  <button class="ctrl-btn" id="btn-edit" onclick="toggleEditMode()" title="Modifica"></button>
-</div>
 
 <!-- Import file (hidden) -->
 <input type="file" id="import-session-input" accept=".json" style="display:none" onchange="importSession(event)">
@@ -771,6 +811,8 @@ function skillName(sk){ return DND.tr[currentLang]?.skills?.[sk.id]||sk.en; }
 // Adding a new language is one object: TRANSLATIONS.fr = { navTitle:'...', ... }
 const BASE = {
   navTitle:'📜 Index', editSidebar:'✏️ Sidebar',
+  hdrCharacter:'⚔️ Character', hdrAIAssistant:'✨ AI Assistant',
+  editMode:'✏️ Edit Sheet', editDone:'✓ Done Editing',
   baseData:'Base Data', skills:'Skills', spells:'Spells',
   equipment:'Equipment',
   algorithm:'Combat Algorithm',
@@ -816,7 +858,7 @@ const BASE = {
    custom:'Custom…', customPh:'Type a custom value',
    sidebarEmpty:'Sidebar is empty. Enable edit mode (✏️) to add sections.',
    editBtn:'✏️', delBtn:'🗑',
-  langToggle:'🇮🇹 IT', editMode:'✏️', editModeActive:'✏️ ON',
+   langToggle:'🇮🇹 IT',
   splashSub:'Interactive Character Sheet — D&D 2024',
   splashImport:'Import JSON', splashImportDesc:'Load your existing sheet',
   splashCreate:'Create Character', splashCreateDesc:'Step-by-step guided wizard',
@@ -954,7 +996,8 @@ const BASE = {
   logPotionHealed:'healed →',
   logDeathReset:'💀 Death saves reset.',
   // HTML title attributes
-  titleHome:'Home', titleTheme:'Theme', titleLang:'Language', titleEdit:'Edit',
+  titleHome:'Home', titleTheme:'Theme', titleLang:'Language', titleEdit:'Edit mode',
+  changeChar:'Change character',
   portraitTitle:'Click to load image',
   portraitPlaceholder:'Add photo',
   // Prompt dialogs
@@ -1100,6 +1143,7 @@ const BASE = {
 const TRANSLATIONS = {
   it:{
     navTitle:'📜 Indice', editSidebar:'✏️ Sidebar',
+    hdrCharacter:'⚔️ Personaggio', hdrAIAssistant:'✨ Assistente AI',
   baseData:'Dati Base', skills:'Abilità', spells:'Incantesimi',
   equipment:'Equipaggiamento',
   algorithm:'Algoritmo di Combattimento',
@@ -1145,7 +1189,7 @@ const TRANSLATIONS = {
     custom:'Personalizzato…', customPh:'Inserisci un valore personalizzato',
     sidebarEmpty:'Sidebar vuota. Abilita modalità modifica (✏️) per aggiungere sezioni.',
     editBtn:'✏️', delBtn:'🗑',
-    langToggle:'🇬🇧 EN', editMode:'✏️', editModeActive:'✏️ ON',
+      langToggle:'🇬🇧 EN', editMode:'✏️ Modifica Scheda', editDone:'✓ Fine Modifica',
     splashSub:'Scheda Personaggio Interattiva — D&D 2024',
     splashImport:'Importa JSON', splashImportDesc:'Carica la tua scheda esistente',
     splashCreate:'Crea Personaggio', splashCreateDesc:'Wizard guidato passo per passo',
@@ -1279,7 +1323,8 @@ const TRANSLATIONS = {
     logNoPotionRight:'rimasta.',
     logPotionHealed:'PF curati →',
     logDeathReset:'💀 Tiri salvezza morte resettati.',
-    titleHome:'Home', titleTheme:'Tema', titleLang:'Lingua', titleEdit:'Modifica',
+    titleHome:'Home', titleTheme:'Tema', titleLang:'Lingua', titleEdit:'Modalità modifica',
+    changeChar:'Cambia personaggio',
     portraitTitle:'Clicca per caricare immagine',
     portraitPlaceholder:'Aggiungi foto',
     promptEditBlock:'Modifica blocco',
@@ -1518,16 +1563,14 @@ function updatePageTitle(){
 }
 function updateFixedControls(){
   const isDark=document.documentElement.getAttribute('data-theme')!=='light';
-  document.getElementById('btn-theme').textContent=isDark?'☀️':'🌙';
-  document.getElementById('btn-lang').textContent=T('langToggle');
-  // Update title attributes for i18n
-  document.getElementById('btn-theme').title=T('titleTheme');
-  document.getElementById('btn-lang').title=T('titleLang');
-  const hasChar=!!CHAR;
-  const logoutBtn=document.getElementById('btn-logout');
-  const editBtn=document.getElementById('btn-edit');
-  if(logoutBtn){ logoutBtn.style.display=hasChar?'':'none'; logoutBtn.title=T('titleHome'); }
-  if(editBtn){ editBtn.style.display=hasChar?'':'none'; editBtn.textContent=EDIT_MODE?T('editModeActive'):T('editMode'); editBtn.classList.toggle('active',EDIT_MODE); editBtn.title=T('titleEdit'); }
+  const themeBtn=document.getElementById('btn-theme');
+  const langBtn=document.getElementById('btn-lang');
+  if(themeBtn){themeBtn.textContent=isDark?'☀️':'🌙';themeBtn.title=T('titleTheme');}
+  if(langBtn){langBtn.textContent=T('langToggle');langBtn.title=T('titleLang');}
+  const tabChar=document.getElementById('hdr-tab-char');
+  const tabAI=document.getElementById('hdr-tab-ai');
+  if(tabChar) tabChar.textContent=T('hdrCharacter');
+  if(tabAI) tabAI.textContent=T('hdrAIAssistant');
   renderFAB();
 }
 function renderFAB(){
@@ -1700,12 +1743,34 @@ function sbTrashDrop(e){
 function renderSidebar(){
   const links=document.getElementById('nav-links');
   const footer=document.getElementById('sidebar-footer');
-  document.getElementById('nav-title').textContent=T('navTitle');
-  if(!CHAR){links.innerHTML='';footer.innerHTML='';return;}
+  const sidebar=document.getElementById('sidebar');
+  const charBlock=document.getElementById('sb-char-block');
+
+  if(!CHAR){
+    links.innerHTML='';footer.innerHTML='';
+    if(sidebar) sidebar.style.display='none';
+    return;
+  }
+  if(sidebar) sidebar.style.display='';
   ensureSidebar();
+  // ── Character identity block ──
+  const portraitSrc=SESSION?.portrait||'';
+  const cName=CHAR.name||'';
+  const cClass=CHAR.class?dndTr('classes',CHAR.class):'';
+  const cLvl=CHAR.level?T('level')+' '+CHAR.level:'';
+  const cSub=[cClass,cLvl].filter(Boolean).join(' · ');
+  const portraitEl=portraitSrc
+    ?`<img class="sb-portrait" src="${portraitSrc}" alt="">`
+    :`<div class="sb-portrait-ph">🧙</div>`;
+  if(charBlock){
+    charBlock.innerHTML=`<div class="sb-char-info">${portraitEl}<div class="sb-char-text">
+      <div class="sb-char-name">${cName}</div>${cSub?`<div class="sb-char-sub">${cSub}</div>`:''}
+    </div></div>
+    <button class="sb-change-char" onclick="logoutCharacter()" title="${T('titleHome')}">↩ ${T('changeChar')}</button>
+    <button class="sb-edit-btn${EDIT_MODE?' on':''}" onclick="toggleEditMode()" title="${T('titleEdit')}">${EDIT_MODE?T('editDone'):T('editMode')}</button>`;
+  }
   let html='';
   if(EDIT_MODE){
-    // ── Edit mode: draggable items ──
     html+=(CHAR.sidebar||[]).map((item,i)=>{
       const dAttr=`draggable="true" ondragstart="sbDragStart(event,${i})" ondragover="sbDragOver(event,${i})" ondrop="sbDrop(event,${i})" ondragend="sbDragEnd()"`;
       if(typeof item==='object' && item.type==='sep'){
@@ -1715,10 +1780,8 @@ function renderSidebar(){
       if(!resolved) return '';
       return `<div class="sb-item-edit" ${dAttr}><span class="drag-handle">⋮⋮</span><a href="#${resolved.id}" onclick="closeSidebarMobile()">${resolved.emoji||''} ${resolved.label||''}</a></div>`;
     }).join('');
-    // Trash drop zone (hidden until drag starts)
     html+=`<div class="sb-trash-zone" id="sb-trash" ondragover="sbTrashOver(event)" ondragleave="sbTrashLeave(event)" ondrop="sbTrashDrop(event)">${T('sbTrashLabel')}</div>`;
   } else {
-    // ── Normal mode: simple links ──
     html+=(CHAR.sidebar||[]).map((item,i)=>{
       if(typeof item==='object' && item.type==='sep') return `<div class="nav-sep"></div>`;
       const resolved=resolveSidebarItem(item);
@@ -1735,10 +1798,13 @@ function renderSidebar(){
     }).join('');
   }
   links.innerHTML=html;
+  // ── Footer: action buttons (edit mode only) ──
+  let footerHtml='';
   if(EDIT_MODE){
-    footer.innerHTML=`<button class="btn-edit-sm edit-only" style="display:inline-flex;width:100%;margin:2px 0;justify-content:center;" onclick="addFeature()">${T('addFeature')}</button>
+    footerHtml=`<button class="btn-edit-sm edit-only" style="display:inline-flex;width:100%;margin:2px 0;justify-content:center;" onclick="addFeature()">${T('addFeature')}</button>
       <button class="btn-edit-sm edit-only" style="display:inline-flex;width:100%;margin:2px 0;justify-content:center;" onclick="addSidebarSep()">${T('addSep')}</button>`;
-  } else {footer.innerHTML='';}
+  }
+  footer.innerHTML=footerHtml;
 }
 
 function renderHeader(){
@@ -4309,7 +4375,9 @@ function logoutCharacter(){
   });
   const img=document.getElementById('portrait-img'); if(img){img.src='';img.style.display='none';}
   const ph=document.getElementById('portrait-ph'); if(ph) ph.style.display='';
+  const sb=document.getElementById('sb-char-block'); if(sb) sb.innerHTML='';
   showSplash();
+  renderSidebar();
   updateFixedControls();
 }
 let _toastTimer=null;
@@ -4342,6 +4410,7 @@ function init(){
   const loaded=loadFromStorage();
   if(!loaded||!CHAR){
     showSplash();
+    renderSidebar();
     updateFixedControls();
     return;
   }
@@ -4374,6 +4443,38 @@ function init(){
   // HP amount enter key
   const hpAmt=document.getElementById('hp-amount');
   if(hpAmt) hpAmt.addEventListener('keydown',function(e){if(e.key==='Enter')applyDamage();});
+  // Sidebar resize
+  const savedSbW=localStorage.getItem('sidebarWidth');
+  if(savedSbW) document.documentElement.style.setProperty('--sidebar-w',savedSbW);
+  initSbResize();
+}
+// ─── SIDEBAR RESIZE ───
+let _sbDrag=null;
+function initSbResize(){
+  const handle=document.getElementById('sb-resize');
+  if(!handle) return;
+  handle.addEventListener('mousedown',function(e){
+    e.preventDefault();
+    const sb=document.getElementById('sidebar');
+    _sbDrag={startX:e.clientX,startW:sb?sb.getBoundingClientRect().width:200};
+    handle.classList.add('dragging');
+    document.addEventListener('mousemove',_onSbDrag);
+    document.addEventListener('mouseup',_onSbDragEnd);
+  });
+}
+function _onSbDrag(e){
+  if(!_sbDrag) return;
+  const newW=Math.min(320,Math.max(160,_sbDrag.startW+(e.clientX-_sbDrag.startX)));
+  document.documentElement.style.setProperty('--sidebar-w',newW+'px');
+}
+function _onSbDragEnd(){
+  if(!_sbDrag) return;
+  const w=document.documentElement.style.getPropertyValue('--sidebar-w');
+  if(w) localStorage.setItem('sidebarWidth',w);
+  _sbDrag=null;
+  document.getElementById('sb-resize')?.classList.remove('dragging');
+  document.removeEventListener('mousemove',_onSbDrag);
+  document.removeEventListener('mouseup',_onSbDragEnd);
 }
 // Splash "load file" button
 function splashLoadFile(){

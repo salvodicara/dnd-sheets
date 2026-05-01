@@ -1,8 +1,8 @@
-# CLAUDE.md -- Steering Document for AI Agents
+# CLAUDE.md — Steering Document for AI Agents
 
 ## Project Overview
 
-**D&D Sheets** is a zero-dependency, single-file (HTML+CSS+JS) digital character sheet for D&D 2024 players. The entire application lives in `index.html` (~3,830 lines). There is no build system, no framework, no server. Open the file in a browser and it works.
+**D&D Sheets** is a zero-dependency, single-file (HTML+CSS+JS) digital character sheet for D&D 2024 players. The entire application lives in `index.html` (~4,492 lines). There is no build system, no framework, no server. Open the file in a browser and it works.
 
 ## Golden Rules
 
@@ -13,15 +13,17 @@
 5. **Always syntax-check after edits.** After any JS change, run `just check` from the project root. Never leave a session without a clean check. Common pitfall: mixing `??` with `||`/`&&` requires explicit parentheses.
 6. **No dice rolling.** The app never rolls dice. Players always roll in an external window/app. Any feature that needs a dice result must show the formula (e.g. `2d8+3`) and let the user enter the rolled result manually. Never use `Math.random()` for dice. Remove `rollDice()` if found.
 7. **Preserve the existing architecture.** Follow the patterns already in the code (see below). Do not introduce new paradigms.
-7. **Always test in context.** After any change, mentally verify that `renderAll()` will still produce correct output and that event handlers will bind properly.
-8. **Usability first.** Never ask users for technical information (IDs, slugs, anchors). Auto-generate from user-friendly inputs. Wizards should guide step-by-step with contextual labels.
-9. **Auto-compute + override.** Every derived value (PB, spell DC, weapon attack, etc.) is auto-calculated. Each has an optional `*Override` field for custom values (magic items, homebrew).
-10. **No redundancy in data.** The JSON should store only unique, non-derivable data. The engine is smart. See `DESIGN.md` for the v3.0 data model.
-11. **Read DESIGN.md first.** For any new implementation work, read `DESIGN.md` before starting -- it contains all design decisions, the v1 phase plan, and the target data model.
-12. **English source code.** ALL identifiers (variable names, function names, CSS classes/IDs, translation keys, section IDs) must be English. Only the string VALUES in `TRANSLATIONS.it` are Italian. If you encounter Italian identifiers in the codebase, rename them to English immediately.
-13. **English canonical D&D names.** All fixed D&D names (races, classes, backgrounds, subclasses, conditions, schools, damage types, etc.) are stored in English in the data model. Localization happens only at display time via `dndTr()`. The char-create wizard uses `select-or-custom` fields for these, with a "Custom..." option for homebrew.
-14. **Backward compatibility: ask before breaking.** The app is deployed and real users have saved JSON. Prefer additive changes (new fields with safe defaults). If a breaking data model change would lead to significantly better design, **ask the user first** — don't just do it. If approved, add a silent migration in `syncSession()` / `ensureSidebar()` so old data upgrades automatically.
-15. **No commits unless told to.** Never create git commits unless the user explicitly asks.
+8. **Always test in context.** After any change, mentally verify that `renderAll()` will still produce correct output and that event handlers will bind properly.
+9. **No dead code.** Every change must leave the codebase cleaner than it found it. When replacing CSS rules, HTML elements, or JS variables/functions, immediately remove the old ones. When adding i18n keys, verify they are actually used. When removing UI elements, remove their CSS and any DOM-update references. Dead code is a bug.
+10. **Usability first.** Never ask users for technical information (IDs, slugs, anchors). Auto-generate from user-friendly inputs. Wizards should guide step-by-step with contextual labels.
+11. **Auto-compute + override.** Every derived value (PB, spell DC, weapon attack, etc.) is auto-calculated. Each has an optional `*Override` field for custom values (magic items, homebrew).
+12. **No redundancy in data.** The JSON should store only unique, non-derivable data. The engine is smart. See `DESIGN.md` for the v3.0 data model.
+13. **Read DESIGN.md first.** For any new implementation work, read `DESIGN.md` before starting -- it contains all design decisions, the v1 phase plan, and the target data model.
+14. **English source code.** ALL identifiers (variable names, function names, CSS classes/IDs, translation keys, section IDs) must be English. Only the string VALUES in `TRANSLATIONS.it` are Italian. If you encounter Italian identifiers in the codebase, rename them to English immediately.
+15. **English canonical D&D names.** All fixed D&D names (races, classes, backgrounds, subclasses, conditions, schools, damage types, etc.) are stored in English in the data model. Localization happens only at display time via `dndTr()`. The char-create wizard uses `select-or-custom` fields for these, with a "Custom..." option for homebrew.
+16. **Backward compatibility: ask before breaking.** The app is deployed and real users have saved JSON. Prefer additive changes (new fields with safe defaults). If a breaking data model change would lead to significantly better design, **ask the user first** — don't just do it. If approved, add a silent migration in `syncSession()` / `ensureSidebar()` so old data upgrades automatically.
+17. **No commits unless told to.** Never create git commits unless the user explicitly asks.
+18. **Grill before building.** Before implementing any new feature or meaningfully modifying an existing one, always load the `grill-me` skill and interview the user to resolve all design decisions. Do this implicitly — the user does not need to ask for it.
 
 ## Architecture
 
@@ -157,7 +159,6 @@ CB_EDIT_DATA  -- deep clone of block being edited (for cancel/restore)
 | `T(key)` | Get translated string (uppercase T) |
 | `sectionHeader(id, extra)` | Build section `<h2>` with emoji from registry |
 | `mod(score)` | Compute ability modifier from score |
-| `rollDice(formula)` | Parse and roll NdM+K dice formulas |
 | `addLog(msg)` | Append to the action log |
 | `toast(msg, type)` | Show a toast notification (success/error/info) |
 | `renderMarkdown(text)` / `md(text)` | Convert **bold**, *italic*, newlines to HTML |
@@ -170,10 +171,27 @@ CB_EDIT_DATA  -- deep clone of block being edited (for cancel/restore)
 | `renderTags(tags)` | Render tag badges as HTML spans |
 | `injectWizPreview()` | Dispatch live preview update for current wizard |
 | `translateSource(src)` | Translate feature source for display |
+| `initSbResize()` | Attach drag listener to `#sb-resize` handle |
+| `updateFixedControls()` | Sync header tab labels and theme/lang buttons |
 
 ## AI Assistant (`assistant.html`)
 
-A standalone ~1000-line HTML file (same zero-dependency constraint). Communicates with `index.html` exclusively via `localStorage` key `dnd_sheet_v2`.
+A standalone ~1,229-line HTML file (same zero-dependency constraint). Communicates with `index.html` exclusively via `localStorage` key `dnd_sheet_v2`.
+
+### Sidebar Layout
+
+`#ai-sidebar` is `position:fixed; left:0; top:48px; width:var(--ai-sb-w,240px)`, matching the `#sidebar` pattern in `index.html`.
+
+- **Collapsible:** `.collapsed` class + `--ai-sb-w:48px` shrinks to icon-only strip. State saved to `aiSidebarCollapsed` in localStorage.
+- **Resizable:** `#ai-sb-resize` drag handle (160px–400px). Width saved to `aiSidebarWidth` in localStorage. Handle hidden when collapsed.
+- **Two panels:** ⚙️ Settings (`#setup-panel`) and 🧙 Character (`#cpanel-panel`). Toggled via `.ai-panel.open` class. Start collapsed by default; `openAiPanel('setup')` auto-expands on new-user welcome.
+- **Mobile:** overlay drawer via `#ai-overlay` + `mobile-open` class; hamburger `#hamburger-ai` in header.
+- **Flash prevention:** An inline `<script>` in `<head>` runs synchronously before first paint, applying `data-theme`, `--ai-sb-w`, and `disclaimer-dismissed` class from localStorage. This prevents layout/theme flash on page load and navigation.
+- **CSS variable note:** `assistant.html` defines `--bg3` (not `--bg-card2`). Always use `var(--bg3)` for hover surfaces in this file.
+
+### Disclaimer
+
+`#ai-disclaimer` bar at bottom of chat, dismissible via `dismissDisclaimer()`. Dismissed state saved to `aiDisclaimerDismissed` in localStorage and applied before paint via `html.disclaimer-dismissed #ai-disclaimer{display:none}`.
 
 ### State
 ```
