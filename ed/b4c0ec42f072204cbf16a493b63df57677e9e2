@@ -1,0 +1,30 @@
+assistant.html
+  592ae137f43efab7 121,207,574-575
+index.html
+  592ae137f43efab7 169,462,702,1343,1835-1836,1959,2012-2057,2093,2097,4861-4862
+README.md
+  592ae137f43efab7 58
+CHANGELOG.md
+  592ae137f43efab7 15-16
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.3.4",
+  "base_commit_sha": "edb4c0ec42f072204cbf16a493b63df57677e9e2",
+  "prompts": {
+    "592ae137f43efab7": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_21b10dc58fferIlir0L3tpncvX",
+        "model": "github-copilot/claude-sonnet-4.6"
+      },
+      "human_author": "Salvatore Di Cara",
+      "messages": [],
+      "total_additions": 77,
+      "total_deletions": 20,
+      "accepted_lines": 71,
+      "overriden_lines": 0,
+      "messages_url": "https://usegitai.com/cas/c1d1cd33174b7bf61c7d47fdef6fb7b4818c3879158d39b5139cc2cf67b4487e"
+    }
+  }
+}
