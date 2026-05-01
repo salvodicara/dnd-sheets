@@ -6,7 +6,7 @@
 ## Status
 
 - **v0 (Complete):** Core character sheet, wizard system, i18n skeleton, dark/light themes
-- **v1 (In Progress):** UX overhaul, i18n completion, sidebar architecture, smart features
+- **v1 (Complete):** UX overhaul, i18n completion, sidebar architecture, smart features, D&D 2024 parity
 - **v1.1 (Scoped, Deferred):** Full level-up wizard, class feature tables, feat database
 
 ---
@@ -228,24 +228,24 @@ Done:
 - **syncSession():** backward compatible — existing saves without `hdDialog` default to `false` via `??` pattern.
 
 ### Phase 13: FAB (Floating Action Button)
-**Status:** COMPLETE
+**Status:** ✅ COMPLETE
 - Floating `＋` button bottom-right, edit mode only. Rotates on open/close.
 - Menu simplified to 4 items: Level Up, Add Feature, Add Item, Add Spell (only if spellcasting configured).
 - `renderFAB()` called from `updateFixedControls()`. `closeFAB()` called by each item's onclick.
 
 ### Phase 14: Edit Mode Banner
-**Status:** COMPLETE (scope reduced)
+**Status:** ✅ COMPLETE (scope reduced)
 - Banner removed per user decision — orange inset glow (`body.edit-mode::after`) is sufficient visual feedback.
 
 ### Phase 15: Getting Started Card
-**Status:** COMPLETE
+**Status:** ✅ COMPLETE
 - One-time card shown after new character creation (`SESSION.showGettingStarted=true` set in char-create `onSave`).
 - Buttons: Add Weapon, Add Equipment, Add Feature, Add Spell / Set up Spellcasting.
 - `gsAction(key)` enables edit mode + calls `renderAll()` before opening wizard.
 - `dismissGettingStarted()` clears the flag. Rendered at top of `renderSections()`.
 
 ### Phase 16: Basic Level-Up Wizard (v1 limited)
-**Status:** COMPLETE
+**Status:** ✅ COMPLETE
 - 2-step wizard: Step 1 = HP gain (number field + "Use average" checkbox, **checked by default**, auto-fills average value). Step 2 = preview checklist.
 - `onSave`: increments `CHAR.level`, adds HP to `CHAR.hp.max` and `SESSION.hp.current`, stores `CHAR.levelUpChecklist` as `[{text, done:false}]`.
 - Checklist lives in **`CHAR`** (not SESSION) so it survives reloads and JSON exports until manually dismissed.
@@ -255,21 +255,21 @@ Done:
 - `syncSession()` silently migrates old saves that stored checklist in `SESSION`.
 
 ### Phase 17: Session Cleanup
-**Status:** COMPLETE
+**Status:** ✅ COMPLETE
 - `syncSession()` prunes stale `SESSION.trackers` entries for deleted features/equipment.
 - `syncSession()` prunes stale `SESSION.spellSlots` entries for deleted slot levels.
 
 ### Phase 18: Portrait Size Cap
-**Status:** COMPLETE
+**Status:** ✅ COMPLETE
 - `loadPortrait()` resizes via canvas to 512px max, encodes as JPEG quality 0.8.
 
 ### Phase 19: Import Validation
-**Status:** COMPLETE
+**Status:** ✅ COMPLETE
 - `validateAndMigrateChar(c)` validates required fields (throws on missing name / invalid structure).
 - Ensures all arrays are arrays, clamps level 1–20, defaults ability scores to 10, migrates legacy skills format.
 
 ### Phase 20: AI Assistant (`assistant.html`)
-**Status:** COMPLETE
+**Status:** ✅ COMPLETE
 
 A standalone companion page that lets users ask D&D 2024 questions and apply character changes directly from a chat interface, with no manual JSON editing.
 
@@ -290,6 +290,103 @@ Done:
 - `fetchPollinationsLimits()` — live model info fetch with i18n fallbacks
 - Full i18n of all UI strings in `assistant.html` (`applyBtn`, `applyToast`, `applyError`, `patchFailed`, `modelInfo`, `loadingModel`, etc.)
 - System prompt (`sys` + `sysShort`) updated: always-output-patch contract, no-technical-language rule
+
+### Phase 21: Passive Skills
+**Status:** ✅ COMPLETE
+**Goal:** Show passive Perception, Investigation, and Insight scores auto-computed from skill proficiency + WIS mod.
+
+Done:
+- Displayed in the Skills section below active skills.
+- Auto-computed: `10 + WIS mod + (proficiency bonus if proficient, doubled if expertise)`.
+- No wizard needed — pure derived values.
+
+### Phase 22: Inspiration & Exhaustion
+**Status:** ✅ COMPLETE
+**Goal:** Track Bardic/Heroic Inspiration and Exhaustion level in the game panel.
+
+Done:
+- **Inspiration**: Toggle button in game panel. `SESSION.inspiration` boolean. No dice — player decides.
+- **Exhaustion**: 0–6 level tracker in game panel. `SESSION.exhaustion` integer. Long rest reduces by 1 (per D&D 2024). Level 6 = dead. Each level shows penalty summary.
+
+### Phase 23: Multi-Currency
+**Status:** ✅ COMPLETE
+**Goal:** Replace single "gold" field with full D&D 2024 currency (PP/GP/EP/SP/CP).
+
+Done:
+- `SESSION.currency = {pp, gp, ep, sp, cp}` replaces `SESSION.gold`.
+- Game panel: 5 coin tiles in a horizontal row. Click a tile to select it; `−` / step input / `+` controls act on the selected coin.
+- `selectCurTab(c)` does DOM-only updates (no re-render). `adjustCur(dir)` updates both game panel and equipment table instantly.
+- Equipment table: read-only mirror of all 5 currencies.
+- `syncSession()` migrates old `SESSION.gold` to `SESSION.currency.gp`.
+
+### Phase 24: Spell Components (V/S/M)
+**Status:** ✅ COMPLETE
+**Goal:** Track verbal, somatic, and material components per spell; show material text when needed.
+
+Done:
+- `compV`, `compS`, `compM` (boolean) and `compMaterial` (string) fields added to spell data model.
+- Checkboxes in spell wizard. `compMaterial` text field shown only when `compM` is checked (`_afterRender` hook).
+- Component badges (V / S / M) rendered on spell cards. M badge shows tooltip with material text.
+- `catalion.json` updated: all 11 spells filled with correct D&D 2024 components.
+
+### Phase 25: Weapon Mastery (D&D 2024)
+**Status:** ✅ COMPLETE
+**Goal:** Each weapon can have one Mastery property (Cleave, Graze, Nick, Push, Sap, Slow, Topple, Vex).
+
+Done:
+- `mastery` field added to weapon data model.
+- `DND.masteryProps` list and `DND.masteryDesc` (EN) + `DND.tr.it.masteryDesc` (IT) with accurate D&D 2024 descriptions.
+- Select field in weapon wizard step 2.
+- Mastery chip rendered on weapon cards with CSS `::after` tooltip showing the description.
+- `catalion.json` updated: Pugnale→Nick, Spada Bella→Vex.
+
+### Phase 26: Attunement
+**Status:** ✅ COMPLETE
+**Goal:** Mark equipment items as requiring attunement; show attuned count (max 3) in equipment section.
+
+Done:
+- `attuned` boolean field added to equipment data model.
+- Checkbox in equipment wizard.
+- Attunement chip shown inline on equipment table rows when attuned.
+- Attunement count badge `N/3 attuned` shown in equipment section header when any items are attuned.
+
+### Phase 27: Spell Filter Bar
+**Status:** ✅ COMPLETE
+**Goal:** Quick search/filter across spells without leaving the page.
+
+Done:
+- Sticky filter bar in Spells section: text search input + "Prepared" toggle button.
+- `setSpellFilter(val)` / `clearSpellFilter()` update module-level filter state and re-render.
+- Scroll position and input focus preserved on re-render (saves/restores `window.scrollY`, re-focuses input).
+- Filtering is case-insensitive substring match on spell name, school, action type, and tags.
+
+### Phase 28: Weapon & Armor Proficiencies
+**Status:** ✅ COMPLETE
+**Goal:** Store and display weapon/armor proficiency strings on the character sheet.
+
+Done:
+- `CHAR.weaponProficiencies` and `CHAR.armorProficiencies` free-text fields added to data model.
+- Fields in char-create wizard (Combat step) and `flattenChar()`/`onSave` wired.
+- Displayed in base-data section below language/tool proficiencies.
+
+### Phase 29: Character Lore
+**Status:** ✅ COMPLETE
+**Goal:** Structured section for physical description, personality, backstory, and ideals/bonds/flaws.
+
+Done:
+- `CHAR.lore` object: `{age, height, weight, eyes, hair, skin, personalityTraits, ideals, bonds, flaws, backstory}`.
+- Dedicated Lore section (`lore` in SECTION_REGISTRY) with its own `renderLore()` and wizard.
+- Lore wizard: two steps (Physical / Personality & Backstory).
+- `catalion.json` updated: full Italian backstory + physical stats for Catalion.
+
+### Phase 30: Unarmed Strike
+**Status:** ✅ COMPLETE
+**Goal:** Auto-derive unarmed strike from STR mod and display it in weapons section.
+
+Done:
+- Unarmed strike auto-rendered as a derived row in the weapons table (not stored in `CHAR.weapons`).
+- Damage: `1 + STR mod` (minimum 1) bludgeoning; attack bonus: `PB + STR mod`.
+- Not editable — it's always auto-computed. Consistent with the override pattern.
 
 ---
 
@@ -320,6 +417,7 @@ Done:
   name, quote, race, class, subclass, level, background, alignment,
   playerName, speed, ac, armorNote, hp: {max},
   hitDieType, initiativeBonus, languages, toolProficiencies,
+  weaponProficiencies?, armorProficiencies?,  // free-text strings
 
   abilityScores: { STR, DEX, CON, INT, WIS, CHA },
   savingThrows: ["DEX", "CHA"],
@@ -341,6 +439,8 @@ Done:
     level, name, originalName, emoji, actionType, school,
     range, duration, concentration?, saveAbility?,
     description, scaling?, notes?,
+    compV?, compS?, compM?,        // boolean component flags
+    compMaterial?,                 // material component text (e.g. "a pinch of sand")
     prepared?, ritual?,
     tags?: [{ label, color }]  // 0-3 tags (green/blue/purple/red/orange)
   }],
@@ -349,6 +449,7 @@ Done:
     name, emoji, quantity,
     damageDie: "1d4",          // die only, no modifier
     damageType, attackStat,
+    mastery?,                  // Cleave|Graze|Nick|Push|Sap|Slow|Topple|Vex
     magicBonus?,               // optional +1/+2/+3
     attackBonusOverride?,      // null = auto-calc
     damageOverride?,           // null = auto-calc
@@ -360,6 +461,7 @@ Done:
     name, notes?,
     // Optional tracker fields (e.g. potions, scrolls)
     tracked?, quantity?, emoji?,
+    attuned?,                    // boolean — shows chip + counts toward 3-item limit
     recovery?,                   // manual/short/long
     isPotion?, potionFormula?
   }],
@@ -399,7 +501,10 @@ Done:
     "eq-slugified-item-name": { used: 0 }     // equipment trackers
   },
   spellSlots: { "1": { used: 0 }, "2": { used: 0 } },
-  gold, round, concentration, initiative,
+  currency: { pp, gp, ep, sp, cp },           // replaces old `gold` field
+  inspiration: false,                          // boolean
+  exhaustion: 0,                               // 0-6
+  round, concentration, initiative,
   conditions: [],
   deathSucc, deathFail,
   notes, portrait, logEntries,
@@ -407,7 +512,7 @@ Done:
 }
 ```
 
-### Removed from v2.0 model
+### Fields removed from the legacy model (pre-v3.0)
 - proficiencyBonus -> computed from level (override: proficiencyBonusOverride)
 - spellcasting.saveDC -> computed (override: dcOverride)
 - spellcasting.attackBonus -> computed (override: attackBonusOverride)
@@ -503,6 +608,20 @@ Done:
 | 74 | AI technical language | Banned from prose/wizard steps (style rule 8); allowed only in patch block |
 | 75 | Free model limits | Dynamic fetch from Pollinations /models API; shown in settings hint with i18n fallback |
 | 76 | Patch omit rule | AI may omit patch only for pure rules questions; no "too complex" escape hatch |
+| 77 | Multi-currency | PP/GP/EP/SP/CP replace single gold field; `SESSION.currency` map; old `SESSION.gold` migrated in syncSession() |
+| 78 | Currency UI | Coin tile selector in game panel; adjustCur() updates both panel and equipment table without re-render |
+| 79 | Passive skills | Displayed in Skills section; auto-computed (10 + ability mod + proficiency), never stored |
+| 80 | Inspiration | Boolean in SESSION; toggle in game panel; no dice (player decides) |
+| 81 | Exhaustion | 0–6 in SESSION; long rest reduces by 1 per D&D 2024; level 6 = dead |
+| 82 | Spell components | compV/compS/compM booleans + compMaterial string on spells; V/S/M badges on cards |
+| 83 | Material component display | M badge shows tooltip with material text; wizard shows compMaterial field only when compM is checked |
+| 84 | Weapon mastery | mastery field on weapons; DND.masteryDesc (EN) + DND.tr.it.masteryDesc (IT); CSS ::after tooltip |
+| 85 | Attunement | attuned boolean on equipment; chip on table rows; N/3 badge in section header |
+| 86 | Spell filter | Sticky bar in Spells section; text search + prepared toggle; scroll/focus preserved on re-render |
+| 87 | Weapon/armor proficiencies | Free-text fields in char-create wizard (Combat step); displayed in base-data section |
+| 88 | Character lore | CHAR.lore object; dedicated section + wizard (Physical + Personality & Backstory steps) |
+| 89 | Unarmed strike | Auto-derived row in weapons table; not stored; damage = 1+STR mod, attack = PB+STR mod |
+| 90 | Schema version | Single source of truth: SCHEMA_VERSION = '3.0' in index.html; all exports and Catalion JSON use "3.0" |
 
 ---
 
@@ -515,10 +634,10 @@ Done:
 | ~~"Nessun dado vita" hardcoded~~ | ~~spendHD()~~ | ✅ Fixed (T() key) |
 | ~~Tracker die/showDie not in wizard~~ | ~~WIZARDS.tracker~~ | ✅ Fixed |
 | ~~Action ID is dead code~~ | ~~WIZARDS.action~~ | ✅ Fixed (removed) |
-| shortRest() is a no-op | shortRest() | Full implementation (Phase 12) |
+| ~~shortRest() is a no-op~~ | ~~shortRest()~~ | ✅ Fixed (Phase 12) |
 | ~~longRest() ignores tracker recovery~~ | ~~longRest()~~ | ✅ Fixed (checks recovery field) |
 | ~~Manual trackers reset on long rest~~ | ~~longRest()~~ | ✅ Fixed (skips recovery:'manual') |
-| PB auto-calc shadowed | renderBaseData | Override pattern (Phase 9) |
+| ~~PB auto-calc shadowed~~ | ~~renderBaseData~~ | ✅ Fixed (Phase 9 — override pattern) |
 | ~~Death save colors hardcoded~~ | ~~CSS~~ | ✅ Fixed (--death-succ/--death-fail) |
 | ~~Gold input color hardcoded~~ | ~~CSS~~ | ✅ Fixed (CSS variable) |
 | ~~Pip text color hardcoded~~ | ~~CSS~~ | ✅ Fixed (--pip-text) |
@@ -542,18 +661,23 @@ Done:
 | CSS theme variables (dark) | ~1-30 |
 | CSS theme variables (light) | ~31-60 |
 | HTML skeleton | ~490-520 |
-| DND constants + canonical lists | ~580-660 |
-| BASE i18n object | ~660-830 |
-| TRANSLATIONS.it object | ~830-1080 |
-| syncSession() | ~1185-1195 |
-| SECTION_REGISTRY | ~1255-1270 |
-| ensureSidebar() | ~1296-1330 |
-| renderSidebar() | ~1358-1395 |
-| renderPanel / buildPanelRow* | ~1420-1690 |
-| renderSections() | ~1690-1715 |
-| longRest() / shortRest() | ~2100-2125 |
-| Wizard engine | ~2140-2320 |
-| Content block editor | ~2326-2415 |
-| Algo step editor | ~2416-2445 |
-| WIZARDS config object | ~2450-2810 |
-| Feature CRUD | ~2930-2970 |
+| DND constants + canonical lists | ~750-900 |
+| BASE i18n object | ~904-1280 |
+| TRANSLATIONS.it object | ~1283-1650 |
+| SCHEMA_VERSION + export helpers | ~1653-1750 |
+| renderAll() + renderFAB() | ~1749-1812 |
+| syncSession() | ~1691-1728 |
+| SECTION_REGISTRY | ~1814-1830 |
+| ensureSidebar() | ~1856-1940 |
+| renderSidebar() | ~1943-2035 |
+| renderPanel / buildPanelRow* | ~2035-2385 |
+| renderSections() | ~2385-2412 |
+| renderBaseData() | ~2412-2486 |
+| renderSpellsSection() | ~2520-2621 |
+| renderWeapons() | ~2621-2666 |
+| renderEquipment() | ~2666-2711 |
+| renderLore() | ~2720-2930 |
+| longRest() / shortRest() | ~2933-2960 |
+| addLog() / toast() | ~2738-2760 |
+| renderField() / wizard engine | ~3195-3400 |
+| WIZARDS config object | ~3934+ |
