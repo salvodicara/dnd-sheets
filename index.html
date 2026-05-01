@@ -293,7 +293,7 @@ input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;}
   color:var(--text);border-radius:7px;padding:8px 11px;font-size:.85em;resize:vertical;
   min-height:62px;margin-top:8px;font-family:inherit;}
 #conc-spell-input{background:var(--bg-input);border:1px solid var(--border-light);color:var(--text);
-  border-radius:5px;padding:3px 8px;font-size:.85em;width:170px;}
+  border-radius:5px;padding:3px 8px;font-size:.85em;flex:1;min-width:0;}
 .conc-active{color:#d0b040;font-weight:600;}
 .temp-hp-info{margin-top:6px;font-size:.79em;color:var(--text-muted);}
 /* ═══════════════ SECTIONS ═══════════════ */
@@ -944,7 +944,7 @@ const DND = {
   }
 };
 // DND helpers — translate terms and build option arrays for the current language
-function dndTr(cat,key){ return DND.tr[currentLang]?.[cat]?.[key]||key; }
+function dndTr(cat,key){ return DND.tr[currentLang]?.[cat]?.[key]||DND[cat]?.[key]||key; }
 function abilityShortName(a){ return DND.tr[currentLang]?.abilityShort?.[a]||DND.abilityShort[a]||a; }
 function abilityLongName(a) { return DND.tr[currentLang]?.abilityNames?.[a]||DND.abilityNames[a]||a; }
 function skillName(sk){ return DND.tr[currentLang]?.skills?.[sk.id]||sk.en; }
@@ -1029,7 +1029,7 @@ const BASE = {
   f_linkLabel:'Link Label', f_question:'Question (optional)', f_bullets:'Bullet points',
   required:'(required)', optional:'(optional)',
   profType_none:'None', profType_proficient:'Proficient', profType_expertise:'Expertise',
-    profType_halfProficiency:'Mezza Competenza',
+    profType_halfProficiency:'Half Proficiency',
   hasSpellcasting:'Does this character use magic?',
   abilityMethod:'Score assignment method',
   method_manual:'Manual', method_standard:'Standard Array (15,14,13,12,10,8)',
@@ -1286,6 +1286,7 @@ const BASE = {
   lvPrefix:'Lv',
   // Inspiration
   inspiration:'✨ Inspiration', logInspGained:'Inspiration gained!', logInspSpent:'Inspiration spent.',
+  logAidUp:'Aid active: +', logAidDown:'Aid ended →',
   // Exhaustion
   exhaustion:'Exhaustion', exhaustionPenalty:'−{N} to d20 rolls',
   // Currency
@@ -1345,7 +1346,7 @@ const TRANSLATIONS = {
   equipment:'Equipaggiamento',
   algorithm:'Algoritmo di Combattimento',
     panelTitle:'Pannello di Gioco',
-    hp:'❤️ Punti Ferita', tempHP:'PF temp', aidBonus:'PF max (aid)',
+    hp:'❤️ Punti Ferita', tempHP:'PF temp', aidBonus:'PF max (aiuto)',
     hitDice:'🎲 Dadi Vita', deathSaves:'💀 Tiri Salvezza Morte',
     succ:'✅ Successi', fail:'❌ Fallimenti',
     concLabel:'🔮 Concentrazione', concNone:'Nessuna concentrazione attiva.',
@@ -1364,7 +1365,7 @@ const TRANSLATIONS = {
     hdNote:'Recuperi ½ con riposo breve',
     potionUseNote:'Azione Bonus',
     abilitiesTitle:'Caratteristiche', tsTitle:'🛡️ Tiri Salvezza',
-    proficient:'✅ Competente', expertise:'⭐ Expertise', halfProf:'½ Mezza Competenza',
+    proficient:'✅ Competente', expertise:'⭐ Maestria', halfProf:'½ Mezza Competenza',
     spellTitle:'Incantesimi', spellDC:'CD Tiro Salvezza', spellAttackBonus:'Bonus Attacco Incantesimi',
     focus:'Focus', slotTitle:'Slot Incantesimi', slotLevel:'Livello', slotTot:'Slot', slotNote:'Note',
     longRestRecovery:'Recupero con Riposo Lungo',
@@ -1413,8 +1414,8 @@ const TRANSLATIONS = {
     f_slotTotal:'Numero Slot', f_algoTitle:'Titolo Blocco', f_linkHref:'Anchor (#id)',
     f_linkLabel:'Label Link', f_question:'Domanda (opzionale)', f_bullets:'Punti elenco',
     required:'(obbligatorio)', optional:'(opzionale)',
-    profType_none:'Nessuna', profType_proficient:'Competente', profType_expertise:'Expertise',
-  profType_halfProficiency:'Half Proficiency',
+    profType_none:'Nessuna', profType_proficient:'Competente', profType_expertise:'Maestria',
+  profType_halfProficiency:'Mezza Competenza',
     hasSpellcasting:'Il personaggio usa magia?',
     abilityMethod:'Metodo assegnazione punteggi',
     method_manual:'Manuale', method_standard:'Array Standard (15,14,13,12,10,8)',
@@ -1656,6 +1657,7 @@ const TRANSLATIONS = {
     lvPrefix:'Lv',
     // Inspiration
     inspiration:'✨ Ispirazione', logInspGained:'Ispirazione ottenuta!', logInspSpent:'Ispirazione spesa.',
+    logAidUp:'Aiuto attivo: +', logAidDown:'Aiuto terminato →',
     // Exhaustion
     exhaustion:'Sfinimento', exhaustionPenalty:'−{N} ai tiri d20',
     // Currency
@@ -2168,7 +2170,7 @@ function renderPanel(){
 }
 function buildPanel(){
   const S=SESSION, C=CHAR;
-  const effMax=(S.hp?.current!==undefined?C.hp?.max||0:0)+(S.hp?.aidBonus||0);
+  const effMax=(C.hp?.max||0)+(S.hp?.aidBonus||0);
   const hpCurr=S.hp?.current??0;
   const hpPct=effMax>0?Math.max(0,Math.min(100,(hpCurr/effMax)*100)):0;
   const hpColor=hpPct>50?'var(--hp-green)':hpPct>25?'var(--hp-yellow)':'var(--hp-red)';
@@ -2280,8 +2282,8 @@ function buildPanelRow3(){
   const concCard=`<div class="pn-card">
     <div class="label">${T('concLabel')}</div>
     <div class="inline-field" style="margin-top:8px;">
-      <input type="text" id="conc-spell-input" placeholder="${T('none')}…" value="${S.concentration||''}" style="width:160px;">
-      <button class="btn danger" onclick="dropConc()">❌</button>
+      <input type="text" id="conc-spell-input" placeholder="${T('none')}…" value="${S.concentration||''}">
+      <button class="btn danger" style="flex-shrink:0;" onclick="dropConc()">❌</button>
     </div>
     <div id="conc-status" class="conc-status-text${S.concentration?' conc-active':''}">${S.concentration?T('concActive')+S.concentration:T('concNone')}</div>
   </div>`;
@@ -2366,18 +2368,18 @@ function buildPanelBottom(){
     <div class="pn-card">${restsCardContent}</div>
     <div class="pn-card" style="grid-column:span 2;">
       <div class="label">${T('log')}</div>
-      <div id="log-wrap"><p style="color:var(--text-faint);font-style:italic;">${T('logEmpty')}</p></div>
+      <div id="log-wrap">${(SESSION.logEntries||[]).length>0?(SESSION.logEntries).map(e=>`<p class="${e.type||''}">${e.msg}</p>`).join(''):`<p style="color:var(--text-faint);font-style:italic;">${T('logEmpty')}</p>`}</div>
     </div>
   </div>`;
   // Quick Actions — auto-generated from spells + weapons + manual actions
   const actTypes=['action','bonus','reaction'];
   const actFilter=`<div class="action-filter-row">
     <button class="filter-btn active" onclick="filterActions(this,'all')">${T('allActions')}</button>
-    ${actTypes.map(t=>`<button class="filter-btn" onclick="filterActions(this,'${t}')">${dndTr('actionLabels',t)||t}</button>`).join('')}
+    ${actTypes.map(t=>`<button class="filter-btn" onclick="filterActions(this,'${t}')">${dndTr('actionLabels',t)||DND.actionLabels[t]}</button>`).join('')}
   </div>`;
   function actionBadge(type){
     const cls=type==='action'?'badge-azione':type==='bonus'?'badge-bonus':type==='reaction'?'badge-reazione':'badge-azione';
-    return `<span class="action-badge ${cls}">${dndTr('actionLabels',type)||type.toUpperCase()}</span>`;
+    return `<span class="action-badge ${cls}">${dndTr('actionLabels',type)||DND.actionLabels[type]}</span>`;
   }
   function spellQuickNote(sp){
     const parts=[];
@@ -2936,7 +2938,8 @@ function resetSlot(lv){
 }
 function clickSlotPip(lv,j){
   const s=SESSION.spellSlots[lv]; if(!s) return;
-  if(j<s.used) s.used=j; else s.used=j+1;
+  const tot=(CHAR.spellSlots||[]).find(sl=>sl.level===lv)?.total||0;
+  if(j<s.used){ s.used=j; } else { s.used=j+1; addLog(`${T('logSlot')}${lv}${T('logSlotUsed')} ${tot-s.used}`,'log-damage'); }
   renderPanel(); saveAll();
 }
 function findTrackerById(id){
@@ -2964,7 +2967,8 @@ function resetTracker(id){
 }
 function clickTrackerPip(id,j){
   const s=SESSION.trackers[id]; if(!s) return;
-  if(j<s.used) s.used=j; else s.used=j+1;
+  const t=findTrackerById(id);
+  if(j<s.used){ s.used=j; } else { s.used=j+1; if(t) addLog(`${t.emoji||''} ${t.label}: ${T('logTrackerUsed')} ${t.total-s.used}`,'log-damage'); }
   renderPanel(); saveAll();
 }
 function usePotionTracker(id){
@@ -2997,7 +3001,25 @@ function setAidBonus(){
   const cur=SESSION.hp?.aidBonus||0;
   el.innerHTML=`<input type="number" id="aid-input" value="${cur}" style="width:50px;font-size:.9em;padding:1px 4px;border:1px solid var(--accent);border-radius:4px;background:var(--bg-input);color:var(--text);text-align:center;">`;
   const inp=document.getElementById('aid-input'); inp.focus(); inp.select();
-  const save=()=>{SESSION.hp.aidBonus=parseInt(inp.value)||0;updateHPDisplay();saveAll();};
+  let saved=false;
+  const save=()=>{
+    if(saved) return; saved=true;
+    const oldBonus=SESSION.hp.aidBonus||0;
+    const newBonus=parseInt(inp.value)||0;
+    const delta=newBonus-oldBonus;
+    SESSION.hp.aidBonus=newBonus;
+    const newEffMax=(CHAR.hp?.max||0)+newBonus;
+    if(delta>0){
+      // Aid granted / boosted: current HP rises by delta, capped at new effMax
+      SESSION.hp.current=Math.min(newEffMax,(SESSION.hp.current||0)+delta);
+    } else if(delta<0){
+      // Aid expired / reduced: clamp current HP down to new effMax
+      SESSION.hp.current=Math.min(SESSION.hp.current||0,newEffMax);
+    }
+    updateHPDisplay(); saveAll();
+    if(delta>0) addLog(`${T('logAidUp')}${newBonus} HP. ${T('hpAbbr')}: ${SESSION.hp.current}/${newEffMax}`,'log-heal');
+    else if(delta<0) addLog(`${T('logAidDown')} ${SESSION.hp.current}/${newEffMax}`,'log-damage');
+  };
   inp.addEventListener('blur',save);
   inp.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();save();}if(e.key==='Escape'){el.textContent=modStr(cur);}});
 }
@@ -4203,7 +4225,7 @@ const WIZARDS = {
       base.sidebar=[...DEFAULT_SIDEBAR]; base.combatAlgorithm=[];
       SESSION=createDefaultSession(base);
     } else {
-      if(SESSION?.hp) SESSION.hp.max=+d.hpMax||SESSION.hp.max;
+      if(SESSION?.hp) SESSION.hp.current=Math.min((+d.hpMax||10)+(SESSION.hp.aidBonus||0),SESSION.hp.current||0);
     }
     CHAR=base; syncSession();
     if(!isEdit) SESSION.showGettingStarted=true;
@@ -4600,7 +4622,7 @@ const WIZARDS = {
     CHAR.level=(CHAR.level||1)+1;
     if(!CHAR.hp) CHAR.hp={max:10};
     CHAR.hp.max=(CHAR.hp.max||10)+gain;
-    if(SESSION?.hp) SESSION.hp.current=Math.min(CHAR.hp.max,(SESSION.hp.current||0)+gain);
+    if(SESSION?.hp) SESSION.hp.current=Math.min(CHAR.hp.max+(SESSION.hp.aidBonus||0),(SESSION.hp.current||0)+gain);
     addLog(T('logLevelUp').replace('{N}',CHAR.level)+(gain?` +${gain} ${T('hpAbbr')}`:''),'log-heal');
     const pbChanged=computedPB(CHAR.level)!==computedPB(CHAR.level-1);
     const isCaster=!!(CHAR.spellcasting?.ability);

@@ -316,7 +316,7 @@ Always verify game mechanics (point buy costs, spell slot recovery, ability modi
 
 ## Full JSON Schema
 
-This is the canonical schema for both development reference and the AI assistant's system prompt (`assistant.html`). Keep both in sync when adding new fields.
+This is the canonical schema for development reference. The AI assistant's system prompt (`getSys()` in `assistant.html`) uses the same prose format — keep both in sync when adding new fields.
 
 The exported file shape: `{ version:"3.0", savedAt, character:{...}, session:{...} }`
 

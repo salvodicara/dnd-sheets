@@ -668,6 +668,8 @@ Done:
 | 99 | Sidebar char block | .sb-char-info is clickable (smooth scroll to top) with hover highlight |
 | 100 | Portrait lightbox | Click portrait → full-screen overlay; scroll/pinch zoom; ESC to close; no portrait → file picker |
 | 101 | Mastery tooltip z-index | z-index:210 — above fixed sidebar (200), below modal (400+) |
+| 102 | Aid HP mechanics | `setAidBonus()` grants/clamps `hp.current` by delta per D&D 2024; Aid raises both max AND current HP |
+| 103 | AI weapons vs equipment | Explicit CRITICAL rule in both `getSys()` and `sysShort`: weapons (attack roll + damage dice) → `weapons[]`, never `equipment[]` |
 
 ---
 
@@ -697,6 +699,12 @@ Done:
 | **~~Content block preview blank on wizard open~~** | `renderWizardStep` | ✅ Fixed (`injectWizPreview()` at end of field-based path) |
 | **~~Block summary shows "2" for table, blank for bullets~~** | `renderContentBlockEditor` | ✅ Fixed (synced template with `refreshCBEditor`) |
 | **~~WIZ_BLOCKS shallow-spreads live CHAR blocks~~** | `openWizard` | ✅ Fixed (deep-clone via `JSON.parse(JSON.stringify(...))`) |
+| **~~HP/Aid doesn't grant current HP~~** | `setAidBonus`, `buildPanel` | ✅ Fixed (`setAidBonus` grants/clamps `hp.current` by delta per D&D 2024; effMax formula fixed; level-up and char-edit caps updated) |
+| **~~Action log wiped on every `renderPanel()` call~~** | `buildPanelBottom` | ✅ Fixed (`#log-wrap` populated from `SESSION.logEntries` during render) |
+| **~~Double-save bug in `setAidBonus()`~~** | `setAidBonus` | ✅ Fixed (`saved` flag guard prevents `blur` re-entry from `updateHPDisplay()`) |
+| **~~`dndTr()` returns raw key in English~~** | `dndTr` | ✅ Fixed (added `DND[cat]?.[key]` intermediate fallback before raw key) |
+| **~~`profType_halfProficiency` translations swapped~~** | BASE / TRANSLATIONS.it | ✅ Fixed (EN/IT values corrected; `expertise` → "Maestria" in IT) |
+| **~~Concentration input overflow on mobile~~** | CSS `#conc-spell-input` | ✅ Fixed (`flex:1; min-width:0`; removed inline `style="width:160px"`) |
 
 ---
 

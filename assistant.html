@@ -268,7 +268,7 @@ For character updates, always respond in this exact order:
 1. **Explanation** — what you are changing and why (1–3 sentences).
 2. **Wizard steps** — numbered instructions for doing this manually via the app's UI wizards.
 3. **JSON Patch** — a ```json-patch``` block at the very end. See output format section below.
-If no character has been shared yet, still give explanation + wizard steps + a full creation patch: an ops array with one op — [{"op":"add","path":"/character","value":{...}}] — containing a complete, schema-valid character object (all fields from the schema below).
+If no character has been shared yet, still give explanation + wizard steps + a creation patch: [{"op":"add","path":"/character","value":{...}}]. Omit only null override fields (e.g. spellDCOverride:null) and truly empty utility arrays (combatAlgorithm:[], customConditions:[]). Always populate: name, race, class, subclass, level, background, abilityScores (all 6 as integers), savingThrows (string[]), skills, hp:{max}, hitDieType, speed, sidebar (full built-in list + slugified ID per feature) — plus spells, weapons, equipment, features, and lore appropriate to the character's class and level.
 
 ## Style rules (for character content)
 1. Match the language of existing JSON content (Italian descriptions → write in Italian).
@@ -290,10 +290,11 @@ speed (e.g. "9 m"), ac (number), armorNote (e.g. "Leather +DEX")
 hp: { max: number }
 hitDieType: 4|6|8|10|12
 initiativeBonus: number (optional flat bonus on top of DEX)
-languages (comma-separated string), toolProficiencies (string)
+languages (comma-separated string), toolProficiencies, weaponProficiencies, armorProficiencies (strings, optional)
 abilityBudget: number (default 27)
 proficiencyBonusOverride: number|null (null = auto from level)
 levelUpChecklist: [{text:string, done:boolean}] | null
+lore: {traits, ideals, bonds, flaws, backstory, age, height, weight, eyes, hair, skin} (all strings, optional)
 
 ### character.abilityScores
 { STR, DEX, CON, INT, WIS, CHA }  — all integers
@@ -312,6 +313,7 @@ preparedCaster: boolean (Cleric/Druid/Paladin/Wizard = true; Bard/Warlock/Sorcer
 focus: string (e.g. "Arcane focus", "Musical instrument")
 spellDCOverride: number|null
 spellAttackOverride: number|null
+preparedMax: integer (optional — max prepared spells shown in UI)
 
 ### character.spellSlots[] — each slot tier
 level: integer 1–9
@@ -336,6 +338,7 @@ tags: [{label:string, color:"green"|"blue"|"purple"|"red"|"orange"}]
 prepared: boolean (omit unless preparedCaster:true)
 
 ### character.weapons[] — each weapon
+**Any item that makes an attack roll or deals damage dice belongs here, NOT in equipment[]. Never add weapons to equipment[].**
 name, quantity (integer), emoji
 damageDie: string (e.g. "1d8")
 damageType: string (e.g. "Piercing", "Slashing", "Bludgeoning")
@@ -344,10 +347,11 @@ attackBonusOverride: number|null (null = auto: stat mod + PB)
 damageModOverride: number|null (null = auto: stat mod)
 properties: string (e.g. "Finesse, Versatile (1d10), Thrown (6/18 m)")
 notes: string
+mastery: string (optional) — Cleave|Graze|Nick|Push|Sap|Slow|Topple|Vex
 tags: [{label, color}]
 
 ### character.equipment[] — each item
-name, emoji (optional), notes
+General items, consumables, armor, tools. **Never put weapons here — anything with an attack roll goes in weapons[].**
 tracked: boolean — if true, shows pip tracker in game panel
   quantity: integer (required if tracked)
   recovery: "long"|"short"|"manual" (required if tracked)
@@ -386,9 +390,12 @@ hp: { current, temp, aidBonus }
 hitDice: { used }
 trackers: { [id]: { used } } — id = slugify(tracker label or feature title), or "eq-"+slugify(name) for equipment
 spellSlots: { [level]: { used } } — level as string key
-gold, round, concentration, initiative (all primitives)
+currency: {pp, gp, ep, sp, cp} (all integers — replaces old 'gold' field)
+round, concentration, initiative (primitives)
 conditions: string[]
 deathSucc, deathFail: number
+inspiration: boolean
+exhaustion: number (0–6)
 notes: string
 portrait: string|null — base64 data URL, preserve exactly
 logEntries: [{text, type, ts}]
@@ -527,7 +534,8 @@ const PROVS={
   pollinations:{name:'Free — no key needed',hint:'Works instantly. No account or sign-up. Powered by Pollinations.ai.',ep:'https://text.pollinations.ai/openai?referrer=dnd-sheets',model:'openai',noKey:true,noStream:true,maxHistory:6,
     sysShort:`You are a D&D 2024 assistant for the D&D Sheets app.
 For updates: 1) explain briefly in plain D&D language (no array indices, no JSON paths, no technical terms), 2) give numbered wizard steps (UI path), 3) always end with a \`\`\`json-patch\`\`\` block (RFC 6902 ops array). Paths: /character/... or /session/..., use /- to append, /N to replace/remove. Only omit for pure rules questions.
-If no character JSON has been shared yet, still output a creation patch — an ops array with one op: [{"op":"add","path":"/character","value":{...}}] with these key fields: name, race, class, subclass, level, background, abilityScores:{STR,DEX,CON,INT,WIS,CHA} (integers), savingThrows (string[]), skills (map to "proficient"|"expertise"), hp:{max}, hitDieType (4|6|8|10|12), speed, languages, sidebar:["game-panel","base-data","skills","spells","weapons","equipment","algorithm"].
+CRITICAL: weapons (attack roll + damage dice) → /character/weapons/-, NEVER /character/equipment/-. Equipment is for armor, consumables, general items only.
+If no character JSON has been shared yet, output a creation patch — [{"op":"add","path":"/character","value":{...}}]. Omit empty arrays and null optionals. Required: name, race, class, subclass, level, background, abilityScores:{STR,DEX,CON,INT,WIS,CHA} (integers), savingThrows (string[]), skills (map to "proficient"|"expertise"|"halfProficiency"), hp:{max}, hitDieType (4|6|8|10|12), speed, languages, sidebar:["game-panel","base-data","skills","spells","weapons","equipment","algorithm",...slugified feature IDs].
 For rules questions: just answer. Use **bold** for D&D terms. Verify: http://dnd2024.wikidot.com/`},
   gemini:{name:'Google Gemini 2.0 Flash (free tier)',hint:'Free tier, generous context. Get key at aistudio.google.com — no credit card.',klink:'https://aistudio.google.com/app/apikey',ep:'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent'},
   groq:{name:'Groq — Llama 3.3 70B (free)',hint:'Free & fast. Context limit may affect large characters.',klink:'https://console.groq.com/keys',ep:'https://api.groq.com/openai/v1/chat/completions',model:'llama-3.3-70b-versatile'},
@@ -1033,7 +1041,7 @@ function toast(msg){
 const getSys=()=>document.getElementById('sys').textContent.trim();
 // ── Build-mode system prompt ──────────────────────────────────────────────
 const sysBuild=`You are a D&D 2024 character builder for the D&D Sheets app.
-The user shares a document with their character info. Extract ALL data and output a complete JSON.
+The user shares a document with their character info. Extract all data and output a complete JSON. Omit empty arrays and null optionals to stay compact and avoid truncation.
 YOU MUST output a \`\`\`json-char\`\`\` code block — this is mandatory, no exceptions. Even if info is partial, produce the best possible character from what is available.
 Output ONLY: 1-2 sentence summary, then the \`\`\`json-char\`\`\` block. NO wizard steps. NO json-patch blocks.
 
@@ -1061,7 +1069,7 @@ features:[{title,emoji,source,tags:[{label,color}],contentBlocks:[{type:"paragra
 combatAlgorithm:[]
 customConditions:[]
 sidebar:["game-panel","base-data","skills","spells","weapons","equipment","algorithm",...slugify each feature title]
-DO NOT set sectionId on features. session:{hp:{current:<hp.max>,temp:0,aidBonus:0},hitDice:{used:0},trackers:{},spellSlots:{},gold:0,round:1,concentration:"",initiative:"",conditions:[],deathSucc:0,deathFail:0,notes:"",portrait:null,logEntries:[],showGettingStarted:false,hdDialog:false}
+DO NOT set sectionId on features. session:{hp:{current:<hp.max>,temp:0,aidBonus:0},hitDice:{used:0},trackers:{},spellSlots:{},currency:{pp:0,gp:0,ep:0,sp:0,cp:0},round:1,concentration:"",initiative:"",conditions:[],deathSucc:0,deathFail:0,inspiration:false,exhaustion:0,notes:"",portrait:null,logEntries:[],showGettingStarted:false,hdDialog:false}
 slugify: lowercase, replace spaces+special chars with hyphens, collapse multiple hyphens.
 Infer anything missing from class/level (hit die, save proficiencies, spellcasting ability, spell slots). Use **bold** for D&D terms. Verify mechanics: http://dnd2024.wikidot.com/`;
 // ── Document parsing ──────────────────────────────────────────────────────
