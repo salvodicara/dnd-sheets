@@ -1,0 +1,49 @@
+assistant.html
+  5d1e91001833aeec 8-21,23,25-27,30-34,36,41-47,52,54,57,62,64,68,87-88,98,103-109,111-122,132,140,155-158,166-167,205-209,457,486,491,520,545-548,573-581,583-587
+DESIGN.md
+  5d1e91001833aeec 11,392-425,660-670,696-699
+CLAUDE.md
+  5d1e91001833aeec 27
+CHANGELOG.md
+  5d1e91001833aeec 1-243
+Catalion/catalion_di_sancaldo_2026-04-29.json
+  5d1e91001833aeec 250,261,359,378,393-394,398-403,406-410,416,424-447,451-475,479-483,489,497,614-625,629,679
+index.html
+  f7ae781a5d1fad0d 1317-1319,1687-1689,2249,2512-2513,4066-4067,4119-4120,4127-4128,4608-4609
+  5d1e91001833aeec 11-16,18-19,21-22,31-32,42-47,49-50,52-53,62-63,77-80,113-114,118-122,124-128,130,138-139,144,155-170,183-196,209-210,344,380,384-388,481,483-484,514-515,528,536,541,664,699-703,718,721,783-791,955,1141,1145,1320-1321,1341,1522,1526,1690-1691,1833-1836,1893,2031,2082,2093,2095-2098,2228,3193,3266-3267,3465,4023-4024,4604,4747-4752,4754-4761,4787-4825
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.3.4",
+  "base_commit_sha": "ffff4ecab32b8737116e823d2fa41bba1931fcfd",
+  "prompts": {
+    "5d1e91001833aeec": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_21bc72d92ffeF4lS37iuyHkuim",
+        "model": "github-copilot/claude-sonnet-4.6"
+      },
+      "human_author": "Salvatore Di Cara",
+      "messages": [],
+      "total_additions": 675,
+      "total_deletions": 273,
+      "accepted_lines": 666,
+      "overriden_lines": 0,
+      "messages_url": "https://usegitai.com/cas/8eae90d44b823ab4007645ae1a207238c31c66b471fc7714b24df7d830be8021"
+    },
+    "f7ae781a5d1fad0d": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_21b4d1b4bffeDaN4rQfjvf604L",
+        "model": "github-copilot/claude-sonnet-4.6"
+      },
+      "human_author": "Salvatore Di Cara",
+      "messages": [],
+      "total_additions": 22,
+      "total_deletions": 1,
+      "accepted_lines": 15,
+      "overriden_lines": 0,
+      "messages_url": "https://usegitai.com/cas/592686eda99a106a2b5ea9ec4e75193177d971f3617c8e39165c5ae0a485735f"
+    }
+  }
+}
