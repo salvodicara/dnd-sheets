@@ -118,7 +118,7 @@ html.disclaimer-dismissed #ai-disclaimer{display:none;}
 #hdr-overflow-menu.open{display:block;}
 .overflow-item{display:flex;align-items:center;gap:10px;width:100%;background:none;
   border:none;color:var(--sidebar-text);font-size:.9em;padding:9px 16px;cursor:pointer;
-  text-align:left;transition:background .12s,color .12s;}
+  text-align:left;transition:background .12s,color .12s;text-decoration:none;}
 .overflow-item:hover{background:var(--sidebar-hover);color:var(--accent);}
 .pb{padding:.55rem .9rem .8rem;background:var(--bg3);}
 .row{display:flex;gap:.4rem;align-items:center;flex-wrap:wrap;margin-bottom:.38rem;}
@@ -204,6 +204,7 @@ a{color:var(--accent);}
     </div>
     <button id="hdr-overflow-btn" onclick="toggleOverflowMenu(event)" title="More options">⋯</button>
     <div id="hdr-overflow-menu">
+      <a class="overflow-item" id="overflow-char" href="index.html">📜 Character</a>
       <button class="overflow-item" id="overflow-theme" onclick="toggleTheme();closeOverflowMenu()">☀️ Theme</button>
       <button class="overflow-item" id="overflow-lang" onclick="toggleLang();closeOverflowMenu()">IT Language</button>
     </div>
@@ -570,6 +571,8 @@ function applyLang(){
   const tabAI=document.getElementById('hdr-tab-ai');
   if(tabChar) tabChar.textContent=UI('hdrCharacter');
   if(tabAI) tabAI.textContent=UI('hdrAIAssistant');
+  const oc=document.getElementById('overflow-char');
+  if(oc) oc.textContent=UI('hdrCharacter');
   const ol=document.getElementById('overflow-lang');
   if(ol) ol.textContent=UI('langToggle')+' '+UI('overflowLang');
 }

@@ -166,7 +166,7 @@ tr.skill-none{opacity:.55;}
 #hdr-overflow-menu.open{display:block;}
 .overflow-item{display:flex;align-items:center;gap:10px;width:100%;background:none;
   border:none;color:var(--sidebar-text);font-size:.9em;padding:9px 16px;cursor:pointer;
-  text-align:left;transition:background .12s,color .12s;}
+  text-align:left;transition:background .12s,color .12s;text-decoration:none;}
 .overflow-item:hover{background:var(--sidebar-hover);color:var(--accent);}
 /* ═══════════════ HEADER ═══════════════ */
 #header-area{display:flex;align-items:flex-start;gap:20px;margin-bottom:24px;
@@ -459,6 +459,7 @@ body.edit-mode::after{content:'';position:fixed;inset:0;pointer-events:none;box-
 .sb-item-edit{display:flex;align-items:center;gap:2px;padding:1px 4px 1px 6px;
   border-left:3px solid transparent;transition:border-color .15s,background .15s;}
 .sb-item-edit.drag-over{border-left-color:var(--accent);background:var(--sidebar-hover);}
+.sb-item-edit.sb-touch-dragging{opacity:.45;background:var(--sidebar-hover);}
 .sb-item-edit[draggable="true"]{cursor:grab;}
 .sb-item-edit[draggable="true"]:active{cursor:grabbing;}
 .drag-handle{color:var(--sidebar-text);opacity:.4;font-size:1em;user-select:none;
@@ -698,6 +699,7 @@ body.edit-mode::after{content:'';position:fixed;inset:0;pointer-events:none;box-
   </div>
   <button id="hdr-overflow-btn" onclick="toggleOverflowMenu(event)" title="More options">⋯</button>
   <div id="hdr-overflow-menu">
+    <a class="overflow-item" id="overflow-ai" href="assistant.html">✨ AI</a>
     <button class="overflow-item" id="overflow-theme" onclick="toggleTheme();closeOverflowMenu()">☀️ Theme</button>
     <button class="overflow-item" id="overflow-lang" onclick="toggleLang();closeOverflowMenu()">IT Language</button>
   </div>
@@ -1338,7 +1340,7 @@ const BASE = {
 const TRANSLATIONS = {
   it:{
     navTitle:'📜 Indice', editSidebar:'✏️ Sidebar',
-    hdrCharacter:'📜 Personaggio', hdrAIAssistant:'✨ AI',
+  hdrCharacter:'📜 Personaggio', hdrAIAssistant:'✨ AI',
   baseData:'Dati Base', skills:'Abilità', spells:'Incantesimi',
   equipment:'Equipaggiamento',
   algorithm:'Algoritmo di Combattimento',
@@ -1830,6 +1832,8 @@ function updateFixedControls(){
   const tabAI=document.getElementById('hdr-tab-ai');
   if(tabChar) tabChar.textContent=T('hdrCharacter');
   if(tabAI) tabAI.textContent=T('hdrAIAssistant');
+  const oa=document.getElementById('overflow-ai');
+  if(oa) oa.textContent=T('hdrAIAssistant');
   const ob=document.getElementById('overflow-theme');
   if(ob) ob.textContent=(isDark?'☀️':'🌙')+' '+T('overflowTheme');
   const ol=document.getElementById('overflow-lang');
@@ -1952,6 +1956,7 @@ function ensureSidebar(){
 }
 // ── Sidebar drag-and-drop ──
 let SB_DRAG_IDX=null;
+let SB_TOUCH_DRAG=null;
 function moveSidebarItem(idx,dir){
   const arr=CHAR.sidebar||[]; const to=idx+dir;
   if(to<0||to>=arr.length) return;
@@ -2004,6 +2009,52 @@ function sbTrashDrop(e){
   const idx=SB_DRAG_IDX; SB_DRAG_IDX=null;
   deleteSidebarItem(idx);
 }
+// ── Sidebar touch drag (mobile) ──
+function sbTouchStart(e,idx){
+  if(!EDIT_MODE) return;
+  e.stopPropagation();
+  SB_TOUCH_DRAG={fromIdx:idx,targetIdx:null};
+  const items=document.querySelectorAll('.sb-item-edit');
+  if(items[idx]) items[idx].classList.add('sb-touch-dragging');
+  const trash=document.getElementById('sb-trash');
+  if(trash) trash.classList.add('visible');
+}
+function sbTouchMove(e){
+  if(!SB_TOUCH_DRAG) return;
+  e.preventDefault();
+  const touch=e.touches[0];
+  const items=[...document.querySelectorAll('.sb-item-edit')];
+  items.forEach(el=>el.classList.remove('drag-over'));
+  const el=document.elementFromPoint(touch.clientX,touch.clientY);
+  const item=el?.closest('.sb-item-edit');
+  const trash=document.getElementById('sb-trash');
+  if(item){
+    const idx=items.indexOf(item);
+    if(idx!==-1&&idx!==SB_TOUCH_DRAG.fromIdx){item.classList.add('drag-over');SB_TOUCH_DRAG.targetIdx=idx;}
+    else SB_TOUCH_DRAG.targetIdx=null;
+    if(trash) trash.classList.remove('drag-over');
+  } else if(trash){
+    const r=trash.getBoundingClientRect();
+    const over=touch.clientX>=r.left&&touch.clientX<=r.right&&touch.clientY>=r.top&&touch.clientY<=r.bottom;
+    trash.classList.toggle('drag-over',over);
+    SB_TOUCH_DRAG.targetIdx=over?'trash':null;
+  }
+}
+function sbTouchEnd(){
+  if(!SB_TOUCH_DRAG) return;
+  const{fromIdx,targetIdx}=SB_TOUCH_DRAG;
+  SB_TOUCH_DRAG=null;
+  document.querySelectorAll('.sb-item-edit').forEach(el=>el.classList.remove('drag-over','sb-touch-dragging'));
+  const trash=document.getElementById('sb-trash');
+  if(trash) trash.classList.remove('visible','drag-over');
+  if(targetIdx==='trash'){deleteSidebarItem(fromIdx);}
+  else if(targetIdx!==null&&targetIdx!==fromIdx){
+    const arr=CHAR.sidebar||[];
+    const[moved]=arr.splice(fromIdx,1);
+    arr.splice(targetIdx,0,moved);
+    CHAR.sidebar=arr;saveAll();renderSidebar();renderSections();
+  }
+}
 // ─── SIDEBAR ───
 function renderSidebar(){
   const links=document.getElementById('nav-links');
@@ -2039,11 +2090,11 @@ function renderSidebar(){
     html+=(CHAR.sidebar||[]).map((item,i)=>{
       const dAttr=`draggable="true" ondragstart="sbDragStart(event,${i})" ondragover="sbDragOver(event,${i})" ondrop="sbDrop(event,${i})" ondragend="sbDragEnd()"`;
       if(typeof item==='object' && item.type==='sep'){
-        return `<div class="sb-item-edit" ${dAttr}><span class="drag-handle">⋮⋮</span><span class="sep-label">────</span></div>`;
+        return `<div class="sb-item-edit" ${dAttr}><span class="drag-handle" ontouchstart="sbTouchStart(event,${i})">⋮⋮</span><span class="sep-label">────</span></div>`;
       }
       const resolved=resolveSidebarItem(item);
       if(!resolved) return '';
-      return `<div class="sb-item-edit" ${dAttr}><span class="drag-handle">⋮⋮</span><a href="#${resolved.id}" onclick="closeSidebarMobile()">${resolved.emoji||''} ${resolved.label||''}</a></div>`;
+      return `<div class="sb-item-edit" ${dAttr}><span class="drag-handle" ontouchstart="sbTouchStart(event,${i})">⋮⋮</span><a href="#${resolved.id}" onclick="closeSidebarMobile()">${resolved.emoji||''} ${resolved.label||''}</a></div>`;
     }).join('');
     html+=`<div class="sb-trash-zone" id="sb-trash" ondragover="sbTrashOver(event)" ondragleave="sbTrashLeave(event)" ondrop="sbTrashDrop(event)">${T('sbTrashLabel')}</div>`;
   } else {
@@ -4807,6 +4858,8 @@ function changePortraitFromModal(){
     portraitZoom=Math.max(0.5,Math.min(5,portraitZoom+(e.deltaY<0?0.15:-0.15)));
     document.getElementById('portrait-lightbox-img').style.transform=`scale(${portraitZoom})`;
   },{passive:false});
+  document.addEventListener('touchmove',function(e){if(SB_TOUCH_DRAG) sbTouchMove(e);},{passive:false});
+  document.addEventListener('touchend',function(){if(SB_TOUCH_DRAG) sbTouchEnd();});
   document.addEventListener('touchmove',function(e){
     if(!document.getElementById('portrait-lightbox')?.classList.contains('open')) return;
     if(e.touches.length!==2) return;

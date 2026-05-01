@@ -12,7 +12,8 @@ Entries are in reverse-chronological order. Uncommitted work appears under `[Unr
 - Header bottom border `2px solid var(--accent)` as structural divider
 - `h2` section headers: gold accent left-border (4px), uppercase, letter-spacing, font-weight:700
 - Active tab reserved underline slot (`border-bottom:2px solid transparent`) — no layout shift between pages
-- Mobile overflow menu (`⋯` button) on ≤768px exposes theme/lang toggles; identical in both files
+- Mobile overflow menu (`⋯` button) on ≤768px exposes theme/lang toggles + navigation: "✨ AI" on `index.html`, "📜 Character" on `assistant.html` — Character/AI tabs remain on desktop
+- Touch drag for sidebar section reordering on mobile — `sbTouchStart`/`sbTouchMove`/`sbTouchEnd` using `elementFromPoint()` for drop-target detection; supports reorder and trash-delete; `.sb-touch-dragging` visual feedback; document-level `{passive:false}` listeners coexist with portrait pinch-zoom
 - Portrait lightbox: click portrait → full-screen overlay with scroll/pinch zoom; ESC or click-outside to close; "📷 Change photo" + "Close" buttons
 - Sidebar character block (`.sb-char-info`) clickable — smooth scrolls to page top with hover highlight
 - Scroll anchor margin (`scroll-margin-top:68px`) on `h2`, `.spell-level-title`, and `#game-panel` — sidebar nav links no longer land under fixed header

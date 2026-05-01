@@ -55,7 +55,7 @@ Open `index.html` in any browser. No server, no build step, no internet required
 - English / Italian language toggle (extensible i18n system)
 - Edit mode -- togglable add/edit/delete controls throughout the sheet
 - Responsive mobile layout (hamburger menu at 768px)
-- Sidebar navigation with drag-and-drop section reordering
+- Sidebar navigation with drag-and-drop section reordering (mouse and touch)
 - Live wizard preview -- see how your feature/spell/weapon will look as you fill in fields
 - Toast notifications for feedback
 - Modal wizard system for all CRUD operations
