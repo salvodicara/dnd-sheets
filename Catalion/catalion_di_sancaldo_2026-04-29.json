@@ -105,12 +105,6 @@
         "range": "9 m",
         "duration": "1 minuto",
         "description": "Crea **un suono** oppure **un'immagine visiva** entro raggio:\n• **Suono:** qualsiasi suono, da un sussurro a una voce alta\n• **Immagine:** un oggetto fisso (max 1,5 m di lato), senza suono né odore\n📌 Chi interagisce può smascherarla con INT (Arcano) CD 13.\n📌 Ottima per distrarre nemici o creare diversivi.",
-        "tags": [
-          {
-            "label": "NEW",
-            "color": "green"
-          }
-        ],
         "components": {"v": false, "s": true, "m": true, "material": "un po' di lana"}
       },
       {
@@ -177,12 +171,6 @@
         "saveAbility": "CON",
         "description": "3d8 danni tuono (metà se salva).\nOggetti inorganici e nemici in armatura metallica hanno svantaggio al TS.",
         "scaling": "+1d8 per ogni slot sopra il 2°",
-        "tags": [
-          {
-            "label": "NEW",
-            "color": "green"
-          }
-        ],
         "notes": "📌 Usa su gruppi di nemici vicini tra loro.",
         "components": {"v": true, "s": true, "m": true, "material": "un frammento di mica"}
       },
@@ -197,12 +185,6 @@
         "concentration": true,
         "duration": "Fino a 1 ora",
         "description": "Una creatura diventa **invisibile**. Termina se la creatura attacca o lancia un incantesimo.\n📌 Usa su te stesso se sei in pericolo grave.\n📌 Usala sul Ladro per dargli vantaggio sugli attacchi.",
-        "tags": [
-          {
-            "label": "NEW",
-            "color": "green"
-          }
-        ],
         "components": {"v": true, "s": true, "m": true, "material": "una ciglia in gomma arabica"}
       },
       {
@@ -265,13 +247,7 @@
         "damageType": "Piercing",
         "attackStat": "STR",
         "properties": "Versatile (1d8), Lanciabile (6/18 m)",
-        "notes": "Arma semplice, sei competente. Statistiche basse perché FOR è −1. Meglio come arma di riserva o da lancio situazionale.",
-        "tags": [
-          {
-            "label": "NEW",
-            "color": "green"
-          }
-        ]
+        "notes": "Arma semplice, sei competente. Statistiche basse perché FOR è −1. Meglio come arma di riserva o da lancio situazionale."
       },
       {
         "name": "Spada Bella",
@@ -282,13 +258,7 @@
         "attackStat": "DEX",
         "properties": "Da definire con il DM",
         "notes": "Se è uno spadino/rapier (Finesse): Attacco +5, Danno 1d8+3. Chiedi al DM di che arma si tratta esattamente.",
-        "mastery": "Vex",
-        "tags": [
-          {
-            "label": "NEW",
-            "color": "green"
-          }
-        ]
+        "mastery": "Vex"
       }
     ],
     "equipment": [
@@ -386,7 +356,7 @@
         ]
       },
       {
-        "title": "Expertise (Perizia)",
+        "title": "Perizia",
         "emoji": "🎓",
         "source": "Bard",
         "contentBlocks": [
@@ -405,7 +375,7 @@
         ]
       },
       {
-        "title": "Jack of All Trades",
+        "title": "Jolly di Tutto",
         "emoji": "🃏",
         "source": "Bard",
         "contentBlocks": [
@@ -420,71 +390,30 @@
         ]
       },
       {
-        "title": "College of Lore",
-        "emoji": "🎓",
+        "title": "Parole Taglienti",
+        "emoji": "🗡️",
         "source": "College of Lore",
         "contentBlocks": [
           {
-            "type": "subfeature",
-            "title": "Parole Taglienti (Cutting Words)",
-            "emoji": "🗡️",
-            "tags": [
-              {
-                "label": "NEW",
-                "color": "green"
-              }
-            ],
-            "contentBlocks": [
-              {
-                "type": "paragraph",
-                "text": "**REAZIONE | Raggio 18 m**"
-              },
-              {
-                "type": "paragraph",
-                "text": "Quando una creatura entro 18 m fa un **tiro d'attacco**, una **prova di caratteristica** o un **tiro danni**:\n→ Spendi 1 Ispirazione Bardica: il bersaglio **sottrae 1d6 al risultato**."
-              },
-              {
-                "type": "bullets",
-                "bullets": [
-                  "📌 Puoi usarlo **dopo** aver visto il tiro, ma **prima** che abbia effetto.",
-                  "📌 Ottimo per proteggere il Barbaro o il Monaco quando stanno per ricevere un colpo grosso.",
-                  "📌 Non funziona se il bersaglio è immune a essere affascinato."
-                ]
-              }
-            ]
+            "type": "paragraph",
+            "text": "**REAZIONE | Raggio 18 m**"
           },
           {
-            "type": "subfeature",
-            "title": "Segreti Magici Bonus (Bonus Magical Secrets)",
-            "emoji": "🔮",
-            "tags": [
-              {
-                "label": "NEW",
-                "color": "green"
-              }
-            ],
-            "contentBlocks": [
-              {
-                "type": "paragraph",
-                "text": "Apprendi **2 incantesimi da qualsiasi lista di classe**."
-              },
-              {
-                "type": "paragraph",
-                "text": "**Scelte di Catalion:**"
-              },
-              {
-                "type": "bullets",
-                "bullets": [
-                  "Ferma Persona — lista Chierico/Druido",
-                  "Aiuto — lista Chierico/Paladino"
-                ]
-              }
+            "type": "paragraph",
+            "text": "Quando una creatura entro 18 m fa un **tiro d'attacco**, una **prova di caratteristica** o un **tiro danni**:\n→ Spendi 1 Ispirazione Bardica: il bersaglio **sottrae 1d6 al risultato**."
+          },
+          {
+            "type": "bullets",
+            "bullets": [
+              "📌 Puoi usarlo **dopo** aver visto il tiro, ma **prima** che abbia effetto.",
+              "📌 Ottimo per proteggere il Barbaro o il Monaco quando stanno per ricevere un colpo grosso.",
+              "📌 Non funziona se il bersaglio è immune a essere affascinato."
             ]
           }
         ],
         "actions": [
           {
-            "label": "Parole Taglienti (Cutting Words)",
+            "label": "Parole Taglienti",
             "emoji": "🗡️",
             "type": "reaction",
             "description": "Parole Taglienti: −1d6 a tiro attacco/danno nemico | spendi 1 Ispirazione | 18 m"
@@ -492,57 +421,72 @@
         ]
       },
       {
-        "title": "Feat Origin",
-        "emoji": "🎭",
+        "title": "Segreti Magici Bonus",
+        "emoji": "🔮",
+        "source": "College of Lore",
+        "contentBlocks": [
+          {
+            "type": "paragraph",
+            "text": "Apprendi **2 incantesimi da qualsiasi lista di classe**."
+          },
+          {
+            "type": "paragraph",
+            "text": "**Scelte di Catalion:**"
+          },
+          {
+            "type": "bullets",
+            "bullets": [
+              "Ferma Persona — lista Chierico/Druido",
+              "Aiuto — lista Chierico/Paladino"
+            ]
+          }
+        ]
+      },
+      {
+        "title": "Musicista",
+        "emoji": "🎶",
         "source": "Origin Feat",
         "contentBlocks": [
           {
-            "type": "subfeature",
-            "title": "Musicista",
-            "emoji": "🎶",
-            "contentBlocks": [
-              {
-                "type": "paragraph",
-                "text": "Competenza in 3 strumenti musicali (es. liuto, flauto, tamburo)"
-              },
-              {
-                "type": "paragraph",
-                "text": "**Canzone Incoraggiante:** al termine di un Riposo Breve o Lungo, scegli un numero di alleati pari al Bonus di Competenza (2). Ogni alleato ottiene **Ispirazione Eroica** (1 Vantaggio su D20)."
-              }
+            "type": "paragraph",
+            "text": "Competenza in 3 strumenti musicali (es. liuto, flauto, tamburo)"
+          },
+          {
+            "type": "paragraph",
+            "text": "**Canzone Incoraggiante:** al termine di un Riposo Breve o Lungo, scegli un numero di alleati pari al Bonus di Competenza (2). Ogni alleato ottiene **Ispirazione Eroica** (1 Vantaggio su D20)."
+          }
+        ]
+      },
+      {
+        "title": "Fortunato",
+        "emoji": "🍀",
+        "source": "Origin Feat",
+        "contentBlocks": [
+          {
+            "type": "table",
+            "rows": [
+              [
+                "Punti Fortuna",
+                "2 (pari al Bonus di Competenza)"
+              ],
+              [
+                "Recupero",
+                "Riposo Lungo"
+              ]
             ]
           },
           {
-            "type": "subfeature",
-            "title": "Lucky",
-            "emoji": "🍀",
-            "contentBlocks": [
-              {
-                "type": "table",
-                "rows": [
-                  [
-                    "Punti Fortuna",
-                    "2 (pari al Bonus di Competenza)"
-                  ],
-                  [
-                    "Recupero",
-                    "Riposo Lungo"
-                  ]
-                ]
-              },
-              {
-                "type": "bullets",
-                "bullets": [
-                  "**Vantaggio:** spendi 1 punto → rilanci un d20 con vantaggio",
-                  "**Svantaggio:** spendi 1 punto → imponi svantaggio a un nemico che ti colpisce",
-                  "Usabile su: attacchi, tiri salvezza, prove abilità"
-                ]
-              }
+            "type": "bullets",
+            "bullets": [
+              "**Vantaggio:** spendi 1 punto → rilanci un d20 con vantaggio",
+              "**Svantaggio:** spendi 1 punto → imponi svantaggio a un nemico che ti colpisce",
+              "Usabile su: attacchi, tiri salvezza, prove abilità"
             ]
           }
         ],
         "trackers": [
           {
-            "label": "Lucky",
+            "label": "Fortunato",
             "emoji": "🍀",
             "total": 2,
             "recovery": "long"
@@ -550,7 +494,7 @@
         ]
       },
       {
-        "title": "Two-Weapon Fighting",
+        "title": "Lotta con Due Armi",
         "emoji": "🗡️",
         "source": "Combat Rule",
         "contentBlocks": [
@@ -667,14 +611,22 @@
         "type": "sep"
       },
       "ispirazione-bardica",
-      "expertise-perizia",
-      "jack-of-all-trades",
+      "perizia",
+      "jolly-di-tutto",
       {
         "type": "sep"
       },
-      "college-of-lore",
-      "feat-origin",
-      "two-weapon-fighting",
+      "parole-taglienti",
+      "segreti-magici-bonus",
+      {
+        "type": "sep"
+      },
+      "musicista",
+      "fortunato",
+      {
+        "type": "sep"
+      },
+      "lotta-con-due-armi",
       {
         "type": "sep"
       },
@@ -724,7 +676,7 @@
       "eq-pozione-curativa": {
         "used": 0
       },
-      "lucky": {
+      "fortunato": {
         "used": 0
       }
     },

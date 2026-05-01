@@ -8,6 +8,7 @@
 - **v0 (Complete):** Core character sheet, wizard system, i18n skeleton, dark/light themes
 - **v1 (Complete):** UX overhaul, i18n completion, sidebar architecture, smart features, D&D 2024 parity
 - **v1.1 (Scoped, Deferred):** Full level-up wizard, class feature tables, feat database
+- **v1.2 (In Progress):** UI redesign (gold/navy palette, header polish), mobile UX, UX polish
 
 ---
 
@@ -388,6 +389,40 @@ Done:
 - Damage: `1 + STR mod` (minimum 1) bludgeoning; attack bonus: `PB + STR mod`.
 - Not editable — it's always auto-computed. Consistent with the override pattern.
 
+### Phase 31: UI Redesign — Gold/Navy Palette
+**Status:** ✅ COMPLETE
+**Goal:** Replace blue/purple accent palette with a polished gold/navy palette for both themes.
+
+Done:
+- Dark theme: base `#0f0f1a`, accent `#c9a227` (gold), warm off-white text `#d8d8e8`.
+- Light theme: base `#f5f0e8`, accent `#8a6800` (dark gold), warm cream tones.
+- Header logo: `font-weight:800`, `letter-spacing:.04em`, gold text-shadow.
+- Header bottom border: `2px solid var(--accent)` (structural divider signal).
+- `h2` section headers: gold accent left-border (4px), uppercase, `letter-spacing:.02em`, `font-weight:700`.
+- Active tab underline: reserved slot via `border-bottom:2px solid transparent` on inactive; `border-bottom-color:var(--accent)` on active. No tab layout shift.
+- `.btn-primary`, `.add-btn`, assistant send button: gold gradients.
+- `.ctrl-btn`: gold-tinted border + hover bg; `.ctrl-btn.active`: subtle gold bg.
+- All changes mirrored identically in both `index.html` and `assistant.html`.
+- New i18n keys: `overflowTheme`, `overflowLang` (EN + IT in both files).
+
+### Phase 32: Mobile UX
+**Status:** ✅ COMPLETE
+**Goal:** Make theme/lang controls accessible on mobile; fix chat input hidden behind mobile browser chrome.
+
+Done:
+- **Overflow menu (`⋯` button):** On `≤768px`, `.hdr-right` hides and `#hdr-overflow-btn` appears. Dropdown shows theme and language toggles. Closes on outside click. Fully i18n'd. Implemented identically in both files.
+- **Chat height fix (`assistant.html`):** `html,body{height:100dvh}`, `#ai-main{height:calc(100dvh - 50px)}` on mobile, `#ui{max-height:80px}`, reduced `.ibar` padding. Prevents send button and input from being hidden behind mobile browser chrome.
+
+### Phase 33: UX Polish
+**Status:** ✅ COMPLETE
+**Goal:** Sidebar scroll anchoring, sidebar character block clickable, portrait lightbox.
+
+Done:
+- **Scroll anchor margin:** `scroll-margin-top:68px` on `h2`, `.spell-level-title`, and `#game-panel`. Sidebar nav links no longer land under the fixed header.
+- **Sidebar char block:** `.sb-char-info` is now `cursor:pointer` with hover highlight; clicking smooth-scrolls to page top.
+- **Portrait lightbox:** Clicking portrait when one exists opens full-screen `#portrait-lightbox` overlay. Supports scroll-wheel zoom (desktop) and pinch zoom (mobile). ESC key or clicking outside closes. "📷 Change photo" + "Close" buttons. If no portrait, clicking opens file picker directly.
+- **Mastery tooltip z-index:** Raised from `100` to `210` so tooltip always renders above the fixed sidebar (`z-index:200`).
+
 ---
 
 
@@ -622,6 +657,17 @@ Done:
 | 88 | Character lore | CHAR.lore object; dedicated section + wizard (Physical + Personality & Backstory steps) |
 | 89 | Unarmed strike | Auto-derived row in weapons table; not stored; damage = 1+STR mod, attack = PB+STR mod |
 | 90 | Schema version | Single source of truth: SCHEMA_VERSION = '3.0' in index.html; all exports and Catalion JSON use "3.0" |
+| 91 | Accent palette | Gold/navy replaces blue/purple: dark `#c9a227`, light `#8a6800`; warm cream/grey backgrounds |
+| 92 | Header height | 50px (up from 48px) for visual breathing room; all dependent offsets updated in both files |
+| 93 | Header border | 2px solid var(--accent) — signals structural divider, not component border |
+| 94 | Section h2 style | Gold accent left-border (4px), uppercase text, letter-spacing, font-weight:700 |
+| 95 | Tab active underline | Reserved slot via border-bottom:2px solid transparent on inactive; no layout shift between pages |
+| 96 | Mobile overflow menu | ⋯ button on ≤768px reveals theme/lang toggles in dropdown; implemented identically in both files |
+| 97 | Mobile chat height | html,body{height:100dvh} in assistant.html prevents send button hidden behind mobile chrome |
+| 98 | Scroll anchor margin | scroll-margin-top:68px on h2/.spell-level-title/#game-panel so sidebar links clear fixed header |
+| 99 | Sidebar char block | .sb-char-info is clickable (smooth scroll to top) with hover highlight |
+| 100 | Portrait lightbox | Click portrait → full-screen overlay; scroll/pinch zoom; ESC to close; no portrait → file picker |
+| 101 | Mastery tooltip z-index | z-index:210 — above fixed sidebar (200), below modal (400+) |
 
 ---
 
@@ -647,7 +693,10 @@ Done:
 | **~~cbeRenderTable() not defined~~** | ~~editBlock()~~ | ✅ Fixed |
 | **~~cbeRenderSubfeature() not defined~~** | ~~editBlock()~~ | ✅ Fixed |
 | **~~Sidebar reorder not wired~~** | ~~renderSidebar~~ | ✅ Fixed (drag-drop + trash zone) |
-| **Algo step editor uses prompt()** | addAlgoStep | ✅ Fixed (inline editing) |
+| **~~Algo step editor uses prompt()~~** | addAlgoStep | ✅ Fixed (inline editing) |
+| **~~Content block preview blank on wizard open~~** | `renderWizardStep` | ✅ Fixed (`injectWizPreview()` at end of field-based path) |
+| **~~Block summary shows "2" for table, blank for bullets~~** | `renderContentBlockEditor` | ✅ Fixed (synced template with `refreshCBEditor`) |
+| **~~WIZ_BLOCKS shallow-spreads live CHAR blocks~~** | `openWizard` | ✅ Fixed (deep-clone via `JSON.parse(JSON.stringify(...))`) |
 
 ---
 

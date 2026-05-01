@@ -8,18 +8,18 @@
 /* ═══════════════ THEME VARIABLES ═══════════════ */
 *{box-sizing:border-box;margin:0;padding:0;}
 :root[data-theme="dark"]{
-  --bg:#1a1a2e; --bg-card:#222238; --bg-card2:#2a2a42; --bg-input:#1e1e34;
-  --border:#3a3a58; --border-light:#30304a;
-  --text:#d8d8e8; --text-muted:#8888a8; --text-faint:#55557a;
-  --accent:#9090e0; --accent-dim:#2a2a50; --accent-glow:rgba(144,144,224,.18);
-  --sidebar-bg:#16162a; --sidebar-text:#b0b0cc; --sidebar-hover:#26264a;
-  --shadow:0 4px 24px rgba(0,0,0,.4); --shadow-sm:0 2px 8px rgba(0,0,0,.25);
+  --bg:#0f0f1a; --bg-card:#1a1a28; --bg-card2:#22223a; --bg-input:#14141f;
+  --border:#3a3620; --border-light:#28263a;
+  --text:#e4dfc8; --text-muted:#8a8870; --text-faint:#504e60;
+  --accent:#c9a227; --accent-dim:#1e1800; --accent-glow:rgba(201,162,39,.22);
+  --sidebar-bg:#0a0a14; --sidebar-text:#9a9878; --sidebar-hover:#161620;
+  --shadow:0 4px 24px rgba(0,0,0,.55); --shadow-sm:0 2px 8px rgba(0,0,0,.4);
   --hp-green:#48a848; --hp-yellow:#c8a030; --hp-red:#b83030;
-  --tag-green:#2a7a2a; --tag-purple:#7a2a8a; --tag-blue:#2a5a9a; --tag-red:#9a2a2a; --tag-orange:#8a6a1a;
-  --algo-bg:#1e1e34; --algo-step-bg:#262642; --algo-step-border:#3a3a58;
+  --tag-green:#2a5a2a; --tag-purple:#5a2a7a; --tag-blue:#2a4a8a; --tag-red:#8a2a2a; --tag-orange:#7a5a10;
+  --algo-bg:#14141f; --algo-step-bg:#1e1e2e; --algo-step-border:#2a2820;
   --log-damage:#e88888; --log-heal:#88d888;
-  --modal-bg:#222238; --overlay:rgba(10,10,20,.85);
-  --pip-on:#6868a8; --pip-off-bg:transparent; --pip-off-border:#44446a; --pip-text:#e0e0f0;
+  --modal-bg:#1a1a28; --overlay:rgba(5,5,10,.88);
+  --pip-on:#c9a227; --pip-off-bg:transparent; --pip-off-border:#3a3620; --pip-text:#1a0e00;
   --death-succ:#4a9a4a; --death-fail:#9a4a4a;
   --slot1-color:#5588dd; --slot2-color:#8855dd; --slot3-color:#44aa66;
   --slot4-color:#cc5555; --slot5-color:#bbaa30; --slot6-color:#44aabb;
@@ -28,8 +28,8 @@
   --toast-success-bg:#1a2e1a; --toast-success-border:#338833;
   --toast-err-bg:#2e1a1a; --toast-err-border:#883333;
   --toast-info-bg:#1a2230; --toast-info-border:#335588;
-  --scrollbar-track:#1e1e34; --scrollbar-thumb:#3a3a58;
-  --edit-mode-color:#d09030;
+  --scrollbar-track:#14141f; --scrollbar-thumb:#3a3620;
+  --edit-mode-color:#c9a227;
   --badge-action-bg:#162844; --badge-action-text:#7aaad8; --badge-action-border:#2a4868;
   --badge-bonus-bg:#281840; --badge-bonus-text:#a888d0; --badge-bonus-border:#3a2860;
   --badge-reaction-bg:#3a1a08; --badge-reaction-text:#d89858; --badge-reaction-border:#5a3018;
@@ -39,18 +39,18 @@
   --btn-shortrest-bg:#1a2a3a; --btn-shortrest-border:#3a5a8a; --btn-shortrest-text:#88aadd;
 }
 :root[data-theme="light"]{
-  --bg:#f0efe8; --bg-card:#fafaf6; --bg-card2:#f0efe8; --bg-input:#e8e7e0;
-  --border:#c8c6b8; --border-light:#d8d6cc;
-  --text:#2a2a34; --text-muted:#5a5a6a; --text-faint:#9090a0;
-  --accent:#5858b8; --accent-dim:#e8e6f4; --accent-glow:rgba(88,88,184,.12);
-  --sidebar-bg:#e8e7e0; --sidebar-text:#3a3a4a; --sidebar-hover:#dcdad0;
-  --shadow:0 2px 16px rgba(40,40,60,.10); --shadow-sm:0 1px 6px rgba(40,40,60,.06);
+  --bg:#f5f0e8; --bg-card:#faf6ec; --bg-card2:#ede8dc; --bg-input:#e4ddd0;
+  --border:#b8a888; --border-light:#cdc3ac;
+  --text:#1e1508; --text-muted:#5c4e34; --text-faint:#8a7c64;
+  --accent:#8a6800; --accent-dim:#f0e4b8; --accent-glow:rgba(138,104,0,.15);
+  --sidebar-bg:#ede4d4; --sidebar-text:#3a3020; --sidebar-hover:#e0d4b8;
+  --shadow:0 2px 16px rgba(40,30,10,.12); --shadow-sm:0 1px 6px rgba(40,30,10,.08);
   --hp-green:#2e8e2e; --hp-yellow:#9a8818; --hp-red:#a02020;
-  --tag-green:#2a7a2a; --tag-purple:#7a2a8a; --tag-blue:#2a5a9a; --tag-red:#9a2a2a; --tag-orange:#8a6a1a;
-  --algo-bg:#f0efe8; --algo-step-bg:#fafaf6; --algo-step-border:#c8c6b8;
+  --tag-green:#2a5a2a; --tag-purple:#5a2a7a; --tag-blue:#2a4a8a; --tag-red:#8a2a2a; --tag-orange:#7a5a10;
+  --algo-bg:#f0ebe0; --algo-step-bg:#faf6ec; --algo-step-border:#b8a888;
   --log-damage:#b82020; --log-heal:#2a8a2a;
-  --modal-bg:#fafaf6; --overlay:rgba(20,20,30,.55);
-  --pip-on:#6868b8; --pip-off-bg:#eae9e2; --pip-off-border:#b8b6aa; --pip-text:#ffffff;
+  --modal-bg:#faf6ec; --overlay:rgba(20,15,5,.55);
+  --pip-on:#8a6800; --pip-off-bg:#ede0c4; --pip-off-border:#b8a880; --pip-text:#faf6ec;
   --death-succ:#2e8e2e; --death-fail:#a02020;
   --slot1-color:#3366bb; --slot2-color:#7733bb; --slot3-color:#2e8e4e;
   --slot4-color:#aa3333; --slot5-color:#8a7718; --slot6-color:#228888;
@@ -59,8 +59,8 @@
   --toast-success-bg:#e0f0e0; --toast-success-border:#338833;
   --toast-err-bg:#f4e0e0; --toast-err-border:#883333;
   --toast-info-bg:#e0e4f0; --toast-info-border:#446688;
-  --scrollbar-track:#e8e7e0; --scrollbar-thumb:#b8b6aa;
-  --edit-mode-color:#b87718;
+  --scrollbar-track:#e4ddd0; --scrollbar-thumb:#b8a888;
+  --edit-mode-color:#8a6800;
   --badge-action-bg:#dce8f4; --badge-action-text:#2a5588; --badge-action-border:#aac4e0;
   --badge-bonus-bg:#e8ddf4; --badge-bonus-text:#5a3388; --badge-bonus-border:#c4aae0;
   --badge-reaction-bg:#f4e8da; --badge-reaction-text:#884a1a; --badge-reaction-border:#e0c4a0;
@@ -74,9 +74,10 @@ html{scroll-behavior:smooth;}
 body{font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--text);
   line-height:1.6;font-size:16px;transition:background .3s,color .3s;-webkit-font-smoothing:antialiased;}
 h1{font-size:1.75em;margin-bottom:2px;color:var(--text);font-weight:700;letter-spacing:-.01em;}
-h2{font-size:1.15em;border-bottom:1.5px solid var(--border);padding-bottom:5px;
-  margin-top:36px;margin-bottom:14px;scroll-margin-top:20px;color:var(--text);
-  display:flex;align-items:center;gap:8px;font-weight:600;}
+h2{font-size:1.1em;border-bottom:1.5px solid var(--accent);padding:4px 0 7px 12px;
+  border-left:4px solid var(--accent);margin-top:36px;margin-bottom:14px;
+  scroll-margin-top:68px;color:var(--text);display:flex;align-items:center;
+  gap:8px;font-weight:700;letter-spacing:.02em;text-transform:uppercase;}
 h3{font-size:1em;margin-top:16px;margin-bottom:4px;color:var(--text);font-weight:600;}
 p{margin:4px 0;}
 .subtitle{color:var(--text-muted);font-style:italic;margin-top:2px;font-size:.95em;}
@@ -109,22 +110,24 @@ tr.skill-none{opacity:.55;}
 .section-header-line{border-bottom:2px solid var(--border);margin-bottom:14px;padding-bottom:4px;}
 /* ═══════════════ LAYOUT ═══════════════ */
 /* ═══════════════ APP HEADER ═══════════════ */
-#app-header{position:fixed;top:0;left:0;right:0;height:48px;z-index:1010;
-  background:var(--bg-card);border-bottom:1px solid var(--border-light);
+#app-header{position:fixed;top:0;left:0;right:0;height:50px;z-index:1010;
+  background:var(--bg-card);border-bottom:2px solid var(--accent);
   display:flex;align-items:center;padding:0 10px;gap:8px;box-shadow:var(--shadow-sm);}
 #hamburger{display:none;background:none;border:none;color:var(--text-muted);
   font-size:1.2em;cursor:pointer;padding:5px 7px;border-radius:6px;flex-shrink:0;line-height:1;}
-#hamburger:hover{background:var(--bg-card2);color:var(--text);}
-.hdr-logo{color:var(--accent);font-weight:700;font-size:.95em;text-decoration:none;
-  white-space:nowrap;padding:2px 4px;flex-shrink:0;letter-spacing:-.01em;}
-.hdr-logo:hover{opacity:.8;}
+#hamburger:hover{background:var(--sidebar-hover);color:var(--accent);}
+.hdr-logo{color:var(--accent);font-weight:800;font-size:.95em;text-decoration:none;
+  white-space:nowrap;padding:2px 4px;flex-shrink:0;letter-spacing:.04em;
+  text-shadow:0 0 12px rgba(201,162,39,.35);}
+.hdr-logo:hover{opacity:.85;}
 .hdr-tabs{display:flex;gap:2px;margin:0 6px;}
-.hdr-tab{color:var(--text-muted);font-size:.84em;padding:5px 11px;border-radius:6px;
-  text-decoration:none;font-weight:500;transition:color .15s,background .15s;white-space:nowrap;}
-.hdr-tab:hover{color:var(--text);background:var(--bg-card2);}
-.hdr-tab.active{color:var(--accent);font-weight:600;}
+.hdr-tab{color:var(--sidebar-text);font-size:.84em;padding:5px 11px;border-radius:6px;
+  text-decoration:none;font-weight:500;transition:color .15s,background .15s;white-space:nowrap;
+  border-bottom:2px solid transparent;}
+.hdr-tab:hover{color:var(--accent);background:var(--sidebar-hover);}
+.hdr-tab.active{color:var(--accent);font-weight:700;border-bottom-color:var(--accent);border-radius:0;}
 .hdr-right{display:flex;gap:5px;margin-left:auto;}
-#sidebar{position:fixed;left:0;top:48px;width:var(--sidebar-w,200px);height:calc(100vh - 48px);overflow-y:auto;
+#sidebar{position:fixed;left:0;top:50px;width:var(--sidebar-w,200px);height:calc(100vh - 50px);overflow-y:auto;
   background:var(--sidebar-bg);padding:16px 0 24px;z-index:200;
   transition:transform .25s ease;display:flex;flex-direction:column;}
 #sb-resize{position:absolute;right:0;top:0;width:5px;height:100%;cursor:col-resize;z-index:10;
@@ -132,13 +135,13 @@ tr.skill-none{opacity:.55;}
 #sb-resize:hover,#sb-resize.dragging{background:var(--accent-glow);}
 #sidebar a{display:block;color:var(--sidebar-text);text-decoration:none;
   padding:5px 14px;font-size:.82em;border-left:3px solid transparent;transition:all .15s;}
-#sidebar a:hover{background:var(--sidebar-hover);color:var(--text);border-left-color:var(--accent);}
-#sidebar a.active{background:var(--accent-dim);color:var(--accent);border-left-color:var(--accent);}
+#sidebar a:hover{background:var(--sidebar-hover);color:var(--accent);border-left-color:var(--accent);}
+#sidebar a.active{background:rgba(201,162,39,.1);color:var(--accent);border-left-color:var(--accent);}
 .nav-sep{border-top:1px solid var(--border-light);margin:6px 0;}
 .nav-sub-link{font-size:.85em!important;padding:4px 12px 4px 24px!important;opacity:.8;}
 .nav-sub-link:hover{opacity:1;}
 .section-sep{border:none;border-top:1px solid var(--border-light);margin:24px 0;}
-#main{margin-left:var(--sidebar-w,200px);margin-top:48px;max-width:920px;padding:32px 32px 80px;}
+#main{margin-left:var(--sidebar-w,200px);margin-top:50px;max-width:920px;padding:32px 32px 80px;}
 #sidebar-overlay{display:none;position:fixed;inset:0;background:var(--overlay);z-index:150;}
 #sidebar-overlay.visible{display:block;}
 @media(max-width:768px){
@@ -149,7 +152,22 @@ tr.skill-none{opacity:.55;}
   h1{font-size:1.4em;}
   table{font-size:.82em;}
   td,th{padding:5px 8px;}
+  .hdr-right{display:none!important;}
+  .hdr-tabs{display:none!important;}
+  #hdr-overflow-btn{display:flex!important;}
 }
+/* ── Overflow menu (mobile theme/lang) ── */
+#hdr-overflow-btn{display:none;background:none;border:none;color:var(--sidebar-text);
+  font-size:1.3em;cursor:pointer;padding:4px 8px;border-radius:6px;line-height:1;margin-left:auto;}
+#hdr-overflow-btn:hover{background:var(--sidebar-hover);color:var(--accent);}
+#hdr-overflow-menu{display:none;position:fixed;top:53px;right:10px;
+  background:var(--sidebar-bg);border:1px solid var(--accent);border-radius:8px;
+  box-shadow:0 4px 20px rgba(0,0,0,.5);z-index:2000;min-width:140px;padding:6px 0;}
+#hdr-overflow-menu.open{display:block;}
+.overflow-item{display:flex;align-items:center;gap:10px;width:100%;background:none;
+  border:none;color:var(--sidebar-text);font-size:.9em;padding:9px 16px;cursor:pointer;
+  text-align:left;transition:background .12s,color .12s;}
+.overflow-item:hover{background:var(--sidebar-hover);color:var(--accent);}
 /* ═══════════════ HEADER ═══════════════ */
 #header-area{display:flex;align-items:flex-start;gap:20px;margin-bottom:24px;
   background:var(--bg-card);border-radius:12px;padding:20px 22px;box-shadow:var(--shadow-sm);
@@ -162,6 +180,20 @@ tr.skill-none{opacity:.55;}
 .portrait-wrap img{width:100%;height:100%;object-fit:cover;display:none;}
 .portrait-ph{font-size:.62em;color:var(--text-faint);text-align:center;line-height:1.7;padding:6px;}
 #portrait-input{display:none;}
+/* ── Portrait lightbox ── */
+#portrait-lightbox{display:none;position:fixed;inset:0;z-index:3000;
+  background:rgba(0,0,0,.9);flex-direction:column;align-items:center;justify-content:center;}
+#portrait-lightbox.open{display:flex;}
+#portrait-lightbox-img{max-width:90vw;max-height:72vh;object-fit:contain;
+  border-radius:10px;transition:transform .12s;transform-origin:center;
+  user-select:none;-webkit-user-drag:none;}
+.portrait-lb-bar{display:flex;gap:12px;margin-top:20px;}
+.portrait-lb-btn{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);
+  color:#fff;border-radius:7px;padding:8px 18px;cursor:pointer;font-size:.9em;
+  transition:background .15s;font-family:inherit;}
+.portrait-lb-btn:hover{background:rgba(255,255,255,.22);}
+.portrait-lb-btn.accent{background:var(--accent);color:#1a0e00;border-color:var(--accent);}
+.portrait-lb-btn.accent:hover{filter:brightness(1.1);}
 .header-text{flex:1;min-width:0;}
 .header-text h1{font-size:1.85em;line-height:1.2;margin-bottom:4px;}
 .header-text .subtitle{margin-bottom:2px;}
@@ -174,7 +206,8 @@ tr.skill-none{opacity:.55;}
 }
 /* ═══════════════ PANNELLO ═══════════════ */
 #game-panel{background:var(--bg-card);border-radius:14px;padding:22px 24px 26px;
-  margin-bottom:32px;box-shadow:var(--shadow-sm);border:1px solid var(--border-light);}
+  margin-bottom:32px;box-shadow:var(--shadow-sm);border:1px solid var(--border-light);
+  scroll-margin-top:62px;}
 .pn-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(175px,1fr));gap:14px;margin-bottom:16px;}
 .pn-card{background:var(--bg-card2);border-radius:10px;padding:11px 14px 13px;
   border:1px solid var(--border-light);transition:border-color .2s;}
@@ -308,7 +341,7 @@ input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;}
 .spell-level-section{margin-top:28px;}
 .spell-level-title{font-size:1.1em;font-weight:bold;color:var(--text);
   border-bottom:1px solid var(--border-light);padding-bottom:4px;margin-bottom:10px;
-  display:flex;align-items:center;gap:8px;}
+  display:flex;align-items:center;gap:8px;scroll-margin-top:68px;}
 .equip-table td:first-child{font-weight:500;}
 .equip-weapon-row td{color:var(--text-muted);font-style:italic;}
 /* ═══════════════ WIZARD ═══════════════ */
@@ -344,14 +377,15 @@ input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;}
 #sidebar .btn-edit-sm{background:var(--sidebar-hover);border-color:var(--border-light);color:var(--sidebar-text);}
 #sidebar .btn-edit-sm:hover{border-color:var(--accent);color:var(--accent);}
 /* Light-mode ctrl-btn: subtle lift */
-:root[data-theme="light"] .ctrl-btn{box-shadow:0 1px 6px rgba(0,0,0,.08);}
+:root[data-theme="light"] .ctrl-btn{background:var(--sidebar-hover);border-color:rgba(138,104,0,.3);color:var(--sidebar-text);}
 .modal-footer{padding:14px 22px;border-top:1px solid var(--border-light);display:flex;
   justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;}
 .modal-footer-right{display:flex;gap:8px;}
-.btn-primary{background:var(--accent);border:none;color:#fff;border-radius:7px;
-  padding:8px 18px;font-size:.9em;cursor:pointer;font-weight:bold;transition:all .15s;}
-.btn-primary:hover{filter:brightness(1.15);}
-.btn-primary.finish{background:linear-gradient(135deg,#2a8a2a,#1a6a1a);}
+.btn-primary{background:linear-gradient(135deg,#c9a227,#a07e18);border:none;
+  color:#1a0e00;border-radius:7px;padding:8px 18px;font-size:.9em;cursor:pointer;
+  font-weight:700;transition:all .15s;letter-spacing:.02em;}
+.btn-primary:hover{background:linear-gradient(135deg,#d9b237,#b08e28);filter:brightness(1.05);}
+.btn-primary.finish{background:linear-gradient(135deg,#2a8a2a,#1a6a1a);color:#fff;}
 .btn-secondary{background:var(--bg-card2);border:1px solid var(--border-light);color:var(--text-muted);
   border-radius:7px;padding:8px 15px;font-size:.9em;cursor:pointer;transition:all .15s;}
 .btn-secondary:hover{border-color:var(--accent);color:var(--text);}
@@ -444,10 +478,10 @@ body.edit-mode::after{content:'';position:fixed;inset:0;pointer-events:none;box-
 .sb-edit-btns{display:flex;gap:1px;flex-shrink:0;}
 .sb-edit-btns .btn-del-sm{padding:1px 4px;}
 .sb-edit-btns .btn-del-sm:disabled{opacity:.25;cursor:default;pointer-events:none;}
-.add-btn{display:inline-flex;align-items:center;gap:5px;background:var(--accent-dim);
+.add-btn{display:inline-flex;align-items:center;gap:5px;background:rgba(201,162,39,.08);
   border:1px dashed var(--accent);color:var(--accent);border-radius:7px;
-  padding:5px 12px;font-size:.82em;cursor:pointer;margin-top:10px;transition:all .15s;}
-.add-btn:hover{background:var(--accent);color:#fff;}
+  padding:5px 12px;font-size:.82em;cursor:pointer;margin-top:10px;transition:all .15s;font-weight:600;}
+.add-btn:hover{background:var(--accent);color:#1a0e00;}
 
 /* ═══════════════ MISC ═══════════════ */
 #splash{position:fixed;inset:0;background:var(--bg);z-index:1000;
@@ -477,7 +511,8 @@ body.edit-mode::after{content:'';position:fixed;inset:0;pointer-events:none;box-
 @keyframes toastIn{from{opacity:0;transform:translateX(20px);}to{opacity:1;transform:none;}}
 /* ── Sidebar character block ── */
 .sb-char-block{padding:10px 12px 8px;border-bottom:1px solid var(--border-light);}
-.sb-char-info{display:flex;align-items:center;gap:8px;margin-bottom:6px;}
+.sb-char-info{display:flex;align-items:center;gap:8px;margin-bottom:6px;cursor:pointer;border-radius:6px;padding:2px 4px;margin:-2px -4px 6px;transition:background .15s;}
+.sb-char-info:hover{background:var(--sidebar-hover);}
 .sb-portrait{width:32px;height:32px;border-radius:50%;object-fit:cover;flex-shrink:0;
   border:1.5px solid var(--border-light);}
 .sb-portrait-ph{width:32px;height:32px;border-radius:50%;background:var(--bg-card2);
@@ -490,7 +525,7 @@ body.edit-mode::after{content:'';position:fixed;inset:0;pointer-events:none;box-
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .sb-change-char{width:100%;background:none;border:1px solid var(--border-light);
   border-radius:5px;color:var(--text-muted);font-size:.71em;padding:3px 8px;
-  cursor:pointer;text-align:left;transition:border-color .15s,color .15s;display:block;}
+  cursor:pointer;text-align:center;transition:border-color .15s,color .15s;display:block;}
 .sb-change-char:hover{border-color:var(--accent);color:var(--accent);}
 /* ── Sidebar edit button ── */
 .sb-edit-btn{width:100%;background:none;border:1.5px solid var(--border-light);border-radius:7px;
@@ -498,12 +533,12 @@ body.edit-mode::after{content:'';position:fixed;inset:0;pointer-events:none;box-
   transition:all .18s;font-family:inherit;text-align:center;display:block;margin-top:4px;}
 .sb-edit-btn:hover{border-color:var(--accent);color:var(--accent);}
 .sb-edit-btn.on{background:var(--accent-dim);border-color:var(--accent);color:var(--accent);font-weight:600;}
-.ctrl-btn{background:var(--bg-card);border:1px solid var(--border-light);color:var(--text);
+.ctrl-btn{background:var(--sidebar-hover);border:1px solid rgba(201,162,39,.3);color:var(--sidebar-text);
   border-radius:8px;padding:7px 11px;font-size:.9em;cursor:pointer;transition:all .15s;
   box-shadow:var(--shadow-sm);text-decoration:none;display:inline-flex;align-items:center;
   font-family:inherit;white-space:nowrap;}
 .ctrl-btn:hover{border-color:var(--accent);color:var(--accent);}
-.ctrl-btn.active{background:var(--accent-dim);border-color:var(--accent);color:var(--accent);}
+.ctrl-btn.active{background:rgba(201,162,39,.15);border-color:var(--accent);color:var(--accent);}
 /* ── FAB ── */
 #fab-wrap{position:fixed;bottom:24px;right:24px;z-index:300;display:flex;flex-direction:column;align-items:flex-end;gap:8px;}
 #fab-btn{width:52px;height:52px;border-radius:50%;background:var(--accent);border:none;color:#fff;font-size:1.5em;cursor:pointer;box-shadow:0 3px 12px rgba(0,0,0,.35);transition:transform .15s,background .15s;line-height:1;}
@@ -626,7 +661,7 @@ body.edit-mode::after{content:'';position:fixed;inset:0;pointer-events:none;box-
 .mastery-chip::after{content:attr(data-tip);position:absolute;bottom:calc(100% + 5px);
   left:50%;transform:translateX(-50%);background:var(--bg-card);border:1px solid var(--border);
   color:var(--text);padding:5px 9px;border-radius:6px;font-size:.85em;white-space:nowrap;
-  pointer-events:none;opacity:0;transition:opacity .15s;z-index:100;
+  pointer-events:none;opacity:0;transition:opacity .15s;z-index:210;
   box-shadow:0 2px 8px rgba(0,0,0,.25);}
 .mastery-chip:hover::after{opacity:1;}
 /* Attunement badge */
@@ -661,6 +696,11 @@ body.edit-mode::after{content:'';position:fixed;inset:0;pointer-events:none;box-
     <button class="ctrl-btn" id="btn-theme" onclick="toggleTheme()">☀️</button>
     <button class="ctrl-btn" id="btn-lang" onclick="toggleLang()">IT</button>
   </div>
+  <button id="hdr-overflow-btn" onclick="toggleOverflowMenu(event)" title="More options">⋯</button>
+  <div id="hdr-overflow-menu">
+    <button class="overflow-item" id="overflow-theme" onclick="toggleTheme();closeOverflowMenu()">☀️ Theme</button>
+    <button class="overflow-item" id="overflow-lang" onclick="toggleLang();closeOverflowMenu()">IT Language</button>
+  </div>
 </header>
 <div id="sidebar-overlay" onclick="toggleSidebar()"></div>
 
@@ -675,10 +715,10 @@ body.edit-mode::after{content:'';position:fixed;inset:0;pointer-events:none;box-
 <!-- MAIN -->
 <div id="main">
   <div id="header-area">
-    <label class="portrait-wrap" for="portrait-input" title="Clicca per caricare immagine">
+    <div class="portrait-wrap" onclick="openPortraitModal()" title="">
       <img id="portrait-img" src="" alt="">
       <div class="portrait-ph" id="portrait-ph">🧙<br>Aggiungi<br>foto</div>
-    </label>
+    </div>
     <input type="file" id="portrait-input" accept="image/*" onchange="loadPortrait(event)">
     <div class="header-text">
       <h1 id="char-name">Scheda D&D 2024</h1>
@@ -737,6 +777,15 @@ body.edit-mode::after{content:'';position:fixed;inset:0;pointer-events:none;box-
         <button class="btn-primary finish" id="wiz-finish" onclick="wizFinish()" style="display:none">✓ Salva</button>
       </div>
     </div>
+  </div>
+</div>
+
+<!-- PORTRAIT LIGHTBOX -->
+<div id="portrait-lightbox" onclick="closePortraitModal()">
+  <img id="portrait-lightbox-img" src="" alt="" onclick="event.stopPropagation()">
+  <div class="portrait-lb-bar" onclick="event.stopPropagation()">
+    <button class="portrait-lb-btn accent" onclick="changePortraitFromModal()">📷 <span id="portrait-lb-change"></span></button>
+    <button class="portrait-lb-btn" onclick="closePortraitModal()"><span id="portrait-lb-close"></span></button>
   </div>
 </div>
 
@@ -903,7 +952,7 @@ function skillName(sk){ return DND.tr[currentLang]?.skills?.[sk.id]||sk.en; }
 // Adding a new language is one object: TRANSLATIONS.fr = { navTitle:'...', ... }
 const BASE = {
   navTitle:'📜 Index', editSidebar:'✏️ Sidebar',
-  hdrCharacter:'⚔️ Character', hdrAIAssistant:'✨ AI Assistant',
+  hdrCharacter:'📜 Character', hdrAIAssistant:'✨ AI',
   editMode:'✏️ Edit Sheet', editDone:'✓ Done Editing',
   baseData:'Base Data', skills:'Skills', spells:'Spells',
   equipment:'Equipment',
@@ -1089,9 +1138,11 @@ const BASE = {
   logDeathReset:'💀 Death saves reset.',
   // HTML title attributes
   titleHome:'Home', titleTheme:'Theme', titleLang:'Language', titleEdit:'Edit mode',
+  overflowTheme:'Theme', overflowLang:'Language',
   changeChar:'Change character',
   portraitTitle:'Click to load image',
   portraitPlaceholder:'Add photo',
+  portraitChange:'Change photo', portraitClose:'Close',
   // Prompt dialogs
   promptEditBlock:'Edit block',
   promptBlockText:'text / main text:',
@@ -1263,7 +1314,11 @@ const BASE = {
   hint_weaponProf:'E.g. Simple weapons, Longswords, Hand Crossbows.',
   hint_armorProf:'E.g. Light armor, Medium armor, Shields.',
   lbl_weaponProf:'Weapon Proficiencies', lbl_armorProf:'Armor Proficiencies',
-  // Lore section
+  wiz_f_toolProf:'Tool Proficiencies', hint_toolProf:'E.g. Thieves\' tools, Herbalism kit, Lute.',
+  lbl_toolProf:'Tool Proficiencies',
+  wiz_f_initiativeBonus:'Initiative Bonus', hint_initiativeBonus:'Flat bonus added to your DEX modifier for initiative (e.g. +2 from Alert feat). Leave blank for no bonus.',
+   lbl_initiativeBonus:'Initiative Bonus',
+   // Lore section
   characterLore:'Character Lore', noLore:'No lore defined yet.', editLore:'✏️ Edit Lore',
   loreTraits:'Personality Traits', loreIdeals:'Ideals', loreBonds:'Bonds', loreFlaws:'Flaws',
   loreBackstory:'Backstory', loreAppearance:'Appearance',
@@ -1283,7 +1338,7 @@ const BASE = {
 const TRANSLATIONS = {
   it:{
     navTitle:'📜 Indice', editSidebar:'✏️ Sidebar',
-    hdrCharacter:'⚔️ Personaggio', hdrAIAssistant:'✨ Assistente AI',
+    hdrCharacter:'📜 Personaggio', hdrAIAssistant:'✨ AI',
   baseData:'Dati Base', skills:'Abilità', spells:'Incantesimi',
   equipment:'Equipaggiamento',
   algorithm:'Algoritmo di Combattimento',
@@ -1464,9 +1519,11 @@ const TRANSLATIONS = {
     logPotionHealed:'PF curati →',
     logDeathReset:'💀 Tiri salvezza morte resettati.',
     titleHome:'Home', titleTheme:'Tema', titleLang:'Lingua', titleEdit:'Modalità modifica',
+    overflowTheme:'Tema', overflowLang:'Lingua',
     changeChar:'Cambia personaggio',
     portraitTitle:'Clicca per caricare immagine',
     portraitPlaceholder:'Aggiungi foto',
+    portraitChange:'Cambia foto', portraitClose:'Chiudi',
     promptEditBlock:'Modifica blocco',
     promptBlockText:'testo/testo principale:',
     promptConditionName:'Nome condizione:',
@@ -1627,7 +1684,11 @@ const TRANSLATIONS = {
     hint_weaponProf:'Es. Armi semplici, Spade lunghe, Balestre a mano.',
     hint_armorProf:'Es. Armature leggere, Armature medie, Scudi.',
     lbl_weaponProf:'Competenze Armi', lbl_armorProf:'Competenze Armature',
-    // Lore section
+    wiz_f_toolProf:'Competenze Strumenti', hint_toolProf:'Es. Attrezzi da ladro, Kit da erborista, Liuto.',
+    lbl_toolProf:'Competenze Strumenti',
+    wiz_f_initiativeBonus:'Bonus Iniziativa', hint_initiativeBonus:'Bonus fisso aggiunto al modificatore DES per l\'iniziativa (es. +2 dal talento Alert). Lascia vuoto per nessun bonus.',
+     lbl_initiativeBonus:'Bonus Iniziativa',
+     // Lore section
     characterLore:'Storia del Personaggio', noLore:'Nessuna storia definita.', editLore:'✏️ Modifica Storia',
     loreTraits:'Tratti della Personalità', loreIdeals:'Ideali', loreBonds:'Legami', loreFlaws:'Difetti',
     loreBackstory:'Retroscena', loreAppearance:'Aspetto Fisico',
@@ -1769,6 +1830,10 @@ function updateFixedControls(){
   const tabAI=document.getElementById('hdr-tab-ai');
   if(tabChar) tabChar.textContent=T('hdrCharacter');
   if(tabAI) tabAI.textContent=T('hdrAIAssistant');
+  const ob=document.getElementById('overflow-theme');
+  if(ob) ob.textContent=(isDark?'☀️':'🌙')+' '+T('overflowTheme');
+  const ol=document.getElementById('overflow-lang');
+  if(ol) ol.textContent=T('langToggle')+' '+T('overflowLang');
   renderFAB();
 }
 function renderFAB(){
@@ -1825,7 +1890,7 @@ const SECTION_REGISTRY = {
                   hiddenWhen:()=>!CHAR?.lore&&!EDIT_MODE },
 };
 const BUILTIN_SECTION_IDS = Object.keys(SECTION_REGISTRY);
-const DEFAULT_SIDEBAR = ['game-panel','base-data','skills','weapons','equipment','character-lore'];
+const DEFAULT_SIDEBAR = ['game-panel','base-data','skills','spells','weapons','equipment','character-lore','algorithm'];
 // Helper: build section <h2> header with emoji from registry
 function sectionHeader(sectionId, extra=''){
   const reg=SECTION_REGISTRY[sectionId];
@@ -1963,7 +2028,7 @@ function renderSidebar(){
     ?`<img class="sb-portrait" src="${portraitSrc}" alt="">`
     :`<div class="sb-portrait-ph">🧙</div>`;
   if(charBlock){
-    charBlock.innerHTML=`<div class="sb-char-info">${portraitEl}<div class="sb-char-text">
+    charBlock.innerHTML=`<div class="sb-char-info" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="${T('titleHome')}">${portraitEl}<div class="sb-char-text">
       <div class="sb-char-name">${cName}</div>${cSub?`<div class="sb-char-sub">${cSub}</div>`:''}
     </div></div>
     <button class="sb-change-char" onclick="logoutCharacter()" title="${T('titleHome')}">↩ ${T('changeChar')}</button>
@@ -2014,7 +2079,7 @@ function renderHeader(){
   const derived=CHAR.class?(dndTr('classes',CHAR.class)+(CHAR.level?' — '+T('level')+' '+CHAR.level:'')):dndTr('races',CHAR.race)||'';
   document.getElementById('char-name').textContent=name;
   const sub=document.getElementById('char-subtitle');
-  sub.className='subtitle'; sub.textContent=CHAR.subtitle||derived;
+   sub.className='subtitle'; sub.textContent=derived;
   const desc=document.getElementById('char-description');
   desc.textContent=CHAR.quote?'':'' ; // quote shown separately
   const q=document.getElementById('char-quote');
@@ -2025,8 +2090,12 @@ function renderHeader(){
   else{img.src='';img.style.display='none';ph.style.display='';}
   // Update portrait i18n
   const wrap=document.querySelector('.portrait-wrap');
-  if(wrap) wrap.title=T('portraitTitle');
+  if(wrap) wrap.title=SESSION?.portrait?T('portraitTitle'):T('portraitTitle');
   if(ph) ph.innerHTML='🧙<br>'+T('portraitPlaceholder');
+  const lbChange=document.getElementById('portrait-lb-change');
+  const lbClose=document.getElementById('portrait-lb-close');
+  if(lbChange) lbChange.textContent=T('portraitChange');
+  if(lbClose) lbClose.textContent=T('portraitClose');
 }
 // ═══════════════ RENDER PANNELLO ═══════════════
 function renderGamePanelSection(){
@@ -2156,7 +2225,7 @@ function buildPanelRow2(){
 
 // ─── Pannello Row 3: conc, round, gold ───
 function buildPanelRow3(){
-  const S=SESSION;
+  const S=SESSION, C=CHAR;
   const concCard=`<div class="pn-card">
     <div class="label">${T('concLabel')}</div>
     <div class="inline-field" style="margin-top:8px;">
@@ -2177,6 +2246,7 @@ function buildPanelRow3(){
       <span>${T('initiative')}</span>
       <input type="number" id="init-input" placeholder="—" value="${S.initiative||''}" style="width:65px;">
     </div>
+    ${(()=>{const dex=abilityMod(C.abilityScores?.DEX||10);const bonus=(C.initiativeBonus??0);const total=dex+bonus;const parts=[modStr(dex)+' DEX'];if(bonus!==0)parts.push(modStr(bonus)+' '+T('lbl_initiativeBonus'));return '<div style="font-size:.8em;color:var(--text-muted);margin-top:2px;">'+parts.join(' + ')+' = <strong>'+modStr(total)+'</strong></div>';})()}
   </div>`;
   const cur=S.currency||{pp:0,gp:0,ep:0,sp:0,cp:0};
   const goldCard=`<div class="pn-card">
@@ -2439,6 +2509,8 @@ function renderBaseData(){
     <table>${rows.map(r=>`<tr><td><strong>${r[0]}</strong></td><td>${r[1]}</td></tr>`).join('')}</table>
     ${C.weaponProficiencies?`<p style="margin-top:8px;font-size:.9em;"><strong>${T('lbl_weaponProf')}:</strong> ${C.weaponProficiencies}</p>`:''}
     ${C.armorProficiencies?`<p style="margin-top:4px;font-size:.9em;"><strong>${T('lbl_armorProf')}:</strong> ${C.armorProficiencies}</p>`:''}
+    ${C.toolProficiencies?`<p style="margin-top:4px;font-size:.9em;"><strong>${T('lbl_toolProf')}:</strong> ${C.toolProficiencies}</p>`:''}
+    ${C.initiativeBonus?`<p style="margin-top:4px;font-size:.9em;"><strong>${T('lbl_initiativeBonus')}:</strong> ${C.initiativeBonus>=0?'+':''}${C.initiativeBonus}</p>`:''}
     <h3>${T('abilitiesTitle')}</h3>
     <table><tr>${DND.abilities.map(a=>`<th>${abilityShortName(a)}</th>`).join('')}</tr><tr>${statsRow}</tr></table>
     <h3>${T('tsTitle')}</h3><table><tr><th>${T('lbl_tsChar')}</th><th>${T('lbl_bonus')}</th><th></th></tr>${savesRows}</table><hr>`;
@@ -3118,7 +3190,7 @@ function openWizard(configKey, editIdx=null, prefill={}){
   WIZ_CONFIG=WIZARDS[configKey];
   if(!WIZ_CONFIG){console.error('Unknown wizard:',configKey);return;}
   WIZ_STEP=0; WIZ_EDIT_IDX=editIdx; WIZ_DATA={...prefill};
-  WIZ_BLOCKS=[...(prefill.contentBlocks||[])];
+  WIZ_BLOCKS=(prefill.contentBlocks||[]).map(b=>JSON.parse(JSON.stringify(b)));
   WIZ_ALGO_STEPS=[...(prefill.steps||[])];
   WIZ_TRACKERS=(prefill.trackers||[]).map(t=>({...t}));
   WIZ_ACTIONS=(prefill.actions||[]).map(a=>({...a}));
@@ -3191,6 +3263,8 @@ function renderWizardStep(){
   });
   // Call _afterRender hook for field-based steps too (e.g. class→subclass dependency)
   if(step._afterRender) step._afterRender(WIZ_DATA);
+  // Always sync the live preview after the step is fully rendered
+  injectWizPreview();
 }
 function renderField(f){
   const hintAttr=f.hint?` title="${T(f.hint).replace(/"/g,'&quot;')}"`:''
@@ -3388,7 +3462,7 @@ function wizFinish(){
 // ── Content Block Editor ──
 function renderContentBlockEditor(){
   let rows=WIZ_BLOCKS.map((b,i)=>`<div class="cb-row" id="cb-row-${i}">
-    <span>${b.emoji||''} <strong>${b.type}</strong>: ${String(b.text||b.title||b.label||b.rows?.length||'').slice(0,50)}</span>
+    <span>${b.emoji||''} <strong>${b.type}</strong>: ${String(b.text||b.title||b.label||b.bullets?.join(', ')||(b.rows?b.rows.length+' rows':'')||'').slice(0,50)}</span>
     <div style="display:flex;gap:4px;">
       <button class="btn-edit-sm" onclick="editBlock(${i})">✏️</button>
       <button class="btn-del-sm" onclick="deleteBlock(${i})">🗑</button>
@@ -3946,8 +4020,8 @@ const WIZARDS = {
       {id:'background',label:'f_background',type:'select-or-custom',options:()=>backgroundOpts()},
       {id:'quote',label:'f_quote',type:'text',placeholder:'wiz_ph_quote',hint:'hint_quote'},
       {id:'languages',label:'f_languages',type:'text',placeholder:'wiz_ph_languages',hint:'hint_languages'},
-      {id:'playerName',label:'wiz_f_playerName',type:'text',hint:'hint_playerName'},
-    ], _afterRender(data){
+       {id:'playerName',label:'wiz_f_playerName',type:'text',hint:'hint_playerName'},
+     ], _afterRender(data){
       const classSel=document.getElementById('wf-class');
       if(!classSel) return;
       classSel.addEventListener('change',function(){
@@ -3989,6 +4063,8 @@ const WIZARDS = {
       {id:'speed',label:'f_speed',type:'text',default:'9m',hint:'hint_speed'},
       {id:'weaponProficiencies',label:'wiz_f_weaponProf',type:'text',hint:'hint_weaponProf'},
       {id:'armorProficiencies',label:'wiz_f_armorProf',type:'text',hint:'hint_armorProf'},
+      {id:'toolProficiencies',label:'wiz_f_toolProf',type:'text',hint:'hint_toolProf'},
+      {id:'initiativeBonus',label:'wiz_f_initiativeBonus',type:'number',hint:'hint_initiativeBonus'},
       {id:'proficiencyBonusOverride',label:'wiz_f_profBonusOverride',type:'number',hint:'hint_profBonusOverride'},
     ]},
     {label:'wiz_step_savingThrows', fields:[], _buildFields(){
@@ -4040,14 +4116,16 @@ const WIZARDS = {
     base.level=d.level||1; base.alignment=d.alignment; base.background=d.background;
     if(d.playerName) base.playerName=d.playerName; else delete base.playerName;
     if(d.quote) base.quote=d.quote; else delete base.quote;
-    if(d.languages) base.languages=d.languages; else delete base.languages;
-    base.abilityScores={STR:+d.STR||10,DEX:+d.DEX||10,CON:+d.CON||10,INT:+d.INT||10,WIS:+d.WIS||10,CHA:+d.CHA||10};
+     if(d.languages) base.languages=d.languages; else delete base.languages;
+     base.abilityScores={STR:+d.STR||10,DEX:+d.DEX||10,CON:+d.CON||10,INT:+d.INT||10,WIS:+d.WIS||10,CHA:+d.CHA||10};
     base.abilityBudget=+(d.abilityBudget||PB_DEFAULT_BUDGET);
     base.hp={max:+d.hpMax||10}; base.hitDieType=parseInt((d.hitDieType||'d8').replace(/\D/g,''))||8;
     base.ac=+d.ac||10; if(d.armorNote) base.armorNote=d.armorNote; else delete base.armorNote;
     base.speed=d.speed||'9m';
     if(d.weaponProficiencies) base.weaponProficiencies=d.weaponProficiencies; else delete base.weaponProficiencies;
     if(d.armorProficiencies) base.armorProficiencies=d.armorProficiencies; else delete base.armorProficiencies;
+    if(d.toolProficiencies) base.toolProficiencies=d.toolProficiencies; else delete base.toolProficiencies;
+    if(d.initiativeBonus!==''&&d.initiativeBonus!=null) base.initiativeBonus=+d.initiativeBonus; else delete base.initiativeBonus;
     if(d.proficiencyBonusOverride!==''&&d.proficiencyBonusOverride!=null) base.proficiencyBonusOverride=+d.proficiencyBonusOverride;
     else delete base.proficiencyBonusOverride;
     base.savingThrows=['STR','DEX','CON','INT','WIS','CHA'].filter(a=>d['saves'+a]);
@@ -4523,10 +4601,12 @@ function flattenChar(){
   return {
     name:C.name,race:C.race,class:C.class,subclass:C.subclass,level:C.level,
     alignment:C.alignment,background:C.background,playerName:C.playerName,
-    quote:C.quote,languages:C.languages,
+     quote:C.quote,languages:C.languages,
     STR:sc.STR,DEX:sc.DEX,CON:sc.CON,INT:sc.INT,WIS:sc.WIS,CHA:sc.CHA,
     abilityBudget:C.abilityBudget||PB_DEFAULT_BUDGET,
     hpMax:C.hp?.max,hitDieType:C.hitDieType?'d'+C.hitDieType:'d8',ac:C.ac,armorNote:C.armorNote,speed:C.speed,
+    weaponProficiencies:C.weaponProficiencies,armorProficiencies:C.armorProficiencies,
+    toolProficiencies:C.toolProficiencies,initiativeBonus:C.initiativeBonus??null,
     proficiencyBonusOverride:C.proficiencyBonusOverride??null,
     savesSTR:saves.includes('STR'),savesDEX:saves.includes('DEX'),
     savesCON:saves.includes('CON'),savesINT:saves.includes('INT'),
@@ -4664,7 +4744,21 @@ function toggleTheme(){
   localStorage.setItem('dnd-theme',newTheme);
   const btn=document.getElementById('btn-theme');
   if(btn) btn.textContent=newTheme==='light'?'🌙':'☀️';
+  const ob=document.getElementById('overflow-theme');
+  if(ob) ob.textContent=(newTheme==='light'?'🌙':'☀️')+' '+T('overflowTheme');
 }
+function toggleOverflowMenu(e){
+  e.stopPropagation();
+  document.getElementById('hdr-overflow-menu')?.classList.toggle('open');
+}
+function closeOverflowMenu(){
+  document.getElementById('hdr-overflow-menu')?.classList.remove('open');
+}
+document.addEventListener('click',function(e){
+  const menu=document.getElementById('hdr-overflow-menu');
+  const btn=document.getElementById('hdr-overflow-btn');
+  if(menu&&btn&&!menu.contains(e.target)&&e.target!==btn) closeOverflowMenu();
+});
 function toggleLang(){
   currentLang=currentLang==='it'?'en':'it';
   localStorage.setItem('dnd-lang',currentLang);
@@ -4690,6 +4784,45 @@ function onOverlayClick(event){
   if(sb) sb.classList.remove('open');
   if(overlay) overlay.classList.remove('visible');
 }
+let portraitZoom=1,ptLastDist=0;
+function openPortraitModal(){
+  if(!SESSION?.portrait){document.getElementById('portrait-input').click();return;}
+  portraitZoom=1;
+  const img=document.getElementById('portrait-lightbox-img');
+  img.src=SESSION.portrait;
+  img.style.transform='scale(1)';
+  document.getElementById('portrait-lightbox').classList.add('open');
+}
+function closePortraitModal(){
+  document.getElementById('portrait-lightbox')?.classList.remove('open');
+}
+function changePortraitFromModal(){
+  closePortraitModal();
+  setTimeout(()=>document.getElementById('portrait-input').click(),50);
+}
+(function(){
+  document.addEventListener('wheel',function(e){
+    if(!document.getElementById('portrait-lightbox')?.classList.contains('open')) return;
+    e.preventDefault();
+    portraitZoom=Math.max(0.5,Math.min(5,portraitZoom+(e.deltaY<0?0.15:-0.15)));
+    document.getElementById('portrait-lightbox-img').style.transform=`scale(${portraitZoom})`;
+  },{passive:false});
+  document.addEventListener('touchmove',function(e){
+    if(!document.getElementById('portrait-lightbox')?.classList.contains('open')) return;
+    if(e.touches.length!==2) return;
+    e.preventDefault();
+    const dist=Math.hypot(e.touches[0].clientX-e.touches[1].clientX,e.touches[0].clientY-e.touches[1].clientY);
+    if(ptLastDist>0){
+      portraitZoom=Math.max(0.5,Math.min(5,portraitZoom+(dist-ptLastDist)*0.01));
+      document.getElementById('portrait-lightbox-img').style.transform=`scale(${portraitZoom})`;
+    }
+    ptLastDist=dist;
+  },{passive:false});
+  document.addEventListener('touchend',()=>{ptLastDist=0;});
+  document.addEventListener('keydown',function(e){
+    if(e.key==='Escape') closePortraitModal();
+  });
+})();
 function loadPortrait(event){
   const file=event?.target?.files?.[0];
   if(!file)return;

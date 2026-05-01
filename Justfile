@@ -4,7 +4,8 @@
 check:
     @sed -n '/<script>/,/<\/script>/p' index.html | sed '1d;$d' > /tmp/dnd-check.js \
         && node --check /tmp/dnd-check.js \
-        && sed -n '/<script>$/,/<\/script>/p' assistant.html | sed '1d;$d' > /tmp/dnd-check-asst.js \
+        && { sed -n '/<script>$/,/<\/script>/p' assistant.html | sed '1d;$d'; \
+             sed -n '/<script>\/\//,/<\/script>/p' assistant.html | sed '1d;$d'; } > /tmp/dnd-check-asst.js \
         && node --check /tmp/dnd-check-asst.js \
         && echo "✓ Syntax OK"
 

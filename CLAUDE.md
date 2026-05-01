@@ -24,6 +24,7 @@
 16. **Backward compatibility: ask before breaking.** The app is deployed and real users have saved JSON. Prefer additive changes (new fields with safe defaults). If a breaking data model change would lead to significantly better design, **ask the user first** — don't just do it. If approved, add a silent migration in `syncSession()` / `ensureSidebar()` so old data upgrades automatically.
 17. **No commits unless told to.** Never create git commits unless the user explicitly asks.
 18. **Grill before building.** Before implementing any new feature or meaningfully modifying an existing one, always load the `grill-me` skill and interview the user to resolve all design decisions. Do this implicitly — the user does not need to ask for it.
+19. **UI consistency across pages.** `index.html` and `assistant.html` must feel like a single app. Any CSS rule that affects shared UI (header, tabs, ctrl-btns, theme variables, scrollbars) **must be applied identically in both files**. Checklist when touching shared UI: (a) mirror the change in the other file, (b) ensure `--sidebar-bg`, `--accent`, and other theme variables resolve to the same values in both files, (c) both files must have a flash-prevention `<script>` in `<head>` that reads `dnd-theme` from localStorage before first paint, (d) tab layout must never shift between pages — use `border-bottom:2px solid transparent` on inactive tabs so the active underline slot is always reserved.
 
 ## Architecture
 
