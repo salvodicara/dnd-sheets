@@ -1,0 +1,24 @@
+Catalion/catalion_di_sancaldo_2026-04-29.json
+  146700b0dad22154 84,440,448-449,459,461,469-470
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.3.4",
+  "base_commit_sha": "7e0236a1be37b593f88ce0c70a993048a846fe5b",
+  "prompts": {
+    "146700b0dad22154": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_219fed6cbffeZ1XqQg1fMrVcEH",
+        "model": "github-copilot/claude-sonnet-4.6"
+      },
+      "human_author": "Salvatore Di Cara",
+      "messages": [],
+      "total_additions": 10,
+      "total_deletions": 87,
+      "accepted_lines": 9,
+      "overriden_lines": 0,
+      "messages_url": "https://usegitai.com/cas/91ee435f9575f2aa6be91d3b5b971274afb9962dfcf9d9448442e0473c4ad4dc"
+    }
+  }
+}
