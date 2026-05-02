@@ -81,20 +81,7 @@
         "scaling": "Liv 5 → 2d6 | Liv 11 → 3d6 | Liv 17 → 4d6",
         "components": {"v": true, "s": false, "m": false, "material": ""}
       },
-      {
-        "level": 0,
-        "name": "Amicizia",
-        "originalName": "Friends",
-        "emoji": "🙂",
-        "actionType": "action",
-        "school": "Enchantment",
-        "range": "3 m",
-        "concentration": true,
-        "duration": "1 minuto",
-        "saveAbility": "WIS",
-        "description": "TS Saggezza o il bersaglio è Charmed.\nAlla fine della concentrazione, il bersaglio sa che l'hai influenzato.",
-        "components": {"v": false, "s": true, "m": true, "material": "trucco"}
-      },
+
       {
         "level": 0,
         "name": "Illusione Minore",
@@ -186,45 +173,6 @@
         "duration": "Fino a 1 ora",
         "description": "Una creatura diventa **invisibile**. Termina se la creatura attacca o lancia un incantesimo.\n📌 Usa su te stesso se sei in pericolo grave.\n📌 Usala sul Ladro per dargli vantaggio sugli attacchi.",
         "components": {"v": true, "s": true, "m": true, "material": "una ciglia in gomma arabica"}
-      },
-      {
-        "level": 2,
-        "name": "Aiuto",
-        "originalName": "Aid",
-        "emoji": "❤️‍🩹",
-        "actionType": "action",
-        "school": "Abjuration",
-        "range": "9 m",
-        "duration": "8 ore",
-        "description": "Fino a 3 creature: **+5 PF massimi e PF attuali** per 8 ore.\n📌 Lancia **prima del combattimento** su Barbaro, Monaco, Paladino.\n📌 Dura tutto il giorno. Non spreca concentrazione.",
-        "scaling": "+5 PF per ogni slot sopra il 2°",
-        "tags": [
-          {
-            "label": "SEGRETO MAGICO",
-            "color": "purple"
-          }
-        ],
-        "components": {"v": true, "s": true, "m": true, "material": "un nastro bianco"}
-      },
-      {
-        "level": 2,
-        "name": "Ferma Persona",
-        "originalName": "Hold Person",
-        "emoji": "🔒",
-        "actionType": "action",
-        "school": "Enchantment",
-        "range": "18 m",
-        "concentration": true,
-        "duration": "Fino a 1 minuto",
-        "saveAbility": "WIS",
-        "description": "⚠️ **Solo su UMANOIDI** (umani, elfi, nani, orchi, ecc.)\nSe fallisce, il bersaglio è **Paralizzato**:\n• Non può muoversi né parlare\n• Fallisce automaticamente TS su FOR e DES\n• Tutti gli attacchi contro di lui hanno **Vantaggio**\n• Attacchi in mischia entro 1,5 m sono **CRITICI AUTOMATICI**\n📌 Usa sul nemico umanoide più pericoloso del combattimento.\n📌 Il Barbaro, il Monaco e il Paladino faranno danni enormi.",
-        "tags": [
-          {
-            "label": "SEGRETO MAGICO",
-            "color": "purple"
-          }
-        ],
-        "components": {"v": true, "s": true, "m": true, "material": "un piccolo pezzo di ferro diritto"}
       }
     ],
     "weapons": [
@@ -421,28 +369,6 @@
         ]
       },
       {
-        "title": "Segreti Magici Bonus",
-        "emoji": "🔮",
-        "source": "College of Lore",
-        "contentBlocks": [
-          {
-            "type": "paragraph",
-            "text": "Apprendi **2 incantesimi da qualsiasi lista di classe**."
-          },
-          {
-            "type": "paragraph",
-            "text": "**Scelte di Catalion:**"
-          },
-          {
-            "type": "bullets",
-            "bullets": [
-              "Ferma Persona — lista Chierico/Druido",
-              "Aiuto — lista Chierico/Paladino"
-            ]
-          }
-        ]
-      },
-      {
         "title": "Musicista",
         "emoji": "🎶",
         "source": "Origin Feat",
@@ -511,9 +437,7 @@
         ]
       }
     ],
-    "customConditions": [
-      "Aid attivo (+5 PF)"
-    ],
+    "customConditions": [],
     "combatAlgorithm": [
       {
         "emoji": "🔷",
@@ -521,8 +445,8 @@
         "steps": [
           {
             "bullets": [
-              "Lancia **Aiuto** su Barbaro + Monaco + Paladino",
-              "Tutti e tre guadagnano +5 PF per 8 ore. Non costa concentrazione."
+              "Azione Bonus: dai **Ispirazione Bardica** al Barbaro o a chi attacca più spesso",
+              "Posizionati **dietro** ai combattenti in mischia — mantieni 18 m dai nemici"
             ]
           }
         ]
@@ -532,9 +456,9 @@
         "title": "TURNO 1",
         "steps": [
           {
-            "question": "C'è un **nemico umanoide pericoloso**?",
+            "question": "C'è un **nemico molto pericoloso** da neutralizzare subito?",
             "bullets": [
-              "**SÌ:** lancia **Ferma Persona** (usa concentrazione)",
+              "**SÌ:** lancia **Risata di Tasha** (concentrazione — lo togli dal combattimento per più round)",
               "**NO:** ci sono almeno 2 nemici vicini tra loro?"
             ]
           },
@@ -542,8 +466,8 @@
             "question": "...almeno 2 nemici vicini tra loro?",
             "indent": true,
             "bullets": [
-              "**SÌ:** lancia **Risata di Tasha** oppure **Sussurri Dissonanti**",
-              "**NO:** dai **Ispirazione Bardica** al Barbaro o a chi attacca di più"
+              "**SÌ:** lancia **Frantuma** — 3d8 tuono, nessuna concentrazione, svantaggio se in armatura metallica",
+              "**NO:** lancia **Sussurri Dissonanti** — il nemico usa la reazione per fuggire → Attacchi di Opportunità da tutta la mischia"
             ]
           }
         ]
@@ -617,7 +541,6 @@
         "type": "sep"
       },
       "parole-taglienti",
-      "segreti-magici-bonus",
       {
         "type": "sep"
       },
