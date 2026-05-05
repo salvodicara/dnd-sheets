@@ -427,6 +427,29 @@ Done:
 
 
 
+### Phase 34: Background ASI + pinNotes System
+**Status:** ✅ COMPLETE
+**Goal:** Correctly model D&D 2024 point buy + background ability bonuses as separate data; enforce consistent 📌 pin emoji on all notes fields.
+
+Done:
+- **`CHAR.backgroundAsi`** — new top-level field `{ability: bonus}` storing background bonuses (+2/+1 or +1/+1/+1). Separate from `CHAR.abilityScores` (base point-buy only).
+- **`finalScores(char)`** — helper that merges `abilityScores` + `backgroundAsi`. All 10+ computation sites (initiative, skills, saves, spells, weapons, etc.) updated to use it.
+- **`DND.backgroundAsiAbilities`** — map of all 16 PHB 2024 backgrounds to their eligible ability codes. Custom backgrounds default to all abilities.
+- **Background ASI wizard step** — new step in char-create wizard (between ability scores and combat). Toggles +2/+1 vs +1/+1/+1 mode; dropdowns constrained to eligible abilities for chosen background.
+- **`renderBaseData` tooltip** — ability score cells for background-boosted abilities show `cursor:help` + `title="Base: N + M (Background)"`.
+- **Background Bonuses row** — new row in the character info table (`lbl_bgBonuses`), e.g. `+2 CHA, +1 DEX`. Hidden when no bonuses present.
+- **`pinNotes(text)` helper** — auto-prepends `📌 ` to each non-empty line of a notes field. Applied at render time; data never stores manual pin emoji. Used in spell, weapon, and equipment renderers.
+- **Catalion migration** — `abilityScores` corrected to base point-buy scores; `backgroundAsi: {"DEX":1,"CHA":2}` added; manual `📌` stripped from data.
+
+Design decisions:
+- Background bonus display: tooltip on ability cells + dedicated info row. No inline `+N▲` indicator (too noisy).
+- `abilityScores` stores base only — background bonuses are always a separate additive layer.
+- pinNotes: one 📌 per non-empty line (not per field) for multi-line notes.
+
+---
+
+
+
 ### Full Level-Up Wizard
 - ASI step at levels 4, 8, 12, 16, 19: +/- on abilities (2 points)
 - "Take a Feat" toggle -> feat database picker
@@ -454,7 +477,8 @@ Done:
   hitDieType, initiativeBonus, languages, toolProficiencies,
   weaponProficiencies?, armorProficiencies?,  // free-text strings
 
-  abilityScores: { STR, DEX, CON, INT, WIS, CHA },
+  abilityScores: { STR, DEX, CON, INT, WIS, CHA },  // BASE point-buy only, NOT including background bonuses
+  backgroundAsi: { STR?, DEX?, CON?, INT?, WIS?, CHA? },  // background bonuses (+2/+1 or +1/+1/+1) — combined with abilityScores via finalScores()
   savingThrows: ["DEX", "CHA"],
 
   // Map format — absence = "none". Only non-none stored.

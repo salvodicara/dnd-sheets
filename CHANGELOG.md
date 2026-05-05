@@ -5,15 +5,72 @@ Entries are in reverse-chronological order. Uncommitted work appears under `[Unr
 
 ---
 
-## [Unreleased] — UI Redesign, Mobile UX, UX Polish (v1.2)
+## [Unreleased] — Background ASI + pinNotes
 
 ### Added
-- Gold/navy accent palette: dark `#c9a227`, light `#8a6800`; consistent across both files
+- **Phase 34 — Background ASI:** `CHAR.backgroundAsi` field stores background ability bonuses (+2/+1 or +1/+1/+1) separately from `CHAR.abilityScores` (base point-buy only). `finalScores(char)` helper merges both for all calculations. All 10+ computation sites (skills, saves, spells, weapons, initiative) updated.
+- **Background ASI wizard step:** New step in char-create wizard between ability scores and combat. Mode toggle (+2/+1 vs +1/+1/+1). Dropdowns constrained to PHB 2024 eligible abilities per background (`DND.backgroundAsiAbilities`).
+- **Background Bonuses info row:** New row in Base Data character info table (e.g. `+2 CHA, +1 DEX`). Hidden when no bonuses set.
+- **Background ASI tooltip:** Ability score cells for background-boosted abilities show `cursor:help` + tooltip (e.g. `Base: 15 + 2 (Entertainer)`).
+- **`pinNotes(text)` helper:** Auto-prepends `📌 ` to each non-empty line of notes fields at render time. Applied to spell, weapon, and equipment renderers. Data never stores manual pin emoji.
+
+### Data (Catalion)
+- `abilityScores` corrected to base point-buy values (STR:8 DEX:15 CON:14 INT:8 WIS:10 CHA:15); `backgroundAsi: {"DEX":1,"CHA":2}` added for Entertainer background. Final scores unchanged.
+- Manual `📌` stripped from spell `notes` fields (Frantuma) and spell `description` fields (Illusione Minore, Invisibilità) — pin emoji now rendered automatically by `pinNotes()`.
+
+---
+
+## [7e0236a] — Catalion: Fix Level-3 Spell List
+
+### Data (Catalion)
+- Removed `"Segreti Magici Bonus"` feature — Magical Discoveries unlocks at level 6, not 3
+- Dropped Aid and Hold Person spells (relied on Segreti Magici Bonus)
+- Dropped Friends cantrip (level 3 = 2 cantrips, not 3)
+- Cleaned up `customConditions` and `sidebar` to match
+- Updated combat algorithm: removed Aid pre-combat step; replaced Hold Person branch with Tasha's / Shatter / Dissonant Whispers decision tree
+
+---
+
+## [6a254d9] — Fix HP/Aid Mechanics, Log Persistence, dndTr Fallback, Translations
+
+### Added
+- Spell slot usage now logs remaining slots (e.g. "Slot 2 usato — rimasti 2")
+- Tracker usage now logs remaining uses
+- `logAidUp` / `logAidDown` i18n keys (EN + IT) for Aid grant/expiry log messages
+
+### Fixed
+- **HP/Aid effective max:** `effMax` now always computed as `hp.max + aidBonus` — was incorrectly conditioned on `SESSION.hp.current` existence, causing Aid bonus to silently vanish on fresh load
+- **Aid dialog:** changing Aid bonus now correctly adjusts `SESSION.hp.current` up (clamped to new effMax) or down; logs the change as heal/damage
+- **Action log persistence:** log entries now restored from `SESSION.logEntries` on render — log was blank after every page reload
+- **`dndTr()` fallback:** now tries `DND[cat][key]` before returning raw key — fixes untranslated English terms when no locale override exists
+- **Italian translations:** `expertise` → `"Maestria"`, `profType_halfProficiency` → `"Mezza Competenza"`, `aidBonus` label → `"PF max (aiuto)"`
+- **HP cap in level-up and long rest:** current HP now correctly capped at `hp.max + aidBonus`, not bare `hp.max`
+- **Concentration input layout:** input now `flex:1;min-width:0` to prevent overflow; cancel button gets `flex-shrink:0`
+
+### Updated (`assistant.html`)
+- AI schema prompt updated: weapons vs equipment warning added; `currency`, `inspiration`, `exhaustion`, `lore`, `preparedMax`, `weaponProficiencies`, `armorProficiencies` added to schema; `sysShort` and `sysBuild` session templates updated
+
+---
+
+## [edb4c0e] — Mobile UX: Nav Visibility + Touch Drag
+
+### Added
+- Mobile overflow menu (`⋯`) now includes page nav links: `"✨ AI"` on `index.html`, `"📜 Character"` on `assistant.html`; desktop retains both Character + AI tabs
+- Touch drag for sidebar section reordering — HTML5 DnD API is mouse-only; new system uses `touchstart`/`touchmove`/`touchend` + `elementFromPoint()` for drop-target detection; supports reorder and trash-delete; `{passive:false}` listeners coexist with portrait pinch-zoom
+
+### Fixed
+- `.overflow-item` anchor elements: added `text-decoration:none` so nav links render cleanly
+
+---
+
+## [ffff4ec] — v1.2 UI Polish, Mobile UX, Content Block Preview Fix, Catalion Restructure
+
+### Added
+- Gold/navy accent palette: dark `#c9a227`, light `#8a6800`; applied consistently across both files
 - Header bottom border `2px solid var(--accent)` as structural divider
 - `h2` section headers: gold accent left-border (4px), uppercase, letter-spacing, font-weight:700
 - Active tab reserved underline slot (`border-bottom:2px solid transparent`) — no layout shift between pages
-- Mobile overflow menu (`⋯` button) on ≤768px exposes theme/lang toggles + navigation: "✨ AI" on `index.html`, "📜 Character" on `assistant.html` — Character/AI tabs remain on desktop
-- Touch drag for sidebar section reordering on mobile — `sbTouchStart`/`sbTouchMove`/`sbTouchEnd` using `elementFromPoint()` for drop-target detection; supports reorder and trash-delete; `.sb-touch-dragging` visual feedback; document-level `{passive:false}` listeners coexist with portrait pinch-zoom
+- Mobile overflow menu (`⋯` button) on ≤768px exposes theme/lang toggles
 - Portrait lightbox: click portrait → full-screen overlay with scroll/pinch zoom; ESC or click-outside to close; "📷 Change photo" + "Close" buttons
 - Sidebar character block (`.sb-char-info`) clickable — smooth scrolls to page top with hover highlight
 - Scroll anchor margin (`scroll-margin-top:68px`) on `h2`, `.spell-level-title`, and `#game-panel` — sidebar nav links no longer land under fixed header

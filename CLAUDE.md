@@ -342,11 +342,12 @@ toolProficiencies         string
 abilityBudget             number (default 27)
 proficiencyBonusOverride  number|null  (null = auto from level)
 levelUpChecklist          [{text:string, done:boolean}] | null
+backgroundAsi             { STR?, DEX?, CON?, INT?, WIS?, CHA? }  — background ability bonuses (+2/+1 or +1/+1/+1). SEPARATE from abilityScores. The app combines both via finalScores() for all calculations.
 ```
 
 ### CHAR.abilityScores
 ```
-{ STR, DEX, CON, INT, WIS, CHA }   all integers
+{ STR, DEX, CON, INT, WIS, CHA }   all integers — BASE point-buy scores only, NOT including background bonuses. Add backgroundAsi values to get the final scores used in play.
 ```
 
 ### CHAR.savingThrows

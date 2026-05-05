@@ -294,10 +294,11 @@ languages (comma-separated string), toolProficiencies, weaponProficiencies, armo
 abilityBudget: number (default 27)
 proficiencyBonusOverride: number|null (null = auto from level)
 levelUpChecklist: [{text:string, done:boolean}] | null
+backgroundAsi: { STR?, DEX?, CON?, INT?, WIS?, CHA? } — background ability bonuses ONLY (+2/+1 or +1/+1/+1). SEPARATE from abilityScores. App combines via finalScores().
 lore: {traits, ideals, bonds, flaws, backstory, age, height, weight, eyes, hair, skin} (all strings, optional)
 
 ### character.abilityScores
-{ STR, DEX, CON, INT, WIS, CHA }  — all integers
+{ STR, DEX, CON, INT, WIS, CHA }  — BASE point-buy scores only, NOT including background bonuses. Final score = abilityScores[ability] + (backgroundAsi[ability] || 0).
 
 ### character.savingThrows
 string[] — ability codes with save proficiency, e.g. ["DEX","CHA"]
@@ -535,7 +536,7 @@ const PROVS={
     sysShort:`You are a D&D 2024 assistant for the D&D Sheets app.
 For updates: 1) explain briefly in plain D&D language (no array indices, no JSON paths, no technical terms), 2) give numbered wizard steps (UI path), 3) always end with a \`\`\`json-patch\`\`\` block (RFC 6902 ops array). Paths: /character/... or /session/..., use /- to append, /N to replace/remove. Only omit for pure rules questions.
 CRITICAL: weapons (attack roll + damage dice) → /character/weapons/-, NEVER /character/equipment/-. Equipment is for armor, consumables, general items only.
-If no character JSON has been shared yet, output a creation patch — [{"op":"add","path":"/character","value":{...}}]. Omit empty arrays and null optionals. Required: name, race, class, subclass, level, background, abilityScores:{STR,DEX,CON,INT,WIS,CHA} (integers), savingThrows (string[]), skills (map to "proficient"|"expertise"|"halfProficiency"), hp:{max}, hitDieType (4|6|8|10|12), speed, languages, sidebar:["game-panel","base-data","skills","spells","weapons","equipment","algorithm",...slugified feature IDs].
+If no character JSON has been shared yet, output a creation patch — [{"op":"add","path":"/character","value":{...}}]. Omit empty arrays and null optionals. Required: name, race, class, subclass, level, background, abilityScores:{STR,DEX,CON,INT,WIS,CHA} (BASE point-buy integers — exclude background bonuses), backgroundAsi:{ability:bonus,...} (background bonuses only, +2/+1 or +1/+1/+1), savingThrows (string[]), skills (map to "proficient"|"expertise"|"halfProficiency"), hp:{max}, hitDieType (4|6|8|10|12), speed, languages, sidebar:["game-panel","base-data","skills","spells","weapons","equipment","algorithm",...slugified feature IDs].
 For rules questions: just answer. Use **bold** for D&D terms. Verify: http://dnd2024.wikidot.com/`},
   gemini:{name:'Google Gemini 2.0 Flash (free tier)',hint:'Free tier, generous context. Get key at aistudio.google.com — no credit card.',klink:'https://aistudio.google.com/app/apikey',ep:'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent'},
   groq:{name:'Groq — Llama 3.3 70B (free)',hint:'Free & fast. Context limit may affect large characters.',klink:'https://console.groq.com/keys',ep:'https://api.groq.com/openai/v1/chat/completions',model:'llama-3.3-70b-versatile'},

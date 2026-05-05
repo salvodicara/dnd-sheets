@@ -828,6 +828,15 @@ const DND = {
   races:       ['Aasimar','Dragonborn','Dwarf','Elf','Gnome','Goliath','Halfling','Human','Orc','Tiefling'],
   classes:     ['Barbarian','Bard','Cleric','Druid','Fighter','Monk','Paladin','Ranger','Rogue','Sorcerer','Warlock','Wizard'],
   backgrounds: ['Acolyte','Artisan','Charlatan','Criminal','Entertainer','Farmer','Guard','Guide','Hermit','Merchant','Noble','Sage','Sailor','Scribe','Soldier','Wayfarer'],
+  // D&D 2024 PHB: each background lists 3 eligible ability scores for ASI (+2/+1 or +1/+1/+1)
+  backgroundAsiAbilities: {
+    Acolyte:['INT','WIS','CHA'], Artisan:['STR','DEX','INT'], Charlatan:['DEX','CON','CHA'],
+    Criminal:['DEX','CON','INT'], Entertainer:['STR','DEX','CHA'], Farmer:['STR','CON','WIS'],
+    Guard:['STR','INT','WIS'], Guide:['DEX','CON','WIS'], Hermit:['CON','WIS','CHA'],
+    Merchant:['CON','INT','CHA'], Noble:['STR','INT','CHA'], Sage:['CON','INT','WIS'],
+    Sailor:['STR','DEX','WIS'], Scribe:['DEX','INT','WIS'], Soldier:['STR','DEX','CON'],
+    Wayfarer:['DEX','WIS','CHA'],
+  },
   subclasses: {
     Barbarian:['Path of the Berserker','Path of the Wild Heart','Path of the World Tree','Path of the Zealot'],
     Bard:['College of Dance','College of Glamour','College of Lore','College of Valor'],
@@ -1085,7 +1094,7 @@ const BASE = {
   noTracker:'No custom tracker.',
   noSpellcasting:'No spellcasting configured.',
   slotLvLabel:'Lv', level:'Level',
-  lbl_player:'Player', lbl_race:'Race', lbl_class:'Class', lbl_subclass:'Subclass', lbl_background:'Background',
+  lbl_player:'Player', lbl_race:'Race', lbl_class:'Class', lbl_subclass:'Subclass', lbl_background:'Background', lbl_bgBonuses:'Background Bonuses',
   lbl_alignment:'Alignment', lbl_profBonus:'Proficiency Bonus',
   lbl_speed:'Speed', lbl_hpMax:'Max HP', lbl_hitDice:'Hit Dice',
   lbl_ac:'AC', lbl_languages:'Languages', lbl_tsChar:'Ability',
@@ -1123,6 +1132,18 @@ const BASE = {
   abFreeMode:'Free', abPointBuy:'Point Buy',
   abCostRef:'Cost: 8→0, 9→1, 10→2, 11→3, 12→4, 13→5, 14→7, 15→9',
   abOver:'Points exceeded!',
+  // Background ASI step
+  wiz_step_backgroundAsi:'Background Ability Improvements',
+  bgAsiEligible:'Eligible abilities',
+  bgAsiCustomNote:'Custom background — choose any ability',
+  bgAsiTwoMode:'+1 to all three',
+  bgAsiThreeMode:'+2/+1 to two',
+  bgAsiPlus2Label:'Increase by 2',
+  bgAsiPlus1Label:'Increase by 1',
+  bgAsiBackground:'Background',
+  bgAsiValidation:'Please select both abilities',
+  bgAsiSameAbility:'Choose two different abilities',
+  bgAsiMaxScore:'Bonus would exceed score cap of 20',
   // Toast
   toastNoteSaved:'📝 Notes saved!',
   // HP abbreviation (for log messages)
@@ -1424,6 +1445,18 @@ const TRANSLATIONS = {
     abFreeMode:'Libero', abPointBuy:'Point Buy',
     abCostRef:'Costo: 8→0, 9→1, 10→2, 11→3, 12→4, 13→5, 14→7, 15→9',
     abOver:'Punti superati!',
+    // Background ASI step
+    wiz_step_backgroundAsi:'Miglioramenti di Caratteristica del Background',
+    bgAsiEligible:'Caratteristiche eleggibili',
+    bgAsiCustomNote:'Background personalizzato — scegli qualsiasi caratteristica',
+    bgAsiTwoMode:'+1 a tutte e tre',
+    bgAsiThreeMode:'+2/+1 a due',
+    bgAsiPlus2Label:'Aumenta di 2',
+    bgAsiPlus1Label:'Aumenta di 1',
+    bgAsiBackground:'Background',
+    bgAsiValidation:'Seleziona entrambe le caratteristiche',
+    bgAsiSameAbility:'Scegli due caratteristiche diverse',
+    bgAsiMaxScore:'Il bonus supererebbe il limite massimo di 20',
     logDmg:'💥 Subiti', logHeal:'💚 Curati', logTempHP:'🛡️ PF temporanei',
     logAbsorb:'🛡️ PF temporanei assorbono', logSlot:'✨ Slot Lv',
     logUsed:' usato. Rimasti:', logRestored:'ripristinati',
@@ -1475,7 +1508,7 @@ const TRANSLATIONS = {
     noTracker:'Nessun tracker custom.',
     noSpellcasting:'Nessun lancio di incantesimi configurato.',
     slotLvLabel:'Lv', level:'Livello',
-    lbl_player:'Giocatore', lbl_race:'Razza', lbl_class:'Classe', lbl_subclass:'Sottoclasse', lbl_background:'Background',
+    lbl_player:'Giocatore', lbl_race:'Razza', lbl_class:'Classe', lbl_subclass:'Sottoclasse', lbl_background:'Background', lbl_bgBonuses:'Bonus del Background',
     lbl_alignment:'Allineamento', lbl_profBonus:'Bonus di Competenza',
     lbl_speed:'Velocità', lbl_hpMax:'PF Massimi', lbl_hitDice:'Dadi Vita',
     lbl_ac:'CA', lbl_languages:'Linguaggi', lbl_tsChar:'Car.',
@@ -1725,6 +1758,14 @@ function abilityMod(score){return Math.floor((score-10)/2);}
 function modStr(m){return (m>=0?'+':'')+m;}
 // D&D 2024: PB = 2 + floor((level-1)/4), levels 1-4→+2, 5-8→+3, 9-12→+4, 13-16→+5, 17-20→+6
 function computedPB(level){return 2+Math.floor((Math.max(1,level||1)-1)/4);}
+// Returns merged ability scores (point-buy base + background ASI bonuses) for a character
+function finalScores(char){
+  const base=char?.abilityScores||{};
+  const asi=char?.backgroundAsi||{};
+  const out={};
+  DND.abilities.forEach(a=>out[a]=(base[a]||10)+(asi[a]||0));
+  return out;
+}
 // Normalize legacy IT action type keys to canonical EN keys (backward compat with old JSON)
 function normalizeActionType(t){
   return {azione:'action',reazione:'reaction',gratuita:'free',bonus:'bonus',action:'action',reaction:'reaction',free:'free'}[t]||t||'action';
@@ -1736,6 +1777,11 @@ function md(text){
     .replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>')
     .replace(/\*(.+?)\*/g,'<em>$1</em>')
     .replace(/\n/g,'<br>');
+}
+// Prepend 📌 to each non-empty line of a notes string (used by all note renderers)
+function pinNotes(text){
+  if(!text) return '';
+  return text.split('\n').filter(l=>l.trim()).map(l=>'📌 '+l.trim()).join('\n');
 }
 function createDefaultSession(char){
   const s={
@@ -2299,7 +2345,7 @@ function buildPanelRow3(){
       <span>${T('initiative')}</span>
       <input type="number" id="init-input" placeholder="—" value="${S.initiative||''}" style="width:65px;">
     </div>
-    ${(()=>{const dex=abilityMod(C.abilityScores?.DEX||10);const bonus=(C.initiativeBonus??0);const total=dex+bonus;const parts=[modStr(dex)+' DEX'];if(bonus!==0)parts.push(modStr(bonus)+' '+T('lbl_initiativeBonus'));return '<div style="font-size:.8em;color:var(--text-muted);margin-top:2px;">'+parts.join(' + ')+' = <strong>'+modStr(total)+'</strong></div>';})()}
+    ${(()=>{const dex=abilityMod(finalScores(C).DEX||10);const bonus=(C.initiativeBonus??0);const total=dex+bonus;const parts=[modStr(dex)+' DEX'];if(bonus!==0)parts.push(modStr(bonus)+' '+T('lbl_initiativeBonus'));return '<div style="font-size:.8em;color:var(--text-muted);margin-top:2px;">'+parts.join(' + ')+' = <strong>'+modStr(total)+'</strong></div>';})()}
   </div>`;
   const cur=S.currency||{pp:0,gp:0,ep:0,sp:0,cp:0};
   const goldCard=`<div class="pn-card">
@@ -2344,7 +2390,7 @@ function buildPanelBottom(){
   // Rests + Log
   const available=(C.level||1)-(S.hitDice?.used||0);
   const hdType='d'+(C.hitDieType||8);
-  const conMod=abilityMod(C.abilityScores?.CON||10);
+  const conMod=abilityMod(finalScores(C).CON||10);
   const hdModStr=conMod>=0?`+${conMod}`:String(conMod);
   const restsCardContent=S.hdDialog
     ?(available>0
@@ -2399,7 +2445,7 @@ function buildPanelBottom(){
       <div class="action-entry-note">${spellQuickNote(sp)}</div>
     </div></div>`;}).join('');
   const pb=C.proficiencyBonusOverride??(C.proficiencyBonus||computedPB(C.level||1));
-  const scores=C.abilityScores||{};
+  const scores=finalScores(C);
   const weaponEntries=(C.weapons||[]).map(w=>{
     const atkMod=abilityMod(scores[w.attackStat]||10);
     const magic=w.magicBonus||0;
@@ -2535,16 +2581,20 @@ function renderSections(){
 function renderBaseData(){
   const C=CHAR;
   const pb=C.proficiencyBonusOverride??(C.proficiencyBonus||computedPB(C.level||1));
+  const bgAsi=C.backgroundAsi||{};
+  const bgAsiStr=Object.entries(bgAsi).filter(([,v])=>v).sort(([,a],[,b])=>b-a).map(([a,v])=>`+${v} ${abilityShortName(a)}`).join(', ');
   const rows=[
     [T('lbl_race'),dndTr('races',C.race)],[T('lbl_class'),dndTr('classes',C.class)],[T('lbl_subclass'),dndTr('subclasses',C.subclass)],[T('lbl_background'),dndTr('backgrounds',C.background)],
+    [T('lbl_bgBonuses'),bgAsiStr],
     [T('lbl_alignment'),alignmentName(C.alignment)],[T('lbl_player'),C.playerName],[T('lbl_profBonus'),'+'+pb],
     [T('lbl_speed'),C.speed],[T('lbl_hpMax'),`<span id="stat-hp-max">${(C.hp?.max||0)+(SESSION?.hp?.aidBonus||0)}</span>`],
     [T('lbl_hitDice'),`${C.level||1}d${C.hitDieType||8}`],
     [T('lbl_ac'),`${C.ac??C.armorClass??'—'}${C.armorNote?' ('+C.armorNote+')':''}`],
     [T('lbl_languages'),C.languages]
   ].filter(r=>r[1]!==undefined&&r[1]!==null&&r[1]!=='');
-  const scores=C.abilityScores||{};
-  const statsRow=DND.abilities.map(a=>{const sc=scores[a]||10;return `<td>${sc} (${modStr(abilityMod(sc))})</td>`;}).join('');
+  const scores=finalScores(C);
+  const bgName=dndTr('backgrounds',C.background)||C.background||'';
+  const statsRow=DND.abilities.map(a=>{const sc=scores[a]||10;const bon=bgAsi[a]||0;const tip=bon?` title="Base: ${(C.abilityScores||{})[a]||10} + ${bon} (${bgName})" style="cursor:help"`:'';return `<td${tip}>${sc} (${modStr(abilityMod(sc))})</td>`;}).join('');
   // savingThrows: supports both ["DEX","CHA"] (new) and [{ability,bonus,proficient}] (legacy)
   const profSaves=Array.isArray(C.savingThrows)&&typeof C.savingThrows[0]==='string'
     ? C.savingThrows
@@ -2571,7 +2621,7 @@ function renderBaseData(){
 function renderSkills(){
   const C=CHAR; const skillsMap=C.skills||{};
   const pb=C.proficiencyBonusOverride??(C.proficiencyBonus||computedPB(C.level||1));
-  const scores=C.abilityScores||{};
+  const scores=finalScores(C);
   function skillBonus(ability, type){
     const base=abilityMod(scores[ability]||10);
     if(type==='expertise')       return base+pb*2;
@@ -2657,7 +2707,7 @@ function renderSpellsSection(){
   const sc=C.spellcasting;
   // Auto-compute DC and attack bonus from ability + PB
   const pb=C.proficiencyBonusOverride??(C.proficiencyBonus||computedPB(C.level||1));
-  const abilMod=sc?.ability?abilityMod(C.abilityScores?.[sc.ability]||10):0;
+  const abilMod=sc?.ability?abilityMod(finalScores(C)[sc.ability]||10):0;
   const dc=sc?.saveDCOverride??(8+pb+abilMod);
   const atk=sc?.attackBonusOverride??(pb+abilMod);
   const dcOverridden=sc?.saveDCOverride!=null;
@@ -2729,7 +2779,7 @@ function renderSpellsSection(){
         </div>
         <div class="spell-card-desc">${md(sp.description||'')}</div>
         ${sp.scaling?`<div class="spell-card-scaling">📈 ${md(sp.scaling)}</div>`:''}
-        ${sp.notes?`<div class="spell-card-notes">${md(sp.notes)}</div>`:''}
+        ${sp.notes?`<div class="spell-card-notes">${md(pinNotes(sp.notes))}</div>`:''}
       </div>`;
     }).join('');
     spellSections+=`<div class="spell-level-section">
@@ -2746,7 +2796,7 @@ function renderSpellsSection(){
 function renderWeapons(){
   const C=CHAR;
   const pb=C.proficiencyBonusOverride??(C.proficiencyBonus||computedPB(C.level||1));
-  const scores=C.abilityScores||{};
+  const scores=finalScores(C);
   function weaponAtk(w){
     if(w.attackBonusOverride!=null) return modStr(w.attackBonusOverride);
     const atkMod=abilityMod(scores[w.attackStat]||10);
@@ -2769,7 +2819,7 @@ function renderWeapons(){
       <tr><td><strong>${T('damageCol')}</strong></td><td>${weaponDmg(w)} ${dndTr('damageTypes',w.damageType)||w.damageType||''}</td></tr>
       ${w.properties?`<tr><td><strong>${T('propertiesCol')}</strong></td><td>${w.properties}</td></tr>`:''}
     </table>
-    ${w.notes?`<p class="note" style="margin-top:6px;">📌 ${md(w.notes)}</p>`:''}
+    ${w.notes?`<p class="note" style="margin-top:6px;">${md(pinNotes(w.notes))}</p>`:''}
   </div>`).join('');
   // Unarmed strike derived row
   const strMod=abilityMod(scores['STR']||10);
@@ -2801,7 +2851,7 @@ function renderEquipment(){
   }).join('');
   // Regular equipment rows
   const rows=(C.equipment||[]).map((e,i)=>`<tr>
-    <td>${e.emoji||''} ${e.name||''} ${e.attuned?`<span class="attune-chip">${T('attuned')}</span>`:''}</td><td>${e.notes||''}</td>
+    <td>${e.emoji||''} ${e.name||''} ${e.attuned?`<span class="attune-chip">${T('attuned')}</span>`:''}</td><td>${e.notes?md(pinNotes(e.notes)):''}</td>
     ${EDIT_MODE?`<td><button class="btn-edit-sm" onclick="editEquip(${i})">✏️</button> <button class="btn-del-sm" onclick="deleteEquip(${i})">🗑</button></td>`:''}
   </tr>`).join('');
   const attunedCount=(C.equipment||[]).filter(e=>e.attuned).length;
@@ -2911,7 +2961,7 @@ function spendHD(){
   const S=SESSION, C=CHAR, lv=C.level||1;
   const used=S.hitDice?.used||0;
   if(used>=lv){addLog(T('logNoHD'));return;}
-  const conMod=abilityMod(C.abilityScores?.CON||10);
+  const conMod=abilityMod(finalScores(C).CON||10);
   const max=C.hitDieType||8;
   const modStr=conMod>=0?`+${conMod}`:String(conMod);
   S.hitDice.used=(S.hitDice.used||0)+1;
@@ -3130,7 +3180,7 @@ function adjustHDQty(delta){
   const available=(C.level||1)-(SESSION.hitDice?.used||0);
   const qty=Math.max(1,Math.min(available,+el.textContent+delta));
   el.textContent=qty;
-  const conMod=abilityMod(C.abilityScores?.CON||10);
+  const conMod=abilityMod(finalScores(C).CON||10);
   const modStr=conMod>=0?`+${conMod}`:String(conMod);
   const fEl=document.getElementById('hd-formula');
   if(fEl) fEl.textContent=`${qty}d${C.hitDieType||8}${modStr}`;
@@ -3413,7 +3463,7 @@ function renderSpellPreview(){
   return `<div id="wiz-preview" class="wiz-preview"><div class="wiz-preview-label">${T('wizPreview')}</div><div class="wiz-preview-content"><div class="spell-card" style="border-left-color:${color};margin:0;">
     <div class="spell-card-header"><span style="font-size:1.1em;">${emoji}</span> <span class="spell-card-name">${name||'...'}</span> ${origName?`<span class="spell-card-original">(${origName})</span>`:''} ${tags}</div>
     <div class="spell-card-meta">${atype?`<span class="spell-meta-chip">${atype}</span>`:''}${rit?`<span class="spell-meta-chip ritual">R ${T('ritual')}</span>`:''}${range?`<span class="spell-meta-chip">📍 ${range}</span>`:''}${duration?`<span class="spell-meta-chip">⏱ ${duration}</span>`:''}${conc?`<span class="spell-meta-chip conc">🔮 ${T('concentration')}</span>`:''}${saveAb?`<span class="spell-meta-chip">TS ${abilityShortName(saveAb)}</span>`:''}${school?`<span class="spell-meta-chip">${dndTr('schools',school)||school}</span>`:''}</div>
-    ${desc?`<div class="spell-card-desc">${md(desc)}</div>`:''}${scaling?`<div class="spell-card-scaling">📈 ${md(scaling)}</div>`:''}${notes?`<div class="spell-card-notes">${md(notes)}</div>`:''}
+    ${desc?`<div class="spell-card-desc">${md(desc)}</div>`:''}${scaling?`<div class="spell-card-scaling">📈 ${md(scaling)}</div>`:''}${notes?`<div class="spell-card-notes">${md(pinNotes(notes))}</div>`:''}
   </div></div></div>`;
 }
 function injectSpellPreview(){
@@ -3437,7 +3487,7 @@ function renderWeaponPreview(){
   const notes=el('notes')?.value||WIZ_DATA.notes||'';
   const tags=renderTags(WIZ_TAGS);
   if(!name&&!damageDie) return '';
-  const scores=CHAR?.abilityScores||{};
+  const scores=finalScores(CHAR);
   const pb=CHAR?.proficiencyBonusOverride??(CHAR?.proficiencyBonus||computedPB(CHAR?.level||1));
   const atkMod=abilityMod(scores[attackStat]||10);
   const atk=modStr(pb+atkMod+magicBonus);
@@ -3448,7 +3498,7 @@ function renderWeaponPreview(){
     <table style="margin-top:8px;"><tr><td><strong>${T('attackCol')}</strong></td><td>${atk} (${abilityShortName(attackStat)})</td></tr>
     <tr><td><strong>${T('damageCol')}</strong></td><td>${dmg} ${dndTr('damageTypes',damageType)||damageType||''}</td></tr>
     ${props?`<tr><td><strong>${T('propertiesCol')}</strong></td><td>${props}</td></tr>`:''}</table>
-    ${notes?`<p class="note" style="margin-top:6px;">📌 ${md(notes)}</p>`:''}
+    ${notes?`<p class="note" style="margin-top:6px;">${md(pinNotes(notes))}</p>`:''}
   </div></div></div>`;
 }
 function injectWeaponPreview(){
@@ -4036,6 +4086,53 @@ function abToggleMode(){
   WIZ_DATA._abFreeMode=!WIZ_DATA._abFreeMode;
   renderWizardStep();
 }
+// ── Background ASI step ──
+function renderBackgroundAsiStep(data){
+  const bg=data.background||'';
+  const eligible=DND.backgroundAsiAbilities[bg]||DND.abilities;
+  const isThree=data._bgAsiMode==='three';
+  const eligLabel=`${T('bgAsiEligible')}: <strong>${eligible.map(a=>abilityShortName(a)).join(', ')}</strong>`;
+  const customNote=!DND.backgroundAsiAbilities[bg]?`<div style="font-size:.85em;color:var(--text-muted);margin-bottom:6px;">${T('bgAsiCustomNote')}</div>`:'';
+  const baseScores=data;
+  let body='';
+  if(isThree){
+    body=`<div class="ab-grid">${eligible.map(a=>{const b=+(data[a]||10);return `<div class="ab-row"><span class="ab-name">${abilityShortName(a)}</span><span class="ab-mod">+1</span><span style="font-size:.8em;color:var(--text-muted)">${b}→${b+1}</span></div>`;}).join('')}</div>`;
+  } else {
+    const opts1=eligible.map(a=>`<option value="${a}"${data._bgAsi1===a?' selected':''}>${abilityShortName(a)} (${data[a]||10})</option>`).join('');
+    const opts2=eligible.map(a=>`<option value="${a}"${data._bgAsi2===a?' selected':''}>${abilityShortName(a)} (${data[a]||10})</option>`).join('');
+    body=`<div class="ab-grid" style="gap:12px;">
+      <div class="ab-row" style="flex-direction:column;align-items:flex-start;gap:4px;">
+        <label><strong>+2</strong> — ${T('bgAsiPlus2Label')}</label>
+        <select id="wf-bgAsi1" style="width:100%;padding:4px 6px;background:var(--input-bg);color:var(--text);border:1px solid var(--border-light);border-radius:4px;" onchange="bgAsiChange()">
+          <option value="">—</option>${opts1}</select>
+      </div>
+      <div class="ab-row" style="flex-direction:column;align-items:flex-start;gap:4px;">
+        <label><strong>+1</strong> — ${T('bgAsiPlus1Label')}</label>
+        <select id="wf-bgAsi2" style="width:100%;padding:4px 6px;background:var(--input-bg);color:var(--text);border:1px solid var(--border-light);border-radius:4px;" onchange="bgAsiChange()">
+          <option value="">—</option>${opts2}</select>
+      </div>
+    </div>`;
+  }
+  return `<div class="ab-widget">
+    <div class="ab-header">
+      <div style="font-weight:bold;">${T('bgAsiBackground')}: ${dndTr('backgrounds',bg)||bg||'—'}</div>
+      <button class="ab-mode" onclick="bgAsiToggleMode()">${isThree?T('bgAsiThreeMode'):T('bgAsiTwoMode')}</button>
+    </div>
+    ${customNote}<div class="ab-ref">${eligLabel}</div>
+    ${body}
+  </div>`;
+}
+function bgAsiChange(){
+  const s1=document.getElementById('wf-bgAsi1');
+  const s2=document.getElementById('wf-bgAsi2');
+  if(s1) WIZ_DATA._bgAsi1=s1.value;
+  if(s2) WIZ_DATA._bgAsi2=s2.value;
+}
+function bgAsiToggleMode(){
+  bgAsiChange();
+  WIZ_DATA._bgAsiMode=WIZ_DATA._bgAsiMode==='three'?'two':'three';
+  renderWizardStep();
+}
 // Helpers
 function abilityOpts(){ return DND.abilities.map(a=>({v:a,l:abilityShortName(a)})); }
 function schoolOpts(){ return DND.schools.map(s=>({v:s,l:dndTr('schools',s)||s})); }
@@ -4128,6 +4225,26 @@ const WIZARDS = {
         return null;
       },
     },
+    {label:'wiz_step_backgroundAsi',
+      _renderStep(data){ return renderBackgroundAsiStep(data); },
+      _collectData(data){
+        const s1=document.getElementById('wf-bgAsi1');
+        const s2=document.getElementById('wf-bgAsi2');
+        if(s1) data._bgAsi1=s1.value;
+        if(s2) data._bgAsi2=s2.value;
+      },
+      _validateStep(data){
+        if(data._bgAsiMode==='three') return null;
+        if(!data._bgAsi1||!data._bgAsi2) return T('bgAsiValidation');
+        if(data._bgAsi1===data._bgAsi2) return T('bgAsiSameAbility');
+        const eli=DND.backgroundAsiAbilities[data.background||'']||DND.abilities;
+        if(!eli.includes(data._bgAsi1)||!eli.includes(data._bgAsi2)) return T('bgAsiValidation');
+        // Check score cap of 20
+        const b1=(+(data[data._bgAsi1]||10)+2); const b2=(+(data[data._bgAsi2]||10)+1);
+        if(b1>20||b2>20) return T('bgAsiMaxScore');
+        return null;
+      },
+    },
     {label:'wiz_step_combat', fields:[
       {id:'hpMax',label:'f_hpMax',type:'number',min:1,required:true,hint:'hint_hpMax'},
       {id:'hitDieType',label:'f_hitDie',type:'select',options:hitDiceOpts(),default:'d8',hint:'hint_hitDie'},
@@ -4192,6 +4309,16 @@ const WIZARDS = {
      if(d.languages) base.languages=d.languages; else delete base.languages;
      base.abilityScores={STR:+d.STR||10,DEX:+d.DEX||10,CON:+d.CON||10,INT:+d.INT||10,WIS:+d.WIS||10,CHA:+d.CHA||10};
     base.abilityBudget=+(d.abilityBudget||PB_DEFAULT_BUDGET);
+    // Background ASI — compute from wizard step data
+    const bgEligible=DND.backgroundAsiAbilities[d.background||'']||DND.abilities;
+    if(d._bgAsiMode==='three'){
+      base.backgroundAsi={};
+      bgEligible.forEach(a=>{ base.backgroundAsi[a]=1; });
+    } else if(d._bgAsi1||d._bgAsi2) {
+      base.backgroundAsi={};
+      if(d._bgAsi1) base.backgroundAsi[d._bgAsi1]=2;
+      if(d._bgAsi2) base.backgroundAsi[d._bgAsi2]=1;
+    } else { delete base.backgroundAsi; }
     base.hp={max:+d.hpMax||10}; base.hitDieType=parseInt((d.hitDieType||'d8').replace(/\D/g,''))||8;
     base.ac=+d.ac||10; if(d.armorNote) base.armorNote=d.armorNote; else delete base.armorNote;
     base.speed=d.speed||'9m';
@@ -4594,7 +4721,7 @@ const WIZARDS = {
     ],
      _afterRender(){
        const C=CHAR||{}; const die=C.hitDieType||8;
-       const conMod=abilityMod(C.abilityScores?.CON||10);
+       const conMod=abilityMod(finalScores(C).CON||10);
        const avg=Math.floor(die/2)+1+conMod;
        const hdModStr=conMod>=0?`+${conMod}`:String(conMod);
        const hintEl=document.querySelector('#wf-hpGain')?.closest('.wiz-field')?.querySelector('.field-hint');
@@ -4692,6 +4819,18 @@ function flattenChar(){
     sc_ability:(C.spellcasting?.ability||''),
     sc_focus:(C.spellcasting?.focus||''),
     sc_preparedCaster:!!(C.spellcasting?.preparedCaster),
+    // Background ASI step prefill
+    ...(()=>{
+      const asi=C.backgroundAsi||{};
+      const entries=Object.entries(asi).filter(([,v])=>v>0);
+      if(!entries.length) return {};
+      const eli=DND.backgroundAsiAbilities[C.background||'']||[];
+      const isThree=eli.length===3&&entries.length===3&&entries.every(([,v])=>v===1);
+      if(isThree) return {_bgAsiMode:'three'};
+      const p2=entries.find(([,v])=>v===2);
+      const p1=entries.find(([,v])=>v===1);
+      return {_bgAsiMode:'two',_bgAsi1:p2?.[0]||'',_bgAsi2:p1?.[0]||''};
+    })(),
   };
 }
 // Spells

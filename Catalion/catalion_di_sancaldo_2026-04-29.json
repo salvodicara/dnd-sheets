@@ -20,11 +20,15 @@
     "languages": "Comune, Nanico",
     "abilityScores": {
       "STR": 8,
-      "DEX": 16,
+      "DEX": 15,
       "CON": 14,
       "INT": 8,
       "WIS": 10,
-      "CHA": 17
+      "CHA": 15
+    },
+    "backgroundAsi": {
+      "DEX": 1,
+      "CHA": 2
     },
     "savingThrows": [
       "DEX",
@@ -91,7 +95,8 @@
         "school": "Illusion",
         "range": "9 m",
         "duration": "1 minuto",
-        "description": "Crea **un suono** oppure **un'immagine visiva** entro raggio:\n• **Suono:** qualsiasi suono, da un sussurro a una voce alta\n• **Immagine:** un oggetto fisso (max 1,5 m di lato), senza suono né odore\n📌 Chi interagisce può smascherarla con INT (Arcano) CD 13.\n📌 Ottima per distrarre nemici o creare diversivi.",
+        "description": "Crea **un suono** oppure **un'immagine visiva** entro raggio:\n• **Suono:** qualsiasi suono, da un sussurro a una voce alta\n• **Immagine:** un oggetto fisso (max 1,5 m di lato), senza suono né odore",
+        "notes": "Chi interagisce può smascherarla con INT (Arcano) CD 13.\nOttima per distrarre nemici o creare diversivi.",
         "components": {"v": false, "s": true, "m": true, "material": "un po' di lana"}
       },
       {
@@ -158,7 +163,7 @@
         "saveAbility": "CON",
         "description": "3d8 danni tuono (metà se salva).\nOggetti inorganici e nemici in armatura metallica hanno svantaggio al TS.",
         "scaling": "+1d8 per ogni slot sopra il 2°",
-        "notes": "📌 Usa su gruppi di nemici vicini tra loro.",
+        "notes": "Usa su gruppi di nemici vicini tra loro.",
         "components": {"v": true, "s": true, "m": true, "material": "un frammento di mica"}
       },
       {
@@ -171,7 +176,8 @@
         "range": "Tocco",
         "concentration": true,
         "duration": "Fino a 1 ora",
-        "description": "Una creatura diventa **invisibile**. Termina se la creatura attacca o lancia un incantesimo.\n📌 Usa su te stesso se sei in pericolo grave.\n📌 Usala sul Ladro per dargli vantaggio sugli attacchi.",
+        "description": "Una creatura diventa **invisibile**. Termina se la creatura attacca o lancia un incantesimo.",
+        "notes": "Usa su te stesso se sei in pericolo grave.\nUsala sul Ladro per dargli vantaggio sugli attacchi.",
         "components": {"v": true, "s": true, "m": true, "material": "una ciglia in gomma arabica"}
       }
     ],
@@ -198,15 +204,16 @@
         "notes": "Arma semplice, sei competente. Statistiche basse perché FOR è −1. Meglio come arma di riserva o da lancio situazionale."
       },
       {
-        "name": "Spada Bella",
+        "name": "Talon",
         "quantity": 1,
         "emoji": "⚔️",
         "damageDie": "1d8",
         "damageType": "Piercing",
         "attackStat": "DEX",
-        "properties": "Da definire con il DM",
-        "notes": "Se è uno spadino/rapier (Finesse): Attacco +5, Danno 1d8+3. Chiedi al DM di che arma si tratta esattamente.",
-        "mastery": "Vex"
+        "properties": "Finesse, +1 magica",
+        "notes": "Spada magica +1 già appartenuta ai Cavalieri dell'Ordine Eterno, lama incisa con un guanto che stringe una rosa.\nArma in comune col gruppo — usarla con rispetto e restituirla dopo lo scontro.\nCon Finesse usa DES per attacco e danno. Vex: il bersaglio colpito ha svantaggio ai tiri salvezza fino alla tua prossima fine turno.",
+        "mastery": "Vex",
+        "tags": [{"label": "Arma del gruppo", "color": "purple"}]
       }
     ],
     "equipment": [
