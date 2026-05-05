@@ -82,8 +82,9 @@ dnd-sheets/
   assistant.html                AI assistant companion page (~700 lines)
   CLAUDE.md                     AI steering document (golden rules, architecture)
   DESIGN.md                     Design decisions, phase plan, data model
-    Catalion/
-    catalion.json               Example character data (v3.0 format)
+  chronicles/                   Campaign chronicles + Catalion's personal files
+    index.html                  Campaign reader page (GitHub Pages)
+    campaign.md                 Session-by-session campaign narrative
 ```
 
 ## Data Format
