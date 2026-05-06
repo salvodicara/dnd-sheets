@@ -8,6 +8,7 @@ Open `index.html` in any browser. No server, no build step, no internet required
 
 ### Character Management
 - Create characters via a guided wizard (identity, ability scores, combat stats, saving throws)
+- **Level up** via a guided wizard -- HP gain (average or manual), Ability Score Improvement or Feat choice at levels 4/8/12/16/19, persistent to-do checklist for manual follow-up steps
 - Import/export characters as JSON files (or copy to clipboard)
 - Upload a portrait image (stored as base64)
 

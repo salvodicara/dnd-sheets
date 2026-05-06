@@ -5,7 +5,30 @@ Entries are in reverse-chronological order. Uncommitted work appears under `[Unr
 
 ---
 
-## [Unreleased] — Chronicles Mobile & Sidebar Polish
+## [Unreleased] — Phase 35: Level-Up ASI Wizard + UX Polish
+
+### Added (`index.html`)
+- **Phase 35 — Level-Up ASI Wizard:** The level-up wizard now injects an Ability Score Improvement step automatically when the new level is 4, 8, 12, 16, or 19.
+  - Three modes: **+2 to one ability**, **+1/+1 to two abilities**, **Take a Feat** — radio-style toggle buttons
+  - Abilities already at 20 excluded from dropdowns at render time
+  - Feat picker: `select-or-custom` with `DND.commonFeats` list (44 D&D 2024 general feats + Epic Boons) + "Custom…" free-text fallback
+  - ASI boost applied immediately to `CHAR.abilityScores` on save; feat name added to level-up checklist as a manual reminder with localized display
+  - `buildLevelUpChecks`: removed generic `lu_check_asis`; adds `lu_check_feat` (with `dndTr('feats')` localization) only when a feat was chosen
+- **`DND.commonFeats`** — 44 D&D 2024 general feats + Epic Boons; English canonical, localized via `dndTr('feats', name)`
+- **`DND.tr.it.feats`** — Italian translations for all 44 feats
+- **`_buildSteps()` wizard engine hook** — wizards can now compute their step array dynamically at `openWizard()` time; engine shallow-clones config with returned steps. Level-up wizard is the first user (2 steps normally, 3 at ASI levels)
+- **FAB: "＋ Add Weapon"** added between "＋ Add Feature" and "＋ Add Item"; FAB order is now: Level Up → Feature → Weapon → Item → Spell (casters only)
+
+### Changed (`index.html`)
+- `addFeature` label: "＋ Add Section" → "＋ Add Feature" (EN) / "＋ Aggiungi Capacità" (IT) — used in sidebar footer, FAB, and section area button
+- `sidebarEmpty` hint: "add sections" → "add features" (EN/IT)
+- `hint_featureTitle` / `hint_featureEmoji`: "section heading" → "feature heading" (EN/IT)
+- Italian "Aggiungi X" labels now use capital nouns consistently: Arma, Oggetto, Incantesimo, Equipaggiamento, Capacità (both `add*` and `gsAdd*` keys)
+- `gsAddFeature`: "Aggiungi caratteristica" → "Aggiungi Capacità" (IT)
+
+---
+
+## [0a2a8f0] — Chronicles Mobile & Sidebar Polish
 
 ### Fixed (`chronicles.html`)
 - **Mobile sidebar show/hide** — `toggleChrSidebar()` is now mobile-aware: on `≤768px` it toggles `mobile-open` + overlay (like `assistant.html`), on desktop it toggles `collapsed`. Previously the function always ran the desktop collapse path, making the `‹` close button inside the open sidebar a no-op on mobile.
@@ -25,7 +48,7 @@ Entries are in reverse-chronological order. Uncommitted work appears under `[Unr
 
 ---
 
-## [Unreleased] — Campaign Chronicles Query in AI Assistant
+## [fedeed8] — Campaign Chronicles Query in AI Assistant
 
 ### Added (`assistant.html`)
 - **📖 Campaign query toggle** — new button in the chat input bar (between 📎 and 🗑). Activates campaign mode: the AI answers questions from the loaded chronicle instead of the character sheet. Turns gold when active.

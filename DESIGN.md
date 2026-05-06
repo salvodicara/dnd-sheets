@@ -7,8 +7,8 @@
 
 - **v0 (Complete):** Core character sheet, wizard system, i18n skeleton, dark/light themes
 - **v1 (Complete):** UX overhaul, i18n completion, sidebar architecture, smart features, D&D 2024 parity
-- **v1.1 (Scoped, Deferred):** Full level-up wizard, class feature tables, feat database
-- **v1.2 (In Progress):** UI redesign (gold/navy palette, header polish), mobile UX, UX polish
+- **v1.2 (Complete):** UI redesign (gold/navy palette, header polish), mobile UX, UX polish
+- **v1.1 (In Progress):** Full level-up wizard (ASI step ✅), class feature tables, feat database
 
 ---
 
@@ -450,10 +450,25 @@ Design decisions:
 
 
 
-### Full Level-Up Wizard
-- ASI step at levels 4, 8, 12, 16, 19: +/- on abilities (2 points)
-- "Take a Feat" toggle -> feat database picker
-- Auto-suggest class features based on class + level
+### Phase 35: Level-Up ASI Wizard
+**Status:** ✅ COMPLETE
+**Goal:** Full Ability Score Improvement step injected into the level-up wizard at the correct levels, with feat choice.
+
+Done:
+- `DND.commonFeats` — 44 D&D 2024 general feats + Epic Boons (English canonical, localized via `dndTr('feats')`)
+- `DND.tr.it.feats` — Italian translations for all 44 feats
+- `_buildSteps()` hook in wizard engine — wizards can compute their step array dynamically at `openWizard()` time via `Object.assign({}, config, {steps: config._buildSteps()})`. Follows `_buildFields` pattern.
+- ASI step auto-injected at levels 4, 8, 12, 16, 19; skipped at all other levels (2-step wizard becomes 3-step)
+- Three modes: **+2 to one ability** / **+1/+1 to two abilities** / **Take a Feat** — radio-style toggle buttons
+- Abilities already at 20 excluded from dropdowns at render time
+- Feat picker: `select-or-custom` with `DND.commonFeats` list + "Custom…" free-text fallback
+- ASI applied immediately to `CHAR.abilityScores` on save; feat name added to level-up checklist as a manual reminder
+- `buildLevelUpChecks` updated: removed generic `lu_check_asis`; adds `lu_check_feat` (with localized feat name) only when a feat was chosen
+- FAB: "＋ Add Weapon" added between "＋ Add Feature" and "＋ Add Item"
+- i18n: all Italian "Aggiungi X" labels use capital nouns (Arma, Oggetto, Incantesimo, Equipaggiamento, Capacità) for consistency
+
+### Full Level-Up Wizard (v1.1 — remaining)
+- Auto-suggest class features based on class + level (requires Class Feature Tables below)
 
 ### Class Feature Tables
 - Priority classes: Bard, Monk, Barbarian, Paladin, Rogue, Wizard
@@ -462,7 +477,7 @@ Design decisions:
 
 ### Feat Database
 - All D&D 2024 feats (General, Origin, Fighting Style, Epic Boon)
-- Searchable picker during ASI/feat choice
+- Searchable picker during ASI/feat choice (replaces current hardcoded `DND.commonFeats` list)
 
 ---
 
@@ -694,6 +709,11 @@ Design decisions:
 | 101 | Mastery tooltip z-index | z-index:210 — above fixed sidebar (200), below modal (400+) |
 | 102 | Aid HP mechanics | `setAidBonus()` grants/clamps `hp.current` by delta per D&D 2024; Aid raises both max AND current HP |
 | 103 | AI weapons vs equipment | Explicit CRITICAL rule in both `getSys()` and `sysShort`: weapons (attack roll + damage dice) → `weapons[]`, never `equipment[]` |
+| 104 | Level-up ASI application | ASI boost applied immediately to `CHAR.abilityScores` on save; feat name goes to checklist as manual reminder |
+| 105 | Feat picker (v1.1) | `select-or-custom` with hardcoded `DND.commonFeats` list (44 feats); full searchable database is a follow-on phase |
+| 106 | Feat name localization | Stored as English canonical in data; displayed via `dndTr('feats', name)` — same pattern as classes/races/masteryDesc |
+| 107 | `_buildSteps` wizard hook | Wizards implement `_buildSteps()` to compute step array dynamically at `openWizard()` time; engine shallow-clones config with new steps |
+| 108 | FAB weapon entry | "＋ Add Weapon" added to FAB between Feature and Item; FAB order: Level Up → Feature → Weapon → Item → Spell (casters only) |
 
 ---
 

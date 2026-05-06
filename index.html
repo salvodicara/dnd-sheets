@@ -860,6 +860,19 @@ const DND = {
   casterAbility:{ Bard:'CHA',Cleric:'WIS',Druid:'WIS',Paladin:'CHA',Ranger:'WIS',Sorcerer:'CHA',Warlock:'CHA',Wizard:'INT' },
   // Prepared casters prepare spells daily; others always have their spells available.
   preparedCasters:['Cleric','Druid','Paladin','Ranger','Wizard'],
+  // D&D 2024 PHB general feats (level 4/8/12/16 choices) + Epic Boons (level 19)
+  commonFeats:[
+    'Actor','Alert','Athlete','Charger','Chef','Crossbow Expert','Crusher',
+    'Defensive Duelist','Dual Wielder','Durable','Elemental Adept','Grappler',
+    'Great Weapon Master','Healer','Heavily Armored','Heavy Armor Master',
+    'Inspiring Leader','Lucky','Mage Slayer','Magic Initiate','Martial Adept',
+    'Mobile','Mounted Combatant','Observant','Polearm Master','Resilient',
+    'Ritual Caster','Savage Attacker','Sentinel','Sharpshooter','Shield Master',
+    'Skill Expert','Skilled','Tough','War Caster','Weapon Master',
+    'Boon of Combat Prowess','Boon of Dimensional Travel','Boon of Energy Resistance',
+    'Boon of Fate','Boon of Fortitude','Boon of Irresistible Offense',
+    'Boon of Speed','Boon of Truesight',
+  ],
   standardSkills:[
     {id:'acrobatics',    en:'Acrobatics',     ability:'DEX'},
     {id:'animalHandling',en:'Animal Handling', ability:'WIS'},
@@ -953,6 +966,29 @@ const DND = {
         Topple: 'TS COS (CD 8+mod+competenza) o il bersaglio cade Prono',
         Vex:    'Vantaggio al tuo prossimo attacco contro questo bersaglio',
       },
+      feats:{
+        Actor:'Attore', Alert:'Allerta', Athlete:'Atleta', Charger:'Caricatore', Chef:'Cuoco',
+        'Crossbow Expert':'Esperto di Balestre', Crusher:'Frantumatore',
+        'Defensive Duelist':'Duellist Difensivo', 'Dual Wielder':'Combattente con Due Armi',
+        Durable:'Tenace', 'Elemental Adept':'Adepto Elementale', Grappler:'Lottatore',
+        'Great Weapon Master':'Maestro delle Armi Pesanti', Healer:'Guaritore',
+        'Heavily Armored':'Armatura Pesante', 'Heavy Armor Master':'Maestro dell\'Armatura Pesante',
+        'Inspiring Leader':'Leader Ispirante', Lucky:'Fortunato',
+        'Mage Slayer':'Cacciatore di Maghi', 'Magic Initiate':'Iniziato alla Magia',
+        'Martial Adept':'Adepto Marziale', Mobile:'Mobile',
+        'Mounted Combatant':'Combattente Montato', Observant:'Osservatore',
+        'Polearm Master':'Maestro delle Armi d\'Asta', Resilient:'Resistente',
+        'Ritual Caster':'Incantatore Rituale', 'Savage Attacker':'Attaccante Selvaggio',
+        Sentinel:'Sentinella', Sharpshooter:'Tiratore Scelto', 'Shield Master':'Maestro dello Scudo',
+        'Skill Expert':'Esperto di Abilità', Skilled:'Abile', Tough:'Robusto',
+        'War Caster':'Guerriero Incantatore', 'Weapon Master':'Maestro delle Armi',
+        'Boon of Combat Prowess':'Dono della Valentia in Combattimento',
+        'Boon of Dimensional Travel':'Dono del Viaggio Dimensionale',
+        'Boon of Energy Resistance':'Dono della Resistenza all\'Energia',
+        'Boon of Fate':'Dono del Destino', 'Boon of Fortitude':'Dono della Fortezza',
+        'Boon of Irresistible Offense':'Dono dell\'Offensiva Irresistibile',
+        'Boon of Speed':'Dono della Velocità', 'Boon of Truesight':'Dono della Vista Autentica',
+      },
     }
   }
 };
@@ -1004,7 +1040,7 @@ const BASE = {
   weapons:'Weapons', damageCol:'Damage', attackCol:'Attack', propertiesCol:'Properties',
   equipTitle:'Equipment', itemCol:'Item', notesCol:'Notes',
    addWeapon:'＋ Add Weapon', addItem:'＋ Add Item', addSkill:'＋ Add Skill',
-   addSpell:'＋ Add Spell', addFeature:'＋ Add Section',
+   addSpell:'＋ Add Spell', addFeature:'＋ Add Feature',
    addSlot:'＋ Add Slot',
    addTracker:'＋ Add Tracker', addAction:'＋ Add Action', addCondition:'＋ Add Condition',
    tracker:'Tracker', action:'Action', trackers:'Trackers',
@@ -1012,7 +1048,7 @@ const BASE = {
    actionHint:'Quick-reference buttons in the game panel for actions you use often in combat.',
    addAlgoBlock:'＋ Add Block',
    custom:'Custom…', customPh:'Type a custom value',
-   sidebarEmpty:'Sidebar is empty. Enable edit mode (✏️) to add sections.',
+   sidebarEmpty:'Sidebar is empty. Enable edit mode (✏️) to add features.',
    editBtn:'✏️', delBtn:'🗑',
    langToggle:'🇮🇹 IT',
   splashSub:'Interactive Character Sheet — D&D 2024',
@@ -1109,13 +1145,20 @@ const BASE = {
   gsAddWeapon:'⚔️ Add Weapon', gsAddEquip:'🎒 Add Equipment', gsAddFeature:'📋 Add Feature',
   gsAddSpell:'✨ Add Spell', gsSetupMagic:'✨ Set Up Spellcasting', gsDismiss:'I\'m all set — dismiss this card',
   wiz_levelUp_title:'Level Up', wiz_levelUp_step1:'HP Increase', wiz_levelUp_step2:'Checklist',
+  wiz_levelUp_step_asi:'Ability Score Improvement',
   wiz_levelUp_hpGain:'HP gained', wiz_levelUp_avg:'Average', wiz_levelUp_useAvgCheck:'Use average HP instead of rolling',
   hint_levelUp_hpGain:'Roll your hit die + CON modifier, or check "Use average" to auto-fill.',
+  wiz_levelUp_asiMode_one:'+2 to One Ability', wiz_levelUp_asiMode_two:'+1/+1 to Two Abilities', wiz_levelUp_asiMode_feat:'Take a Feat',
+  wiz_levelUp_asiPlus2Label:'Choose ability to improve by +2',
+  wiz_levelUp_asiPlus1aLabel:'First ability (+1)', wiz_levelUp_asiPlus1bLabel:'Second ability (+1)',
+  wiz_levelUp_asiFeatLabel:'Feat to take',
+  wiz_levelUp_asiSameError:'Choose two different abilities',
+  hint_levelUp_asi:'At this level you can improve your ability scores or take a feat instead.',
   lu_check_features:'Review new class features for this level',
   lu_check_spells:'Add any new spells you\'ve learned',
   lu_check_slots:'Update your spell slots if they changed',
   lu_check_pb:'Proficiency Bonus increased to +{PB} — update attack bonuses, skills, saves',
-  lu_check_asis:'Check for Ability Score Improvements or Feats (levels 4, 8, 12, 16, 19)',
+  lu_check_feat:'Add your new feat as a feature: {FEAT}',
   lu_remindersDesc:'Close this wizard and work through these reminders before your next session:',
   lu_cardTitle:'⬆️ Level {N} — To Do', lu_cardSub:'Check items off as you complete them.',
   lu_dismiss:'All done — dismiss',
@@ -1254,8 +1297,8 @@ const BASE = {
   wiz_ph_languages:'E.g. Common, Dwarvish',
   wiz_ph_attackBonus:'+5',
   wiz_ph_trackerID:'bardic_inspiration',
-  hint_featureTitle:'The name shown as the section heading.',
-  hint_featureEmoji:'Shown before the title in the section heading.',
+  hint_featureTitle:'The name shown as the feature heading.',
+  hint_featureEmoji:'Shown before the title in the feature heading.',
   hint_featureSubtitle:'Short description shown below the title.',
   hint_featureSource:'Where this feature comes from (class, race, feat, etc.).',
   // Wizard hints — char create
@@ -1401,8 +1444,8 @@ const TRANSLATIONS = {
     scaling:'Progressione', none:'nessuna',
     weapons:'Armi', damageCol:'Danno', attackCol:'Attacco', propertiesCol:'Proprietà',
     equipTitle:'Equipaggiamento', itemCol:'Oggetto', notesCol:'Note',
-    addWeapon:'＋ Aggiungi arma', addItem:'＋ Aggiungi oggetto', addSkill:'＋ Aggiungi abilità',
-    addSpell:'＋ Aggiungi incantesimo', addFeature:'＋ Aggiungi sezione',
+    addWeapon:'＋ Aggiungi Arma', addItem:'＋ Aggiungi Oggetto', addSkill:'＋ Aggiungi abilità',
+    addSpell:'＋ Aggiungi Incantesimo', addFeature:'＋ Aggiungi Capacità',
     addSlot:'＋ Aggiungi slot',
     addTracker:'＋ Aggiungi tracker', addAction:'＋ Aggiungi azione', addCondition:'＋ Aggiungi condizione',
     tracker:'Tracker', action:'Azione', trackers:'Tracker',
@@ -1410,7 +1453,7 @@ const TRANSLATIONS = {
     actionHint:'Pulsanti di riferimento rapido nel pannello di gioco per azioni usate spesso in combattimento.',
     addAlgoBlock:'＋ Aggiungi blocco',
     custom:'Personalizzato…', customPh:'Inserisci un valore personalizzato',
-    sidebarEmpty:'Sidebar vuota. Abilita modalità modifica (✏️) per aggiungere sezioni.',
+    sidebarEmpty:'Sidebar vuota. Abilita modalità modifica (✏️) per aggiungere capacità.',
     editBtn:'✏️', delBtn:'🗑',
       langToggle:'🇬🇧 EN', editMode:'✏️ Modifica Scheda', editDone:'✓ Fine Modifica',
     splashSub:'Scheda Personaggio Interattiva — D&D 2024',
@@ -1520,16 +1563,23 @@ const TRANSLATIONS = {
     editBaseData:'Dati Base', editSkills:'Abilità', editMagic:'Magia', setupMagic:'＋ Configura Magia', showAlgorithm:'＋ Mostra Algoritmo',
     editBannerLabel:'✏️ Modifica in corso', editBannerDone:'Fatto ✓',
     gsTitle:'🎉 Personaggio creato!', gsDesc:'Ecco alcune azioni rapide per iniziare. Ognuna apre il wizard corrispondente.',
-    gsAddWeapon:'⚔️ Aggiungi arma', gsAddEquip:'🎒 Aggiungi equipaggiamento', gsAddFeature:'📋 Aggiungi caratteristica',
-    gsAddSpell:'✨ Aggiungi incantesimo', gsSetupMagic:'✨ Configura magia', gsDismiss:'Sono pronto — chiudi questa scheda',
+    gsAddWeapon:'⚔️ Aggiungi Arma', gsAddEquip:'🎒 Aggiungi Equipaggiamento', gsAddFeature:'📋 Aggiungi Capacità',
+    gsAddSpell:'✨ Aggiungi Incantesimo', gsSetupMagic:'✨ Configura magia', gsDismiss:'Sono pronto — chiudi questa scheda',
     wiz_levelUp_title:'Sali di Livello', wiz_levelUp_step1:'Aumento PF', wiz_levelUp_step2:'Lista di controllo',
+    wiz_levelUp_step_asi:'Miglioramento Caratteristica',
     wiz_levelUp_hpGain:'PF guadagnati', wiz_levelUp_avg:'Media', wiz_levelUp_useAvgCheck:'Usa la media PF invece di tirare',
     hint_levelUp_hpGain:'Tira il tuo dado vita + modificatore COS, oppure spunta "Usa media" per compilare automaticamente.',
+    wiz_levelUp_asiMode_one:'+2 a Una Caratteristica', wiz_levelUp_asiMode_two:'+1/+1 a Due Caratteristiche', wiz_levelUp_asiMode_feat:'Scegli un\'Impresa',
+    wiz_levelUp_asiPlus2Label:'Scegli la caratteristica da migliorare di +2',
+    wiz_levelUp_asiPlus1aLabel:'Prima caratteristica (+1)', wiz_levelUp_asiPlus1bLabel:'Seconda caratteristica (+1)',
+    wiz_levelUp_asiFeatLabel:'Impresa da scegliere',
+    wiz_levelUp_asiSameError:'Scegli due caratteristiche diverse',
+    hint_levelUp_asi:'A questo livello puoi migliorare i punteggi di caratteristica o scegliere un\'impresa.',
     lu_check_features:'Controlla le nuove capacità di classe per questo livello',
     lu_check_spells:'Aggiungi eventuali nuovi incantesimi appresi',
     lu_check_slots:'Aggiorna gli slot incantesimo se sono cambiati',
     lu_check_pb:'Il Bonus di Competenza è salito a +{PB} — aggiorna tiri di attacco, abilità, tiri salvezza',
-    lu_check_asis:'Controlla Miglioramenti dei Punteggi di Caratteristica o Talenti (livelli 4, 8, 12, 16, 19)',
+    lu_check_feat:'Aggiungi la tua nuova impresa come capacità: {FEAT}',
     lu_remindersDesc:'Chiudi questo wizard e completa questi promemoria prima della prossima sessione:',
     lu_cardTitle:'⬆️ Livello {N} — Da fare', lu_cardSub:'Spunta le voci man mano che le completi.',
     lu_dismiss:'Tutto fatto — chiudi',
@@ -1645,8 +1695,8 @@ const TRANSLATIONS = {
     wiz_ph_languages:'Es. Comune, Nanico',
     wiz_ph_attackBonus:'+5',
     wiz_ph_trackerID:'bardic_inspiration',
-    hint_featureTitle:'Il nome mostrato come titolo della sezione.',
-    hint_featureEmoji:'Mostrata prima del titolo nella sezione.',
+    hint_featureTitle:'Il nome mostrato come titolo della capacità.',
+    hint_featureEmoji:'Mostrata prima del titolo nella capacità.',
     hint_featureSubtitle:'Breve descrizione sotto il titolo.',
     hint_featureSource:'Da dove viene questa capacità (classe, razza, talento, ecc.).',
     hint_quote:'Una breve frase o motto mostrato sotto il nome del personaggio.',
@@ -1903,6 +1953,7 @@ function renderFAB(){
   const items=[];
   items.push({label:T('fabLevelUp'),fn:"openWizard('level-up');closeFAB()"});
   items.push({label:T('addFeature'),fn:"addFeature();closeFAB()"});
+  items.push({label:T('addWeapon'),fn:"addWeapon();closeFAB()"});
   items.push({label:T('addItem'),fn:"addEquip();closeFAB()"});
   if(CHAR.spellcasting?.ability){
     items.push({label:T('addSpell'),fn:"addSpell(0);closeFAB()"});
@@ -2504,13 +2555,13 @@ function buildPanelBottom(){
   return condSection+restsLog+actionsCard+sessionCard+notesCard;
 }
 // ═══════════════ RENDER SECTIONS ═══════════════
-function buildLevelUpChecks(C,newLv,pbChanged,isCaster){
+function buildLevelUpChecks(C,newLv,pbChanged,isCaster,featName){
   return [
     T('lu_check_features'),
     isCaster?T('lu_check_spells'):null,
     isCaster?T('lu_check_slots'):null,
     pbChanged?T('lu_check_pb').replace('{PB}',computedPB(newLv)):null,
-    T('lu_check_asis'),
+    featName?T('lu_check_feat').replace('{FEAT}',dndTr('feats',featName)):null,
   ].filter(Boolean);
 }
 function renderLevelUpChecklist(){
@@ -3322,6 +3373,10 @@ function openWizard(configKey, editIdx=null, prefill={}){
   WIZ_KEY=configKey;
   WIZ_CONFIG=WIZARDS[configKey];
   if(!WIZ_CONFIG){console.error('Unknown wizard:',configKey);return;}
+  // Allow wizards to compute steps dynamically at open time
+  if(typeof WIZ_CONFIG._buildSteps==='function'){
+    WIZ_CONFIG=Object.assign({},WIZ_CONFIG,{steps:WIZ_CONFIG._buildSteps()});
+  }
   WIZ_STEP=0; WIZ_EDIT_IDX=editIdx; WIZ_DATA={...prefill};
   WIZ_BLOCKS=(prefill.contentBlocks||[]).map(b=>JSON.parse(JSON.stringify(b)));
   WIZ_ALGO_STEPS=[...(prefill.steps||[])];
@@ -4143,6 +4198,68 @@ function bgAsiToggleMode(){
   WIZ_DATA._bgAsiMode=WIZ_DATA._bgAsiMode==='three'?'two':'three';
   renderWizardStep();
 }
+// ── Level-Up ASI step helpers ──
+function renderLevelUpAsiStep(data){
+  const C=CHAR||{};
+  const scores=finalScores(C);
+  const mode=data._luAsiMode||'one';
+  const newLv=(C.level||1)+1;
+  const sel='width:100%;margin-top:4px;padding:4px 6px;background:var(--input-bg);color:var(--text);border:1px solid var(--border-light);border-radius:4px;';
+  // Filter out abilities already at 20
+  const available=DND.abilities.filter(a=>(scores[a]||10)<20);
+  const abilOpts=(picked)=>available.map(a=>`<option value="${a}"${picked===a?' selected':''}>${abilityShortName(a)} (${scores[a]||10}→${(scores[a]||10)+(mode==='one'?2:1)})</option>`).join('');
+  let body='';
+  if(mode==='one'){
+    body=`<div style="margin-top:8px;"><label><strong>+2</strong> — ${T('wiz_levelUp_asiPlus2Label')}</label>
+      <select id="wf-luAsi1" style="${sel}" onchange="luAsiChange()"><option value="">—</option>${abilOpts(data._luAsi1)}</select></div>`;
+  } else if(mode==='two'){
+    body=`<div style="margin-top:8px;"><label><strong>+1</strong> — ${T('wiz_levelUp_asiPlus1aLabel')}</label>
+      <select id="wf-luAsi1" style="${sel}" onchange="luAsiChange()"><option value="">—</option>${abilOpts(data._luAsi1)}</select></div>
+    <div style="margin-top:10px;"><label><strong>+1</strong> — ${T('wiz_levelUp_asiPlus1bLabel')}</label>
+      <select id="wf-luAsi2" style="${sel}" onchange="luAsiChange()"><option value="">—</option>${abilOpts(data._luAsi2)}</select></div>`;
+  } else {
+    const featOpts=DND.commonFeats.map(f=>`<option value="${f}"${data._luFeat===f?' selected':''}>${dndTr('feats',f)}</option>`).join('');
+    const isCustom=data._luFeat && !DND.commonFeats.includes(data._luFeat);
+    body=`<div style="margin-top:8px;"><label><strong>${T('wiz_levelUp_asiFeatLabel')}</strong></label>
+      <select id="wf-luFeat" style="${sel}" onchange="luAsiChange()">
+        <option value="">—</option>${featOpts}<option value="_custom"${isCustom?' selected':''}>${T('custom')}…</option>
+      </select>
+      <input type="text" id="wf-luFeat-custom" placeholder="${T('custom')}…"
+        style="${sel}margin-top:6px;${isCustom?'':'display:none;'}" value="${isCustom?data._luFeat:''}" oninput="luAsiChange()">
+    </div>`;
+  }
+  const modes=[
+    {k:'one',l:T('wiz_levelUp_asiMode_one')},
+    {k:'two',l:T('wiz_levelUp_asiMode_two')},
+    {k:'feat',l:T('wiz_levelUp_asiMode_feat')},
+  ];
+  const btns=modes.map(m=>`<button class="ab-mode${mode===m.k?' active':''}" style="margin:2px;" onclick="luAsiToggleMode('${m.k}')">${m.l}</button>`).join('');
+  return `<div class="ab-widget">
+    <div class="ab-header"><div style="font-weight:bold;">⬆️ ${T('wiz_levelUp_title')} → ${newLv}</div></div>
+    <div style="margin:8px 0;">${btns}</div>${body}
+  </div>`;
+}
+function luAsiChange(){
+  const s1=document.getElementById('wf-luAsi1');
+  const s2=document.getElementById('wf-luAsi2');
+  const sf=document.getElementById('wf-luFeat');
+  const sc=document.getElementById('wf-luFeat-custom');
+  if(s1) WIZ_DATA._luAsi1=s1.value;
+  if(s2) WIZ_DATA._luAsi2=s2.value;
+  if(sf){
+    if(sf.value==='_custom'){
+      if(sc){sc.style.display='';WIZ_DATA._luFeat=sc.value;}
+    } else {
+      if(sc) sc.style.display='none';
+      WIZ_DATA._luFeat=sf.value;
+    }
+  }
+}
+function luAsiToggleMode(mode){
+  luAsiChange();
+  WIZ_DATA._luAsiMode=mode;
+  renderWizardStep();
+}
 // Helpers
 function abilityOpts(){ return DND.abilities.map(a=>({v:a,l:abilityShortName(a)})); }
 function schoolOpts(){ return DND.schools.map(s=>({v:s,l:dndTr('schools',s)||s})); }
@@ -4724,46 +4841,93 @@ const WIZARDS = {
 },
 'level-up':{
   title:'wiz_levelUp_title',
-  steps:[
-    {label:'wiz_levelUp_step1',fields:[
+  _buildSteps(){
+    const C=CHAR||{};
+    const newLv=(C.level||1)+1;
+    const isAsiLv=[4,8,12,16,19].includes(newLv);
+    // Step 0: HP
+    const hpStep={label:'wiz_levelUp_step1',fields:[
       {id:'hpGain',label:'wiz_levelUp_hpGain',type:'number',min:0,required:true,hint:'hint_levelUp_hpGain'},
       {id:'useAverage',label:'wiz_levelUp_step1',type:'checkbox',checkLabel:'wiz_levelUp_useAvgCheck'},
-    ],
-     _afterRender(){
-       const C=CHAR||{}; const die=C.hitDieType||8;
-       const conMod=abilityMod(finalScores(C).CON||10);
-       const avg=Math.floor(die/2)+1+conMod;
-       const hdModStr=conMod>=0?`+${conMod}`:String(conMod);
-       const hintEl=document.querySelector('#wf-hpGain')?.closest('.wiz-field')?.querySelector('.field-hint');
-       if(hintEl) hintEl.textContent=`1d${die}${hdModStr} | ${T('wiz_levelUp_avg')}: ${Math.max(1,avg)}`;
-        const cb=document.getElementById('wf-useAverage');
-        const inp=document.getElementById('wf-hpGain');
-        if(cb&&inp){
-          cb.checked=true; inp.value=Math.max(1,avg);
-          cb.addEventListener('change',()=>{if(cb.checked) inp.value=Math.max(1,avg);});
+    ],_afterRender(){
+      const die=C.hitDieType||8;
+      const conMod=abilityMod(finalScores(C).CON||10);
+      const avg=Math.floor(die/2)+1+conMod;
+      const hdModStr=conMod>=0?`+${conMod}`:String(conMod);
+      const hintEl=document.querySelector('#wf-hpGain')?.closest('.wiz-field')?.querySelector('.field-hint');
+      if(hintEl) hintEl.textContent=`1d${die}${hdModStr} | ${T('wiz_levelUp_avg')}: ${Math.max(1,avg)}`;
+      const cb=document.getElementById('wf-useAverage');
+      const inp=document.getElementById('wf-hpGain');
+      if(cb&&inp){
+        cb.checked=true; inp.value=Math.max(1,avg);
+        cb.addEventListener('change',()=>{if(cb.checked) inp.value=Math.max(1,avg);});
+      }
+    }};
+    // Step 1 (conditional): ASI
+    const asiStep={label:'wiz_levelUp_step_asi',
+      _renderStep(data){return renderLevelUpAsiStep(data);},
+      _collectData(data){
+        const s1=document.getElementById('wf-luAsi1');
+        const s2=document.getElementById('wf-luAsi2');
+        const sf=document.getElementById('wf-luFeat');
+        const sc=document.getElementById('wf-luFeat-custom');
+        if(s1) data._luAsi1=s1.value;
+        if(s2) data._luAsi2=s2.value;
+        if(sf) data._luFeat=(sf.value==='_custom')?(sc?.value||''):sf.value;
+      },
+      _validateStep(data){
+        const mode=data._luAsiMode||'one';
+        if(mode==='one'&&!data._luAsi1) return T('wizRequired');
+        if(mode==='two'){
+          if(!data._luAsi1||!data._luAsi2) return T('wizRequired');
+          if(data._luAsi1===data._luAsi2) return T('wiz_levelUp_asiSameError');
         }
-     }},
-    {label:'wiz_levelUp_step2',fields:[],
-     _renderStep(){
-       const C=CHAR||{}; const newLv=(C.level||1)+1;
-       const pbChanged=computedPB(newLv)!==computedPB(C.level||1);
-       const isCaster=!!(C.spellcasting?.ability);
-       const checks=buildLevelUpChecks(C,newLv,pbChanged,isCaster);
-       return `<p style="color:var(--accent);font-weight:700;font-size:1.1em;margin:0 0 6px;">⬆️ Level ${C.level||1} → ${newLv}</p>`
-         +`<p style="color:var(--text-muted);font-size:.88em;margin:0 0 14px;">${T('lu_remindersDesc')}</p>`
-         +checks.map(c=>`<div style="padding:7px 0;border-bottom:1px solid var(--border-light);font-size:.92em;">→ ${c}</div>`).join('');
-     }}
-  ],
+        if(mode==='feat'&&!data._luFeat) return T('wizRequired');
+        return null;
+      }
+    };
+    // Last step: checklist preview
+    const checkStep={label:'wiz_levelUp_step2',fields:[],
+      _renderStep(){
+        const newLv2=(C.level||1)+1;
+        const pbChanged=computedPB(newLv2)!==computedPB(C.level||1);
+        const isCaster=!!(C.spellcasting?.ability);
+        const featName=(WIZ_DATA._luAsiMode||'one')==='feat'?WIZ_DATA._luFeat:null;
+        const checks=buildLevelUpChecks(C,newLv2,pbChanged,isCaster,featName);
+        return `<p style="color:var(--accent);font-weight:700;font-size:1.1em;margin:0 0 6px;">⬆️ Level ${C.level||1} → ${newLv2}</p>`
+          +`<p style="color:var(--text-muted);font-size:.88em;margin:0 0 14px;">${T('lu_remindersDesc')}</p>`
+          +checks.map(c=>`<div style="padding:7px 0;border-bottom:1px solid var(--border-light);font-size:.92em;">→ ${c}</div>`).join('');
+      }
+    };
+    const steps=[hpStep];
+    if(isAsiLv) steps.push(asiStep);
+    steps.push(checkStep);
+    return steps;
+  },
   onSave(d){
     const gain=Math.max(0,+d.hpGain||0);
     CHAR.level=(CHAR.level||1)+1;
     if(!CHAR.hp) CHAR.hp={max:10};
     CHAR.hp.max=(CHAR.hp.max||10)+gain;
     if(SESSION?.hp) SESSION.hp.current=Math.min(CHAR.hp.max+(SESSION.hp.aidBonus||0),(SESSION.hp.current||0)+gain);
+    // Apply ASI immediately if this was an ASI level
+    let featName=null;
+    if([4,8,12,16,19].includes(CHAR.level)){
+      const mode=d._luAsiMode||'one';
+      if(!CHAR.abilityScores) CHAR.abilityScores={};
+      if(mode==='one'&&d._luAsi1){
+        CHAR.abilityScores[d._luAsi1]=Math.min(20,(CHAR.abilityScores[d._luAsi1]||10)+2);
+      } else if(mode==='two'){
+        if(d._luAsi1) CHAR.abilityScores[d._luAsi1]=Math.min(20,(CHAR.abilityScores[d._luAsi1]||10)+1);
+        if(d._luAsi2) CHAR.abilityScores[d._luAsi2]=Math.min(20,(CHAR.abilityScores[d._luAsi2]||10)+1);
+      } else if(mode==='feat'){
+        featName=d._luFeat||null;
+      }
+    }
     addLog(T('logLevelUp').replace('{N}',CHAR.level)+(gain?` +${gain} ${T('hpAbbr')}`:''),'log-heal');
     const pbChanged=computedPB(CHAR.level)!==computedPB(CHAR.level-1);
     const isCaster=!!(CHAR.spellcasting?.ability);
-    CHAR.levelUpChecklist=buildLevelUpChecks(CHAR,CHAR.level,pbChanged,isCaster)
+    CHAR.levelUpChecklist=buildLevelUpChecks(CHAR,CHAR.level,pbChanged,isCaster,featName)
       .map(text=>({text,done:false}));
   }
 },
