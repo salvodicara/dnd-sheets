@@ -1,0 +1,39 @@
+index.html
+  8b5e9874fa901296 615-634,883-923,925-931,1026-1032,1034-1055,1062-1066,1270,1485-1493,1593,1885-1893,4261-4262,4323,4325,4344,4393-4480,4551-4559,4666-4672,5064,5067,5199-5200
+  s_8b5e9874fa9012::t_8b0447473aa1e8 4253,4255-4256,4258,4279-4282,4286
+CHANGELOG.md
+  8b5e9874fa901296 8-40
+examples/catalion_di_sancaldo_bard_3_2026-05-06.json
+  8b5e9874fa901296 12
+DESIGN.md
+  8b5e9874fa901296 11,470-486,665,719
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.4.1",
+  "base_commit_sha": "e93c2cd830e2ab9fea180ede7d411dd556f1bdf6",
+  "prompts": {
+    "8b5e9874fa901296": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_201d443eeffegKKu95gxavPufC",
+        "model": "github-copilot/claude-sonnet-4.6"
+      },
+      "human_author": "Salvatore Di Cara <salvodicara@gmail.com>",
+      "total_additions": 288,
+      "total_deletions": 61,
+      "accepted_lines": 288,
+      "overriden_lines": 0
+    }
+  },
+  "sessions": {
+    "s_8b5e9874fa9012": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_201d443eeffegKKu95gxavPufC",
+        "model": "claude-sonnet-4.6"
+      },
+      "human_author": "Salvatore Di Cara <salvodicara@gmail.com>"
+    }
+  }
+}
