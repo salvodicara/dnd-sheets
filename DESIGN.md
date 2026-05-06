@@ -8,7 +8,7 @@
 - **v0 (Complete):** Core character sheet, wizard system, i18n skeleton, dark/light themes
 - **v1 (Complete):** UX overhaul, i18n completion, sidebar architecture, smart features, D&D 2024 parity
 - **v1.2 (Complete):** UI redesign (gold/navy palette, header polish), mobile UX, UX polish
-- **v1.1 (In Progress):** Full level-up wizard (ASI step ✅), class feature tables, feat database
+- **v1.1 (Complete):** Full level-up wizard (ASI step ✅), feat database with searchable picker ✅, origin feat step in char-create wizard ✅
 
 ---
 
@@ -467,17 +467,23 @@ Done:
 - FAB: "＋ Add Weapon" added between "＋ Add Feature" and "＋ Add Item"
 - i18n: all Italian "Aggiungi X" labels use capital nouns (Arma, Oggetto, Incantesimo, Equipaggiamento, Capacità) for consistency
 
-### Full Level-Up Wizard (v1.1 — remaining)
-- Auto-suggest class features based on class + level (requires Class Feature Tables below)
+### Feat Database (v1.1 — Complete)
+- All 75 D&D 2024 PHB feats: 10 Origin, 43 General, 10 Fighting Style, 12 Epic Boon
+- `DND.feats` — array of `{name, type}` objects replacing old `DND.commonFeats` flat array
+- `DND.backgroundFeats` — maps each of the 16 PHB backgrounds to its fixed origin feat
+- Searchable feat picker (`renderFeatPicker({id, context, selected})`) with type filter pills and free-text search
+- Context modes: `'origin'` (origin feats only), `'general'` (general + fighting style), `'asi-19'` (general + fighting style + epic boon)
+- Used in: ASI wizard step (level-up), origin feat step (char-create)
+- Italian translations for all 75 feats in `DND.tr.it.feats`
 
-### Class Feature Tables
-- Priority classes: Bard, Monk, Barbarian, Paladin, Rogue, Wizard
-- Data: CLASS_FEATURES[className][level] = [{name, description, type}]
-- Source: http://dnd2024.wikidot.com/
-
-### Feat Database
-- All D&D 2024 feats (General, Origin, Fighting Style, Epic Boon)
-- Searchable picker during ASI/feat choice (replaces current hardcoded `DND.commonFeats` list)
+### Origin Feat Step in Char-Create (v1.1 — Complete)
+- New step `wiz_step_originFeat` inserted after Background ASI step
+- Known background: shows locked info card (background name + feat name) with hidden input auto-set
+- Custom background: shows feat picker (origin context) for manual selection
+- Human race: shows second picker for the Versatile bonus origin feat
+- On save: builds `levelUpChecklist` entries (one per origin feat) as reminders to add as features
+- Human second feat stored in `CHAR.humanOriginFeat` for prefill on edit
+- `flattenChar()` exposes `_originFeat2` from `CHAR.humanOriginFeat`
 
 ---
 
@@ -656,7 +662,7 @@ Done:
 | 48 | Spell sidebar sub-links | Auto-generated per spell level |
 | 49 | Backward compat | Required — app is deployed, users have saved JSON. New fields OK with defaults, never remove/rename existing fields. Migrate in syncSession()/ensureSidebar() if needed. |
 | 50 | No redundancy | Auto-compute + override everywhere |
-| 51 | v1.1 class tables | Bard, Monk, Barbarian, Paladin, Rogue, Wizard |
+| 51 | v1.1 class tables | Dropped from scope — no value vs. wiki reference |
 | 52 | English canonical D&D names | Stored in English, localized via dndTr() at display time |
 | 53 | select-or-custom field type | Fixed list + "Custom..." option for homebrew in wizards |
 | 54 | Feature trackers/actions | Arrays (plural) with per-entry label+emoji, not singular |
@@ -710,7 +716,7 @@ Done:
 | 102 | Aid HP mechanics | `setAidBonus()` grants/clamps `hp.current` by delta per D&D 2024; Aid raises both max AND current HP |
 | 103 | AI weapons vs equipment | Explicit CRITICAL rule in both `getSys()` and `sysShort`: weapons (attack roll + damage dice) → `weapons[]`, never `equipment[]` |
 | 104 | Level-up ASI application | ASI boost applied immediately to `CHAR.abilityScores` on save; feat name goes to checklist as manual reminder |
-| 105 | Feat picker (v1.1) | `select-or-custom` with hardcoded `DND.commonFeats` list (44 feats); full searchable database is a follow-on phase |
+| 105 | Feat picker (v1.1) | `renderFeatPicker({id,context,selected})` — searchable, type-filtered; `DND.feats` array of 75 feats by type; `DND.backgroundFeats` maps background→feat |
 | 106 | Feat name localization | Stored as English canonical in data; displayed via `dndTr('feats', name)` — same pattern as classes/races/masteryDesc |
 | 107 | `_buildSteps` wizard hook | Wizards implement `_buildSteps()` to compute step array dynamically at `openWizard()` time; engine shallow-clones config with new steps |
 | 108 | FAB weapon entry | "＋ Add Weapon" added to FAB between Feature and Item; FAB order: Level Up → Feature → Weapon → Item → Spell (casters only) |

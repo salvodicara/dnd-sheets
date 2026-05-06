@@ -612,6 +612,26 @@ body.edit-mode::after{content:'';position:fixed;inset:0;pointer-events:none;box-
 .ab-mode{font-size:.82em;color:var(--accent);cursor:pointer;background:none;
   border:1px solid var(--border-light);border-radius:5px;padding:3px 10px;transition:all .15s;}
 .ab-mode:hover{border-color:var(--accent);}
+/* ═══════════════ FEAT PICKER ═══════════════ */
+.feat-picker{border:1px solid var(--border-light);border-radius:8px;padding:8px;background:var(--bg-card2);margin-top:4px;}
+.fp-type-pills{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:8px;}
+.fp-pill{padding:3px 10px;border-radius:5px;border:1px solid var(--border-light);
+  background:var(--bg-card);color:var(--text-muted);font-size:.78em;cursor:pointer;transition:all .15s;}
+.fp-pill.active{border-color:var(--accent);color:var(--accent);background:var(--accent-dim);}
+.feat-picker-search{width:100%;box-sizing:border-box;padding:5px 8px;background:var(--bg-input);
+  border:1px solid var(--border-light);color:var(--text);border-radius:5px;font-size:.85em;margin-bottom:6px;}
+.feat-picker-search:focus{border-color:var(--accent);outline:none;}
+.feat-picker-list{max-height:180px;overflow-y:auto;border:1px solid var(--border-light);
+  border-radius:5px;background:var(--bg-card);}
+.feat-picker-item{padding:5px 10px;cursor:pointer;font-size:.88em;color:var(--text-muted);
+  border-bottom:1px solid var(--border-light);transition:background .1s;}
+.feat-picker-item:last-child{border-bottom:none;}
+.feat-picker-item:hover{background:var(--bg-card2);color:var(--text);}
+.feat-picker-item.fp-selected{background:var(--accent-dim);color:var(--accent);font-weight:600;}
+.feat-picker-custom-input{width:100%;box-sizing:border-box;margin-top:6px;padding:5px 8px;
+  background:var(--bg-input);border:1px solid var(--border-light);color:var(--text);
+  border-radius:5px;font-size:.85em;}
+.feat-picker-custom-input:focus{border-color:var(--accent);outline:none;}
 /* ═══════════════ INSPIRATION / EXHAUSTION / CURRENCY ═══════════════ */
 .inspiration-btn{width:100%;padding:6px 10px;border-radius:8px;border:1.5px solid var(--border-light);
   background:var(--bg-card2);color:var(--text-muted);font-size:.88em;cursor:pointer;
@@ -860,19 +880,55 @@ const DND = {
   casterAbility:{ Bard:'CHA',Cleric:'WIS',Druid:'WIS',Paladin:'CHA',Ranger:'WIS',Sorcerer:'CHA',Warlock:'CHA',Wizard:'INT' },
   // Prepared casters prepare spells daily; others always have their spells available.
   preparedCasters:['Cleric','Druid','Paladin','Ranger','Wizard'],
-  // D&D 2024 PHB general feats (level 4/8/12/16 choices) + Epic Boons (level 19)
-  commonFeats:[
-    'Actor','Alert','Athlete','Charger','Chef','Crossbow Expert','Crusher',
-    'Defensive Duelist','Dual Wielder','Durable','Elemental Adept','Grappler',
-    'Great Weapon Master','Healer','Heavily Armored','Heavy Armor Master',
-    'Inspiring Leader','Lucky','Mage Slayer','Magic Initiate','Martial Adept',
-    'Mobile','Mounted Combatant','Observant','Polearm Master','Resilient',
-    'Ritual Caster','Savage Attacker','Sentinel','Sharpshooter','Shield Master',
-    'Skill Expert','Skilled','Tough','War Caster','Weapon Master',
-    'Boon of Combat Prowess','Boon of Dimensional Travel','Boon of Energy Resistance',
-    'Boon of Fate','Boon of Fortitude','Boon of Irresistible Offense',
-    'Boon of Speed','Boon of Truesight',
+  // D&D 2024 PHB feats by type
+  feats:[
+    // Origin (10)
+    {name:'Alert',type:'origin'},{name:'Crafter',type:'origin'},{name:'Healer',type:'origin'},
+    {name:'Lucky',type:'origin'},{name:'Magic Initiate',type:'origin'},{name:'Musician',type:'origin'},
+    {name:'Savage Attacker',type:'origin'},{name:'Skilled',type:'origin'},
+    {name:'Tavern Brawler',type:'origin'},{name:'Tough',type:'origin'},
+    // General (43)
+    {name:'Actor',type:'general'},{name:'Athlete',type:'general'},{name:'Charger',type:'general'},
+    {name:'Chef',type:'general'},{name:'Crossbow Expert',type:'general'},{name:'Crusher',type:'general'},
+    {name:'Defensive Duelist',type:'general'},{name:'Dual Wielder',type:'general'},
+    {name:'Durable',type:'general'},{name:'Elemental Adept',type:'general'},
+    {name:'Fey Touched',type:'general'},{name:'Grappler',type:'general'},
+    {name:'Great Weapon Master',type:'general'},{name:'Heavily Armored',type:'general'},
+    {name:'Heavy Armor Master',type:'general'},{name:'Inspiring Leader',type:'general'},
+    {name:'Keen Mind',type:'general'},{name:'Lightly Armored',type:'general'},
+    {name:'Mage Slayer',type:'general'},{name:'Martial Weapon Training',type:'general'},
+    {name:'Medium Armor Master',type:'general'},{name:'Moderately Armored',type:'general'},
+    {name:'Mounted Combatant',type:'general'},{name:'Observant',type:'general'},
+    {name:'Piercer',type:'general'},{name:'Poisoner',type:'general'},
+    {name:'Polearm Master',type:'general'},{name:'Resilient',type:'general'},
+    {name:'Ritual Caster',type:'general'},{name:'Sentinel',type:'general'},
+    {name:'Shadow Touched',type:'general'},{name:'Sharpshooter',type:'general'},
+    {name:'Shield Master',type:'general'},{name:'Skill Expert',type:'general'},
+    {name:'Skulker',type:'general'},{name:'Slasher',type:'general'},
+    {name:'Speedy',type:'general'},{name:'Spell Sniper',type:'general'},
+    {name:'Telekinetic',type:'general'},{name:'Telepathic',type:'general'},
+    {name:'War Caster',type:'general'},{name:'Weapon Master',type:'general'},
+    // Fighting Style (10)
+    {name:'Archery',type:'fightingStyle'},{name:'Blind Fighting',type:'fightingStyle'},
+    {name:'Defense',type:'fightingStyle'},{name:'Dueling',type:'fightingStyle'},
+    {name:'Great Weapon Fighting',type:'fightingStyle'},{name:'Interception',type:'fightingStyle'},
+    {name:'Protection',type:'fightingStyle'},{name:'Thrown Weapon Fighting',type:'fightingStyle'},
+    {name:'Two Weapon Fighting',type:'fightingStyle'},{name:'Unarmed Fighting',type:'fightingStyle'},
+    // Epic Boon (12)
+    {name:'Boon of Combat Prowess',type:'epicBoon'},{name:'Boon of Dimensional Travel',type:'epicBoon'},
+    {name:'Boon of Energy Resistance',type:'epicBoon'},{name:'Boon of Fate',type:'epicBoon'},
+    {name:'Boon of Fortitude',type:'epicBoon'},{name:'Boon of Irresistible Offense',type:'epicBoon'},
+    {name:'Boon of Recovery',type:'epicBoon'},{name:'Boon of Skill',type:'epicBoon'},
+    {name:'Boon of Speed',type:'epicBoon'},{name:'Boon of Spell Recall',type:'epicBoon'},
+    {name:'Boon of the Night Spirit',type:'epicBoon'},{name:'Boon of Truesight',type:'epicBoon'},
   ],
+  // Background → fixed origin feat (D&D 2024 PHB)
+  backgroundFeats:{
+    Acolyte:'Magic Initiate',Artisan:'Crafter',Charlatan:'Skilled',Criminal:'Alert',
+    Entertainer:'Musician',Farmer:'Tough',Guard:'Alert',Guide:'Magic Initiate',
+    Hermit:'Healer',Merchant:'Lucky',Noble:'Skilled',Sage:'Magic Initiate',
+    Sailor:'Tavern Brawler',Scribe:'Skilled',Soldier:'Savage Attacker',Wayfarer:'Lucky',
+  },
   standardSkills:[
     {id:'acrobatics',    en:'Acrobatics',     ability:'DEX'},
     {id:'animalHandling',en:'Animal Handling', ability:'WIS'},
@@ -967,27 +1023,47 @@ const DND = {
         Vex:    'Vantaggio al tuo prossimo attacco contro questo bersaglio',
       },
       feats:{
-        Actor:'Attore', Alert:'Allerta', Athlete:'Atleta', Charger:'Caricatore', Chef:'Cuoco',
-        'Crossbow Expert':'Esperto di Balestre', Crusher:'Frantumatore',
-        'Defensive Duelist':'Duellist Difensivo', 'Dual Wielder':'Combattente con Due Armi',
-        Durable:'Tenace', 'Elemental Adept':'Adepto Elementale', Grappler:'Lottatore',
+        Actor:'Attore', Alert:'Allerta', Archery:'Tiro con l\'Arco',
+        Athlete:'Atleta', 'Blind Fighting':'Combattimento Cieco', Charger:'Caricatore',
+        Chef:'Cuoco', Crafter:'Artigiano', 'Crossbow Expert':'Esperto di Balestre',
+        Crusher:'Frantumatore', Defense:'Difesa', 'Defensive Duelist':'Duellista Difensivo',
+        'Dual Wielder':'Combattente con Due Armi', Dueling:'Duello', Durable:'Tenace',
+        'Elemental Adept':'Adepto Elementale', 'Fey Touched':'Toccato dal Fato',
+        Grappler:'Lottatore', 'Great Weapon Fighting':'Combattimento con Armi a Due Mani',
         'Great Weapon Master':'Maestro delle Armi Pesanti', Healer:'Guaritore',
-        'Heavily Armored':'Armatura Pesante', 'Heavy Armor Master':'Maestro dell\'Armatura Pesante',
-        'Inspiring Leader':'Leader Ispirante', Lucky:'Fortunato',
-        'Mage Slayer':'Cacciatore di Maghi', 'Magic Initiate':'Iniziato alla Magia',
-        'Martial Adept':'Adepto Marziale', Mobile:'Mobile',
-        'Mounted Combatant':'Combattente Montato', Observant:'Osservatore',
-        'Polearm Master':'Maestro delle Armi d\'Asta', Resilient:'Resistente',
-        'Ritual Caster':'Incantatore Rituale', 'Savage Attacker':'Attaccante Selvaggio',
-        Sentinel:'Sentinella', Sharpshooter:'Tiratore Scelto', 'Shield Master':'Maestro dello Scudo',
-        'Skill Expert':'Esperto di Abilità', Skilled:'Abile', Tough:'Robusto',
+        'Heavily Armored':'Competenza Armatura Pesante',
+        'Heavy Armor Master':'Maestro dell\'Armatura Pesante',
+        'Inspiring Leader':'Leader Ispirante', Interception:'Intercettazione',
+        'Keen Mind':'Mente Acuta', 'Lightly Armored':'Competenza Armatura Leggera',
+        Lucky:'Fortunato', 'Mage Slayer':'Cacciatore di Maghi',
+        'Magic Initiate':'Iniziato alla Magia',
+        'Martial Weapon Training':'Addestramento Armi da Guerra',
+        'Medium Armor Master':'Maestro dell\'Armatura Media',
+        'Moderately Armored':'Competenza Armatura Media',
+        'Mounted Combatant':'Combattente Montato', Musician:'Musicista',
+        Observant:'Osservatore', Piercer:'Perforatore', Poisoner:'Avvelenatore',
+        'Polearm Master':'Maestro delle Armi d\'Asta', Protection:'Protezione',
+        Resilient:'Resistente', 'Ritual Caster':'Incantatore Rituale',
+        'Savage Attacker':'Attaccante Selvaggio', Sentinel:'Sentinella',
+        'Shadow Touched':'Toccato dall\'Ombra', Sharpshooter:'Tiratore Scelto',
+        'Shield Master':'Maestro dello Scudo', 'Skill Expert':'Esperto di Abilità',
+        Skilled:'Abile', Skulker:'Agguatatore', Slasher:'Tagliente', Speedy:'Veloce',
+        'Spell Sniper':'Cecchino Arcano', 'Tavern Brawler':'Rissoso da Taverna',
+        Telekinetic:'Telecinetico', Telepathic:'Telepatico',
+        'Thrown Weapon Fighting':'Combattimento con Armi da Lancio',
+        Tough:'Robusto', 'Two Weapon Fighting':'Combattimento con Due Armi',
+        'Unarmed Fighting':'Combattimento a Mani Nude',
         'War Caster':'Guerriero Incantatore', 'Weapon Master':'Maestro delle Armi',
         'Boon of Combat Prowess':'Dono della Valentia in Combattimento',
         'Boon of Dimensional Travel':'Dono del Viaggio Dimensionale',
         'Boon of Energy Resistance':'Dono della Resistenza all\'Energia',
         'Boon of Fate':'Dono del Destino', 'Boon of Fortitude':'Dono della Fortezza',
         'Boon of Irresistible Offense':'Dono dell\'Offensiva Irresistibile',
-        'Boon of Speed':'Dono della Velocità', 'Boon of Truesight':'Dono della Vista Autentica',
+        'Boon of Recovery':'Dono del Recupero', 'Boon of Skill':'Dono dell\'Abilità',
+        'Boon of Speed':'Dono della Velocità',
+        'Boon of Spell Recall':'Dono del Rievoco d\'Incantesimo',
+        'Boon of the Night Spirit':'Dono dello Spirito Notturno',
+        'Boon of Truesight':'Dono della Vista Autentica',
       },
     }
   }
@@ -1191,6 +1267,7 @@ const BASE = {
   bgAsiValidation:'Please select both abilities',
   bgAsiSameAbility:'Choose two different abilities',
   bgAsiMaxScore:'Bonus would exceed score cap of 20',
+  bgAsiThreeConfirm:'Each of these abilities will automatically receive +1. Click Next to continue.',
   // Toast
   toastNoteSaved:'📝 Notes saved!',
   // HP abbreviation (for log messages)
@@ -1405,6 +1482,15 @@ const BASE = {
   hint_loreBonds:'Connections to the world: people, places, events.',
   hint_loreFlaws:'Weaknesses, fears, or vices.',
   hint_loreBackstory:'Where your character comes from and what shaped them.',
+  // Feat picker
+  wiz_step_originFeat:'Origin Feat',
+  originFeatFromBg:'Background feat',
+  originFeatGrantedBy:'Granted by your {BG} background.',
+  originFeatVersatile:'Human bonus feat (Versatile)',
+  originFeatSkip:'Skip (add later as a feature)',
+  featTypeOrigin:'Origin',featTypeGeneral:'General',
+  featTypeFighting:'Fighting Style',featTypeEpicBoon:'Epic Boon',
+  featFilterAll:'All',featPickerSearch:'Search feats…',
 };
 const TRANSLATIONS = {
   it:{
@@ -1504,6 +1590,7 @@ const TRANSLATIONS = {
     bgAsiValidation:'Seleziona entrambe le caratteristiche',
     bgAsiSameAbility:'Scegli due caratteristiche diverse',
     bgAsiMaxScore:'Il bonus supererebbe il limite massimo di 20',
+    bgAsiThreeConfirm:'Queste caratteristiche riceveranno automaticamente +1 ciascuna. Clicca Avanti per continuare.',
     logDmg:'💥 Subiti', logHeal:'💚 Curati', logTempHP:'🛡️ PF temporanei',
     logAbsorb:'🛡️ PF temporanei assorbono', logSlot:'✨ Slot Lv',
     logUsed:' usato. Rimasti:', logRestored:'ripristinati',
@@ -1795,6 +1882,15 @@ const TRANSLATIONS = {
     hint_loreBonds:'Connessioni con il mondo: persone, luoghi, eventi.',
     hint_loreFlaws:'Debolezze, paure o vizi.',
     hint_loreBackstory:'Da dove viene il personaggio e cosa lo ha plasmato.',
+    // Feat picker
+    wiz_step_originFeat:'Talento di Origine',
+    originFeatFromBg:'Talento del background',
+    originFeatGrantedBy:'Concesso dal tuo background {BG}.',
+    originFeatVersatile:'Talento di origine umano (Versatile)',
+    originFeatSkip:'Salta (aggiungi dopo come capacità)',
+    featTypeOrigin:'Origine',featTypeGeneral:'Generale',
+    featTypeFighting:'Stile di Combattimento',featTypeEpicBoon:'Dono Epico',
+    featFilterAll:'Tutti',featPickerSearch:'Cerca talenti…',
   }
   // To add Spanish: es:{ navTitle:'...', ... }
 };
@@ -4154,14 +4250,16 @@ function abToggleMode(){
 // ── Background ASI step ──
 function renderBackgroundAsiStep(data){
   const bg=data.background||'';
+  const hasDefinedEligible=!!DND.backgroundAsiAbilities[bg];
   const eligible=DND.backgroundAsiAbilities[bg]||DND.abilities;
-  const isThree=data._bgAsiMode==='three';
+  // Three-mode is only valid for known backgrounds with exactly 3 defined eligible abilities
+  const isThree=data._bgAsiMode==='three' && hasDefinedEligible;
   const eligLabel=`${T('bgAsiEligible')}: <strong>${eligible.map(a=>abilityShortName(a)).join(', ')}</strong>`;
-  const customNote=!DND.backgroundAsiAbilities[bg]?`<div style="font-size:.85em;color:var(--text-muted);margin-bottom:6px;">${T('bgAsiCustomNote')}</div>`:'';
-  const baseScores=data;
+  const customNote=!hasDefinedEligible?`<div style="font-size:.85em;color:var(--text-muted);margin-bottom:6px;">${T('bgAsiCustomNote')}</div>`:'';
   let body='';
   if(isThree){
-    body=`<div class="ab-grid">${eligible.map(a=>{const b=+(data[a]||10);return `<div class="ab-row"><span class="ab-name">${abilityShortName(a)}</span><span class="ab-mod">+1</span><span style="font-size:.8em;color:var(--text-muted)">${b}→${b+1}</span></div>`;}).join('')}</div>`;
+    body=`<div class="ab-grid">${eligible.map(a=>{const b=+(data[a]||10);return `<div class="ab-row"><span class="ab-name">${abilityShortName(a)}</span><span class="ab-mod">+1</span><span style="font-size:.8em;color:var(--text-muted)">${b}→${b+1}</span></div>`;}).join('')}</div>
+    <div style="margin-top:10px;font-size:.82em;color:var(--text-muted);border-top:1px solid var(--border-light);padding-top:8px;">✅ ${T('bgAsiThreeConfirm')}</div>`;
   } else {
     const opts1=eligible.map(a=>`<option value="${a}"${data._bgAsi1===a?' selected':''}>${abilityShortName(a)} (${data[a]||10})</option>`).join('');
     const opts2=eligible.map(a=>`<option value="${a}"${data._bgAsi2===a?' selected':''}>${abilityShortName(a)} (${data[a]||10})</option>`).join('');
@@ -4178,10 +4276,14 @@ function renderBackgroundAsiStep(data){
       </div>
     </div>`;
   }
+  // Only show the toggle button for known PHB backgrounds (custom backgrounds have no fixed eligible set)
+  const toggleBtn=hasDefinedEligible
+    ?`<button class="ab-mode" onclick="bgAsiToggleMode()">${isThree?T('bgAsiThreeMode'):T('bgAsiTwoMode')}</button>`
+    :'';
   return `<div class="ab-widget">
     <div class="ab-header">
       <div style="font-weight:bold;">${T('bgAsiBackground')}: ${dndTr('backgrounds',bg)||bg||'—'}</div>
-      <button class="ab-mode" onclick="bgAsiToggleMode()">${isThree?T('bgAsiThreeMode'):T('bgAsiTwoMode')}</button>
+      ${toggleBtn}
     </div>
     ${customNote}<div class="ab-ref">${eligLabel}</div>
     ${body}
@@ -4218,14 +4320,9 @@ function renderLevelUpAsiStep(data){
     <div style="margin-top:10px;"><label><strong>+1</strong> — ${T('wiz_levelUp_asiPlus1bLabel')}</label>
       <select id="wf-luAsi2" style="${sel}" onchange="luAsiChange()"><option value="">—</option>${abilOpts(data._luAsi2)}</select></div>`;
   } else {
-    const featOpts=DND.commonFeats.map(f=>`<option value="${f}"${data._luFeat===f?' selected':''}>${dndTr('feats',f)}</option>`).join('');
-    const isCustom=data._luFeat && !DND.commonFeats.includes(data._luFeat);
+    const ctx=newLv>=19?'asi-19':'general';
     body=`<div style="margin-top:8px;"><label><strong>${T('wiz_levelUp_asiFeatLabel')}</strong></label>
-      <select id="wf-luFeat" style="${sel}" onchange="luAsiChange()">
-        <option value="">—</option>${featOpts}<option value="_custom"${isCustom?' selected':''}>${T('custom')}…</option>
-      </select>
-      <input type="text" id="wf-luFeat-custom" placeholder="${T('custom')}…"
-        style="${sel}margin-top:6px;${isCustom?'':'display:none;'}" value="${isCustom?data._luFeat:''}" oninput="luAsiChange()">
+      ${renderFeatPicker({id:'asi',context:ctx,selected:data._luFeat})}
     </div>`;
   }
   const modes=[
@@ -4242,18 +4339,9 @@ function renderLevelUpAsiStep(data){
 function luAsiChange(){
   const s1=document.getElementById('wf-luAsi1');
   const s2=document.getElementById('wf-luAsi2');
-  const sf=document.getElementById('wf-luFeat');
-  const sc=document.getElementById('wf-luFeat-custom');
   if(s1) WIZ_DATA._luAsi1=s1.value;
   if(s2) WIZ_DATA._luAsi2=s2.value;
-  if(sf){
-    if(sf.value==='_custom'){
-      if(sc){sc.style.display='';WIZ_DATA._luFeat=sc.value;}
-    } else {
-      if(sc) sc.style.display='none';
-      WIZ_DATA._luFeat=sf.value;
-    }
-  }
+  // feat value read live via fp-asi-value in _collectData / _validateStep
 }
 function luAsiToggleMode(mode){
   luAsiChange();
@@ -4301,6 +4389,94 @@ function translateSource(src){
 }
 function alignmentName(v){ const idx=DND.alignments.indexOf(v); const lbls=DND.tr[currentLang]?.alignments||DND.alignments; return lbls[idx]||v; }
 function toggleCustomInput(fid){ const s=document.getElementById('wf-'+fid); const c=document.getElementById('wf-'+fid+'-custom'); if(c) c.style.display=s&&s.value==='_custom'?'block':'none'; }
+
+// ── Feat Picker ──
+function renderFeatPicker(opts){
+  const {id,context,selected}=opts;
+  const typeMap={origin:['origin'],general:['general','fightingStyle'],'asi-19':['general','fightingStyle','epicBoon']};
+  const visibleTypes=typeMap[context]||['origin','general','fightingStyle','epicBoon'];
+  const feats=DND.feats.filter(f=>visibleTypes.includes(f.type));
+  const typeLabels={origin:T('featTypeOrigin'),general:T('featTypeGeneral'),fightingStyle:T('featTypeFighting'),epicBoon:T('featTypeEpicBoon')};
+  const isKnown=selected&&DND.feats.some(f=>f.name===selected);
+  const isCustom=selected&&!isKnown;
+  let pillsHtml='';
+  if(visibleTypes.length>1){
+    const pills=[{k:'all',l:T('featFilterAll')},...visibleTypes.map(t=>({k:t,l:typeLabels[t]}))];
+    pillsHtml=`<div class="fp-type-pills">${pills.map(p=>`<button type="button" class="fp-pill${p.k==='all'?' active':''}" data-fptype="${p.k}" onclick="fpSetType('${id}','${p.k}')">${p.l}</button>`).join('')}</div>`;
+  }
+  const listItems=feats.map(f=>{
+    const nm=dndTr('feats',f.name);
+    return `<div class="feat-picker-item${selected===f.name?' fp-selected':''}" data-name="${f.name}" data-type="${f.type}" onclick="fpSelect('${id}','${f.name}')">${nm}</div>`;
+  }).join('');
+  const customItem=`<div class="feat-picker-item${isCustom?' fp-selected':''}" data-name="_custom" data-type="all" onclick="fpSelectCustom('${id}')">${T('custom')}</div>`;
+  return `<div class="feat-picker" id="fp-${id}">
+    ${pillsHtml}<input type="text" class="feat-picker-search" id="fp-${id}-search" placeholder="${T('featPickerSearch')}" oninput="fpFilter('${id}')">
+    <div class="feat-picker-list" id="fp-${id}-list">${listItems}${customItem}</div>
+    <input type="text" id="fp-${id}-custom" class="feat-picker-custom-input" placeholder="${T('customPh')}" oninput="fpCustomInput('${id}')" style="${isCustom?'':'display:none;'}" value="${isCustom?selected:''}">
+    <input type="hidden" id="fp-${id}-value" value="${selected||''}">
+  </div>`;
+}
+function fpSelect(id,name){
+  const vEl=document.getElementById('fp-'+id+'-value');
+  const custEl=document.getElementById('fp-'+id+'-custom');
+  if(vEl) vEl.value=name;
+  if(custEl){custEl.style.display='none';custEl.value='';}
+  document.querySelectorAll('#fp-'+id+' .feat-picker-item').forEach(el=>el.classList.toggle('fp-selected',el.dataset.name===name));
+}
+function fpSelectCustom(id){
+  const vEl=document.getElementById('fp-'+id+'-value');
+  const custEl=document.getElementById('fp-'+id+'-custom');
+  if(custEl){custEl.style.display='';custEl.focus();}
+  if(vEl) vEl.value=custEl?.value||'';
+  document.querySelectorAll('#fp-'+id+' .feat-picker-item').forEach(el=>el.classList.toggle('fp-selected',el.dataset.name==='_custom'));
+}
+function fpCustomInput(id){
+  const vEl=document.getElementById('fp-'+id+'-value');
+  const custEl=document.getElementById('fp-'+id+'-custom');
+  if(vEl&&custEl) vEl.value=custEl.value;
+}
+function fpFilter(id){
+  const q=(document.getElementById('fp-'+id+'-search')?.value||'').toLowerCase();
+  const activeType=document.querySelector('#fp-'+id+' .fp-pill.active')?.dataset?.fptype||'all';
+  document.querySelectorAll('#fp-'+id+' .feat-picker-item').forEach(el=>{
+    const nameMatch=el.dataset.name==='_custom'||el.textContent.toLowerCase().includes(q)||el.dataset.name.toLowerCase().includes(q);
+    const typeMatch=activeType==='all'||el.dataset.type===activeType;
+    el.style.display=(nameMatch&&typeMatch)?'':'none';
+  });
+}
+function fpSetType(id,type){
+  document.querySelectorAll('#fp-'+id+' .fp-pill').forEach(el=>el.classList.toggle('active',el.dataset.fptype===type));
+  fpFilter(id);
+}
+// ── Origin Feat step renderer ──
+function renderOriginFeatStep(data){
+  const bg=data.background||WIZ_DATA.background||'';
+  const race=data.race||WIZ_DATA.race||'';
+  const isHuman=(race==='Human'||race==='Umano');
+  const bgFeatName=DND.backgroundFeats[bg]||null;
+  const bgLabel=bg?dndTr('backgrounds',bg):bg;
+  let bgSection='';
+  if(bgFeatName){
+    const featDisplay=dndTr('feats',bgFeatName);
+    bgSection=`<div style="padding:10px;border-radius:7px;border:1px solid var(--border-light);background:var(--bg-card2);margin-bottom:12px;">
+      <div style="font-size:.8em;color:var(--text-muted);margin-bottom:2px;">${T('originFeatFromBg')}</div>
+      <div style="font-weight:700;color:var(--accent);font-size:1em;margin-bottom:4px;">${featDisplay}</div>
+      <div style="font-size:.8em;color:var(--text-muted);">${T('originFeatGrantedBy').replace('{BG}',bgLabel||bg)}</div>
+      <input type="hidden" id="fp-bgfeat-value" value="${bgFeatName}">
+    </div>`;
+  } else {
+    bgSection=`<div style="margin-bottom:12px;"><label style="font-weight:600;display:block;margin-bottom:4px;">${T('originFeatFromBg')}</label>
+      ${renderFeatPicker({id:'bgfeat',context:'origin',selected:data._bgFeat})}
+    </div>`;
+  }
+  let humanSection='';
+  if(isHuman){
+    humanSection=`<div style="margin-top:12px;"><label style="font-weight:600;display:block;margin-bottom:4px;">${T('originFeatVersatile')}</label>
+      ${renderFeatPicker({id:'origin2',context:'origin',selected:data._originFeat2})}
+    </div>`;
+  }
+  return `<div>${bgSection}${humanSection}</div>`;
+}
 
 const WIZARDS = {
 // ── Character Creation ──
@@ -4370,6 +4546,15 @@ const WIZARDS = {
         const b1=(+(data[data._bgAsi1]||10)+2); const b2=(+(data[data._bgAsi2]||10)+1);
         if(b1>20||b2>20) return T('bgAsiMaxScore');
         return null;
+      },
+    },
+    {label:'wiz_step_originFeat',
+      _renderStep(data){ return renderOriginFeatStep(data); },
+      _collectData(data){
+        const bgv=document.getElementById('fp-bgfeat-value');
+        if(bgv) data._bgFeat=bgv.value;
+        const o2v=document.getElementById('fp-origin2-value');
+        if(o2v) data._originFeat2=o2v.value;
       },
     },
     {label:'wiz_step_combat', fields:[
@@ -4478,6 +4663,13 @@ const WIZARDS = {
       base.customConditions=[];
       base.sidebar=[...DEFAULT_SIDEBAR]; base.combatAlgorithm=[];
       SESSION=createDefaultSession(base);
+      // Origin feat reminders
+      const bgFeatName=DND.backgroundFeats[d.background||'']||d._bgFeat||'';
+      const checks=[];
+      if(bgFeatName) checks.push(T('lu_check_feat').replace('{FEAT}',dndTr('feats',bgFeatName)));
+      if(d._originFeat2) checks.push(T('lu_check_feat').replace('{FEAT}',dndTr('feats',d._originFeat2)));
+      if(checks.length) base.levelUpChecklist=checks.map(text=>({text,done:false}));
+      if(d._originFeat2) base.humanOriginFeat=d._originFeat2;
     } else {
       if(SESSION?.hp) SESSION.hp.current=Math.min((+d.hpMax||10)+(SESSION.hp.aidBonus||0),SESSION.hp.current||0);
     }
@@ -4869,11 +5061,10 @@ const WIZARDS = {
       _collectData(data){
         const s1=document.getElementById('wf-luAsi1');
         const s2=document.getElementById('wf-luAsi2');
-        const sf=document.getElementById('wf-luFeat');
-        const sc=document.getElementById('wf-luFeat-custom');
+        const fv=document.getElementById('fp-asi-value');
         if(s1) data._luAsi1=s1.value;
         if(s2) data._luAsi2=s2.value;
-        if(sf) data._luFeat=(sf.value==='_custom')?(sc?.value||''):sf.value;
+        if(fv) data._luFeat=fv.value;
       },
       _validateStep(data){
         const mode=data._luAsiMode||'one';
@@ -5005,6 +5196,8 @@ function flattenChar(){
       const p1=entries.find(([,v])=>v===1);
       return {_bgAsiMode:'two',_bgAsi1:p2?.[0]||'',_bgAsi2:p1?.[0]||''};
     })(),
+    // Origin feat step prefill
+    _originFeat2:C.humanOriginFeat||'',
   };
 }
 // Spells

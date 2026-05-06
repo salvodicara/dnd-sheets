@@ -5,7 +5,39 @@ Entries are in reverse-chronological order. Uncommitted work appears under `[Unr
 
 ---
 
-## [Unreleased] — Phase 35: Level-Up ASI Wizard + UX Polish
+## [Unreleased] — Phase 36: Feat Database + Origin Feat Wizard Step
+
+### Added (`index.html`)
+- **Feat database:** `DND.feats` — array of 75 D&D 2024 PHB feats, each typed as `origin`, `general`, `fightingStyle`, or `epicBoon`. Replaces old flat `DND.commonFeats` array.
+  - 10 Origin feats (Alert, Crafter, Healer, Lucky, Magic Initiate, Musician, Savage Attacker, Skilled, Tavern Brawler, Tough)
+  - 43 General feats (including new additions: Fey Touched, Keen Mind, Lightly Armored, Martial Weapon Training, Medium Armor Master, Moderately Armored, Piercer, Poisoner, Shadow Touched, Skulker, Slasher, Speedy, Spell Sniper, Telekinetic, Telepathic; removed Martial Adept and Mobile which don't exist in D&D 2024)
+  - 10 Fighting Style feats (Archery, Blind Fighting, Defense, Dueling, Great Weapon Fighting, Interception, Protection, Thrown Weapon Fighting, Two Weapon Fighting, Unarmed Fighting)
+  - 12 Epic Boon feats (including new: Boon of Recovery, Boon of Skill, Boon of Spell Recall, Boon of the Night Spirit)
+- **`DND.backgroundFeats`** — maps all 16 PHB 2024 backgrounds to their fixed origin feat (wiki-verified)
+- **Searchable feat picker** (`renderFeatPicker({id, context, selected})`):
+  - Type filter pills (All / Origin / General / Fighting Style / Epic Boon) — visible set controlled by `context`
+  - Live text search filters the list as you type
+  - "Custom…" escape hatch for homebrew feats
+  - Context modes: `'origin'` (origin only), `'general'` (general + fighting style), `'asi-19'` (general + fighting style + epic boon)
+- **Origin feat step in char-create wizard** (`wiz_step_originFeat`, after Background ASI step):
+  - Known background: shows locked info card with the auto-granted feat (no picker needed)
+  - Custom background: shows origin-context feat picker for manual selection
+  - Human race: shows a second picker for the Versatile bonus origin feat
+  - On save: adds `levelUpChecklist` reminder(s) — one per origin feat — to prompt the player to add them as features
+  - Human second feat stored in `CHAR.humanOriginFeat`; prefilled on edit via `flattenChar()`
+- **ASI wizard feat step** now uses `renderFeatPicker` instead of `<select>` — searchable, filterable, full 75-feat database
+- **Italian translations** for all 75 feats in `DND.tr.it.feats` (updated; removed Martial Adept, Mobile; added all new feats and Fighting Style/Epic Boon feats)
+- **i18n keys:** `wiz_step_originFeat`, `originFeatFromBg`, `originFeatGrantedBy`, `originFeatVersatile`, `featTypeOrigin`, `featTypeGeneral`, `featTypeFighting`, `featTypeEpicBoon`, `featFilterAll`, `featPickerSearch` (EN + IT)
+
+### Updated (`DESIGN.md`)
+- v1.1 marked **Complete**
+- Class feature tables removed from scope (no value vs. wiki reference)
+- Feat database and origin feat step documented under completed work
+- Decision log entries 51 and 105 updated
+
+---
+
+## [7f2c80d] — Phase 35: Level-Up ASI Wizard + UX Polish
 
 ### Added (`index.html`)
 - **Phase 35 — Level-Up ASI Wizard:** The level-up wizard now injects an Ability Score Improvement step automatically when the new level is 4, 8, 12, 16, or 19.

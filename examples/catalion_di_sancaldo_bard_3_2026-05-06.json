@@ -9,6 +9,7 @@
     "subclass": "College of Lore",
     "level": 3,
     "background": "Entertainer",
+    "humanOriginFeat": "Lucky",
     "alignment": "Neutral Good",
     "speed": "9 m",
     "ac": 14,
