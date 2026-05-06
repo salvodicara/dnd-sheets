@@ -123,13 +123,15 @@ th{background:var(--bg-card2);color:var(--text);font-weight:600;}td{background:v
   transition:background .15s;}
 #chr-sb-resize:hover,#chr-sb-resize.dragging{background:var(--accent-glow);}
 #chr-sidebar.collapsed #chr-sb-resize{display:none;}
-.chr-sb-header{display:flex;align-items:center;padding:10px 12px 6px;gap:6px;flex-shrink:0;
-  border-bottom:1px solid var(--border-light);}
+.chr-sb-header{display:flex;align-items:center;padding:6px 8px;gap:6px;flex-shrink:0;
+  border-bottom:1px solid rgba(201,162,39,.2);justify-content:space-between;}
+#chr-sidebar.collapsed .chr-sb-header{justify-content:center;}
 .chr-sb-title{font-size:.8em;font-weight:700;color:var(--sidebar-text);text-transform:uppercase;
   letter-spacing:.07em;flex:1;overflow:hidden;white-space:nowrap;}
 #chr-sidebar.collapsed .chr-sb-title{display:none;}
 .chr-sb-toggle{background:none;border:none;color:var(--sidebar-text);cursor:pointer;
-  padding:2px 6px;border-radius:4px;font-size:1.1em;line-height:1;flex-shrink:0;}
+  font-size:1rem;width:28px;height:28px;border-radius:6px;display:flex;align-items:center;
+  justify-content:center;transition:color .15s,background .15s;line-height:1;flex-shrink:0;}
 .chr-sb-toggle:hover{color:var(--accent);background:var(--sidebar-hover);}
 .chr-toc{flex:1;overflow-y:auto;padding:6px 0;}
 .chr-toc-item{display:block;width:100%;background:none;border:none;text-align:left;
@@ -144,16 +146,18 @@ th{background:var(--bg-card2);color:var(--text);font-weight:600;}td{background:v
 .chr-toc-empty{padding:8px 14px;font-size:.8em;color:var(--text-faint);
   font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;font-style:italic;}
 #chr-sidebar.collapsed .chr-toc{display:none;}
-.chr-sb-footer{padding:8px 10px 10px;border-top:1px solid var(--border-light);flex-shrink:0;
+.chr-sb-footer{padding:8px 10px 10px;border-top:1px solid rgba(201,162,39,.2);flex-shrink:0;
   display:flex;flex-direction:column;gap:5px;}
-#chr-sidebar.collapsed .chr-sb-footer{align-items:center;}
+#chr-sidebar.collapsed .chr-sb-footer{padding:0;border-top:none;gap:0;}
 .chr-sb-btn{width:100%;background:none;border:1.5px solid var(--border-light);border-radius:7px;
   padding:6px 10px;font-size:.82em;color:var(--sidebar-text);cursor:pointer;
   font-family:inherit;display:flex;align-items:center;gap:6px;
   transition:all .15s;white-space:nowrap;overflow:hidden;}
 .chr-sb-btn:hover{border-color:var(--accent);color:var(--accent);}
 .chr-sb-btn.on{background:var(--accent-dim);border-color:var(--accent);color:var(--accent);font-weight:600;}
-#chr-sidebar.collapsed .chr-sb-btn{width:36px;height:36px;justify-content:center;padding:0;}
+#chr-sidebar.collapsed .chr-sb-btn{width:100%;height:auto;min-height:38px;justify-content:center;
+  padding:9px 0;font-size:.9rem;border:none;border-radius:0;
+  border-bottom:1px solid rgba(201,162,39,.12);}
 #chr-sidebar.collapsed .chr-sb-btn-lbl{display:none;}
 /* editor */
 #chr-editor{display:block;width:100%;height:calc(100vh - 200px);min-height:300px;
@@ -164,11 +168,13 @@ th{background:var(--bg-card2);color:var(--text);font-weight:600;}td{background:v
 /* edit mode indicator */
 body.edit-mode::after{content:'';position:fixed;inset:0;pointer-events:none;
   box-shadow:inset 0 0 0 3px var(--edit-mode-color);z-index:9999;opacity:.55;}
-/* mobile toc overflow item */
-#overflow-toc,#overflow-toc-sep{display:none;}
-body.has-campaign #overflow-toc{display:flex!important;}
-body.has-campaign #overflow-toc-sep{display:block!important;}
+
 #chr-sidebar-overlay{display:none;position:fixed;inset:0;top:50px;background:rgba(0,0,0,.5);z-index:899;}
+#chr-sidebar-overlay.visible{display:block;}
+/* hamburger (mobile only) */
+#hamburger-chr{display:none;background:none;border:none;color:var(--sidebar-text);
+  font-size:1.2em;cursor:pointer;padding:5px 7px;border-radius:6px;flex-shrink:0;line-height:1;}
+#hamburger-chr:hover{background:var(--sidebar-hover);color:var(--accent);}
 /* mobile */
 @media(max-width:768px){
   .hdr-tabs{display:none!important;}
@@ -178,13 +184,21 @@ body.has-campaign #overflow-toc-sep{display:block!important;}
   body.has-campaign #main{margin-left:0!important;}
   #chr-sidebar{transform:translateX(-100%);transition:transform .25s ease,width .2s ease;width:260px!important;}
   #chr-sidebar.mobile-open{transform:translateX(0);}
-  #chr-sidebar-overlay{display:none;}
-  body.chr-sb-mobile-open #chr-sidebar-overlay{display:block!important;}
+  body.has-campaign #hamburger-chr{display:flex!important;align-items:center;}
+  /* Collapsed state must never hide content on mobile — sidebar is off-canvas anyway */
+  #chr-sidebar.collapsed .chr-toc{display:block;}
+  #chr-sidebar.collapsed .chr-sb-title{display:block;}
+  #chr-sidebar.collapsed .chr-sb-header{justify-content:space-between;}
+  #chr-sidebar.collapsed .chr-sb-footer{padding:8px 10px 10px;border-top:1px solid rgba(201,162,39,.2);gap:5px;}
+  #chr-sidebar.collapsed .chr-sb-btn{width:100%;height:auto;justify-content:flex-start;padding:6px 10px;
+    border:1.5px solid var(--border-light);border-radius:7px;border-top:none;}
+  #chr-sidebar.collapsed .chr-sb-btn-lbl{display:inline;}
 }
 </style>
 </head>
 <body>
 <header id="app-header">
+  <button id="hamburger-chr" onclick="toggleChrSidebar()" title="Menu">☰</button>
   <a class="hdr-logo" href="index.html">⚔️ D&amp;D Sheets</a>
   <nav class="hdr-tabs">
     <a class="hdr-tab" id="hdr-tab-char" href="index.html"></a>
@@ -199,8 +213,6 @@ body.has-campaign #overflow-toc-sep{display:block!important;}
   <div id="hdr-overflow-menu">
     <a class="overflow-item" id="overflow-char" href="index.html"></a>
     <a class="overflow-item" id="overflow-ai" href="assistant.html"></a>
-    <button class="overflow-item" id="overflow-toc" onclick="openChrSidebarMobile();closeOverflowMenu()"></button>
-    <hr class="overflow-sep" id="overflow-toc-sep">
     <hr class="overflow-sep">
     <button class="overflow-item" id="overflow-theme" onclick="toggleTheme();closeOverflowMenu()"></button>
     <button class="overflow-item" id="overflow-lang" onclick="toggleLang();closeOverflowMenu()"></button>
@@ -232,8 +244,7 @@ var STRINGS={
     loadedFrom:'Loaded:',changeCampaign:'× Change',
     fetchErr:'Could not load example. Open this page via GitHub Pages or a local server.',
     tocTitle:'📖 TOC',editCampaign:'Edit',editDone:'Done',
-    exportCampaign:'Export',noHeadings:'No headings found',
-    openToc:'📖 TOC'
+    exportCampaign:'Export',noHeadings:'No headings found'
   },
   it:{
     pageTitle:'Cronache — D&D Sheets',
@@ -246,8 +257,7 @@ var STRINGS={
     loadedFrom:'Caricato:',changeCampaign:'× Cambia',
     fetchErr:'Impossibile caricare l\'esempio. Apri la pagina da GitHub Pages o un server locale.',
     tocTitle:'📖 Indice',editCampaign:'Modifica',editDone:'Fine',
-    exportCampaign:'Esporta',noHeadings:'Nessun titolo trovato',
-    openToc:'📖 Indice'
+    exportCampaign:'Esporta',noHeadings:'Nessun titolo trovato'
   }
 };
 var currentLang=localStorage.getItem('dnd-lang')||'en';
@@ -305,20 +315,25 @@ function applyLang(){
   document.getElementById('btn-lang').textContent=currentLang==='en'?'🇮🇹 IT':'🇬🇧 EN';
   var ovl=document.getElementById('overflow-lang');
   if(ovl)ovl.textContent=currentLang==='en'?'🇮🇹 IT Language':'🇬🇧 EN Language';
-  var otoc=document.getElementById('overflow-toc');
-  if(otoc)otoc.textContent=S('openToc');
 }
 
 // ── Sidebar ──────────────────────────────────────────────────────────────
 function toggleChrSidebar(){
   var sb=document.getElementById('chr-sidebar');
+  var overlay=document.getElementById('chr-sidebar-overlay');
   if(!sb)return;
-  var collapsed=sb.classList.toggle('collapsed');
-  var w=collapsed?'48px':(localStorage.getItem('chrSidebarWidth')||'240px');
-  document.documentElement.style.setProperty('--chr-sb-w',w);
-  localStorage.setItem('chrSidebarCollapsed',collapsed?'1':'');
-  var btn=document.getElementById('chr-sb-toggle-btn');
-  if(btn)btn.textContent=collapsed?'›':'‹';
+  if(window.innerWidth<=768){
+    sb.classList.remove('collapsed');
+    var open=sb.classList.toggle('mobile-open');
+    if(overlay)overlay.classList.toggle('visible',open);
+  } else {
+    var collapsed=sb.classList.toggle('collapsed');
+    var w=collapsed?'48px':(localStorage.getItem('chrSidebarWidth')||'240px');
+    document.documentElement.style.setProperty('--chr-sb-w',w);
+    localStorage.setItem('chrSidebarCollapsed',collapsed?'1':'');
+    var btn=document.getElementById('chr-sb-toggle-btn');
+    if(btn)btn.textContent=collapsed?'›':'‹';
+  }
 }
 function initChrSbResize(){
   var handle=document.getElementById('chr-sb-resize');
@@ -345,12 +360,16 @@ function _onChrSbDragEnd(){
   document.removeEventListener('mouseup',_onChrSbDragEnd);
 }
 function openChrSidebarMobile(){
-  document.getElementById('chr-sidebar')?.classList.add('mobile-open');
-  document.body.classList.add('chr-sb-mobile-open');
+  var sb=document.getElementById('chr-sidebar');
+  var overlay=document.getElementById('chr-sidebar-overlay');
+  if(sb)sb.classList.add('mobile-open');
+  if(overlay)overlay.classList.add('visible');
 }
 function closeChrSidebarMobile(){
-  document.getElementById('chr-sidebar')?.classList.remove('mobile-open');
-  document.body.classList.remove('chr-sb-mobile-open');
+  var sb=document.getElementById('chr-sidebar');
+  var overlay=document.getElementById('chr-sidebar-overlay');
+  if(sb)sb.classList.remove('mobile-open');
+  if(overlay)overlay.classList.remove('visible');
 }
 
 // ── File handling ────────────────────────────────────────────────────────// ── Edit / Export ─────────────────────────────────────────────────────────

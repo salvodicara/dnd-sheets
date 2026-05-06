@@ -5,6 +5,26 @@ Entries are in reverse-chronological order. Uncommitted work appears under `[Unr
 
 ---
 
+## [Unreleased] — Chronicles Mobile & Sidebar Polish
+
+### Fixed (`chronicles.html`)
+- **Mobile sidebar show/hide** — `toggleChrSidebar()` is now mobile-aware: on `≤768px` it toggles `mobile-open` + overlay (like `assistant.html`), on desktop it toggles `collapsed`. Previously the function always ran the desktop collapse path, making the `‹` close button inside the open sidebar a no-op on mobile.
+- **Hamburger button** — added `#hamburger-chr` directly in the header (hidden by default, shown on mobile when `body.has-campaign`). Previously the only way to open the TOC sidebar on mobile was buried in the `⋯` overflow menu.
+- **Overlay pattern** — `#chr-sidebar-overlay` now uses `.visible` class (same as `#ai-overlay` in `assistant.html`) instead of the `body.chr-sb-mobile-open` body-class hack.
+- **Collapsed state leaking into mobile** — `collapsed` class (set on desktop) no longer breaks the mobile sidebar. `toggleChrSidebar()` strips `collapsed` before opening on mobile; a full set of CSS overrides inside `@media(max-width:768px)` resets all collapsed-state rules as a safety net for page load / orientation change.
+- **Missing separator below Export in collapsed sidebar** — switched collapsed `.chr-sb-btn` from `border-top` to `border-bottom` so the last action item also has a separator below it, matching `assistant.html`'s `.ai-panel` pattern.
+- **Collapsed sidebar icon sizing** — added `min-height:38px` and `font-size:.9rem` to collapsed `.chr-sb-btn`, matching `assistant.html`'s `.ai-panel-hdr` dimensions exactly.
+- **Double separator in overflow menu** — removed `#overflow-toc-sep` element and its CSS; the menu now has exactly one `<hr class="overflow-sep">` between nav links and theme/lang utilities, consistent with `index.html` and `assistant.html`.
+- **TOC entry removed from overflow menu** — redundant now that a dedicated hamburger button exists. Removed element, 2 CSS rules, JS `applyLang()` reference, and dead `openToc` i18n keys (`en` + `it`).
+
+### Changed (`chronicles.html`)
+- **Collapsed sidebar header** — `.chr-sb-header` updated to match `assistant.html`'s `.ai-sb-top`: tighter symmetric padding (`6px 8px`), `justify-content:space-between` when expanded / `center` when collapsed, `border-bottom:rgba(201,162,39,.2)`.
+- **Collapsed sidebar toggle button** — `.chr-sb-toggle` updated to match `.ai-sb-toggle`: fixed `28×28px` square, flex-centered, `border-radius:6px`, consistent hover style.
+- **Collapsed footer actions** — removed the ugly `36×36` bordered-box style; collapsed `.chr-sb-btn` now renders as a full-width centered-icon row with `border-bottom` separator, identical in rhythm to `assistant.html`'s collapsed panel items. Footer container padding and `border-top` stripped in collapsed state (each button carries its own separator).
+- **Separator colors** — header and footer border colors updated from `var(--border-light)` to `rgba(201,162,39,.2)` / `rgba(201,162,39,.12)` to match the accent-tinted separators used throughout `assistant.html`.
+
+---
+
 ## [Unreleased] — Campaign Chronicles Query in AI Assistant
 
 ### Added (`assistant.html`)
