@@ -2,7 +2,7 @@
 
 ## Project Overview
 
-**D&D Sheets** is a zero-dependency, single-file (HTML+CSS+JS) digital character sheet for D&D 2024 players. The entire application lives in `index.html` (~4,492 lines). There is no build system, no framework, no server. Open the file in a browser and it works.
+**D&D Sheets** is a zero-dependency, single-file (HTML+CSS+JS) digital character sheet for D&D 2024 players. The entire application lives in `index.html` (~5,200 lines). There is no build system, no framework, no server. Open the file in a browser and it works.
 
 ## Golden Rules
 
@@ -177,7 +177,7 @@ CB_EDIT_DATA  -- deep clone of block being edited (for cancel/restore)
 
 ## AI Assistant (`assistant.html`)
 
-A standalone ~1,229-line HTML file (same zero-dependency constraint). Communicates with `index.html` exclusively via `localStorage` key `dnd_sheet_v2`.
+A standalone ~1,430-line HTML file (same zero-dependency constraint). Communicates with `index.html` exclusively via `localStorage` key `dnd_sheet_v2`.
 
 ### Sidebar Layout
 
@@ -200,12 +200,31 @@ HISTORY      -- OpenAI-format message array [{role, content}]
 CHAR         -- full character object loaded from localStorage ({version, character, session})
 CHAR_DONE    -- boolean flag: has the character been injected into HISTORY yet?
 STAGED_FILE  -- {name, text} when a document is attached; null otherwise
+CAMPAIGN_MODE -- boolean flag: true when campaign query mode is active (📖 toggle)
 ```
+localStorage keys used by assistant.html:
+- `dnd_sheet_v2` — character + session data (shared with index.html)
+- `dnd_campaign_v1` — campaign chronicle `{name, text, loadedAt}` (shared with chronicles.html)
+- `dnd_campaign_summary` — AI-generated summary `{text, generatedAt, campaignName, textLength}`
+- `dnd_ai_history` — persisted chat history across reloads
 
 ### Send Flow
 1. On first send, inject character as synthetic `HISTORY[0/1]` (user+assistant turns), stripping `session.portrait` (base64) and `session.logEntries` (unbounded) to save tokens. Set `CHAR_DONE = true`.
 2. Append the real user message and call the provider API.
 3. After the AI responds, push the assistant reply to `HISTORY`.
+
+### Campaign Query Flow
+Activated by the 📖 toggle button (`.ibar-icon-btn#btn-campaign`). When `CAMPAIGN_MODE=true`, `send()` bypasses character context entirely:
+1. Load `dnd_campaign_v1` from localStorage. If missing, show toast and abort.
+2. Compute context budget: `info.campaignLimit ?? CAMPAIGN_CHAR_LIMIT` (Pollinations=8000, others=60000).
+3. **Pollinations path:** use cached summary (`dnd_campaign_summary`) + keyword-matched snippets for remaining budget. If no summary, fall back to keyword selection only.
+4. **Keyed provider path:** keyword-based section selection (`getKeywordSections`) from full text.
+5. Send single-turn call — no HISTORY accumulation. `sysCampaign` system prompt.
+6. **Auto-summary:** on `toggleCampaignMode()` activation with a keyed provider and no cached/fresh summary → `generateCampaignSummary()` fires async, toasts on completion.
+
+`getKeywordSections(text, question, limit)` — splits chronicle by `#`/`##` headings, scores sections against question keywords (bilingual EN+IT stopwords), sorts by score and packs greedily into `limit` chars.
+`getCachedSummary(camp)` — returns cached summary if `campaignName` matches and text length hasn't changed by >500 chars, otherwise null (stale).
+`generateCampaignSummary(camp)` — async, keyed providers only. Sends full chronicle text (up to 80K chars) with a structured summary prompt. Saves result to `dnd_campaign_summary`. Chronicle language auto-detected by the AI.
 
 ### Document Import Flow
 - Paperclip button (`#btn-attach`) triggers a hidden file input (`#doc-file`, accepts `.txt,.pdf,.docx`).
@@ -250,7 +269,7 @@ Same pattern as `index.html` but independent. `STRINGS.en` and `STRINGS.it` hold
 ### Provider Config (`PROVS`)
 | Provider | Auth | Notes |
 |---|---|---|
-| `pollinations` | None (`noKey:true`) | `maxHistory:6`, uses `sysShort` prompt, fetches live model info from `https://text.pollinations.ai/models` |
+| `pollinations` | None (`noKey:true`) | `maxHistory:6`, `campaignLimit:8000`, uses `sysShort` prompt, fetches live model info from `https://text.pollinations.ai/models` |
 | `gemini` | API key | Non-streaming, Gemini format |
 | `groq` | API key | Streaming SSE, OpenAI-compat |
 | `openrouter` | API key | Streaming SSE, OpenAI-compat |
@@ -259,7 +278,7 @@ Same pattern as `index.html` but independent. `STRINGS.en` and `STRINGS.it` hold
 ### Key Functions (`assistant.html`)
 | Function | Purpose |
 |---|---|
-| `send()` | Build/context/normal message dispatch, call provider, render response |
+| `send()` | Build/context/campaign/normal message dispatch, call provider, render response |
 | `render(text)` | Parse code blocks + markdown, return HTML |
 | `applyPatch(uid)` | Apply stored RFC 6902 ops, save, re-sync, update `#cname` |
 | `importChar(uid)` | Import full character object, reset session HP, update `#cname` |
@@ -275,6 +294,10 @@ Same pattern as `index.html` but independent. `STRINGS.en` and `STRINGS.it` hold
 | `fetchPollinationsLimits()` | Fetch live model info for settings hint |
 | `UI(key, ...args)` | Translated string lookup with en fallback |
 | `buildSetup()` | Render provider settings panel |
+| `toggleCampaignMode()` | Toggle 📖 campaign query mode; auto-triggers summary generation |
+| `getCachedSummary(camp)` | Return cached `dnd_campaign_summary` if fresh, else null |
+| `getKeywordSections(text, q, limit)` | Keyword-score chronicle sections, pack into limit chars |
+| `generateCampaignSummary(camp)` | Async: generate + cache structured chronicle summary |
 
 
 

@@ -5,7 +5,32 @@ Entries are in reverse-chronological order. Uncommitted work appears under `[Unr
 
 ---
 
-## [Unreleased] — Background ASI + pinNotes
+## [Unreleased] — Campaign Chronicles Query in AI Assistant
+
+### Added (`assistant.html`)
+- **📖 Campaign query toggle** — new button in the chat input bar (between 📎 and 🗑). Activates campaign mode: the AI answers questions from the loaded chronicle instead of the character sheet. Turns gold when active.
+- **Keyword-based section selection** — chronicle is split by `#`/`##` headings; sections are scored against question keywords and packed greedily into the context budget. Bilingual stopword filtering (English + Italian) ensures clean keyword extraction regardless of chronicle language.
+- **AI-generated campaign summary** — when campaign mode is activated with a keyed provider and no cached summary exists, a structured summary (WORLD / PLOT / NPCs / LOCATIONS / OPEN THREADS) is generated silently in the background and cached in `dnd_campaign_summary` localStorage. Auto-detects chronicle language (Italian or English). Stale detection: regenerates if campaign text changes by more than 500 chars.
+- **Runtime context strategy:** Pollinations (free) uses cached summary + keyword snippets within 8,000 chars. Keyed providers use keyword selection from full text up to 60,000 chars.
+- `sysCampaign` system prompt — lore-focused, instructs AI to stay strictly within chronicle content and not invent details.
+- Chronicles nav tab and mobile overflow entry added to `assistant.html` header.
+
+### Added (`index.html`)
+- Chronicles tab added to header nav and mobile overflow menu.
+
+### Changed (`Justfile`)
+- `just check` now validates `chronicles.html` syntax alongside `index.html` and `assistant.html`.
+- `serve` command removed; `run` target restored to `check` + `open index.html`.
+
+### Changed (project structure)
+- **Chronicles page promoted to root** — `chronicles/index.html` replaced by `chronicles.html` at project root.
+- Example files consolidated into `examples/` folder (`campaign.md`, `catalion_*.json`, PDF).
+- **Export filename convention** changed from `name_date.json` to `name_class_lvl_date.json` (e.g. `catalion_di_sancaldo_bard_3_2026-05-06.json`). Class and level are now part of the filename for instant identification.
+- Catalion's example JSON renamed accordingly.
+
+---
+
+## [10dcd3b] — Background ASI + pinNotes; Chronicles Page
 
 ### Added
 - **Phase 34 — Background ASI:** `CHAR.backgroundAsi` field stores background ability bonuses (+2/+1 or +1/+1/+1) separately from `CHAR.abilityScores` (base point-buy only). `finalScores(char)` helper merges both for all calculations. All 10+ computation sites (skills, saves, spells, weapons, initiative) updated.
@@ -13,6 +38,7 @@ Entries are in reverse-chronological order. Uncommitted work appears under `[Unr
 - **Background Bonuses info row:** New row in Base Data character info table (e.g. `+2 CHA, +1 DEX`). Hidden when no bonuses set.
 - **Background ASI tooltip:** Ability score cells for background-boosted abilities show `cursor:help` + tooltip (e.g. `Base: 15 + 2 (Entertainer)`).
 - **`pinNotes(text)` helper:** Auto-prepends `📌 ` to each non-empty line of notes fields at render time. Applied to spell, weapon, and equipment renderers. Data never stores manual pin emoji.
+- **Chronicles page (`chronicles.html`):** Standalone campaign reader/editor. Renders `.md` or `.txt` files with a sidebar TOC (headings), edit mode with auto-save, export button. Campaign stored in `dnd_campaign_v1` localStorage. Collapsible/resizable sidebar, flash-prevention inline script, bilingual (EN/IT).
 
 ### Data (Catalion)
 - `abilityScores` corrected to base point-buy values (STR:8 DEX:15 CON:14 INT:8 WIS:10 CHA:15); `backgroundAsi: {"DEX":1,"CHA":2}` added for Entertainer background. Final scores unchanged.

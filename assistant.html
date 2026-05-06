@@ -120,6 +120,7 @@ html.disclaimer-dismissed #ai-disclaimer{display:none;}
   border:none;color:var(--sidebar-text);font-size:.9em;padding:9px 16px;cursor:pointer;
   text-align:left;transition:background .12s,color .12s;text-decoration:none;}
 .overflow-item:hover{background:var(--sidebar-hover);color:var(--accent);}
+.overflow-sep{border:none;border-top:1px solid var(--border-light);margin:4px 0;}
 .pb{padding:.55rem .9rem .8rem;background:var(--bg3);}
 .row{display:flex;gap:.4rem;align-items:center;flex-wrap:wrap;margin-bottom:.38rem;}
 label{font-size:.78rem;color:var(--muted);white-space:nowrap;}
@@ -152,6 +153,7 @@ textarea.jta:focus{border-color:var(--accent);}
   font-size:.95rem;width:30px;height:30px;border-radius:6px;transition:color .15s,background .15s;
   display:inline-flex;align-items:center;justify-content:center;font-family:inherit;}
 .ibar-icon-btn:hover{color:var(--text);background:var(--bg3);}
+.ibar-icon-btn.active{color:var(--accent);background:var(--accent-dim);box-shadow:0 0 0 1px rgba(201,162,39,.4);}
 .ibar-send{margin-left:auto;background:linear-gradient(135deg,#c9a227,#a07e18);color:#1a0e00;border:none;
   border-radius:7px;width:32px;height:32px;cursor:pointer;font-size:1rem;font-weight:700;
   transition:opacity .15s,transform .1s,box-shadow .15s;display:flex;align-items:center;justify-content:center;}
@@ -197,6 +199,7 @@ a{color:var(--accent);}
     <nav class="hdr-tabs">
       <a class="hdr-tab" id="hdr-tab-char" href="index.html"></a>
       <a class="hdr-tab active" id="hdr-tab-ai" href="assistant.html"></a>
+      <a class="hdr-tab" id="hdr-tab-chronicles" href="chronicles.html"></a>
     </nav>
     <div class="hdr-right">
       <button class="ctrl-btn" id="btn-theme" onclick="toggleTheme()">☀️</button>
@@ -205,6 +208,8 @@ a{color:var(--accent);}
     <button id="hdr-overflow-btn" onclick="toggleOverflowMenu(event)" title="More options">⋯</button>
     <div id="hdr-overflow-menu">
       <a class="overflow-item" id="overflow-char" href="index.html">📜 Character</a>
+      <a class="overflow-item" id="overflow-chronicles" href="chronicles.html">📖 Chronicles</a>
+      <hr class="overflow-sep">
       <button class="overflow-item" id="overflow-theme" onclick="toggleTheme();closeOverflowMenu()">☀️ Theme</button>
       <button class="overflow-item" id="overflow-lang" onclick="toggleLang();closeOverflowMenu()">IT Language</button>
     </div>
@@ -251,6 +256,7 @@ a{color:var(--accent);}
         <textarea id="ui" onkeydown="onKey(event)" oninput="resize(this)"></textarea>
         <div class="ibar-row">
           <button class="ibar-icon-btn" id="btn-attach" title="Attach document" onclick="document.getElementById('doc-file').click()">📎</button>
+          <button class="ibar-icon-btn" id="btn-campaign" onclick="toggleCampaignMode()">📖</button>
           <button class="ibar-icon-btn" id="btn-clear" onclick="clearChat()">🗑</button>
           <button class="ibar-send" id="sb" onclick="send()">&#9658;</button>
         </div>
@@ -463,7 +469,7 @@ Now share your character JSON (or describe your sheet) and tell me what to add o
 const STRINGS={
   en:{
     settings:'Settings', character:'Character', back:'← App',
-    hdrCharacter:'📜 Character', hdrAIAssistant:'✨ AI',
+    hdrCharacter:'📜 Character', hdrAIAssistant:'✨ AI', hdrChronicles:'📖 Chronicles',
     provLabel:'Provider', keyLabel:'API Key', keyPlaceholder:'Paste your key here',
     saveBtn:'Save', loadFile:'Load file', useChar:'Use this character',
     noKeyMsg:'✓ No key needed — just start chatting!',
@@ -494,10 +500,14 @@ const STRINGS={
     clearChat:'Clear chat',
     overflowTheme:'Theme', overflowLang:'Language',
     disclaimer:'⚠️ AI can make mistakes — review all changes carefully before applying them to your sheet.',
+    queryCampaignTitle:'Query campaign chronicles',
+    noCampaign:'No campaign loaded. Go to Chronicles to load one first.',
+    campaignWelcome:n=>'📖 **Campaign mode** — "'+n+'" loaded. Ask me about NPCs, events, locations, or plot. Each question is answered directly from the chronicle.',
+    summaryReady:'Chronicle summary ready ✓',
   },
   it:{
     settings:'Impostazioni', character:'Personaggio', back:'← App',
-    hdrCharacter:'📜 Personaggio', hdrAIAssistant:'✨ AI',
+    hdrCharacter:'📜 Personaggio', hdrAIAssistant:'✨ AI', hdrChronicles:'📖 Cronache',
     provLabel:'Provider', keyLabel:'Chiave API', keyPlaceholder:'Incolla la chiave qui',
     saveBtn:'Salva', loadFile:'Carica file', useChar:'Usa questo personaggio',
     noKeyMsg:'✓ Nessuna chiave — inizia a chattare!',
@@ -528,11 +538,15 @@ const STRINGS={
     clearChat:'Pulisci chat',
     overflowTheme:'Tema', overflowLang:'Lingua',
     disclaimer:'⚠️ L\'AI può sbagliare — controlla sempre le modifiche con attenzione prima di applicarle alla scheda.',
+    queryCampaignTitle:'Consulta le cronache',
+    noCampaign:'Nessuna campagna caricata. Vai alle Cronache per caricarne una.',
+    campaignWelcome:n=>'📖 **Modalità cronache** — "'+n+'" caricata. Chiedimi di personaggi, eventi, luoghi o trama. Ogni domanda usa il testo della cronaca.',
+    summaryReady:'Riassunto cronache pronto ✓',
   },
 };
 // ── Config ──────────────────────────────────────────────────────────────
 const PROVS={
-  pollinations:{name:'Free — no key needed',hint:'Works instantly. No account or sign-up. Powered by Pollinations.ai.',ep:'https://text.pollinations.ai/openai?referrer=dnd-sheets',model:'openai',noKey:true,noStream:true,maxHistory:6,
+  pollinations:{name:'Free — no key needed',hint:'Works instantly. No account or sign-up. Powered by Pollinations.ai.',ep:'https://text.pollinations.ai/openai?referrer=dnd-sheets',model:'openai',noKey:true,noStream:true,maxHistory:6,campaignLimit:8000,
     sysShort:`You are a D&D 2024 assistant for the D&D Sheets app.
 For updates: 1) explain briefly in plain D&D language (no array indices, no JSON paths, no technical terms), 2) give numbered wizard steps (UI path), 3) always end with a \`\`\`json-patch\`\`\` block (RFC 6902 ops array). Paths: /character/... or /session/..., use /- to append, /N to replace/remove. Only omit for pure rules questions.
 CRITICAL: weapons (attack roll + damage dice) → /character/weapons/-, NEVER /character/equipment/-. Equipment is for armor, consumables, general items only.
@@ -546,6 +560,8 @@ For rules questions: just answer. Use **bold** for D&D terms. Verify: http://dnd
 // ── State ───────────────────────────────────────────────────────────────
 let HISTORY=[], CHAR=null, CHAR_DONE=false;
 let STAGED_FILE=null; // {name, text} when a document is attached
+let CAMPAIGN_MODE=false;
+const CAMPAIGN_CHAR_LIMIT=60000;
 let currentLang=localStorage.getItem('dnd-lang')||'it';
 function UI(key,...args){const s=(STRINGS[currentLang]||STRINGS.en)[key]||(STRINGS.en[key]||key);return typeof s==='function'?s(...args):s;}
 // ── Theme ────────────────────────────────────────────────────────────────
@@ -572,6 +588,8 @@ function applyLang(){
   if(lBtn){lBtn.textContent=UI('langToggle');lBtn.title=UI('titleLang');}
   if(tBtn) tBtn.title=UI('titleTheme');
   if(clearBtn) clearBtn.title=UI('clearChat');
+  const campBtn=document.getElementById('btn-campaign');
+  if(campBtn) campBtn.title=UI('queryCampaignTitle');
   if(disc) disc.textContent=UI('disclaimer');
   const s=document.getElementById('lbl-settings'); if(s) s.textContent=UI('settings');
   const c=document.getElementById('lbl-character'); if(c) c.textContent=UI('character');
@@ -580,6 +598,10 @@ function applyLang(){
   const tabAI=document.getElementById('hdr-tab-ai');
   if(tabChar) tabChar.textContent=UI('hdrCharacter');
   if(tabAI) tabAI.textContent=UI('hdrAIAssistant');
+  const tabChronicles=document.getElementById('hdr-tab-chronicles');
+  if(tabChronicles) tabChronicles.textContent=UI('hdrChronicles');
+  const och=document.getElementById('overflow-chronicles');
+  if(och) och.textContent=UI('hdrChronicles');
   const oc=document.getElementById('overflow-char');
   if(oc) oc.textContent=UI('hdrCharacter');
   const ol=document.getElementById('overflow-lang');
@@ -611,6 +633,12 @@ function clearChat(){
   localStorage.removeItem('dnd_ai_history');
   document.getElementById('chat').innerHTML='';
   document.getElementById('chips').style.display='none';
+  if(CAMPAIGN_MODE){
+    let camp=null;
+    try{const r=localStorage.getItem('dnd_campaign_v1');if(r)camp=JSON.parse(r);}catch(e){}
+    if(camp){addMsg('a',UI('campaignWelcome',camp.name));return;}
+    CAMPAIGN_MODE=false;const b=document.getElementById('btn-campaign');if(b)b.classList.remove('active');
+  }
   const p=gProv(), info=PROVS[p], hasKey=info.noKey||(!!gKey(p));
   const charName=CHAR?.character?.name||'', charLvl=CHAR?.character?.level||'';
   if(charName&&hasKey){addMsg('a',UI('welcomeChar',charName,charLvl));showChips();}
@@ -1073,6 +1101,8 @@ sidebar:["game-panel","base-data","skills","spells","weapons","equipment","algor
 DO NOT set sectionId on features. session:{hp:{current:<hp.max>,temp:0,aidBonus:0},hitDice:{used:0},trackers:{},spellSlots:{},currency:{pp:0,gp:0,ep:0,sp:0,cp:0},round:1,concentration:"",initiative:"",conditions:[],deathSucc:0,deathFail:0,inspiration:false,exhaustion:0,notes:"",portrait:null,logEntries:[],showGettingStarted:false,hdDialog:false}
 slugify: lowercase, replace spaces+special chars with hyphens, collapse multiple hyphens.
 Infer anything missing from class/level (hit die, save proficiencies, spellcasting ability, spell slots). Use **bold** for D&D terms. Verify mechanics: http://dnd2024.wikidot.com/`;
+// ── Campaign system prompt ────────────────────────────────────────────────
+const sysCampaign=`You are a campaign lore assistant for a D&D group. The user message contains the campaign chronicle/notes followed by their question. Answer based strictly on the chronicle content provided. Be concise and specific — reference names, places, and events from the text when relevant. If something is not mentioned in the chronicle, say so clearly and do not invent details.`;
 // ── Document parsing ──────────────────────────────────────────────────────
 function decodePdfStr(s){
   // Detect UTF-16BE BOM (bytes 0xFE 0xFF stored as Latin-1 chars 254 255)
@@ -1244,6 +1274,46 @@ async function send(){
     }catch(e){updMsg(mid,'**Error:** '+e.message);}
     document.getElementById('sb').disabled=false; return;
   }
+  // ── Campaign mode ─────────────────────────────────────────────────────
+  if(CAMPAIGN_MODE){
+    if(!text){document.getElementById('sb').disabled=false;return;}
+    let camp=null;
+    try{const r=localStorage.getItem('dnd_campaign_v1');if(r)camp=JSON.parse(r);}catch(e){}
+    if(!camp){toast(UI('noCampaign'));CAMPAIGN_MODE=false;const b=document.getElementById('btn-campaign');if(b)b.classList.remove('active');document.getElementById('sb').disabled=false;return;}
+    const p=gProv(),key=gKey(p),info=PROVS[p];
+    const limit=(info.campaignLimit??CAMPAIGN_CHAR_LIMIT);
+    let context;
+    if(info.noKey){
+      const summary=getCachedSummary(camp);
+      if(summary){
+        const remaining=Math.max(0,limit-summary.text.length-100);
+        const snippets=remaining>200?getKeywordSections(camp.text,text,remaining):null;
+        context='CAMPAIGN SUMMARY:\n'+summary.text+(snippets?'\n\nRELEVANT SECTIONS:\n'+snippets:'');
+      }else{
+        const kw=getKeywordSections(camp.text,text,limit);
+        context=kw||(camp.text.slice(0,limit)+(camp.text.length>limit?'\n\n[... chronicle truncated ...]':''));
+      }
+    }else{
+      const kw=getKeywordSections(camp.text,text,limit);
+      context=kw||(camp.text.slice(0,limit)+(camp.text.length>limit?'\n\n[... chronicle truncated ...]':''));
+    }
+    const userContent='Campaign chronicle ("'+camp.name+'"):\n---\n'+context+'\n---\n\nQuestion: '+text;
+    addMsg('u',text);
+    const mid='m'+Date.now();const el=addMsg('a','',mid);el.classList.add('thinking');
+    try{
+      const lang=currentLang==='it'?'Italian':'English';
+      const sys=sysCampaign+'\n\nRespond in '+lang+'.';
+      if(!info.noKey&&!key)throw new Error(UI('sendError'));
+      const messages=[{role:'system',content:sys},{role:'user',content:userContent}];
+      let resp='';
+      if(p==='gemini'){resp=await callGemini(key,sys,[{role:'user',content:userContent}]);}
+      else if(info.noStream){resp=await callOAI(p,key,messages);}
+      else{resp=await streamOAI(p,key,messages,t=>updMsg(mid,t||'…'));}
+      if(!resp)resp=UI('emptyResp');
+      updMsg(mid,resp);
+    }catch(e){updMsg(mid,'**Error:** '+e.message);}
+    document.getElementById('sb').disabled=false;return;
+  }
   // ── Normal mode ───────────────────────────────────────────────────────
   if(CHAR&&!CHAR_DONE){
     const c4ai=JSON.parse(JSON.stringify(CHAR));
@@ -1280,6 +1350,81 @@ async function send(){
 }
 function onKey(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();send();}}
 function resize(el){el.style.height='42px';el.style.height=Math.min(el.scrollHeight,130)+'px';}
+// ── Campaign mode ─────────────────────────────────────────────────────────
+function getCachedSummary(camp){
+  try{
+    const raw=localStorage.getItem('dnd_campaign_summary');if(!raw)return null;
+    const s=JSON.parse(raw);
+    if(s.campaignName!==camp.name)return null;
+    if(Math.abs(s.textLength-camp.text.length)>500)return null;
+    return s;
+  }catch(e){return null;}
+}
+function getKeywordSections(text,question,limit){
+  const STOP=new Set([
+    // English
+    'a','an','the','is','are','was','were','i','my','me','we','our','what','who','where','when','how','does','did','do','can','could','would','should','have','has','had','in','on','at','to','for','of','and','or','but','with','about','from','that','this','it','he','she','they','you','your','their','its','be','been','being',
+    // Italian
+    'che','non','una','uno','del','con','per','tra','fra','gli','nel','dal','sul','dei','alla','alle','agli','dai','nei','sui','della','delle','degli','nella','nelle','negli','dalla','dalle','dagli','sulla','sulle','sugli','questo','questa','questi','queste','come','quando','dove','anche','sono','hanno','era','suo','sua','suoi','sue','poi','mai','ogni','tutto','tutti','sempre','ora','chi','cui','mio','mia','tuo','tua','ben','piu','gia','col','cio'
+  ]);
+  const words=question.toLowerCase().split(/\W+/).filter(function(w){return w.length>2&&!STOP.has(w);});
+  if(!words.length)return null;
+  const regs=words.map(function(w){return new RegExp('\\b'+w+'\\b','gi');});
+  const lines=text.split('\n');const secs=[];let cur={content:'',origIdx:0};
+  for(let i=0;i<lines.length;i++){
+    const l=lines[i];
+    if(l.startsWith('# ')||l.startsWith('## ')){
+      if(cur.content.trim())secs.push(cur);
+      cur={content:l+'\n',origIdx:secs.length};
+    }else{cur.content+=l+'\n';}
+  }
+  if(cur.content.trim())secs.push(cur);
+  secs.forEach(function(s){
+    const low=s.content.toLowerCase();
+    s.score=regs.reduce(function(sum,re){const m=low.match(re);return sum+(m?m.length:0);},0);
+  });
+  secs.sort(function(a,b){return b.score-a.score||a.origIdx-b.origIdx;});
+  let out='',total=0;
+  for(const s of secs){
+    if(!s.score)break;
+    const chunk=s.content.trim();
+    if(total+chunk.length+2<=limit){out+=chunk+'\n\n';total+=chunk.length+2;}
+  }
+  return out.trim()||null;
+}
+async function generateCampaignSummary(camp){
+  const p=gProv(),info=PROVS[p];if(info.noKey)return null;
+  const key=gKey(p);if(!key)return null;
+  const sysSummarize='Summarize the following D&D campaign chronicle into a compact structured reference. The chronicle may be written in Italian or English — produce the summary in the same language as the chronicle. Output ONLY this format:\nWORLD: [1-2 sentences on the setting]\nPLOT:\n• [story beat]\nNPCS:\n• Name — role/status\nLOCATIONS:\n• Name — brief description\nOPEN THREADS:\n• [unresolved hook]\nBe factual, under 800 words total.';
+  const userMsg='Chronicle:\n---\n'+camp.text.slice(0,80000)+'\n---';
+  let resp='';
+  try{
+    const msgs=[{role:'system',content:sysSummarize},{role:'user',content:userMsg}];
+    if(p==='gemini'){resp=await callGemini(key,sysSummarize,[{role:'user',content:userMsg}]);}
+    else if(info.noStream){resp=await callOAI(p,key,msgs);}
+    else{resp=await streamOAI(p,key,msgs,function(){});}
+  }catch(e){return null;}
+  if(!resp)return null;
+  const summary={text:resp,generatedAt:new Date().toISOString(),campaignName:camp.name,textLength:camp.text.length};
+  try{localStorage.setItem('dnd_campaign_summary',JSON.stringify(summary));}catch(e){}
+  return summary;
+}
+function toggleCampaignMode(){
+  let camp=null;
+  try{const r=localStorage.getItem('dnd_campaign_v1');if(r)camp=JSON.parse(r);}catch(e){}
+  if(!CAMPAIGN_MODE&&!camp){toast(UI('noCampaign'));return;}
+  CAMPAIGN_MODE=!CAMPAIGN_MODE;
+  const btn=document.getElementById('btn-campaign');
+  if(btn)btn.classList.toggle('active',CAMPAIGN_MODE);
+  if(CAMPAIGN_MODE&&camp){
+    addMsg('a',UI('campaignWelcome',camp.name));
+    document.getElementById('chips').style.display='none';
+    const info=PROVS[gProv()];
+    if(!info.noKey&&gKey(gProv())&&!getCachedSummary(camp)){
+      generateCampaignSummary(camp).then(function(s){if(s)toast(UI('summaryReady'));});
+    }
+  }
+}
   </script>
 </body>
 </html>

@@ -168,6 +168,7 @@ tr.skill-none{opacity:.55;}
   border:none;color:var(--sidebar-text);font-size:.9em;padding:9px 16px;cursor:pointer;
   text-align:left;transition:background .12s,color .12s;text-decoration:none;}
 .overflow-item:hover{background:var(--sidebar-hover);color:var(--accent);}
+.overflow-sep{border:none;border-top:1px solid var(--border-light);margin:4px 0;}
 /* ═══════════════ HEADER ═══════════════ */
 #header-area{display:flex;align-items:flex-start;gap:20px;margin-bottom:24px;
   background:var(--bg-card);border-radius:12px;padding:20px 22px;box-shadow:var(--shadow-sm);
@@ -692,6 +693,7 @@ body.edit-mode::after{content:'';position:fixed;inset:0;pointer-events:none;box-
   <nav class="hdr-tabs">
     <a class="hdr-tab active" id="hdr-tab-char" href="index.html"></a>
     <a class="hdr-tab" id="hdr-tab-ai" href="assistant.html"></a>
+    <a class="hdr-tab" id="hdr-tab-chronicles" href="chronicles.html"></a>
   </nav>
   <div class="hdr-right">
     <button class="ctrl-btn" id="btn-theme" onclick="toggleTheme()">☀️</button>
@@ -700,6 +702,8 @@ body.edit-mode::after{content:'';position:fixed;inset:0;pointer-events:none;box-
   <button id="hdr-overflow-btn" onclick="toggleOverflowMenu(event)" title="More options">⋯</button>
   <div id="hdr-overflow-menu">
     <a class="overflow-item" id="overflow-ai" href="assistant.html">✨ AI</a>
+    <a class="overflow-item" id="overflow-chronicles" href="chronicles.html">📖 Chronicles</a>
+    <hr class="overflow-sep">
     <button class="overflow-item" id="overflow-theme" onclick="toggleTheme();closeOverflowMenu()">☀️ Theme</button>
     <button class="overflow-item" id="overflow-lang" onclick="toggleLang();closeOverflowMenu()">IT Language</button>
   </div>
@@ -963,7 +967,7 @@ function skillName(sk){ return DND.tr[currentLang]?.skills?.[sk.id]||sk.en; }
 // Adding a new language is one object: TRANSLATIONS.fr = { navTitle:'...', ... }
 const BASE = {
   navTitle:'📜 Index', editSidebar:'✏️ Sidebar',
-  hdrCharacter:'📜 Character', hdrAIAssistant:'✨ AI',
+  hdrCharacter:'📜 Character', hdrAIAssistant:'✨ AI', hdrChronicles:'📖 Chronicles',
   editMode:'✏️ Edit Sheet', editDone:'✓ Done Editing',
   baseData:'Base Data', skills:'Skills', spells:'Spells',
   equipment:'Equipment',
@@ -1362,7 +1366,7 @@ const BASE = {
 const TRANSLATIONS = {
   it:{
     navTitle:'📜 Indice', editSidebar:'✏️ Sidebar',
-  hdrCharacter:'📜 Personaggio', hdrAIAssistant:'✨ AI',
+  hdrCharacter:'📜 Personaggio', hdrAIAssistant:'✨ AI', hdrChronicles:'📖 Cronache',
   baseData:'Dati Base', skills:'Abilità', spells:'Incantesimi',
   equipment:'Equipaggiamento',
   algorithm:'Algoritmo di Combattimento',
@@ -1880,6 +1884,10 @@ function updateFixedControls(){
   const tabAI=document.getElementById('hdr-tab-ai');
   if(tabChar) tabChar.textContent=T('hdrCharacter');
   if(tabAI) tabAI.textContent=T('hdrAIAssistant');
+  const tabChronicles=document.getElementById('hdr-tab-chronicles');
+  if(tabChronicles) tabChronicles.textContent=T('hdrChronicles');
+  const oc=document.getElementById('overflow-chronicles');
+  if(oc) oc.textContent=T('hdrChronicles');
   const oa=document.getElementById('overflow-ai');
   if(oa) oa.textContent=T('hdrAIAssistant');
   const ob=document.getElementById('overflow-theme');
@@ -3221,9 +3229,11 @@ function exportCharacter(){
   if(!CHAR){showToast(T('errNoChar'),'error');return;}
   const data=buildExportData();
   const json=JSON.stringify(data,null,2);
-  const name=(CHAR.name||'personaggio').replace(/[^a-z0-9]/gi,'_').toLowerCase();
+  const name=(CHAR.name||'character').replace(/[^a-z0-9]/gi,'_').toLowerCase();
+  const cls=(CHAR.class||'').replace(/[^a-z0-9]/gi,'_').toLowerCase();
+  const lvl=CHAR.level||1;
   const date=new Date().toISOString().slice(0,10);
-  const filename=`${name}_${date}.json`;
+  const filename=`${name}_${cls}_${lvl}_${date}.json`;
   try{
     const blob=new Blob([json],{type:'application/json'});
     const url=URL.createObjectURL(blob);

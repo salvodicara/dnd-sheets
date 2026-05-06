@@ -72,19 +72,19 @@ A companion chat page that connects to the character sheet via localStorage.
 - Works with multiple AI providers: free (Pollinations, no account needed), Gemini, Groq, OpenRouter, OpenAI
 - Dynamic model info for the free tier (fetched live from Pollinations API)
 - **Document import** — attach a PDF, TXT, or DOCX character sheet via the paperclip button; with no extra text the AI reads it and builds a full importable character; with extra text the document is used as conversation context instead
+- **Campaign query mode (📖)** — toggle button in the chat bar switches context from the character sheet to the loaded campaign chronicle; AI answers lore/story questions instead of character questions. Uses keyword-based section selection to fit the most relevant chronicle sections within the context budget. For free-tier (Pollinations), a structured AI-generated summary is cached and used alongside keyword snippets
 - Fully bilingual (English / Italian)
 
 ## Project Structure
 
 ```
 dnd-sheets/
-  index.html                    Main application (single file, ~3,830 lines)
-  assistant.html                AI assistant companion page (~700 lines)
-  CLAUDE.md                     AI steering document (golden rules, architecture)
-  DESIGN.md                     Design decisions, phase plan, data model
-  chronicles/                   Campaign chronicles + Catalion's personal files
-    index.html                  Campaign reader page (GitHub Pages)
-    campaign.md                 Session-by-session campaign narrative
+  index.html       Main character sheet (~5,200 lines)
+  assistant.html   AI assistant companion page (~1,430 lines)
+  chronicles.html  Campaign chronicle reader/editor (~540 lines)
+  CLAUDE.md        AI steering document (golden rules, architecture)
+  DESIGN.md        Design decisions, phase plan, data model
+  examples/        Example files (campaign.md, catalion JSON, PDF)
 ```
 
 ## Data Format
