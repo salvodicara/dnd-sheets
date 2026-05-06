@@ -69,12 +69,6 @@ Il gruppo decide di andare a cercarlo. Ma mentre discutono sul da farsi, il gobl
 Col senno di poi, il goblin li aveva ingannati: aveva esagerato il numero di nemici nel covo per scoraggiarli o guadagnare tempo. Ma in questo momento il gruppo non lo sa ancora, e segue le tracce verso la caverna!
 
 ---
----
-
-## EPISODIO 3 — La Soglia della Caverna
-**23 febbraio 2026**
-
----
 
 Le tracce portano fino a un costone di roccia dove la collina si apre in una caverna sorvegliata da due goblin di guardia. Il gruppo si ferma a valutare la situazione.
 
@@ -82,17 +76,19 @@ Le tracce portano fino a un costone di roccia dove la collina si apre in una cav
 
 Peccato che i lupi fossero già nervosi — probabilmente hanno sentito il pipistrello — e si siano già liberati dalle catene.
 
+---
+---
+
+## EPISODIO 3 — Nel Ventre della Terra
+**23 febbraio 2026**
+
+---
+
 Si apre un dibattito: **Catalion** vuole la stealth, **Chiaviddu** preferisce l'approccio diretto. La soluzione è un compromesso: si entra piano, con i combattenti più resistenti in testa — **Santaera**, **Bo** e **Mandorlino**.
 
 Le guardie esterne vengono neutralizzate in silenzio. L'entrata è silenziosa. Ma poi i lupi sentono gli odori e fanno esplodere tutto! Le bestie si lanciano fuori dalle catene e il loro baccano attira immediatamente i goblin dalle camere interne. La caverna si trasforma in un combattimento aperto.
 
 Il gruppo tiene e continua ad attrarre i nemici verso di sé invece di avanzare, dividendoli e abbattendoli a piccoli gruppi. Nel frattempo, **Chiaviddu** svolge il suo ruolo naturale: avanza silenzioso nelle gallerie più profonde, raccoglie informazioni e le riporta agli altri. Il gruppo ha i propri occhi nell'oscurità!
-
----
----
-
-## EPISODIO 4 — Nel Ventre della Terra
-**9 marzo 2026**
 
 ---
 
@@ -106,6 +102,14 @@ Un bugbear enorme, dalla corporatura di una scimmia gigante, con un'autorità na
 
 «E tu chi cazzo saresti?»
 
+---
+---
+
+## EPISODIO 4 — L'Uscita dal Buio
+**9 marzo 2026**
+
+---
+
 **Chiaviddu** non risponde. Gira i tacchi e corre!
 
 **Klarg** manda i goblin all'inseguimento. **Chiaviddu** conosce già la geometria delle gallerie e riesce a guadagnare distanza. Mentre fugge, nota qualcosa di importante: **Klarg** stava dando ai goblin ordini di ritirata — stava dicendo loro di abbandonare il covo!
@@ -113,12 +117,6 @@ Un bugbear enorme, dalla corporatura di una scimmia gigante, con un'autorità na
 Ma non c'è tempo per elaborare questa informazione. **Chiaviddu** svolta nell'ultima curva prima delle proprie posizioni e si trova davanti a un gruppo di goblin che arrivano dall'altro lato.
 
 È completamente circondato!
-
----
----
-
-## EPISODIO 5 — L'Uscita dal Buio
-**23 marzo 2026**
 
 ---
 
@@ -156,19 +154,21 @@ Il gruppo si divide.
 
 **Chiaviddu**, **Mandorlino** e **Santaera** vanno alla taverna. **Chiaviddu** convince **Santaera** a lanciare una sedia su un vecchio avventore. Nasce una rissa generale.
 
-Nel frattempo, **Briox** è ancora per strada quando i membri del Marchio Rosso lo accerchiano. Lo provocano, lo intimidiscono. **Briox** risponde senza battere ciglio: «Vi romperò il culo.» Loro attaccano!
+Nel frattempo, **Briox** è ancora per strada quando i membri del Marchio Rosso lo accerchiano. Lo provocano, lo intimidiscono. **Briox** risponde senza battere ciglio: «Vi romperò il culo.»
+
+---
+---
+
+## EPISODIO 5 — Il Marchio Rosso
+**23 marzo 2026**
+
+---
+
+Loro attaccano!
 
 Arrivano in soccorso prima **Chiaviddu**, **Mandorlino** e **Santaera** dalla taverna, poi **Bo** che sente il rumore a distanza e copre la distanza di corsa in pochi secondi, infine **Catalion** e **Linene** che escono dall'armeria sullo stesso trambusto.
 
 I membri del Marchio Rosso vengono sconfitti e trascinati al municipio. Il sindaco, terrorizzato dall'idea di ritorsioni, acconsente a tutto. Gli abitanti guardano con sollievo — ma anche con apprensione. «Che cosa avete fatto», si sente tra la folla. Come se la vittoria stesse aprendo qualcosa di più grande.
-
-Fine sessione — e che sessione!
-
----
----
-
-## EPISODIO 6 — Il Covo del Marchio Rosso
-**13 aprile 2026**
 
 ---
 
@@ -178,7 +178,17 @@ Prima di trovare il covo, il trio passa dalla fattoria di una donna ai margini d
 
 Il trio entra dal passaggio segreto in uniforme.
 
-All'interno, **Catalion** gestisce ogni incontro a parole. I membri del Marchio li scambiano per colleghi. Il travestimento regge. In una camera laterale trovano però un nothic — una creatura anomala con occhi enormi e intelligenza distorta. Lo abbattono in silenzio e nascondono il cadavere prima che qualcuno possa notarlo.
+All'interno, **Catalion** gestisce ogni incontro a parole. I membri del Marchio li scambiano per colleghi. Il travestimento regge. In una camera laterale trovano però un nothic — una creatura anomala con occhi enormi e intelligenza distorta.
+
+---
+---
+
+## EPISODIO 6 — Il Covo del Marchio Rosso
+**13 aprile 2026**
+
+---
+
+Lo abbattono in silenzio e nascondono il cadavere prima che qualcuno possa notarlo.
 
 Poi arrivano al dormitorio. Dentro c'è **Klarg**, seduto su un cassone, con altri membri del Marchio intorno. Non riconosce nessuno dei tre. **Catalion** gestisce l'interazione con sangue freddo e il trio riesce a uscire dalla stanza senza incidenti!
 
