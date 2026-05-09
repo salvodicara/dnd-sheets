@@ -1,0 +1,19 @@
+CHANGELOG.md
+  s_a2686e1bd10a0b::t_e5f94fe0b19be3 8-12
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.4.4",
+  "base_commit_sha": "1157b1238b3cd56a3c86accbb65391ff65ace0aa",
+  "prompts": {},
+  "sessions": {
+    "s_a2686e1bd10a0b": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_1f3472d43ffeU5S5xIy31PI8wi",
+        "model": "claude-sonnet-4.6"
+      },
+      "human_author": "Salvatore Di Cara <salvodicara@gmail.com>"
+    }
+  }
+}
