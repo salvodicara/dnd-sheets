@@ -1,0 +1,57 @@
+index.html
+  s_a2686e1bd10a0b::t_81333efdfba707 1254
+  s_a2686e1bd10a0b::t_1e71b12cb06701 4541,4544,4548-4556,4561-4570,4573,4580-4582,4584-4585,4588-4589
+  s_a2686e1bd10a0b::t_df3cf967e32b3c 4624,4631
+  s_a2686e1bd10a0b::t_2bf0ed6d401f4f 2957-2959,2961-2972
+  s_a2686e1bd10a0b::t_c93430d329953c 2858
+  s_a2686e1bd10a0b::t_e1d1dfec8cd93b 4634-4635,4655-4663,4669-4683,4693-4695
+  s_a2686e1bd10a0b::t_fe63e0581aa899 2872
+  s_a2686e1bd10a0b::t_4dc8b6c6ad331a 3694,3697
+  s_a2686e1bd10a0b::t_501b4105a709c3 3700-3702
+  s_a2686e1bd10a0b::t_79e16d1e6bef4c 4521
+  s_a2686e1bd10a0b::t_d87a438582eee7 710-720
+  s_a2686e1bd10a0b::t_b5bd5e528b0992 4604
+  s_a2686e1bd10a0b::t_5803e7b95f33ee 3534-3536,3539-3541
+  s_a2686e1bd10a0b::t_6eacf5fe9916eb 1717
+  s_a2686e1bd10a0b::t_b099f4ea33f825 2856-2857,2859-2863,2867,2869-2871,2873-2876
+  s_a2686e1bd10a0b::t_7311de7cd482f6 3557-3569
+  s_a2686e1bd10a0b::t_57a31e8a8f85c5 5438-5439,5445,5449-5463,5472-5473,5485-5486
+  s_a2686e1bd10a0b::t_05d577d1a8c633 1236-1242
+  s_a2686e1bd10a0b::t_36cae6a24f9a1d 2973
+  s_a2686e1bd10a0b::t_d54e331b68886c 1699-1705
+CLAUDE.md
+  s_a2686e1bd10a0b::t_95a3259abb49ba 105-122
+  s_a2686e1bd10a0b::t_dc5c31579b67ee 197-198
+  s_a2686e1bd10a0b::t_d9988befdefcd6 468,472-473,475
+  s_a2686e1bd10a0b::t_c7e930923f42e4 502,504-507,512-517
+examples/test_tracker_features_2026-05-09.json
+  s_a2686e1bd10a0b::t_50c73d95e921c9 172
+  s_a2686e1bd10a0b::t_0eb8809f6644c0 162
+  s_a2686e1bd10a0b::t_7ffa1b8da3badd 85-123
+  s_a2686e1bd10a0b::t_75e4870a39927a 6
+  s_a2686e1bd10a0b::t_e19b18f1ecdd6b 1-5,7-84,124-161,163-171,173-190
+DESIGN.md
+  s_a2686e1bd10a0b::t_2a65a10f05f3c8 11
+  s_a2686e1bd10a0b::t_2114895047f4b9 796,798,802,804,806,808
+CHANGELOG.md
+  s_a2686e1bd10a0b::t_74704b03b801f4 8-36
+README.md
+  s_a2686e1bd10a0b::t_05d5bd69c3f8a2 54-55
+  s_a2686e1bd10a0b::t_fc850f626f30fa 20-22
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.4.4",
+  "base_commit_sha": "d2a13a4207702f51150723edf27e6abfd8ae3ec6",
+  "prompts": {},
+  "sessions": {
+    "s_a2686e1bd10a0b": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_1f3472d43ffeU5S5xIy31PI8wi",
+        "model": "claude-sonnet-4.6"
+      },
+      "human_author": "Salvatore Di Cara <salvodicara@gmail.com>"
+    }
+  }
+}
