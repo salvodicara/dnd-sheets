@@ -5,7 +5,37 @@ Entries are in reverse-chronological order. Uncommitted work appears under `[Unr
 
 ---
 
-## [Unreleased] — Phase 38: Tooltip Sizing & New Help Icons
+## [Unreleased] — Phase 39: Feature Tracker Linking & Floating Tooltips
+
+### Added (`index.html`)
+- **`trackerLink` field on feature actions** — links an action to a tracker (any tracker across all features, including cross-feature links). When the round advances (`changeRound(+1)`) and the linked action is queued in Quick Actions, the tracker is automatically decremented, with a log entry and toast notification
+- **`findTrackerByTid(tid)`** — new helper that searches all features globally for a tracker by its session ID; returns `{tracker, feature}` or `null`. Powers both cross-feature lookup and availability checks in the game panel
+- **Cross-feature tracker linking in wizard** — the action editor's tracker dropdown lists ALL trackers across all saved features (not just the current feature), allowing e.g. "Cutting Words" to spend "Bardic Inspiration" charges. Option labels include the source feature name for cross-feature entries
+- **JS floating tooltip** — `.help-icon[data-tip]` elements inside `.modal-body` now use a `position:fixed` tooltip div (`.floating-tip`) created via event delegation on `document`. This escapes `overflow:auto` clipping entirely. The CSS `::after` tooltip remains unchanged for all non-modal usages
+- **New i18n keys (EN + IT):** `actionTrackerLink`, `actionTrackerLinkHint`, `actionTrackerSelect`, `actionTrackerNone`, `actionTrackerNoTrackers`, `lbl_uses`, `logTrackerUse`, `logTrackerNoUses`
+
+### Fixed (`index.html`)
+- **Tooltip clipping inside wizard modal** — the previous CSS-flip workaround (`.modal-body .help-icon::after { top:unset; bottom:... }`) was removed. It couldn't work because `overflow:auto` clips absolutely-positioned children in all directions. Replaced with the JS floating tooltip approach described above
+
+### Changed (`index.html`)
+- **`buildPanelActions()` feature entries** — uses `findTrackerByTid` for remaining-uses display and availability dimming, supporting cross-feature tracker links
+- **`renderWizActionList()`** — shows a 🔗 badge on actions that have a `trackerLink` set
+- **`editWizAction(i)`** — tracker dropdown now enumerates all character trackers (cross-feature), skipping the feature being edited to avoid self-reference
+
+### Changed (`examples/catalion_di_sancaldo_bard_3_2026-05-06.json`)
+- **Ispirazione Bardica** action: added `trackerLink: "ispirazione-bardica"` (self-link)
+- **Parole Taglienti** action: added `trackerLink: "ispirazione-bardica"` (cross-feature link)
+
+### Fixed (`index.html`) — addendum
+- **Duplicate tooltip on modal help icons** — the CSS `::after` tooltip was still firing alongside the JS floating tooltip inside `.modal-body`, showing two tooltips stacked. Fixed by removing all CSS `::after` tooltip rules and unifying everything under the JS floating approach
+
+### Changed (`index.html`) — addendum
+- **Unified tooltip system** — all `[data-tip]` elements app-wide (`.insp-btn`, `.stat-cell`, `.save-cell`, `.turn-slot`, `.help-icon`) now use the single JS floating tooltip (`position:fixed`, `.floating-tip`). All five CSS `::after` tooltip rule blocks removed. Visual style is now identical everywhere (320px max-width, 11px/15px padding, 0.87rem, line-height 1.6). Added `relatedTarget` guard in `mouseout` to prevent flicker when the cursor moves into a child of the hovered element
+- **`.help-icon`** — removed `position:relative` (was only needed for the now-deleted `::after` tooltip)
+
+---
+
+## [5e72057] — Phase 38: Tooltip Sizing & New Help Icons
 
 ### Added (`index.html`)
 - **`?` help icon on HP card** — tooltip explains Aid spell mechanics (raises both max and current HP), temp HP stacking rule (no stacking — keep the higher value), and bar color thresholds (yellow <50%, red <25%)

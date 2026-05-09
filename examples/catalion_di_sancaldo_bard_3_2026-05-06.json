@@ -358,7 +358,8 @@
         "actions": [
           {
             "type": "bonus",
-            "description": "+1d6 al d20 di un alleato | 18 m | 3 usi / Riposo Lungo"
+            "description": "+1d6 al d20 di un alleato | 18 m | 3 usi / Riposo Lungo",
+            "trackerLink": "ispirazione-bardica"
           }
         ]
       },
@@ -442,7 +443,8 @@
             "label": "Parole Taglienti",
             "emoji": "🗡️",
             "type": "reaction",
-            "description": "Parole Taglienti: −1d6 a tiro attacco/danno nemico | spendi 1 Ispirazione | 18 m"
+            "description": "Parole Taglienti: −1d6 a tiro attacco/danno nemico | spendi 1 Ispirazione | 18 m",
+            "trackerLink": "ispirazione-bardica"
           }
         ]
       },

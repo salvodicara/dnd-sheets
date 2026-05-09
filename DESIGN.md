@@ -788,3 +788,35 @@ Done:
 | addLog() / toast() | ~2738-2760 |
 | renderField() / wizard engine | ~3195-3400 |
 | WIZARDS config object | ~3934+ |
+
+---
+
+## Known Missing Features / Future Work
+
+### `trackerLink` variable cost (`cost` field)
+
+**Status:** Not implemented. `trackerLink` always consumes exactly 1 use.
+
+**Problem:** Some D&D 2024 abilities spend more than 1 tracker use per activation:
+- Monk Ki/Discipline Points: most abilities cost 1, but some cost 2–3
+- Sorcerer Metamagic: Careful/Twinned = 1 pt, Heightened = 3 pts, Quickened = 2 pts
+
+**Proposed data model:** add optional `cost: integer` (default `1`) to the action object's `trackerLink`:
+```json
+{ "trackerLink": "ki-points", "cost": 2 }
+```
+`changeRound(+1)` would decrement `SESSION.trackers[tid].used` by `cost` (clamped to tracker total).
+
+**Proposed wizard UI:** The action editor shows the tracker dropdown as today (1 use, no extra field visible). A muted secondary line — e.g. `"Costs 1 use · change"` — appears beneath the dropdown once a tracker is linked. Clicking "change" reveals an inline number input. This keeps the default (cost = 1) invisible and the configuration opt-in.
+
+---
+
+### Numeric pool trackers (Lay on Hands)
+
+**Status:** Not implemented. All trackers are pip-based (integer uses).
+
+**Problem:** Paladin's Lay on Hands is a **HP pool** (e.g. 25 points at level 5). Each use spends a variable number of points (1 per HP restored, 5 to cure a disease/poison). A pip tracker cannot model this naturally.
+
+**Proposed data model:** add optional `poolType: "numeric"` and `poolMax: number` to tracker objects. `SESSION.trackers[id]` would store `{ used: number }` as today, but `used` would represent points spent (not pips). The game panel would render it as `X / Y pts` instead of pip dots.
+
+**Wizard UI:** when "Track quantity" is checked in the equipment/feature wizard, offer a toggle between "Pip uses (default)" and "Numeric pool". If numeric, show a "Pool size" number input. The Spend button in the game panel would prompt for how many points to spend (or use a small inline stepper).

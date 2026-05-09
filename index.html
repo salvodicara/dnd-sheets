@@ -645,13 +645,7 @@ body.edit-mode::after{content:'';position:fixed;inset:0;pointer-events:none;box-
 :root[data-theme="light"] .insp-btn.active.heroic{background:#fff8d8;color:#8a6800;border-color:#c8a030;}
 .insp-btn.active.bardic{border-color:var(--accent);background:var(--accent-dim);color:var(--accent);}
 .insp-btn.disabled{opacity:.38;cursor:not-allowed;}
-.insp-btn[data-tip]::after{content:attr(data-tip);position:absolute;bottom:calc(100% + 6px);
-  left:50%;transform:translateX(-50%);background:var(--bg-card);border:1px solid var(--border);
-  color:var(--text);padding:8px 13px;border-radius:6px;font-size:0.87rem;font-weight:400;
-  max-width:280px;white-space:normal;text-align:center;line-height:1.5;
-  pointer-events:none;opacity:0;transition:opacity .15s;z-index:210;
-  box-shadow:0 2px 8px rgba(0,0,0,.25);}
-.insp-btn[data-tip]:hover::after{opacity:1;}
+
 .insp-die-row{display:flex;gap:4px;margin-top:6px;flex-wrap:wrap;}
 .insp-die-pill{padding:2px 8px;border-radius:12px;border:1.5px solid var(--border-light);
   background:var(--bg-card2);color:var(--text-muted);font-size:.75em;cursor:pointer;transition:all .15s;}
@@ -663,12 +657,7 @@ body.edit-mode::after{content:'';position:fixed;inset:0;pointer-events:none;box-
   position:relative;cursor:default;}
 .stat-cell-val{font-size:1.25em;font-weight:bold;color:var(--text);line-height:1.1;}
 .stat-cell-lbl{font-size:.62em;color:var(--text-muted);text-transform:uppercase;margin-top:2px;white-space:nowrap;}
-.stat-cell[data-tip]::after{content:attr(data-tip);position:absolute;bottom:calc(100% + 6px);
-  left:50%;transform:translateX(-50%);background:var(--bg-card);border:1px solid var(--border);
-  color:var(--text);padding:8px 13px;border-radius:6px;font-size:0.87rem;
-  max-width:230px;white-space:normal;text-align:center;line-height:1.5;
-  pointer-events:none;opacity:0;transition:opacity .15s;z-index:210;box-shadow:0 2px 8px rgba(0,0,0,.25);}
-.stat-cell[data-tip]:hover::after{opacity:1;}
+
 .stat-sep{width:1px;background:var(--border-light);align-self:stretch;margin:2px 0;}
 /* ── Saving throws row ── */
 .save-throws-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:5px;margin-bottom:14px;}
@@ -678,11 +667,7 @@ body.edit-mode::after{content:'';position:fixed;inset:0;pointer-events:none;box-
 .save-cell.prof{border-color:var(--accent);background:var(--accent-dim);}
 .save-cell-val{font-size:1em;font-weight:bold;color:var(--text);}
 .save-cell-lbl{font-size:.58em;color:var(--text-muted);text-transform:uppercase;}
-.save-cell[data-tip]::after{content:attr(data-tip);position:absolute;bottom:calc(100% + 5px);
-  left:50%;transform:translateX(-50%);background:var(--bg-card);border:1px solid var(--border);
-  color:var(--text);padding:7px 12px;border-radius:6px;font-size:0.87rem;white-space:nowrap;
-  pointer-events:none;opacity:0;transition:opacity .15s;z-index:210;box-shadow:0 2px 8px rgba(0,0,0,.25);}
-.save-cell[data-tip]:hover::after{opacity:1;}
+
 /* ── Saves strip wrapper / shared strip label ── */
 .saves-wrap{margin-bottom:14px;}
 .pn-strip-label{font-size:.7em;font-weight:700;color:var(--text-muted);text-transform:uppercase;
@@ -710,24 +695,18 @@ body.edit-mode::after{content:'';position:fixed;inset:0;pointer-events:none;box-
 .turn-slot.used .turn-slot-check{border-color:var(--accent);background:var(--accent);color:#fff;}
 .turn-slot-sel{font-size:.62em;color:var(--accent);opacity:.9;max-width:100%;overflow:hidden;
   text-overflow:ellipsis;white-space:nowrap;line-height:1.2;}
-.turn-slot[data-tip]::after{content:attr(data-tip);position:absolute;bottom:calc(100% + 5px);
-  left:50%;transform:translateX(-50%);background:var(--bg-card);border:1px solid var(--border);
-  color:var(--text);padding:7px 12px;border-radius:6px;font-size:0.85rem;
-  max-width:260px;white-space:normal;text-align:center;line-height:1.5;
-  pointer-events:none;opacity:0;transition:opacity .15s;z-index:210;box-shadow:0 2px 8px rgba(0,0,0,.25);}
-.turn-slot[data-tip]:hover::after{opacity:1;}
+
 /* ── Generic help icon ── */
 .help-icon{display:inline-flex;align-items:center;justify-content:center;width:15px;height:15px;
   border-radius:50%;border:1px solid var(--border-light);background:var(--bg-card2);
   color:var(--text-muted);font-size:.62em;font-weight:700;cursor:default;
-  position:relative;user-select:none;flex-shrink:0;vertical-align:middle;}
-.help-icon::after{content:attr(data-tip);position:absolute;top:calc(100% + 7px);
-  left:50%;transform:translateX(-50%);background:var(--bg-card);border:1px solid var(--border);
+  user-select:none;flex-shrink:0;vertical-align:middle;}
+/* Floating tooltip — JS-positioned, escapes overflow:auto clipping */
+.floating-tip{position:fixed;z-index:9999;background:var(--bg-card);border:1px solid var(--border);
   color:var(--text);padding:11px 15px;border-radius:7px;font-size:0.87rem;font-weight:400;
   max-width:320px;min-width:200px;white-space:normal;text-align:left;line-height:1.6;
-  pointer-events:none;opacity:0;transition:opacity .15s;z-index:220;
-  box-shadow:0 3px 12px rgba(0,0,0,.28);}
-.help-icon:hover::after{opacity:1;}
+  box-shadow:0 3px 12px rgba(0,0,0,.28);pointer-events:none;
+  transform:translateX(-50%) translateY(-100%);display:none;}
 .exhaustion-row{display:flex;align-items:center;gap:8px;margin-top:6px;}
 .exhaustion-val{font-size:1.2em;font-weight:700;min-width:20px;text-align:center;color:var(--text);}
 .exhaustion-val.danger{color:var(--hp-red);}
@@ -1235,6 +1214,14 @@ const BASE = {
     helpDeathSaves:'Roll a d20 at the start of each of your turns while unconscious. 10 or higher = success (3 successes = stable). 9 or lower = failure (3 failures = you die). Natural 20 = you regain 1 HP immediately. Natural 1 = counts as 2 failures.',
     helpHitDice:'Spend hit dice during a short rest to recover HP: roll the die and add your CON modifier (minimum 0 per die). On a long rest you recover up to half your total hit dice (rounded up), so use them freely during sessions.',
     helpExhaustion:'Each level of exhaustion imposes a −2 penalty to all d20 rolls (attack rolls, ability checks, saving throws) and to your speed. Level 6 = death. A long rest removes 1 exhaustion level.',
+    actionTrackerLink:'Auto-spend tracker use',
+    actionTrackerLinkHint:'Link this action to one of its feature\'s trackers. When you select it in Quick Actions and the round advances (+), one use is automatically deducted — just like spell slots. The tracker\'s Spend button still works at any time for manual control.',
+    actionTrackerSelect:'Which tracker to spend',
+    actionTrackerNone:'No resource cost',
+    actionTrackerNoTrackers:'Add trackers to this feature first',
+    lbl_uses:'uses left',
+    logTrackerUse:'⚡ {name}: 1 use spent',
+    logTrackerNoUses:'❌ {name}: no uses remaining',
    secStats:'Stats', secCombat:'Combat', secConditions:'Conditions', secTrackers:'Trackers',
    secRest:'Rest', secSession:'Session',
   rests:'😴 Rests', longRest:'🌙 Long Rest', shortRest:'☕ Short Rest',
@@ -1683,6 +1670,14 @@ const TRANSLATIONS = {
       helpDeathSaves:'Tira un d20 all\'inizio di ogni tuo turno mentre sei privo di sensi. 10 o più = successo (3 successi = stabile). 9 o meno = fallimento (3 fallimenti = muori). 20 naturale = recuperi 1 HP immediatamente. 1 naturale = conta come 2 fallimenti.',
       helpHitDice:'Spendi Dadi Vita durante un riposo breve per recuperare HP: tira il dado e aggiungi il modificatore di COS (minimo 0 per dado). Con un riposo lungo recuperi fino a metà dei tuoi Dadi Vita totali (arrotondato per eccesso).',
       helpExhaustion:'Ogni livello di affaticamento impone una penalità −2 a tutti i tiri di d20 (attacchi, prove di caratteristica, tiri salvezza) e alla velocità. Livello 6 = morte. Un riposo lungo rimuove 1 livello di affaticamento.',
+      actionTrackerLink:'Consuma uso tracker automaticamente',
+      actionTrackerLinkHint:'Collega questa azione a uno dei tracker della feature. Quando la selezioni nelle Azioni Rapide e avanzi il round (+), un uso viene detratto automaticamente — esattamente come gli slot degli incantesimi. Il pulsante Usa sul tracker funziona sempre anche manualmente.',
+      actionTrackerSelect:'Quale tracker consumare',
+      actionTrackerNone:'Nessun costo di risorse',
+      actionTrackerNoTrackers:'Aggiungi prima i tracker a questa feature',
+      lbl_uses:'usi rimasti',
+      logTrackerUse:'⚡ {name}: 1 uso speso',
+      logTrackerNoUses:'❌ {name}: nessun uso rimasto',
      secStats:'Statistiche', secCombat:'Combattimento', secConditions:'Condizioni', secTrackers:'Tracker',
      secRest:'Riposo', secSession:'Sessione',
     rests:'😴 Riposi', longRest:'🌙 Riposo Lungo', shortRest:'☕ Riposo Breve',
@@ -2928,11 +2923,18 @@ function buildPanelActions(){
     const t=normalizeActionType(a.type||'action');
     const id='fa-'+slugify(a.label||f.title||'');
     const isUsed=ta[slotOf(t)]===id;
-    const isUnavail=!isFeatureActionAvailable(f);
-    const hidden=ACTION_FILTER!=='all'&&t!==ACTION_FILTER;
-    const cls=`action-entry${isUsed?' used':''}${isUnavail?' unavail':''}`;
-    return `<div class="${cls}" data-type="${t}"${hidden?' style="display:none"':''} onclick="useAction('${t}','${id}')">${badge(t)}${isUsed?'<span class="action-entry-check">✓</span>':''}<div class="action-entry-body"><div class="action-entry-name">${a.emoji||f.emoji||''} ${a.label||f.title||''}</div><div class="action-entry-note">${a.description||''}</div></div></div>`;
-  })).join('');
+     const isUnavail=a.trackerLink
+      ?(()=>{const found=findTrackerByTid(a.trackerLink);return found?(SESSION.trackers?.[a.trackerLink]?.used||0)>=(found.tracker.total||1):false;})()
+      :!isFeatureActionAvailable(f);
+     const hidden=ACTION_FILTER!=='all'&&t!==ACTION_FILTER;
+     const cls=`action-entry${isUsed?' used':''}${isUnavail?' unavail':''}`;
+     let noteText=a.description||'';
+     if(a.trackerLink){
+       const found=findTrackerByTid(a.trackerLink);
+       if(found){const tr=found.tracker;const rem=(tr.total||0)-(SESSION.trackers?.[a.trackerLink]?.used||0);const usesStr=rem+'/'+tr.total+' '+T('lbl_uses');noteText=noteText?noteText+' · '+usesStr:usesStr;}
+     }
+     return `<div class="${cls}" data-type="${t}"${hidden?' style="display:none"':''} onclick="useAction('${t}','${id}')">${badge(t)}${isUsed?'<span class="action-entry-check">✓</span>':''}<div class="action-entry-body"><div class="action-entry-name">${a.emoji||f.emoji||''} ${a.label||f.title||''}</div><div class="action-entry-note">${noteText}</div></div></div>`;
+   })).join('');
   const all=spellEntries+weaponEntries+featureEntries;
   return `<div class="pn-card" style="margin-top:14px;">
     <div class="label">${T('quickActions')} <span class="help-icon" data-tip="${T('helpQuickActions')}">?</span></div>
@@ -3436,6 +3438,15 @@ function clickHDPip(i){
   if(i<used) SESSION.hitDice.used=i; else SESSION.hitDice.used=i+1;
   renderPanel(); saveAll();
 }
+// Returns {tracker, feature} for any tracker across all features, by session ID
+function findTrackerByTid(tid){
+  for(const f of (CHAR.features||[])){
+    for(const t of (f.trackers||[])){
+      if(slugify(t.label||f.title)===tid) return {tracker:t,feature:f};
+    }
+  }
+  return null;
+}
 function consumeSpellSlot(level){
   if(!level||level===0) return null;
   const slots=(CHAR.spellSlots||[]).filter(sl=>sl.level>=level).sort((a,b)=>a.level-b.level);
@@ -3600,6 +3611,7 @@ function changeRound(d){
   const toastMsgs=[];
   if(d>0){
     const ta=SESSION.turnActions&&!Array.isArray(SESSION.turnActions)?SESSION.turnActions:{};
+    // ── Spell slot auto-consumption ──
     for(const slot of ['action','bonus','reaction']){
       const id=ta[slot]; if(!id||!id.startsWith('sp-')) continue;
       const sp=(CHAR.spells||[]).find(s=>'sp-'+slugify(s.name||'')===id);
@@ -3614,6 +3626,34 @@ function changeRound(d){
       }
       addLog(msg,'log-damage');
       toastMsgs.push(msg);
+    }
+    // ── Feature tracker auto-consumption ──
+    for(const slot of ['action','bonus','reaction']){
+      const id=ta[slot]; if(!id||!id.startsWith('fa-')) continue;
+      outer:for(const f of (CHAR.features||[])){
+        for(const a of (f.actions||[])){
+          if('fa-'+slugify(a.label||f.title||'')!==id) continue;
+          if(!a.trackerLink) continue;
+          const tid=a.trackerLink;
+          const found=findTrackerByTid(tid);
+          if(!found) continue;
+          const total=found.tracker.total||0;
+          const used=(SESSION.trackers?.[tid]?.used)||0;
+          const name=((a.emoji||f.emoji||'')+' '+(a.label||f.title||'')).trim();
+          let msg;
+          if(used<total){
+            if(!SESSION.trackers) SESSION.trackers={};
+            if(!SESSION.trackers[tid]) SESSION.trackers[tid]={used:0};
+            SESSION.trackers[tid].used++;
+            msg=T('logTrackerUse').replace('{name}',name);
+          } else {
+            msg=T('logTrackerNoUses').replace('{name}',name);
+          }
+          addLog(msg,'log-damage');
+          toastMsgs.push(msg);
+          continue outer;
+        }
+      }
     }
     resetTurnSlots();
   }
@@ -4483,7 +4523,7 @@ function refreshWizTrackerList(){
 }
 function renderWizActionList(){
   return WIZ_ACTIONS.map((a,i)=>`<div class="cb-row" id="wiz-act-${i}">
-    <span>${a.emoji||'⚡'} ${a.label||'('+T('action')+')'} — ${dndTr('actionLabels',a.type)||a.type||'action'}</span>
+    <span>${a.emoji||'⚡'} ${a.label||'('+T('action')+')'} — ${dndTr('actionLabels',a.type)||a.type||'action'}${a.trackerLink?` <span style="font-size:.72em;color:var(--accent);margin-left:3px;">🔗 ${T('actionTrackerLink')}</span>`:''}</span>
     <div style="display:flex;gap:4px;">
       <button class="btn-edit-sm" onclick="editWizAction(${i})">✏️</button>
       <button class="btn-del-sm" onclick="deleteWizAction(${i})">🗑</button>
@@ -4497,6 +4537,23 @@ function editWizAction(i){
   WIZ_ACT_EDIT=i; const a=WIZ_ACTIONS[i];
   const body=document.getElementById('wiz-body'); if(!body) return;
   const typeOpts=actionTypeOpts().map(o=>`<option value="${o.v}"${o.v===a.type?' selected':''}>${o.l}</option>`).join('');
+  const featureTitle=WIZ_DATA?.title||'';
+  // Build tracker list: current feature (unsaved WIZ_TRACKERS) + all other saved features
+  const allOpts=[];
+  WIZ_TRACKERS.forEach(t=>{
+    const tid=slugify(t.label||featureTitle);
+    const name=(t.emoji?t.emoji+' ':'')+(t.label||featureTitle);
+    allOpts.push(`<option value="${tid}"${a.trackerLink===tid?' selected':''}>${name} — ${t.total||0} uses, ${t.recovery||'long'}</option>`);
+  });
+  (CHAR.features||[]).forEach((f,fi)=>{
+    if(WIZ_EDIT_IDX!=null&&fi===WIZ_EDIT_IDX) return; // skip self (WIZ_TRACKERS is authoritative)
+    (f.trackers||[]).forEach(t=>{
+      const tid=slugify(t.label||f.title);
+      const name=(t.emoji?t.emoji+' ':'')+(t.label?t.label+' ('+f.title+')':f.title);
+      allOpts.push(`<option value="${tid}"${a.trackerLink===tid?' selected':''}>${name} — ${t.total||0} uses, ${t.recovery||'long'}</option>`);
+    });
+  });
+  const trackerOpts=allOpts.length?allOpts.join(''):`<option disabled>${T('actionTrackerNoTrackers')}</option>`;
   body.innerHTML=`<div class="wiz-field"><label class="wiz-label">${T('action')}</label>
     <div style="display:flex;gap:6px;margin-bottom:6px;">
       <input id="wae-label" class="wiz-input" style="flex:2" placeholder="${T('wiz_f_actionLabel')}" value="${(a.label||'').replace(/"/g,'&quot;')}">
@@ -4506,7 +4563,17 @@ function editWizAction(i){
       <select id="wae-type" class="wiz-input" style="flex:1">${typeOpts}</select>
     </div>
     <textarea id="wae-desc" class="wiz-input" rows="2" placeholder="${T('wiz_f_actionDesc')}">${a.description||''}</textarea>
-    <div style="display:flex;gap:6px;margin-top:6px;">
+    <div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--border-light);">
+      <div style="display:flex;align-items:center;gap:5px;margin-bottom:4px;">
+        <span style="font-size:.82em;font-weight:600;color:var(--text-muted);">${T('actionTrackerLink')}</span>
+        <span class="help-icon" data-tip="${T('actionTrackerLinkHint')}">?</span>
+      </div>
+      <select id="wae-tracker-link" class="wiz-input">
+        <option value="">— ${T('actionTrackerNone')} —</option>
+        ${trackerOpts}
+      </select>
+    </div>
+    <div style="display:flex;gap:6px;margin-top:10px;">
       <button class="btn" onclick="saveWizAction(${i})">✓ ${T('wizSave')}</button>
       <button class="btn" onclick="cancelWizActEdit()">✕</button>
     </div></div>`;
@@ -4516,10 +4583,12 @@ function collectActEdit(i){
     label:document.getElementById('wae-label')?.value||'',
     emoji:document.getElementById('wae-emoji')?.value||'',
     type:document.getElementById('wae-type')?.value||'action',
-    description:document.getElementById('wae-desc')?.value||''
+    description:document.getElementById('wae-desc')?.value||'',
+    trackerLink:document.getElementById('wae-tracker-link')?.value||''
   };
   if(!a.emoji) delete a.emoji;
   if(!a.label) delete a.label;
+  if(!a.trackerLink) delete a.trackerLink;
   WIZ_ACTIONS[i]=a;
 }
 function saveWizAction(i){
@@ -6007,6 +6076,32 @@ function splashNewChar(){
   hideSplash();
   openWizard('char-create');
 }
+// Unified floating tooltip for all [data-tip] elements app-wide.
+// position:fixed escapes overflow:auto clipping (modal, scroll containers, etc.)
+(function(){
+  let tip = null;
+  function ensureTip(){
+    if (!tip){ tip = document.createElement('div'); tip.className = 'floating-tip'; document.body.appendChild(tip); }
+    return tip;
+  }
+  document.addEventListener('mouseover', function(e){
+    const el = e.target.closest('[data-tip]');
+    if (!el) return;
+    const t = ensureTip();
+    t.textContent = el.dataset.tip;
+    const r = el.getBoundingClientRect();
+    t.style.left = (r.left + r.width / 2) + 'px';
+    t.style.top  = (r.top - 7) + 'px';
+    t.style.display = 'block';
+  });
+  document.addEventListener('mouseout', function(e){
+    const el = e.target.closest('[data-tip]');
+    if (!el || !tip) return;
+    // Don't hide when moving to a child of the same element
+    if (el.contains(e.relatedTarget)) return;
+    tip.style.display = 'none';
+  });
+})();
 document.addEventListener('DOMContentLoaded', init);
 </script>
 <div id="fab-wrap"></div>
