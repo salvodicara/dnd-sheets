@@ -9,6 +9,7 @@
 - **v1 (Complete):** UX overhaul, i18n completion, sidebar architecture, smart features, D&D 2024 parity
 - **v1.2 (Complete):** UI redesign (gold/navy palette, header polish), mobile UX, UX polish
 - **v1.3 (Complete):** Variable-cost tracker actions (`trackerCost`), numeric pool trackers (`isPool`/`unit`), unified floating tooltip system
+- **v1.4 (In Progress):** Bug fixes (damage override backward compat, spell DC/attack field names, feature rename trackerLink integrity), tooltip consistency (all `title=` eliminated), wizard completeness (`preparedMax` reachable from char-create), schema/doc corrections
 
 ---
 

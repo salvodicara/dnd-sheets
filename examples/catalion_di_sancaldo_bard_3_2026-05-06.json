@@ -58,8 +58,7 @@
     "spellcasting": {
       "ability": "CHA",
       "preparedCaster": false,
-      "focus": "Strumento musicale",
-      "preparedMax": 8
+      "focus": "Strumento musicale"
     },
     "spellSlots": [
       {
@@ -256,7 +255,7 @@
         "damageType": "Piercing",
         "attackStat": "DEX",
         "attackBonusOverride": 6,
-        "damageModOverride": 4,
+        "damageOverride": "1d8+4",
         "properties": "Finesse, +1 magica",
         "notes": "Spada magica +1 già appartenuta ai Cavalieri dell'Ordine Eterno, lama incisa con un guanto che stringe una rosa.\nArma in comune col gruppo — usarla con rispetto e restituirla dopo lo scontro.",
         "mastery": "Vex",

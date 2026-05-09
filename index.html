@@ -2198,6 +2198,10 @@ function syncSession(){
     CHAR.levelUpChecklist=SESSION.levelUpChecklist;
   }
   delete SESSION.levelUpChecklist;
+  // Migrate damageModOverride (legacy integer) → damageOverride (string)
+  (CHAR.weapons||[]).forEach(w=>{ if(w.damageModOverride!=null&&!w.damageOverride){ const m=w.damageModOverride; w.damageOverride=(w.damageDie||'1d6')+(m>=0?'+'+m:m); delete w.damageModOverride; } });
+  // Migrate preparedMax on non-prepared casters → remove stale field
+  if(CHAR.spellcasting && !CHAR.spellcasting.preparedCaster) delete CHAR.spellcasting.preparedMax;
   // Remove stale tracker entries (deleted equipment/features)
   const validTrackerIds=new Set();
   (CHAR.equipment||[]).forEach(e=>{ if(e.tracked) validTrackerIds.add('eq-'+slugify(e.name)); });
@@ -2767,8 +2771,8 @@ function buildPanelStatStrip(){
     +cell(T('hint_statPassPerc'),passPerc,T('passivePerception'));
   if(isCaster){
     const ab=C.spellcasting.ability;
-    const spellDC=C.spellcasting?.spellDCOverride??(8+pb+abilityMod(scores[ab]||10));
-    const spellAtk=C.spellcasting?.spellAttackOverride??(pb+abilityMod(scores[ab]||10));
+    const spellDC=C.spellcasting?.saveDCOverride??(8+pb+abilityMod(scores[ab]||10));
+    const spellAtk=C.spellcasting?.attackBonusOverride??(pb+abilityMod(scores[ab]||10));
     cells+=sep+cell(T('hint_statSpellDC'),spellDC,T('lbl_spellDC'))
       +sep+cell(T('hint_statSpellAtk'),modStr(spellAtk),T('lbl_spellAtk'));
   }
@@ -2943,7 +2947,8 @@ function buildPanelActions(){
     const magic=w.magicBonus||0;
     const atk=w.attackBonusOverride!=null?modStr(w.attackBonusOverride):modStr(pb+atkMod+magic);
     const dmgMod=atkMod+magic;
-    const dmg=w.damageOverride||(w.damageDie||'?')+(dmgMod>=0?'+'+dmgMod:dmgMod);
+    const dmgOverride=w.damageOverride||(w.damageModOverride!=null?(w.damageDie||'?')+(w.damageModOverride>=0?'+'+w.damageModOverride:w.damageModOverride):null);
+    const dmg=dmgOverride||(w.damageDie||'?')+(dmgMod>=0?'+'+dmgMod:dmgMod);
     const id='w-'+slugify(w.name||'');
     const isUsed=ta['action']===id;
     const hidden=ACTION_FILTER!=='all'&&ACTION_FILTER!=='action';
@@ -3078,7 +3083,7 @@ function renderBaseData(){
   ].filter(r=>r[1]!==undefined&&r[1]!==null&&r[1]!=='');
   const scores=finalScores(C);
   const bgName=dndTr('backgrounds',C.background)||C.background||'';
-  const statsRow=DND.abilities.map(a=>{const sc=scores[a]||10;const bon=bgAsi[a]||0;const tip=bon?` title="Base: ${(C.abilityScores||{})[a]||10} + ${bon} (${bgName})" style="cursor:help"`:'';return `<td${tip}>${sc} (${modStr(abilityMod(sc))})</td>`;}).join('');
+  const statsRow=DND.abilities.map(a=>{const sc=scores[a]||10;const bon=bgAsi[a]||0;const tip=bon?` data-tip="Base: ${(C.abilityScores||{})[a]||10} + ${bon} (${bgName})"`:'';return `<td${tip} style="${bon?'cursor:help':''}">` +`${sc} (${modStr(abilityMod(sc))})</td>`;}).join('');
   // savingThrows: supports both ["DEX","CHA"] (new) and [{ability,bonus,proficient}] (legacy)
   const profSaves=Array.isArray(C.savingThrows)&&typeof C.savingThrows[0]==='string'
     ? C.savingThrows
@@ -3205,7 +3210,7 @@ function renderSpellsSection(){
     </table>
     ${C.spellSlots?.length?`<h3 style="margin-top:12px;">${T('slotTitle')}</h3>
       <table><tr><th>${T('slotLevel')}</th><th>${T('slotTot')}</th>${EDIT_MODE?'<th></th>':''}</tr>
-      ${(C.spellSlots||[]).map((sl,i)=>`<tr><td>${sl.pactMagic?`<span title="${T('hint_pactMagic')}">${T('pactMagic')}</span>`:`${T('slotLvLabel')} ${sl.level}`}</td><td>${sl.total}</td>${EDIT_MODE?`<td><button class="btn-edit-sm" onclick="editSpellSlot(${i})">✏️</button> <button class="btn-del-sm" onclick="deleteSpellSlot(${i})">🗑</button></td>`:''}</tr>`).join('')}</table>`:''}
+      ${(C.spellSlots||[]).map((sl,i)=>`<tr><td>${sl.pactMagic?`${T('pactMagic')} <span class="help-icon" data-tip="${T('hint_pactMagic')}">?</span>`:`${T('slotLvLabel')} ${sl.level}`}</td><td>${sl.total}</td>${EDIT_MODE?`<td><button class="btn-edit-sm" onclick="editSpellSlot(${i})">✏️</button> <button class="btn-del-sm" onclick="deleteSpellSlot(${i})">🗑</button></td>`:''}</tr>`).join('')}</table>`:''}
     ${EDIT_MODE?`<div class="edit-only" style="display:flex!important;gap:6px;margin-top:8px;flex-wrap:wrap;">
       <button class="btn-edit-sm" onclick="editSpellcasting()">✏️ ${T('editMagic')}</button>
       <button class="btn-edit-sm" onclick="addSpellSlot()">${T('addSlot')}</button></div>`:''}\n  </div>`:'';
@@ -3296,6 +3301,10 @@ function renderWeapons(){
   }
   function weaponDmg(w){
     if(w.damageOverride) return w.damageOverride;
+    if(w.damageModOverride!=null){
+      const mod=w.damageModOverride;
+      return (w.damageDie||'?')+(mod>=0?'+'+mod:mod);
+    }
     const die=w.damageDie||'?';
     const dmgMod=abilityMod(scores[w.attackStat]||10)+(w.magicBonus||0);
     return `${die}${dmgMod>=0?'+'+dmgMod:dmgMod}`;
@@ -4089,8 +4098,7 @@ function renderWizardStep(){
   injectWizPreview();
 }
 function renderField(f){
-  const hintAttr=f.hint?` title="${T(f.hint).replace(/"/g,'&quot;')}"`:''
-  const lbl=f.label?`<label for="wf-${f.id}" class="wiz-label"${hintAttr}>${T(f.label)}${f.required?` <span style="color:var(--accent)">*</span>`:''}${f.hint?' <span style="cursor:help;opacity:.5;">ⓘ</span>':''}</label>`:'';
+  const lbl=f.label?`<label for="wf-${f.id}" class="wiz-label">${T(f.label)}${f.required?` <span style="color:var(--accent)">*</span>`:''}${f.hint?` <span class="help-icon" data-tip="${T(f.hint).replace(/"/g,'&quot;')}">?</span>`:''}</label>`:'';
   let inp='';
   const val=WIZ_DATA[f.id]??f.default??'';
   if(f.type==='text'||f.type==='number'){
@@ -5211,6 +5219,7 @@ const WIZARDS = {
       {id:'sc_ability',label:'wiz_f_magicAbility',type:'select',options:()=>[{v:'',l:'—'},...abilityOpts()],hint:'hint_magicAbility'},
       {id:'sc_focus',label:'wiz_f_magicFocus',type:'text',hint:'hint_magicFocus'},
       {id:'sc_preparedCaster',label:'wiz_f_preparedCaster',type:'checkbox',hint:'hint_preparedCaster'},
+      {id:'sc_preparedMax',label:'wiz_f_preparedMax',type:'number',min:0,hint:'hint_preparedMax'},
     ], _afterRender(data){
       // Auto-fill ability and preparedCaster based on class chosen in step 1
       const cls=data.class||WIZ_DATA.class;
@@ -5228,6 +5237,14 @@ const WIZARDS = {
           cb.checked=DND.preparedCasters.includes(cls);
         }
       }
+      // Show preparedMax only when preparedCaster is checked
+      function togglePreparedMax(){
+        const on=document.getElementById('wf-sc_preparedCaster')?.checked;
+        const el=document.getElementById('wf-sc_preparedMax')?.closest('.wiz-field');
+        if(el) el.style.display=on?'':'none';
+      }
+      togglePreparedMax();
+      document.getElementById('wf-sc_preparedCaster')?.addEventListener('change',togglePreparedMax);
     }},
   ],
   onSave(d){
@@ -5269,6 +5286,7 @@ const WIZARDS = {
     if(d.sc_ability){
       const prev=base.spellcasting||{};
       base.spellcasting={ability:d.sc_ability,focus:d.sc_focus||'',preparedCaster:!!d.sc_preparedCaster};
+      if(d.sc_preparedCaster && d.sc_preparedMax!==''&&d.sc_preparedMax!=null) base.spellcasting.preparedMax=+d.sc_preparedMax;
       if(prev.saveDCOverride!=null) base.spellcasting.saveDCOverride=prev.saveDCOverride;
       if(prev.attackBonusOverride!=null) base.spellcasting.attackBonusOverride=prev.attackBonusOverride;
     }
@@ -5531,8 +5549,10 @@ const WIZARDS = {
       return renderFeatureStep3();
     }, _afterRender(){injectFeaturePreview();}},
   ],
-  onSave(d,idx,blocks){
+   onSave(d,idx,blocks){
     const oldTitle=idx!==null&&idx!==undefined?CHAR.features[idx]?.title:null;
+    const oldTrackers=idx!==null&&idx!==undefined?(CHAR.features[idx]?.trackers||[]):[];
+    const hasUnlabeledTrackers=oldTrackers.some(t=>!t.label);
     const f={title:d.title,emoji:d.emoji,subtitle:d.subtitle,source:d.source,
       contentBlocks:blocks};
     if(WIZ_TAGS.length) f.tags=[...WIZ_TAGS];
@@ -5547,6 +5567,18 @@ const WIZARDS = {
         const oldId=slugify(oldTitle), newId=slugify(d.title);
         const sbIdx=(CHAR.sidebar||[]).indexOf(oldId);
         if(sbIdx>=0) CHAR.sidebar[sbIdx]=newId;
+        // Update trackerLink refs in all features' actions (only unlabeled trackers
+        // use the feature title as their session ID — labeled trackers are unaffected)
+        if(hasUnlabeledTrackers){
+          (CHAR.features||[]).forEach(feat=>{
+            (feat.actions||[]).forEach(a=>{ if(a.trackerLink===oldId) a.trackerLink=newId; });
+          });
+          // Migrate SESSION tracker data so in-progress used count is preserved
+          if(SESSION?.trackers?.[oldId]!==undefined){
+            SESSION.trackers[newId]=SESSION.trackers[oldId];
+            delete SESSION.trackers[oldId];
+          }
+        }
       }
     } else {
       CHAR.features.push(f);
@@ -5686,8 +5718,8 @@ const WIZARDS = {
       const conMod=abilityMod(finalScores(C).CON||10);
       const avg=Math.floor(die/2)+1+conMod;
       const hdModStr=conMod>=0?`+${conMod}`:String(conMod);
-      const hintEl=document.querySelector('#wf-hpGain')?.closest('.wiz-field')?.querySelector('.field-hint');
-      if(hintEl) hintEl.textContent=`1d${die}${hdModStr} | ${T('wiz_levelUp_avg')}: ${Math.max(1,avg)}`;
+      const hintEl=document.querySelector('#wf-hpGain')?.closest('.wiz-field')?.querySelector('.help-icon');
+      if(hintEl) hintEl.dataset.tip=`1d${die}${hdModStr} | ${T('wiz_levelUp_avg')}: ${Math.max(1,avg)}`;
       const cb=document.getElementById('wf-useAverage');
       const inp=document.getElementById('wf-hpGain');
       if(cb&&inp){
@@ -5824,6 +5856,7 @@ function flattenChar(){
     sc_ability:(C.spellcasting?.ability||''),
     sc_focus:(C.spellcasting?.focus||''),
     sc_preparedCaster:!!(C.spellcasting?.preparedCaster),
+    sc_preparedMax:C.spellcasting?.preparedMax??null,
     // Background ASI step prefill
     ...(()=>{
       const asi=C.backgroundAsi||{};

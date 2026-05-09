@@ -5,7 +5,31 @@ Entries are in reverse-chronological order. Uncommitted work appears under `[Unr
 
 ---
 
-## [Unreleased]
+## [Unreleased] — Phase 41: Bug Fixes, Tooltip Consistency, Schema Corrections
+
+### Fixed (`index.html`)
+- **`damageModOverride` backward compat** — renderers (`weaponDmg()` and action bar) now check `damageModOverride` (old integer field) as a fallback when `damageOverride` (current string field) is absent; `syncSession()` migration silently converts old integer field to canonical `damageOverride: "XdY+N"` string on load
+- **`spellDCOverride` / `spellAttackOverride` wrong names** — `renderBaseData()` was reading non-existent field names; corrected to `saveDCOverride` and `attackBonusOverride` (matching wizard save and schema); spell DC and attack bonus overrides now display correctly in the stat strip
+- **Feature rename trackerLink integrity** — feature wizard `onSave` now detects when a feature is renamed, migrates SESSION tracker data from old slug IDs to new slug IDs, and updates `trackerLink` references in sibling features' actions; prevents orphaned tracker state after renames
+- **Pact Magic tooltip** — spell slot table's `<span title="...">` replaced with `<span class="help-icon" data-tip="...">?</span>` to use the unified floating tooltip system
+- **Level-up wizard HP formula hint** — `_afterRender` was querying dead `.field-hint` class (removed in tooltip refactor); now finds `.help-icon` and updates `dataset.tip` dynamically with the computed `1dX+N | avg: Y` formula
+- **Ability score table tooltip** — `data-tip` attribute re-added correctly (template literal closing `}` was accidentally dropped by prior automated edit)
+- **`renderField()` tooltip** — field hints now render as `<span class="help-icon" data-tip="...">?</span>` consistently; old `title=` on label + plain `ⓘ` span removed
+
+### Added (`index.html`)
+- **`sc_preparedMax` in char-create wizard Step 8** — prepared caster checkbox now reveals a "Max prepared spells" number field; wired into `onSave` and `flattenChar()` so `spellcasting.preparedMax` is settable from character creation (was only reachable via standalone spellcasting edit wizard)
+
+### Fixed (`examples/`)
+- **`catalion_di_sancaldo_bard_3_2026-05-06.json`** — removed stale `preparedMax: 8` (Bards are not prepared casters in D&D 2024); converted `damageModOverride: 4` → `damageOverride: "1d8+4"` on Talon weapon
+
+### Fixed (`CLAUDE.md`)
+- Schema corrections: `CHAR.spellcasting` field names (`saveDCOverride`, `attackBonusOverride`), `preparedMax` added, Ranger added to prepared casters list
+- `CHAR.lore` block added (was entirely missing from schema)
+- `CHAR.weapons[]`: `damageModOverride` → `damageOverride: string|null`
+- `CHAR.spells[]`: `components {v,s,m,material}` added (was missing entirely)
+- `CHAR.features[]`: `subtitle` field and `{type:"header"}` content block added
+- Top-level CHAR: `humanOriginFeat`, `bgFeat` added
+- `SESSION`: `gold` → `currency`, added `inspiration`, `bardicInspiration`, `bardicInspirationDie`, `exhaustion`
 
 ---
 
