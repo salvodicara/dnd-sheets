@@ -5,7 +5,66 @@ Entries are in reverse-chronological order. Uncommitted work appears under `[Unr
 
 ---
 
-## [Unreleased] — Phase 36: Feat Database + Origin Feat Wizard Step
+## [Unreleased] — Phase 38: Tooltip Sizing & New Help Icons
+
+### Added (`index.html`)
+- **`?` help icon on HP card** — tooltip explains Aid spell mechanics (raises both max and current HP), temp HP stacking rule (no stacking — keep the higher value), and bar color thresholds (yellow <50%, red <25%)
+- **`?` help icon on Concentration card** — tooltip explains one-spell-at-a-time rule and the CON save requirement when taking damage (DC = max(10, half damage))
+- **`?` help icon on Death Saves card** — tooltip explains the 3-success/3-failure rules, natural 20 = regain 1 HP immediately, natural 1 = counts as 2 failures
+- **`?` help icon on Hit Dice card** — tooltip explains how to spend dice during a short rest (roll + CON mod) and the half-recovery rule on long rest
+- **`?` help icon on Exhaustion row** — tooltip explains the D&D 2024 exhaustion mechanic: −2 per level to all d20 rolls and speed, level 6 = death, long rest removes 1 level
+- **New i18n keys (EN + IT):** `helpHP`, `helpConc`, `helpDeathSaves`, `helpHitDice`, `helpExhaustion`
+
+### Fixed (`index.html`)
+- **Tooltip font-size compounding** — all six tooltip `::after` blocks now use `rem` units (`0.85–0.87rem`) instead of `em`. The `em` approach caused silent font-size cascading: a help icon nested inside a `.label` or small-text span would render tooltip text at ~7–8px. `rem` ensures a consistent readable size (~14px) everywhere regardless of nesting depth
+- **Tooltip sizing** — bumped `max-width` (up to 320px on `.help-icon`), `padding` (+2–3px), and `line-height` (1.5–1.6) across all tooltip variants for better readability
+
+---
+
+## [e93c2cd] — Phase 37: Game Panel UX — Dual Inspiration, Turn Hints, Save Tooltips
+
+### Added (`index.html`)
+- **Dual Inspiration tracker** (Trackers section):
+  - Two separate toggles: ⭐ Heroic Inspiration (golden, DM-granted, `SESSION.inspiration`) and 🎶 Bardic Inspiration (accent-colored, bard-granted, `SESSION.bardicInspiration`)
+  - Mutually exclusive: enabling one while the other is active shows a conflict toast and blocks the action; the unavailable button is visually dimmed (`.disabled`)
+  - Bardic Inspiration reveals a die-type selector (d6 / d8 / d10 / d12 pills) so the recipient can record which die the Bard gave them (`SESSION.bardicInspirationDie`)
+  - Die pills use `flex-wrap:wrap` for narrow screens
+  - Both toggles have hover tooltips quoting the D&D 2024 rules
+- **Inspiration card header** — `✨ INSPIRATION` label added for visual consistency with other tracker cards
+- **Currency card header** — `🪙 CURRENCY` label added (new i18n key `currencyLabel`)
+- **Selected action in turn slots** — ACTION / BONUS slots now show the chosen action name as a small accent line below the slot label (e.g. `⚔️ Action` + `🔥 Fireball`). Movement slot excluded (no selectable action)
+- **`?` help icon on Round panel** — hover tooltip explains the full turn tracker flow including: tick-to-skip, auto-advance vs manual `+`, and spell slot auto-consumption on advance
+- **`?` help icon on Quick Actions** — hover tooltip explains selection, deselection, and dimmed-entry rules
+- **Saving throw tooltips** — each save cell has a hover tooltip: proficient cells show "Proficient — includes your +N Proficiency Bonus", non-proficient show "Not proficient — ability modifier only" (EN + IT)
+- **Responsive turn tracker** — `.turn-tracker` gains `flex-wrap:wrap`; `.turn-slot` gains `flex-direction:column` and `min-width:80px` so slots stack gracefully on narrow mobile screens
+- **Spell slot auto-consumption on round advance** — `changeRound(+1)` now scans `SESSION.turnActions` for `sp-*` entries before resetting; calls `consumeSpellSlot()` for each, logs result, and shows a success toast with undo button. Cantrips are logged without consuming a slot. If no slot is available a warning is logged instead
+- **`consumeSpellSlot(level)`** — new shared helper; finds and consumes the lowest available slot ≥ the spell's level; returns the level consumed or `null`
+- **`castSpell(idx)`** — explicit cast from the Spells section; consumes slot immediately, logs, shows success toast with undo button. Error toast if no slots available
+- **Cast button on spell cards** — every spell card in the Spells section now has a `Cast` button (hidden in edit mode) that calls `castSpell(idx)`
+- **New SESSION fields:** `bardicInspiration` (boolean), `bardicInspirationDie` (string) — both backfilled in `syncSession()` for existing saves
+- **New i18n keys (EN + IT):** `heroicInspiration`, `heroicInspirationTip`, `bardicInspiration`, `bardicInspirationTip`, `inspirationConflict`, `logBardicGained`, `logBardicSpent`, `currencyLabel`, `saveProfTip`, `saveNoProfTip`, `castBtn`, `logCast`, `logCastCantrip`, `noSlotsLeft`
+
+### Changed (`index.html`)
+- **`.inspiration-btn`** CSS replaced by `.insp-btn` with `.heroic` / `.bardic` / `.disabled` modifiers
+- **Turn slot inner layout** — checkbox + label wrapped in `.ts-row` (flex row) inside a column-direction slot, so the selected-action line sits below without breaking alignment
+- **Quick Actions filter buttons** — removed selection hint spans that appeared below filter tabs; selection is now conveyed exclusively via the slot label in the round panel
+- **`helpCombat` tooltip text** — updated to mention tick-to-skip, manual `+` button, and spell slot auto-consumption
+
+### Fixed (`index.html`)
+- `toast()` calls (undefined function) replaced with `showToast()` in `toggleHeroicInspiration()`, `toggleBardicInspiration()`, and a pre-existing call in the sidebar delete handler
+- Missing toast + undo button on round-advance spell slot consumption — `showToast('success')` now called after `saveAll()` so undo auto-attaches
+
+### Removed (`index.html`)
+- `toggleInspiration()` → replaced by `toggleHeroicInspiration()` and `toggleBardicInspiration()`
+- `.filter-sel-hint` CSS class (dead code)
+- `inspirationTip` i18n key → replaced by `heroicInspirationTip`
+
+### Updated (`DESIGN.md`)
+- Phase 22 inspiration entry updated to reflect dual-toggle architecture and new SESSION fields
+
+---
+
+## [e93c2cd] — Phase 36: Feat Database + Origin Feat Wizard Step
 
 ### Added (`index.html`)
 - **Feat database:** `DND.feats` — array of 75 D&D 2024 PHB feats, each typed as `origin`, `general`, `fightingStyle`, or `epicBoon`. Replaces old flat `DND.commonFeats` array.

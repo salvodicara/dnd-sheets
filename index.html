@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Scheda D&D 2024</title>
+  <script>(function(){var t=localStorage.getItem('dnd-theme');if(!t)t=window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light';document.documentElement.setAttribute('data-theme',t);})();</script>
   <style>
 /* ═══════════════ THEME VARIABLES ═══════════════ */
 *{box-sizing:border-box;margin:0;padding:0;}
@@ -262,11 +263,11 @@ input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;}
 .gold-row input[type=number]{width:82px;background:var(--bg-input);border:1px solid var(--border-light);
   color:#d4aa30;border-radius:5px;padding:5px 8px;font-size:1em;font-weight:600;text-align:center;}
 #log-wrap{background:var(--bg-card2);border:1px solid var(--border-light);border-radius:7px;
-  padding:7px 10px;max-height:95px;overflow-y:auto;margin-top:7px;font-size:.78em;color:var(--text-muted);}
+  padding:7px 10px;height:100px;min-height:60px;overflow-y:auto;resize:vertical;
+  margin-top:7px;font-size:.78em;color:var(--text-muted);}
 #log-wrap p{margin:2px 0;}
 .log-damage{color:var(--log-damage);}
 .log-heal{color:var(--log-heal);}
-.round-row{display:flex;align-items:center;gap:8px;margin-top:7px;font-size:.85em;}
 .round-val{font-size:1.6em;font-weight:bold;color:var(--text);min-width:32px;text-align:center;}
 .cond-grid{display:flex;flex-wrap:wrap;gap:6px;margin-top:7px;}
 .cond-btn{background:var(--bg-card2);border:1.5px solid var(--border-light);color:var(--text-muted);
@@ -274,13 +275,16 @@ input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;}
 .cond-btn.active{background:var(--cond-active-bg);border-color:var(--cond-active-border);
   color:var(--cond-active-text);font-weight:bold;}
 .cond-btn:hover{border-color:var(--accent);color:var(--text);}
-.action-filter-row{display:flex;gap:6px;flex-wrap:wrap;margin:10px 0 12px;}
+.action-filter-row{display:flex;gap:6px;flex-wrap:wrap;margin:10px 0 12px;align-items:flex-start;}
 .filter-btn{background:var(--bg-card2);border:1.5px solid var(--border-light);color:var(--text-muted);
-  border-radius:14px;padding:4px 13px;font-size:.79em;cursor:pointer;transition:all .15s;user-select:none;}
+  border-radius:14px;padding:4px 13px;font-size:.79em;cursor:pointer;transition:all .15s;user-select:none;
+  display:flex;flex-direction:column;align-items:center;gap:1px;}
 .filter-btn.active{background:var(--accent-dim);border-color:var(--accent);color:var(--text);font-weight:600;}
 .filter-btn:hover{border-color:var(--accent);color:var(--text);}
-.action-entry{display:flex;align-items:flex-start;gap:9px;padding:8px 0;
-  border-bottom:1px solid var(--border-light);}
+.action-entry{display:flex;align-items:flex-start;gap:9px;padding:8px 6px;
+  border-bottom:1px solid var(--border-light);cursor:pointer;border-radius:6px;
+  transition:background .12s;}
+.action-entry:hover{background:var(--accent-dim);}
 .action-entry:last-child{border-bottom:none;}
 .action-badge{flex-shrink:0;font-size:.63em;padding:2px 8px;border-radius:10px;
   font-weight:bold;margin-top:3px;white-space:nowrap;}
@@ -633,27 +637,121 @@ body.edit-mode::after{content:'';position:fixed;inset:0;pointer-events:none;box-
   border-radius:5px;font-size:.85em;}
 .feat-picker-custom-input:focus{border-color:var(--accent);outline:none;}
 /* ═══════════════ INSPIRATION / EXHAUSTION / CURRENCY ═══════════════ */
-.inspiration-btn{width:100%;padding:6px 10px;border-radius:8px;border:1.5px solid var(--border-light);
-  background:var(--bg-card2);color:var(--text-muted);font-size:.88em;cursor:pointer;
-  transition:all .18s;display:flex;align-items:center;justify-content:center;gap:5px;}
-.inspiration-btn.active{border-color:#c8a030;background:#2a2000;color:#e8c850;}
-:root[data-theme="light"] .inspiration-btn.active{background:#fff8d8;color:#8a6800;border-color:#c8a030;}
+.insp-btn{width:100%;padding:5px 10px;border-radius:8px;border:1.5px solid var(--border-light);
+  position:relative;background:var(--bg-card2);color:var(--text-muted);font-size:.85em;cursor:pointer;
+  transition:all .18s;display:flex;align-items:center;justify-content:center;gap:5px;margin-bottom:5px;}
+.insp-btn:last-of-type{margin-bottom:0;}
+.insp-btn.active.heroic{border-color:#c8a030;background:#2a2000;color:#e8c850;}
+:root[data-theme="light"] .insp-btn.active.heroic{background:#fff8d8;color:#8a6800;border-color:#c8a030;}
+.insp-btn.active.bardic{border-color:var(--accent);background:var(--accent-dim);color:var(--accent);}
+.insp-btn.disabled{opacity:.38;cursor:not-allowed;}
+.insp-btn[data-tip]::after{content:attr(data-tip);position:absolute;bottom:calc(100% + 6px);
+  left:50%;transform:translateX(-50%);background:var(--bg-card);border:1px solid var(--border);
+  color:var(--text);padding:8px 13px;border-radius:6px;font-size:0.87rem;font-weight:400;
+  max-width:280px;white-space:normal;text-align:center;line-height:1.5;
+  pointer-events:none;opacity:0;transition:opacity .15s;z-index:210;
+  box-shadow:0 2px 8px rgba(0,0,0,.25);}
+.insp-btn[data-tip]:hover::after{opacity:1;}
+.insp-die-row{display:flex;gap:4px;margin-top:6px;flex-wrap:wrap;}
+.insp-die-pill{padding:2px 8px;border-radius:12px;border:1.5px solid var(--border-light);
+  background:var(--bg-card2);color:var(--text-muted);font-size:.75em;cursor:pointer;transition:all .15s;}
+.insp-die-pill.active{border-color:var(--accent);background:var(--accent);color:#fff;}
+/* ── Stat strip ── */
+.stat-strip{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px;padding:9px 12px;
+  background:var(--bg-card2);border-radius:8px;border:1px solid var(--border-light);}
+.stat-cell{display:flex;flex-direction:column;align-items:center;flex:1;min-width:44px;
+  position:relative;cursor:default;}
+.stat-cell-val{font-size:1.25em;font-weight:bold;color:var(--text);line-height:1.1;}
+.stat-cell-lbl{font-size:.62em;color:var(--text-muted);text-transform:uppercase;margin-top:2px;white-space:nowrap;}
+.stat-cell[data-tip]::after{content:attr(data-tip);position:absolute;bottom:calc(100% + 6px);
+  left:50%;transform:translateX(-50%);background:var(--bg-card);border:1px solid var(--border);
+  color:var(--text);padding:8px 13px;border-radius:6px;font-size:0.87rem;
+  max-width:230px;white-space:normal;text-align:center;line-height:1.5;
+  pointer-events:none;opacity:0;transition:opacity .15s;z-index:210;box-shadow:0 2px 8px rgba(0,0,0,.25);}
+.stat-cell[data-tip]:hover::after{opacity:1;}
+.stat-sep{width:1px;background:var(--border-light);align-self:stretch;margin:2px 0;}
+/* ── Saving throws row ── */
+.save-throws-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:5px;margin-bottom:14px;}
+.save-cell{display:flex;flex-direction:column;align-items:center;padding:6px 3px;
+  background:var(--bg-card2);border-radius:6px;border:1px solid var(--border-light);
+  position:relative;cursor:default;}
+.save-cell.prof{border-color:var(--accent);background:var(--accent-dim);}
+.save-cell-val{font-size:1em;font-weight:bold;color:var(--text);}
+.save-cell-lbl{font-size:.58em;color:var(--text-muted);text-transform:uppercase;}
+.save-cell[data-tip]::after{content:attr(data-tip);position:absolute;bottom:calc(100% + 5px);
+  left:50%;transform:translateX(-50%);background:var(--bg-card);border:1px solid var(--border);
+  color:var(--text);padding:7px 12px;border-radius:6px;font-size:0.87rem;white-space:nowrap;
+  pointer-events:none;opacity:0;transition:opacity .15s;z-index:210;box-shadow:0 2px 8px rgba(0,0,0,.25);}
+.save-cell[data-tip]:hover::after{opacity:1;}
+/* ── Saves strip wrapper / shared strip label ── */
+.saves-wrap{margin-bottom:14px;}
+.pn-strip-label{font-size:.7em;font-weight:700;color:var(--text-muted);text-transform:uppercase;
+  letter-spacing:.05em;padding-left:2px;margin-bottom:5px;}
+/* ── Exhaustion pill ── */
+.active-exh-pill{font-size:.72em;padding:2px 8px;border-radius:12px;
+  background:var(--hp-yellow);color:#fff;font-weight:600;opacity:.9;}
+/* ── Action entry states ── */
+.action-entry.used{background:var(--accent-dim);border-left:2px solid var(--accent);padding-left:4px;}
+.action-entry.unavail{opacity:.35;pointer-events:none;cursor:default;}
+.action-entry.used.unavail{opacity:.6;pointer-events:none;}
+.action-entry-check{flex-shrink:0;color:var(--accent);font-weight:bold;font-size:.85em;
+  align-self:center;margin-left:auto;padding-left:6px;}
+/* ── Turn tracker ── */
+.turn-tracker{display:flex;gap:7px;margin-top:10px;flex-wrap:wrap;}
+.turn-slot{display:flex;flex-direction:column;align-items:flex-start;gap:2px;padding:7px 10px;
+  flex:1;min-width:80px;position:relative;
+  background:var(--bg-card2);border:1.5px solid var(--border-light);border-radius:8px;
+  cursor:pointer;transition:all .15s;font-size:.85em;color:var(--text-muted);user-select:none;}
+.turn-slot.used{background:var(--accent-dim);border-color:var(--accent);color:var(--text);}
+.turn-slot:hover:not(.used){border-color:var(--accent);color:var(--text);}
+.ts-row{display:flex;align-items:center;gap:6px;}
+.turn-slot-check{width:15px;height:15px;border:2px solid var(--border);border-radius:3px;
+  flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:.7em;font-weight:bold;}
+.turn-slot.used .turn-slot-check{border-color:var(--accent);background:var(--accent);color:#fff;}
+.turn-slot-sel{font-size:.62em;color:var(--accent);opacity:.9;max-width:100%;overflow:hidden;
+  text-overflow:ellipsis;white-space:nowrap;line-height:1.2;}
+.turn-slot[data-tip]::after{content:attr(data-tip);position:absolute;bottom:calc(100% + 5px);
+  left:50%;transform:translateX(-50%);background:var(--bg-card);border:1px solid var(--border);
+  color:var(--text);padding:7px 12px;border-radius:6px;font-size:0.85rem;
+  max-width:260px;white-space:normal;text-align:center;line-height:1.5;
+  pointer-events:none;opacity:0;transition:opacity .15s;z-index:210;box-shadow:0 2px 8px rgba(0,0,0,.25);}
+.turn-slot[data-tip]:hover::after{opacity:1;}
+/* ── Generic help icon ── */
+.help-icon{display:inline-flex;align-items:center;justify-content:center;width:15px;height:15px;
+  border-radius:50%;border:1px solid var(--border-light);background:var(--bg-card2);
+  color:var(--text-muted);font-size:.62em;font-weight:700;cursor:default;
+  position:relative;user-select:none;flex-shrink:0;vertical-align:middle;}
+.help-icon::after{content:attr(data-tip);position:absolute;top:calc(100% + 7px);
+  left:50%;transform:translateX(-50%);background:var(--bg-card);border:1px solid var(--border);
+  color:var(--text);padding:11px 15px;border-radius:7px;font-size:0.87rem;font-weight:400;
+  max-width:320px;min-width:200px;white-space:normal;text-align:left;line-height:1.6;
+  pointer-events:none;opacity:0;transition:opacity .15s;z-index:220;
+  box-shadow:0 3px 12px rgba(0,0,0,.28);}
+.help-icon:hover::after{opacity:1;}
 .exhaustion-row{display:flex;align-items:center;gap:8px;margin-top:6px;}
 .exhaustion-val{font-size:1.2em;font-weight:700;min-width:20px;text-align:center;color:var(--text);}
 .exhaustion-val.danger{color:var(--hp-red);}
 .exhaustion-penalty{font-size:.75em;color:var(--text-muted);flex:1;}
+/* ── Collapsible panel sections ── */
+.panel-section{margin:10px 0;}
+.panel-section-hdr{display:flex;align-items:center;justify-content:space-between;
+  padding:7px 4px;border-bottom:1px solid var(--border-light);cursor:pointer;user-select:none;}
+.panel-section-hdr:hover .panel-section-title{color:var(--accent);}
+.panel-section-title{font-size:.82em;font-weight:700;color:var(--text-muted);text-transform:uppercase;
+  letter-spacing:.05em;transition:color .15s;}
+.panel-section-arrow{font-size:.7em;color:var(--text-muted);transition:transform .2s;}
+.panel-section.open .panel-section-arrow{transform:rotate(180deg);}
+.panel-section-body{padding-top:10px;}
 /* Currency card */
-.cur-rows{display:flex;gap:4px;margin-bottom:5px;flex-wrap:wrap;}
-.cur-row{display:flex;flex-direction:column;align-items:center;gap:1px;padding:3px 6px;
+.cur-rows{display:flex;gap:4px;margin-bottom:0;flex-wrap:wrap;}
+.cur-row{display:flex;flex-direction:row;align-items:center;gap:3px;padding:2px 6px;
   border-radius:6px;font-size:.8em;cursor:pointer;border:1px solid var(--border-light);
-  background:var(--bg-card2);transition:background .1s;min-width:36px;}
+  background:var(--bg-card2);transition:background .1s;}
 .cur-row:hover{border-color:var(--accent);}
 .cur-row.cur-sel{background:var(--accent);border-color:var(--accent);color:#fff;}
-.cur-name{font-size:.65em;font-weight:700;color:var(--text-muted);letter-spacing:.03em;}
-.cur-row.cur-sel .cur-name{color:#ffffffcc;}
 .cur-val{font-weight:700;font-variant-numeric:tabular-nums;}
 .cur-controls{display:flex;align-items:center;gap:4px;}
-.cur-step{width:38px;text-align:center;background:var(--bg-input);border:1px solid var(--border-light);
+.cur-step{width:36px;text-align:center;background:var(--bg-input);border:1px solid var(--border-light);
   color:var(--text);border-radius:4px;padding:2px;font-size:.8em;}
 .cur-btn{width:24px;height:24px;border-radius:50%;border:1px solid var(--border-light);
   background:var(--bg-card2);color:var(--text);cursor:pointer;font-size:.95em;font-weight:700;
@@ -673,6 +771,10 @@ body.edit-mode::after{content:'';position:fixed;inset:0;pointer-events:none;box-
 .spell-filter-btn{padding:3px 10px;border-radius:5px;border:1px solid var(--border-light);
   background:var(--bg-card2);color:var(--text-muted);font-size:.8em;cursor:pointer;transition:all .15s;}
 .spell-filter-btn.active{border-color:var(--accent);color:var(--accent);background:var(--accent-dim);}
+.spell-level-tabs{display:flex;flex-wrap:wrap;gap:4px;width:100%;}
+.spell-lvtab{padding:4px 12px;border-radius:5px;border:1px solid var(--border-light);
+  background:var(--bg-card2);color:var(--text-muted);font-size:.82em;cursor:pointer;transition:all .15s;}
+.spell-lvtab.active{border-color:var(--accent);color:var(--accent);background:var(--accent-dim);font-weight:600;}
 /* Spell components badge */
 .spell-comp-badge{font-size:.7em;font-weight:700;padding:1px 5px;border-radius:3px;
   background:var(--bg-card2);border:1px solid var(--border-light);color:var(--text-muted);margin-right:2px;}
@@ -703,6 +805,27 @@ body.edit-mode::after{content:'';position:fixed;inset:0;pointer-events:none;box-
   border-radius:6px;padding:6px 10px;text-align:center;}
 .lore-app-lbl{font-size:.65em;color:var(--text-muted);letter-spacing:.05em;}
 .lore-app-val{font-size:.9em;font-weight:600;color:var(--text);}
+/* Active conditions summary near HP */
+.active-cond-bar{display:flex;flex-wrap:wrap;gap:4px;margin-top:7px;}
+.active-cond-pill{font-size:.72em;padding:2px 8px;border-radius:12px;
+  background:var(--hp-red);color:#fff;font-weight:600;opacity:.88;}
+/* Hit dice dialog */
+.hd-panel{background:var(--bg-card2);border:1px solid var(--border-light);border-radius:8px;
+  padding:12px;margin-top:10px;}
+.hd-formula{font-size:.95em;color:var(--accent);font-weight:600;min-width:90px;}
+/* Concentration dropdown */
+#conc-select{width:100%;background:var(--bg-input);color:var(--text);
+  border:1px solid var(--border-light);border-radius:6px;padding:5px 8px;font-size:.9em;}
+/* @media print */
+@media print{
+  #sidebar,#header,#modal-overlay,.ctrl-btns,.edit-only,.add-btn,
+  .btn-edit-sm,.btn-del-sm,.pn-card button{display:none!important;}
+  body{background:#fff;color:#000;}
+  #main-content{margin-left:0!important;padding:12px;}
+  .section-card,.weapon-card,.spell-card,.feature-card{
+    border:1px solid #ccc!important;break-inside:avoid;margin-bottom:8px;}
+  #game-panel{display:none!important;}
+}
   </style>
 </head>
 <body>
@@ -838,7 +961,7 @@ const DND = {
     Sap:    'Target has Disadvantage on its next attack roll',
     Slow:   'Reduce target Speed by 10 ft until your next turn',
     Topple: 'CON save (DC 8 + mod + PB) or target falls Prone',
-    Vex:    'Advantage on your next attack vs this target',
+    Vex:    'If you deal damage: Adv. on your next attack vs this target',
   },
   alignments:  ['Lawful Good','Neutral Good','Chaotic Good','Lawful Neutral','True Neutral','Chaotic Neutral','Lawful Evil','Neutral Evil','Chaotic Evil'],
   actionTypes: ['action','bonus','reaction','free'],
@@ -1020,7 +1143,7 @@ const DND = {
         Sap:    'Il bersaglio ha Svantaggio al suo prossimo attacco',
         Slow:   'Riduce la Velocità del bersaglio di 3 m fino al tuo prossimo turno',
         Topple: 'TS COS (CD 8+mod+competenza) o il bersaglio cade Prono',
-        Vex:    'Vantaggio al tuo prossimo attacco contro questo bersaglio',
+        Vex:    'Se colpisci e infliggi danno: Vantaggio al tuo prossimo attacco contro questo bersaglio',
       },
       feats:{
         Actor:'Attore', Alert:'Allerta', Archery:'Tiro con l\'Arco',
@@ -1090,10 +1213,33 @@ const BASE = {
   succ:'✅ Successes', fail:'❌ Failures',
   concLabel:'🔮 Concentration', concNone:'No active concentration.',
   concActive:'⚡ Concentrating on: ',
-  round:'⚔️ Round', initiative:'Initiative:', gold:'🪙 Gold (GP)',
+    round:'⚔️ Round', initiative:'Initiative:', gold:'🪙 Gold (GP)',
+    lbl_initiative:'Initiative', lbl_pb:'Prof. Bonus', lbl_spellDC:'Spell DC', lbl_spellAtk:'Spell Atk',
+     lbl_movement:'Movement', savingThrows:'Saving Throws',
+     saveProfTip:'Proficient — includes your +{N} Proficiency Bonus.',
+     saveNoProfTip:'Not proficient — ability modifier only.',
+    hint_statAC:'Armor Class — your defense against attacks.',
+    hint_statSpeed:'Movement speed per turn.',
+    hint_statInit:'Initiative modifier — added to d20 at combat start.',
+    hint_statPB:'Proficiency Bonus — added to proficient skills and attacks.',
+    hint_statPassPerc:'Passive Perception — used by DM without a roll.',
+    hint_statSpellDC:'Spell Save DC — difficulty for targets resisting your spells.',
+    hint_statSpellAtk:'Spell Attack bonus — added to d20 when targeting with a spell.',
+   hint_turnAction:'Your main action this turn (Attack, Cast a Spell, Dash…)',
+   hint_turnBonus:'Bonus action if you have one available.',
+   hint_turnMovement:'Check when you have used your movement speed.',
+    helpCombat:'Tick Action, Bonus, and Movement as you use them — tick a box even to skip that action. All 3 checked auto-advances the round; press + at any time to advance manually. Spell slots for any selected spell are consumed automatically on advance. Enter your d20 roll to see your initiative total.',
+    helpQuickActions:'Tap an entry to mark it as your action for that slot — the slot gets checked automatically. Tap again to deselect. A new selection replaces the previous one. Dimmed entries have no resources left (no spell slots, tracker uses exhausted).',
+    helpHP:'Current HP shown over your effective max. Aid spell raises both max and current HP — the bonus lasts until a long rest. Temp HP absorbs damage first and does not stack (keep the higher value). The bar turns yellow below 50% and red below 25%.',
+    helpConc:'You can only concentrate on one spell at a time. Casting another concentration spell immediately ends the first. When you take damage, roll a CON saving throw (DC = 10 or half the damage taken, whichever is higher) or lose concentration.',
+    helpDeathSaves:'Roll a d20 at the start of each of your turns while unconscious. 10 or higher = success (3 successes = stable). 9 or lower = failure (3 failures = you die). Natural 20 = you regain 1 HP immediately. Natural 1 = counts as 2 failures.',
+    helpHitDice:'Spend hit dice during a short rest to recover HP: roll the die and add your CON modifier (minimum 0 per die). On a long rest you recover up to half your total hit dice (rounded up), so use them freely during sessions.',
+    helpExhaustion:'Each level of exhaustion imposes a −2 penalty to all d20 rolls (attack rolls, ability checks, saving throws) and to your speed. Level 6 = death. A long rest removes 1 exhaustion level.',
+   secStats:'Stats', secCombat:'Combat', secConditions:'Conditions', secTrackers:'Trackers',
+   secRest:'Rest', secSession:'Session',
   rests:'😴 Rests', longRest:'🌙 Long Rest', shortRest:'☕ Short Rest',
   longRestNote:'Long: everything recovers.', shortRestNote:'Short: spend Hit Dice.',
-  log:'📋 Action Log', logEmpty:'No actions yet...',
+   log:'📋 Action Log', logEmpty:'No actions yet...', clearLog:'Clear log',
   quickActions:'⚡ Quick Actions', allActions:'All',
   conditions:'⚠️ Active Conditions',
   note:'📝 Quick Notes', notePlaceholder:'Write conditions, plans, important enemies...',
@@ -1167,6 +1313,8 @@ const BASE = {
   toastLongRest:'🌙 Long rest — fully restored!',
   toastShortRest:'☕ Short rest — +{N} HP',
   toastShortRestSkipped:'☕ Short rest taken.',
+  undo:'Undo', undone:'✓ Action undone.',
+  clickToRemove:'Click to remove',
   hdDialogTitle:'Spend Hit Dice ({A} available — {D})',
   hdApply:'Apply Healing',
   hdEnterResult:'HP healed (enter result)',
@@ -1277,6 +1425,9 @@ const BASE = {
   logHDReset:'🎲 Hit dice restored.',
   logNoSlot:'❌ No slot Lv',
   logSlotUsed:' used. Remaining:',
+  castBtn:'Cast', noSlotsLeft:'No slots available for this spell.',
+  logCast:'✨ Cast {name} — Lv {N} slot spent',
+  logCastCantrip:'✨ {name} cast (cantrip)',
   logNoUses:'❌ No uses remaining:',
   logTrackerUsed:'used. Remaining',
   logNoPotionLeft:'❌ No',
@@ -1430,7 +1581,12 @@ const BASE = {
   // Spell level prefix for lvOpts
   lvPrefix:'Lv',
   // Inspiration
-  inspiration:'✨ Inspiration', logInspGained:'Inspiration gained!', logInspSpent:'Inspiration spent.',
+  inspiration:'Inspiration', logInspGained:'Inspiration gained!', logInspSpent:'Inspiration spent.',
+  heroicInspiration:'Heroic', heroicInspirationTip:'Heroic Inspiration — granted by the DM. Spend to reroll any d20 roll.',
+  bardicInspiration:'Bardic', bardicInspirationTip:'Bardic Inspiration — gifted by a Bard. Add the die to a failed d20 Test within 1 hour.',
+  inspirationConflict:'You can only hold one type of inspiration at a time.',
+  logBardicGained:'Bardic Inspiration gained!', logBardicSpent:'Bardic Inspiration spent.',
+  currencyLabel:'Currency',
   logAidUp:'Aid active: +', logAidDown:'Aid ended →',
   // Exhaustion
   exhaustion:'Exhaustion', exhaustionPenalty:'−{N} to d20 rolls',
@@ -1505,10 +1661,33 @@ const TRANSLATIONS = {
     succ:'✅ Successi', fail:'❌ Fallimenti',
     concLabel:'🔮 Concentrazione', concNone:'Nessuna concentrazione attiva.',
     concActive:'⚡ In concentrazione: ',
-    round:'⚔️ Round', initiative:'Iniziativa:', gold:'🪙 Oro (GP)',
+      round:'⚔️ Round', initiative:'Iniziativa:', gold:'🪙 Oro (GP)',
+      lbl_initiative:'Iniziativa', lbl_pb:'Bonus Comp.', lbl_spellDC:'CD Incant.', lbl_spellAtk:'Att. Incant.',
+       lbl_movement:'Movimento', savingThrows:'Tiri Salvezza',
+       saveProfTip:'Competente — include il tuo +{N} Bonus di Competenza.',
+       saveNoProfTip:'Non competente — solo il modificatore di caratteristica.',
+      hint_statAC:'Classe Armatura — la tua difesa contro gli attacchi.',
+      hint_statSpeed:'Velocità di movimento per turno.',
+      hint_statInit:'Modificatore di Iniziativa — aggiunto al d20 all\'inizio del combattimento.',
+      hint_statPB:'Bonus di Competenza — aggiunto a abilità e attacchi con competenza.',
+      hint_statPassPerc:'Percezione Passiva — usata dal DM senza tiro.',
+      hint_statSpellDC:'CD Incantesimo — difficoltà per resistere ai tuoi incantesimi.',
+      hint_statSpellAtk:'Bonus Attacco Incantesimo — aggiunto al d20 per attacchi con incantesimi.',
+     hint_turnAction:'La tua azione principale (Attacca, Lancia incantesimo, Scatta…)',
+     hint_turnBonus:'Azione bonus se ne hai una disponibile.',
+           hint_turnMovement:'Segna quando hai usato la tua velocità di movimento.',
+      helpCombat:'Spunta Azione, Bonus e Movimento man mano che li usi — spunta anche per saltare un\'azione. Tutti e 3 spuntati = il round avanza automaticamente; premi + in qualsiasi momento per avanzare manualmente. Gli slot degli incantesimi selezionati vengono consumati automaticamente all\'avanzamento. Inserisci il tiro d20 per vedere il totale di iniziativa.',
+      helpQuickActions:'Tocca una voce per segnarla come azione per quello slot — lo slot si spunta da solo. Tocca di nuovo per deselezionare. Una nuova selezione sostituisce la precedente. Voci in grigio = nessuna risorsa disponibile.',
+      helpHP:'Gli HP attuali sono mostrati sul massimo effettivo. L\'incantesimo Rinforzo aumenta sia il massimo che gli HP attuali — il bonus dura fino al riposo lungo. Gli HP temporanei assorbono i danni per primi e non si accumulano (tieni il valore più alto). La barra diventa gialla sotto il 50% e rossa sotto il 25%.',
+      helpConc:'Puoi concentrarti su un solo incantesimo alla volta. Lanciare un altro incantesimo da concentrazione termina immediatamente il primo. Quando subisci danni, esegui un tiro salvezza su COS (CD = 10 oppure metà dei danni subiti, il maggiore dei due) o perdi la concentrazione.',
+      helpDeathSaves:'Tira un d20 all\'inizio di ogni tuo turno mentre sei privo di sensi. 10 o più = successo (3 successi = stabile). 9 o meno = fallimento (3 fallimenti = muori). 20 naturale = recuperi 1 HP immediatamente. 1 naturale = conta come 2 fallimenti.',
+      helpHitDice:'Spendi Dadi Vita durante un riposo breve per recuperare HP: tira il dado e aggiungi il modificatore di COS (minimo 0 per dado). Con un riposo lungo recuperi fino a metà dei tuoi Dadi Vita totali (arrotondato per eccesso).',
+      helpExhaustion:'Ogni livello di affaticamento impone una penalità −2 a tutti i tiri di d20 (attacchi, prove di caratteristica, tiri salvezza) e alla velocità. Livello 6 = morte. Un riposo lungo rimuove 1 livello di affaticamento.',
+     secStats:'Statistiche', secCombat:'Combattimento', secConditions:'Condizioni', secTrackers:'Tracker',
+     secRest:'Riposo', secSession:'Sessione',
     rests:'😴 Riposi', longRest:'🌙 Riposo Lungo', shortRest:'☕ Riposo Breve',
     longRestNote:'Lungo: tutto si recupera.', shortRestNote:'Breve: spendi Dadi Vita.',
-    log:'📋 Log Azioni', logEmpty:'Nessuna azione ancora...',
+     log:'📋 Log Azioni', logEmpty:'Nessuna azione ancora...', clearLog:'Svuota log',
     quickActions:'⚡ Azioni Rapide', allActions:'Tutte',
     conditions:'⚠️ Condizioni Attive',
     note:'📝 Note Rapide', notePlaceholder:'Scrivi qui condizioni, piani, nemici importanti...',
@@ -1523,8 +1702,8 @@ const TRANSLATIONS = {
     spellTitle:'Incantesimi', spellDC:'CD Tiro Salvezza', spellAttackBonus:'Bonus Attacco Incantesimi',
     focus:'Focus', slotTitle:'Slot Incantesimi', slotLevel:'Livello', slotTot:'Slot', slotNote:'Note',
     longRestRecovery:'Recupero con Riposo Lungo',
-    cantrips:'Trucchetti', spellLvPrefix:'Incantesimi di',
-    lvSuffix:'° Livello',
+    cantrips:'Trucchetti', spellLvPrefix:'Livello',
+    lvSuffix:'',
     range:'Raggio', duration:'Durata', school:'Scuola', actionType:'Azione',
     concentration:'Concentrazione', ts:'Tiro Salvezza',
     scaling:'Progressione', none:'nessuna',
@@ -1599,6 +1778,8 @@ const TRANSLATIONS = {
     toastLongRest:'🌙 Riposo lungo — tutto ripristinato!',
     toastShortRest:'☕ Riposo breve — +{N} PF',
     toastShortRestSkipped:'☕ Riposo breve completato.',
+    undo:'Annulla', undone:'✓ Azione annullata.',
+    clickToRemove:'Clicca per rimuovere',
     hdDialogTitle:'Spendi Dadi Vita ({A} disponibili — {D})',
     hdApply:'Applica Cura',
     hdEnterResult:'PF curati (inserisci il risultato)',
@@ -1689,6 +1870,9 @@ const TRANSLATIONS = {
     logHDReset:'🎲 Dadi vita ripristinati.',
     logNoSlot:'❌ Nessun slot Lv',
     logSlotUsed:' usato. Rimasti:',
+    castBtn:'Lancia', noSlotsLeft:'Nessuno slot disponibile per questo incantesimo.',
+    logCast:'✨ {name} — Slot Lv {N} usato',
+    logCastCantrip:'✨ {name} (cantrip)',
     logNoUses:'❌ Nessun uso rimasto:',
     logTrackerUsed:'usato. Rimasti',
     logNoPotionLeft:'❌ Nessuna',
@@ -1830,7 +2014,12 @@ const TRANSLATIONS = {
     hint_spellDescStep:'Descrivi l\'effetto dell\'incantesimo e aggiungi dettagli opzionali. L\'anteprima in basso mostra la scheda finale.',
     lvPrefix:'Lv',
     // Inspiration
-    inspiration:'✨ Ispirazione', logInspGained:'Ispirazione ottenuta!', logInspSpent:'Ispirazione spesa.',
+    inspiration:'Ispirazione', logInspGained:'Ispirazione ottenuta!', logInspSpent:'Ispirazione spesa.',
+    heroicInspiration:'Eroica', heroicInspirationTip:'Ispirazione Eroica — concessa dal DM. Spendila per rilanciare qualsiasi d20.',
+    bardicInspiration:'Bardica', bardicInspirationTip:'Ispirazione Bardica — donata da un Bardo. Aggiungi il dado a un test d20 fallito entro 1 ora.',
+    inspirationConflict:'Puoi avere un solo tipo di ispirazione alla volta.',
+    logBardicGained:'Ispirazione Bardica ottenuta!', logBardicSpent:'Ispirazione Bardica spesa.',
+    currencyLabel:'Monete',
     logAidUp:'Aiuto attivo: +', logAidDown:'Aiuto terminato →',
     // Exhaustion
     exhaustion:'Sfinimento', exhaustionPenalty:'−{N} ai tiri d20',
@@ -1902,7 +2091,8 @@ const SCHEMA_VERSION = '3.0';
 let CHAR = null;
 let SESSION = null;
 let EDIT_MODE = false;
-let SPELL_FILTER={text:'', school:'', action:'', prepared:false};
+let SPELL_FILTER={text:'', school:'', action:'', prepared:false, level:null};
+let PREV_STATE = null; // single-level undo snapshot
 
 function abilityMod(score){return Math.floor((score-10)/2);}
 function modStr(m){return (m>=0?'+':'')+m;}
@@ -1928,10 +2118,19 @@ function md(text){
     .replace(/\*(.+?)\*/g,'<em>$1</em>')
     .replace(/\n/g,'<br>');
 }
-// Prepend 📌 to each non-empty line of a notes string (used by all note renderers)
+// Smart bullet rendering for notes on spells/weapons.
+// Lines starting with '-' get '•'. Plain ASCII-start lines get '•'.
+// Lines already starting with an emoji or special char are left as-is.
 function pinNotes(text){
   if(!text) return '';
-  return text.split('\n').filter(l=>l.trim()).map(l=>'📌 '+l.trim()).join('\n');
+  return text.split('\n').filter(l=>l.trim()).map(l=>{
+    const s=l.trim();
+    if(s.startsWith('-')) return '• '+s.slice(1).trimStart();
+    if(s.startsWith('•')) return s;
+    const cp=s.codePointAt(0)||0;
+    if(cp>127) return s; // emoji or non-ASCII marker — leave untouched
+    return '• '+s;
+  }).join('\n');
 }
 function createDefaultSession(char){
   const s={
@@ -1940,7 +2139,7 @@ function createDefaultSession(char){
     trackers:{},
     spellSlots:{},
     currency:{pp:0,gp:0,ep:0,sp:0,cp:0},
-    inspiration:false, exhaustion:0,
+    inspiration:false, bardicInspiration:false, bardicInspirationDie:'d6', exhaustion:0,
     round:1, concentration:'', initiative:'',
     conditions:[], deathSucc:0, deathFail:0,
     notes:'', portrait:null, logEntries:[]
@@ -1962,7 +2161,13 @@ function syncSession(){
   }
   if(!SESSION.currency) SESSION.currency={pp:0,gp:0,ep:0,sp:0,cp:0};
   if(SESSION.inspiration==null) SESSION.inspiration=false;
+  if(SESSION.bardicInspiration==null) SESSION.bardicInspiration=false;
+  if(!SESSION.bardicInspirationDie) SESSION.bardicInspirationDie='d6';
   if(SESSION.exhaustion==null) SESSION.exhaustion=0;
+  if(!SESSION.panelSections) SESSION.panelSections={stats:true,combat:false,conditions:false,trackers:false,rest:false,session:true};
+  else if(SESSION.panelSections.stats==null) SESSION.panelSections.stats=true;
+  if(!SESSION.turnSlots) SESSION.turnSlots={action:false,bonus:false,movement:false};
+  if(!SESSION.turnActions||Array.isArray(SESSION.turnActions)) SESSION.turnActions={action:null,bonus:null,reaction:null};
   // Equipment-based trackers
   (CHAR.equipment||[]).forEach(e=>{ if(e.tracked){ const tid='eq-'+slugify(e.name); if(tid && !SESSION.trackers[tid]) SESSION.trackers[tid]={used:0}; } });
   // Feature-embedded trackers (plural array)
@@ -1985,11 +2190,23 @@ function syncSession(){
 function saveAll(){
   if(!CHAR) return;
   try{
+    const prev=localStorage.getItem(SAVE_KEY);
+    if(prev) PREV_STATE=prev;
     localStorage.setItem(SAVE_KEY, JSON.stringify({
       version:SCHEMA_VERSION, savedAt:new Date().toISOString(),
       character:CHAR, session:SESSION
     }));
   }catch(e){console.warn('localStorage full',e);}
+}
+function undoLast(){
+  if(!PREV_STATE) return;
+  try{
+    const d=JSON.parse(PREV_STATE);
+    CHAR=d.character; SESSION=d.session;
+    localStorage.setItem(SAVE_KEY,PREV_STATE);
+    PREV_STATE=null;
+    renderAll(); showToast(T('undone'),'info');
+  }catch(e){console.warn('undo failed',e);}
 }
 function loadFromStorage(){
   try{
@@ -2359,15 +2576,38 @@ function renderPanel(){
   const el=document.getElementById('game-panel');
   if(!el||!CHAR||!SESSION){if(el)el.innerHTML='';return;}
   el.innerHTML=buildPanel();
-  // bind live inputs
-  document.getElementById('conc-spell-input').addEventListener('input',e=>{
-    SESSION.concentration=e.target.value;
-    document.getElementById('conc-status').textContent=e.target.value?T('concActive')+e.target.value:T('concNone');
-    document.getElementById('conc-status').className='conc-status-text'+(e.target.value?' conc-active':'');
+  // bind concentration — dropdown or text fallback
+  const concSel=document.getElementById('conc-select');
+  const concTxt=document.getElementById('conc-spell-input');
+  if(concSel){
+    // dropdown: handled by setConc() inline onchange
+  } else if(concTxt){
+    concTxt.addEventListener('input',e=>{
+      SESSION.concentration=e.target.value;
+      const st=document.getElementById('conc-status');
+      if(st){st.textContent=e.target.value?T('concActive')+e.target.value:T('concNone');
+        st.className='conc-status-text'+(e.target.value?' conc-active':'');}
+      saveAll();
+    });
+  }
+  const initEl=document.getElementById('init-input');
+  if(initEl) initEl.addEventListener('input',e=>{
+    SESSION.initiative=e.target.value;
+    const fEl=document.getElementById('init-formula');
+    if(fEl){
+      const scores=finalScores(CHAR);
+      const dex=abilityMod(scores.DEX||10);
+      const bonus=(CHAR.initiativeBonus??0);
+      const initTotal=dex+bonus;
+      const dexLabel=abilityShortName('DEX');
+      const modPart=modStr(dex)+' '+dexLabel+(bonus!==0?' '+modStr(bonus):'');
+      const roll=e.target.value!==''&&e.target.value!=null?Number(e.target.value):null;
+      fEl.innerHTML=roll!=null?`${roll} ${modPart} = <strong>${roll+initTotal}</strong>`:modPart;
+    }
     saveAll();
   });
-  document.getElementById('init-input').addEventListener('input',e=>{SESSION.initiative=e.target.value;saveAll();});
-  document.getElementById('note-rapide').addEventListener('input',e=>{SESSION.notes=e.target.value;saveAll();});
+  const noteEl=document.getElementById('note-rapide');
+  if(noteEl) noteEl.addEventListener('input',e=>{SESSION.notes=e.target.value;saveAll();});
 }
 function buildPanel(){
   const S=SESSION, C=CHAR;
@@ -2375,10 +2615,8 @@ function buildPanel(){
   const hpCurr=S.hp?.current??0;
   const hpPct=effMax>0?Math.max(0,Math.min(100,(hpCurr/effMax)*100)):0;
   const hpColor=hpPct>50?'var(--hp-green)':hpPct>25?'var(--hp-yellow)':'var(--hp-red)';
-
-  // ── HP Card ──
   const hpCard=`<div class="pn-card" style="grid-column:span 2;">
-    <div class="label">${T('hp')}</div>
+    <div class="label">${T('hp')} <span class="help-icon" data-tip="${T('helpHP')}">?</span></div>
     <div class="value-row">
       <div class="big-val" id="hp-curr">${hpCurr}</div>
       <div class="max-val">/ <span id="hp-max-disp">${effMax}</span></div>
@@ -2392,162 +2630,47 @@ function buildPanel(){
     </div>
     <div class="temp-hp-info">${T('tempHP')}: <span id="temp-hp-disp" style="color:var(--accent);font-weight:bold;">${S.hp?.temp||0}</span>
     &nbsp;|&nbsp;${T('aidBonus')}: <span id="aid-disp" style="color:var(--edit-mode-color);font-weight:600;cursor:pointer;text-decoration:underline dotted;" onclick="setAidBonus()">${modStr(S.hp?.aidBonus||0)}</span></div>
-    <button class="inspiration-btn${S.inspiration?' active':''}" onclick="toggleInspiration()" style="margin-top:8px;">✨ ${T('inspiration')}</button>
+    ${(()=>{const conds=S.conditions||[];const exh=S.exhaustion||0;const pills=conds.map(c=>`<span class="active-cond-pill" title="${T('clickToRemove')||'Click to remove'}" onclick="removeCondition('${c.replace(/'/g,"\\'")}')">● ${dndTr('conditions',c)||c}</span>`).join('');const exhPill=exh>0?`<span class="active-exh-pill">💀 ${T('exhaustion')} ${exh}</span>`:'';return (conds.length||exh>0)?`<div class="active-cond-bar" id="active-cond-bar">${pills}${exhPill}</div>`:`<div class="active-cond-bar" id="active-cond-bar" style="display:none;"></div>`;})()}
   </div>`;
-
-  // ── HD Card ──
-  const hdUsed=S.hitDice?.used||0;
-  const hdLabel=`d${C.hitDieType||8}`;
-  let hdPips=''; for(let i=0;i<(C.level||1);i++) hdPips+=`<div class="pip${i<hdUsed?' used':''}" title="${hdLabel}" onclick="clickHDPip(${i})">${hdLabel}</div>`;
-  const hdCard=`<div class="pn-card">
-    <div class="label">${T('hitDice')} (${hdLabel})</div>
-    <div class="pips" id="hd-pips">${hdPips}</div>
-    <div class="btn-row">
-      <button class="btn heal" onclick="spendHD()">${T('spendFull')}</button>
-      <button class="btn" onclick="resetHD()">${T('reset')}</button>
-    </div>
-    <div style="margin-top:4px;font-size:.75em;color:var(--text-muted);">${T('hdNote')}</div>
-  </div>`;
-
-  // ── Death Saves ──
-  const ds=S;
+  // ── Combat section content ──
+  const concSpells=(C.spells||[]).filter(sp=>sp.concentration);
+  const concInput=concSpells.length
+    ?`<select id="conc-select" onchange="setConc(this.value)"><option value="">— ${T('none')} —</option>${concSpells.map(sp=>`<option value="${sp.name||''}"${(S.concentration||'')===(sp.name||'')?' selected':''}>${sp.emoji||'🔮'} ${sp.name||''}</option>`).join('')}</select>`
+    :`<input type="text" id="conc-spell-input" placeholder="${T('none')}…" value="${S.concentration||''}">`;
+  const concCard=`<div class="pn-card"><div class="label">${T('concLabel')} <span class="help-icon" data-tip="${T('helpConc')}">?</span></div><div class="inline-field" style="margin-top:8px;">${concInput}<button class="btn danger" style="flex-shrink:0;" onclick="dropConc()">❌</button></div><div id="conc-status" class="conc-status-text${S.concentration?' conc-active':''}">${S.concentration?T('concActive')+S.concentration:T('concNone')}</div></div>`;
   let dSucc='',dFail='';
-  for(let i=0;i<3;i++){dSucc+=`<div class="death-pip succ${i<(ds.deathSucc||0)?' used':''}" onclick="toggleDeathPip(this,'succ',${i})"></div>`;}
-  for(let i=0;i<3;i++){dFail+=`<div class="death-pip fail${i<(ds.deathFail||0)?' used':''}" onclick="toggleDeathPip(this,'fail',${i})"></div>`;}
-  const deathCard=`<div class="pn-card">
-    <div class="label">${T('deathSaves')}</div>
-    <div class="death-row"><span style="font-size:.8em;color:var(--death-succ);">✅</span><div class="death-pips" id="death-succ">${dSucc}</div></div>
-    <div class="death-row"><span style="font-size:.8em;color:var(--death-fail);">❌</span><div class="death-pips" id="death-fail">${dFail}</div></div>
-    <div class="btn-row"><button class="btn" onclick="resetDeathSaves()">${T('reset')}</button></div>
-  </div>`;
-
-  return `<div class="pn-grid">${hpCard}${hdCard}${deathCard}</div>${buildPanelRow2()}${buildPanelRow3()}${buildPanelBottom()}`;
-}
-// ─── Pannello Row 2: custom trackers + spell slots ───
-function buildPanelRow2(){
-  let cards='';
-  // Equipment trackers (tracked items like potions)
-  (CHAR.equipment||[]).forEach((e,i)=>{
-    if(!e.tracked) return;
-    const tid='eq-'+slugify(e.name);
-    const used=SESSION.trackers?.[tid]?.used||0;
-    const total=e.quantity||1;
-    const emoji=e.emoji||'📦';
-    let pips=''; for(let j=0;j<total;j++) pips+=`<div class="pip${j<used?' used':''}" onclick="clickTrackerPip('${tid}',${j})">${emoji}</div>`;
-    const useBtn=e.isPotion
-      ?`<button class="btn danger" onclick="usePotionTracker('${tid}')">${T('spend')} (${e.potionFormula||''})</button>`
-      :`<button class="btn danger" onclick="useTracker('${tid}')">${T('spend')}</button>`;
-    cards+=`<div class="pn-card" id="tracker-card-${tid}">
-      <div class="label">${emoji} ${e.name||''}</div>
-      <div class="pips" id="pips-${tid}">${pips}</div>
-      <div class="btn-row">${useBtn}<button class="btn" onclick="resetTracker('${tid}')">${T('reset')} (${total})</button></div>
-    </div>`;
-  });
-  // Feature-embedded trackers (v3: plural trackers[] array)
-  (CHAR.features||[]).forEach(f=>{
-    (f.trackers||[]).forEach(t=>{
-      const label=t.label||f.title;
-      const emoji=t.emoji||f.emoji;
-      const tid=slugify(label);
-      const used=SESSION.trackers?.[tid]?.used||0;
-      const total=t.total||1;
-      let pips=''; for(let j=0;j<total;j++) pips+=`<div class="pip${j<used?' used':''}" onclick="clickTrackerPip('${tid}',${j})">${t.showDie&&t.die?t.die:(emoji||'●')}</div>`;
-      cards+=`<div class="pn-card" id="tracker-card-${tid}">
-        <div class="label">${emoji||''} ${label||''}</div>
-        <div class="pips" id="pips-${tid}">${pips}</div>
-        <div class="btn-row"><button class="btn danger" onclick="useTracker('${tid}')">${T('spend')}</button><button class="btn" onclick="resetTracker('${tid}')">${T('reset')} (${total})</button></div>
-      </div>`;
-    });
-  });
-  // Spell slots
-  (CHAR.spellSlots||[]).forEach(sl=>{
-    const lv=sl.level; const tot=sl.total||0;
-    const used=SESSION.spellSlots?.[lv]?.used||0;
-    const color=DND.slotColors[lv]||'var(--accent)';
-    let pips=''; for(let j=0;j<tot;j++) pips+=`<div class="pip${j<used?' used':''}" style="${j<used?'':'border-color:'+color+';background:'+color+';'}" onclick="clickSlotPip(${lv},${j})">${lv}</div>`;
-    cards+=`<div class="pn-card">
-      <div class="label" style="color:${color};">✨ Slot Lv${lv}</div>
-      <div class="pips" id="slot${lv}-pips">${pips}</div>
-      <div class="btn-row">
-        <button class="btn danger" onclick="useSlot(${lv})">${T('spend')}</button>
-        <button class="btn" onclick="resetSlot(${lv})">${T('reset')} (${tot})</button>
-      </div>
-    </div>`;
-  });
-  return `<div class="pn-grid">${cards}</div>`;
-}
-
-// ─── Pannello Row 3: conc, round, gold ───
-function buildPanelRow3(){
-  const S=SESSION, C=CHAR;
-  const concCard=`<div class="pn-card">
-    <div class="label">${T('concLabel')}</div>
-    <div class="inline-field" style="margin-top:8px;">
-      <input type="text" id="conc-spell-input" placeholder="${T('none')}…" value="${S.concentration||''}">
-      <button class="btn danger" style="flex-shrink:0;" onclick="dropConc()">❌</button>
-    </div>
-    <div id="conc-status" class="conc-status-text${S.concentration?' conc-active':''}">${S.concentration?T('concActive')+S.concentration:T('concNone')}</div>
-  </div>`;
-  const roundCard=`<div class="pn-card">
-    <div class="label">${T('round')}</div>
-    <div class="round-row">
-      <button class="btn" onclick="changeRound(-1)">−</button>
-      <div class="round-val" id="round-val">${S.round||1}</div>
-      <button class="btn" onclick="changeRound(1)">+</button>
-      <button class="btn" onclick="resetRound()">${T('reset')}</button>
-    </div>
-    <div class="inline-field" style="margin-top:8px;">
-      <span>${T('initiative')}</span>
-      <input type="number" id="init-input" placeholder="—" value="${S.initiative||''}" style="width:65px;">
-    </div>
-    ${(()=>{const dex=abilityMod(finalScores(C).DEX||10);const bonus=(C.initiativeBonus??0);const total=dex+bonus;const parts=[modStr(dex)+' DEX'];if(bonus!==0)parts.push(modStr(bonus)+' '+T('lbl_initiativeBonus'));return '<div style="font-size:.8em;color:var(--text-muted);margin-top:2px;">'+parts.join(' + ')+' = <strong>'+modStr(total)+'</strong></div>';})()}
-  </div>`;
-  const cur=S.currency||{pp:0,gp:0,ep:0,sp:0,cp:0};
-  const goldCard=`<div class="pn-card">
-    <div class="label">${T('currency')}</div>
-    <div class="cur-rows">
-      ${COINS.map(c=>`<div class="cur-row${CUR_COIN===c.id?' cur-sel':''}" data-coin="${c.id}" onclick="selectCurTab('${c.id}')">
-        <span>${c.emoji}</span><span class="cur-name">${c.label}</span><span class="cur-val">${cur[c.id]||0}</span>
-      </div>`).join('')}
-    </div>
-    <div class="cur-controls">
-      <button class="cur-btn" onclick="adjustCur(-1)">−</button>
-      <input id="cur-step" class="cur-step" type="number" min="1" value="1">
-      <button class="cur-btn" onclick="adjustCur(1)">+</button>
-    </div>
-  </div>`;
-  return `<div class="pn-grid">${concCard}${roundCard}${goldCard}</div>`;
-}
-
-// ─── Pannello Bottom: conditions, rests, log, actions, session, notes ───
-function buildPanelBottom(){
-  const S=SESSION, C=CHAR;
-  // Conditions: standard D&D conditions + custom
+  for(let i=0;i<3;i++){dSucc+=`<div class="death-pip succ${i<(S.deathSucc||0)?' used':''}" onclick="toggleDeathPip(this,'succ',${i})"></div>`;}
+  for(let i=0;i<3;i++){dFail+=`<div class="death-pip fail${i<(S.deathFail||0)?' used':''}" onclick="toggleDeathPip(this,'fail',${i})"></div>`;}
+  const deathCard=`<div class="pn-card"><div class="label">${T('deathSaves')} <span class="help-icon" data-tip="${T('helpDeathSaves')}">?</span></div><div class="death-row"><span style="font-size:.8em;color:var(--death-succ);">✅</span><div class="death-pips" id="death-succ">${dSucc}</div></div><div class="death-row"><span style="font-size:.8em;color:var(--death-fail);">❌</span><div class="death-pips" id="death-fail">${dFail}</div></div><div class="btn-row"><button class="btn" onclick="resetDeathSaves()">${T('reset')}</button></div></div>`;
+  const combatContent=buildPanelTurnTracker()+buildPanelActions()+`<div class="pn-grid" style="margin-top:14px;">${concCard}${deathCard}</div>`;
+  // ── Conditions section content ──
   const stdConds=DND.conditions||[];
   const customConds=C.customConditions||[];
   const condGrid=stdConds.map(c=>`<div class="cond-btn${(S.conditions||[]).includes(c)?' active':''}" onclick="toggleCond(this,'${c.replace(/'/g,"\\'")}')">
     ${dndTr('conditions',c)||c}
-  </div>`).join('') + customConds.map((c,i)=>`<div class="cond-btn${(S.conditions||[]).includes(c)?' active':''}" onclick="toggleCond(this,'${c.replace(/'/g,"\\'")}')">
+  </div>`).join('')+customConds.map((c,i)=>`<div class="cond-btn${(S.conditions||[]).includes(c)?' active':''}" onclick="toggleCond(this,'${c.replace(/'/g,"\\'")}')">
     ${c}${EDIT_MODE?`<button class="btn-del-sm" onclick="event.stopPropagation();deleteCondition(${i})" style="margin-left:4px;">×</button>`:''}
   </div>`).join('');
-  const condSection=`<div class="pn-card" style="margin-bottom:14px;">
-    <div class="label">${T('conditions')}</div>
-    <div class="cond-grid" id="cond-grid">${condGrid}</div>
-    ${EDIT_MODE?`<button class="add-btn edit-only" onclick="addCondition()" style="margin-top:8px;">${T('addCondition')}</button>`:''}
-    <div class="exhaustion-row" style="margin-top:10px;border-top:1px solid var(--border-light);padding-top:8px;">
-      <span style="font-size:.8em;color:var(--text-muted);">${T('exhaustion')}:</span>
-      <button class="btn" onclick="changeExhaustion(-1)" style="padding:1px 8px;font-size:.9em;">−</button>
-      <span class="exhaustion-val${(S.exhaustion||0)>=3?' danger':''}">${S.exhaustion||0}</span>
-      <button class="btn" onclick="changeExhaustion(1)" style="padding:1px 8px;font-size:.9em;">+</button>
-      ${(S.exhaustion||0)>0?`<span class="exhaustion-penalty">${T('exhaustionPenalty').replace('{N}',S.exhaustion||0)}</span>`:''}
-    </div>
+  const exhaustionContent=`<div class="exhaustion-row" style="margin-top:10px;border-top:1px solid var(--border-light);padding-top:8px;">
+    <span style="font-size:.8em;color:var(--text-muted);">${T('exhaustion')} <span class="help-icon" data-tip="${T('helpExhaustion')}">?</span></span>
+    <button class="btn" onclick="changeExhaustion(-1)" style="padding:1px 8px;font-size:.9em;">−</button>
+    <span class="exhaustion-val${(S.exhaustion||0)>=3?' danger':''}">${S.exhaustion||0}</span>
+    <button class="btn" onclick="changeExhaustion(1)" style="padding:1px 8px;font-size:.9em;">+</button>
+    ${(S.exhaustion||0)>0?`<span class="exhaustion-penalty">${T('exhaustionPenalty').replace('{N}',S.exhaustion||0)}</span>`:''}
   </div>`;
-  // Rests + Log
+  const conditionsContent=`<div class="cond-grid" id="cond-grid">${condGrid}</div>
+    ${EDIT_MODE?`<button class="add-btn edit-only" onclick="addCondition()" style="margin-top:8px;">${T('addCondition')}</button>`:''}
+    ${exhaustionContent}`;
+  // ── Rest section content ──
   const available=(C.level||1)-(S.hitDice?.used||0);
   const hdType='d'+(C.hitDieType||8);
+  const hdLabel2=`d${C.hitDieType||8}`;
+  const hdUsed=S.hitDice?.used||0;
+  let hdPips=''; for(let i=0;i<(C.level||1);i++) hdPips+=`<div class="pip${i<hdUsed?' used':''}" title="${hdLabel2}" onclick="clickHDPip(${i})">${hdLabel2}</div>`;
+  const hdCard=`<div class="pn-card" style="margin-bottom:12px;"><div class="label">${T('hitDice')} (${hdLabel2}) <span class="help-icon" data-tip="${T('helpHitDice')}">?</span></div><div class="pips" id="hd-pips">${hdPips}</div><div class="btn-row"><button class="btn heal" onclick="spendHD()">${T('spendFull')}</button><button class="btn" onclick="resetHD()">${T('reset')}</button></div><div style="margin-top:4px;font-size:.75em;color:var(--text-muted);">${T('hdNote')}</div></div>`;
   const conMod=abilityMod(finalScores(C).CON||10);
   const hdModStr=conMod>=0?`+${conMod}`:String(conMod);
-  const restsCardContent=S.hdDialog
+  const restsContent=S.hdDialog
     ?(available>0
       ?`<div class="label">${T('hdDialogTitle').replace('{A}',available).replace('{D}',hdType)}</div>
         <div class="hd-qty-row"><button class="btn-qty" onclick="adjustHDQty(-1)">−</button>
@@ -2559,96 +2682,263 @@ function buildPanelBottom(){
           <button class="btn" onclick="closeHDDialog(true)">${T('hdSkip')}</button></div>`
       :`<div class="label">${T('hdNoHD')}</div>
         <div class="btn-row"><button class="btn" onclick="closeHDDialog(true)">${T('hdSkip')}</button></div>`)
-    :`<div class="label">${T('rests')}</div>
-      <div class="btn-row" style="margin-top:8px;">
+    :`<div class="btn-row" style="margin-bottom:6px;">
         <button class="btn long-rest" onclick="longRest()">${T('longRest')}</button>
         <button class="btn short-rest" onclick="shortRest()">${T('shortRest')}</button>
       </div>
-      <div style="font-size:.75em;color:var(--text-muted);margin-top:6px;">${T('longRestNote')}<br>${T('shortRestNote')}</div>`;
-  const restsLog=`<div class="pn-grid">
-    <div class="pn-card">${restsCardContent}</div>
-    <div class="pn-card" style="grid-column:span 2;">
-      <div class="label">${T('log')}</div>
-      <div id="log-wrap">${(SESSION.logEntries||[]).length>0?(SESSION.logEntries).map(e=>`<p class="${e.type||''}">${e.msg}</p>`).join(''):`<p style="color:var(--text-faint);font-style:italic;">${T('logEmpty')}</p>`}</div>
+      <div style="font-size:.75em;color:var(--text-muted);">${T('longRestNote')}<br>${T('shortRestNote')}</div>`;
+  const restContent=hdCard+`<div class="pn-card">${restsContent}</div>`;
+  // ── Session section content ──
+  const logEntries=(S.logEntries||[]);
+  const logHtml=logEntries.length>0
+    ?logEntries.map(e=>{const ts=e.t?new Date(e.t).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}):'';return `<p class="${e.type||''}"><span style="font-size:.75em;opacity:.5;margin-right:5px;">${ts}</span>${e.msg}</p>`;}).join('')
+    :`<p style="color:var(--text-faint);font-style:italic;">${T('logEmpty')}</p>`;
+  const sessionContent=`<div class="pn-card" style="margin-bottom:12px;"><div class="label">${T('note')}</div><textarea id="note-rapide" placeholder="${T('notePlaceholder')}">${S.notes||''}</textarea></div>
+    <div class="pn-card" style="margin-bottom:12px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;">
+        <div class="label">${T('log')}</div>
+        ${logEntries.length>0?`<button class="btn-del-sm" onclick="clearLog()" style="font-size:.75em;padding:2px 8px;">${T('clearLog')}</button>`:''}
+      </div>
+      <div id="log-wrap">${logHtml}</div>
+    </div>
+    <div class="pn-card">
+      <div class="label">${T('session')}</div>
+      <div class="btn-row" style="margin-top:8px;">
+        <button class="btn long-rest" onclick="exportCharacter()">${T('saveSession')}</button>
+        <label class="btn short-rest" style="cursor:pointer;">${T('loadSession')}<input type="file" id="import-session-click" accept=".json" onchange="importSession(event)" style="display:none;"></label>
+        <button class="btn" onclick="copyToClipboard()">${T('copyClipboard')}</button>
+      </div>
+      <div style="font-size:.75em;color:var(--text-muted);margin-top:6px;">${T('sessionNote')}</div>
+    </div>`;
+  const statsContent=`<div class="pn-grid">${hpCard}</div>`+buildPanelStatStrip()+buildPanelSaveThrows();
+  return buildPanelSection('stats','📊',T('secStats'),statsContent)
+    +buildPanelSection('combat','⚔️',T('secCombat'),combatContent)
+    +buildPanelSection('conditions','⚠️',T('secConditions'),conditionsContent)
+    +buildPanelSection('trackers','🎲',T('secTrackers'),buildPanelTrackers())
+    +buildPanelSection('rest','😴',T('secRest'),restContent)
+    +buildPanelSection('session','💾',T('secSession'),sessionContent);
+}
+// ─── Pannello: collapsible section wrapper ───
+function buildPanelSection(id, emoji, label, content){
+  const open=(SESSION.panelSections||{})[id]!==false;
+  return `<div class="panel-section${open?' open':''}">
+    <div class="panel-section-hdr" onclick="togglePanelSection('${id}')">
+      <span class="panel-section-title">${emoji} ${label}</span>
+      <span class="panel-section-arrow">▼</span>
+    </div>
+    ${open?`<div class="panel-section-body">${content}</div>`:''}
+  </div>`;
+}
+// ─── Pannello: stat strip ───
+function buildPanelStatStrip(){
+  const C=CHAR;
+  const scores=finalScores(C);
+  const dexMod=abilityMod(scores.DEX||10);
+  const pb=C.proficiencyBonusOverride??computedPB(C.level||1);
+  const initTotal=dexMod+(C.initiativeBonus??0);
+  const passPerc=10+abilityMod(scores.WIS||10)+((C.skills||{}).perception?pb:0);
+  const isCaster=!!(C.spellcasting?.ability);
+  const cell=(tip,val,lbl)=>`<div class="stat-cell" data-tip="${tip}"><div class="stat-cell-val">${val}</div><div class="stat-cell-lbl">${lbl}</div></div>`;
+  const sep='<div class="stat-sep"></div>';
+  let cells=cell(T('hint_statAC'),C.ac||10,T('lbl_ac'))+sep
+    +cell(T('hint_statSpeed'),C.speed||'—',T('lbl_speed'))+sep
+    +cell(T('hint_statInit'),modStr(initTotal),T('lbl_initiative'))+sep
+    +cell(T('hint_statPB'),modStr(pb),T('lbl_pb'))+sep
+    +cell(T('hint_statPassPerc'),passPerc,T('passivePerception'));
+  if(isCaster){
+    const ab=C.spellcasting.ability;
+    const spellDC=C.spellcasting?.spellDCOverride??(8+pb+abilityMod(scores[ab]||10));
+    const spellAtk=C.spellcasting?.spellAttackOverride??(pb+abilityMod(scores[ab]||10));
+    cells+=sep+cell(T('hint_statSpellDC'),spellDC,T('lbl_spellDC'))
+      +sep+cell(T('hint_statSpellAtk'),modStr(spellAtk),T('lbl_spellAtk'));
+  }
+  return `<div class="stat-strip">${cells}</div>`;
+}
+// ─── Pannello: saving throws grid ───
+function buildPanelSaveThrows(){
+  const C=CHAR;
+  const scores=finalScores(C);
+  const pb=C.proficiencyBonusOverride??computedPB(C.level||1);
+  const saves=C.savingThrows||[];
+  const cells=DND.abilities.map(ab=>{
+    const prof=saves.includes(ab);
+    const val=abilityMod(scores[ab]||10)+(prof?pb:0);
+    const tip=prof?T('saveProfTip').replace('{N}',pb):T('saveNoProfTip');
+    return `<div class="save-cell${prof?' prof':''}" data-tip="${tip}"><div class="save-cell-val">${modStr(val)}</div><div class="save-cell-lbl">${abilityShortName(ab)}</div></div>`;
+  }).join('');
+  return `<div class="saves-wrap"><div class="pn-strip-label">${T('savingThrows')}</div><div class="save-throws-grid">${cells}</div></div>`;
+}
+// ─── Pannello: turn tracker + round ───
+function buildPanelTurnTracker(){
+  const S=SESSION, C=CHAR;
+  const ts=S.turnSlots||{};
+  const ta=S.turnActions||{};
+  const mkSlot=(key,emoji,lbl,tip)=>{const selName=key!=='movement'?resolveActionName(ta[key]||null):null;return `<div class="turn-slot${ts[key]?' used':''}" onclick="toggleTurnSlot('${key}')" data-tip="${tip}"><div class="ts-row"><div class="turn-slot-check">${ts[key]?'✓':''}</div><span>${emoji} ${lbl}</span></div>${selName?`<span class="turn-slot-sel">${selName}</span>`:''}</div>`;};
+  const slotsHtml=mkSlot('action','⚔️',dndTr('actionLabels','action')||'Action',T('hint_turnAction'))
+    +mkSlot('bonus','⚡',dndTr('actionLabels','bonus')||'Bonus',T('hint_turnBonus'))
+    +mkSlot('movement','🏃',T('lbl_movement'),T('hint_turnMovement'));
+  const dex=abilityMod(finalScores(C).DEX||10);
+  const bonus=(C.initiativeBonus??0);
+  const initTotal=dex+bonus;
+  const dexLabel=abilityShortName('DEX');
+  const roll=S.initiative!==''&&S.initiative!=null?Number(S.initiative):null;
+  const modPart=modStr(dex)+' '+dexLabel+(bonus!==0?' '+modStr(bonus):'');
+  const formulaSpan=roll!=null
+    ?`${roll} ${modPart} = <strong>${roll+initTotal}</strong>`
+    :modPart;
+  return `<div class="pn-card" style="margin-top:14px;">
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;">
+      <div class="label">${T('round')}: <span id="round-val" style="color:var(--accent);">${S.round||1}</span> <span class="help-icon" data-tip="${T('helpCombat')}">?</span></div>
+      <div style="display:flex;gap:5px;">
+        <button class="btn" onclick="changeRound(-1)">−</button>
+        <button class="btn" onclick="changeRound(1)">+</button>
+        <button class="btn" onclick="resetRound()">${T('reset')}</button>
+      </div>
+    </div>
+    <div class="inline-field" style="margin-top:8px;">
+      <span>${T('initiative')}</span>
+      <input type="number" id="init-input" placeholder="—" value="${S.initiative||''}" style="width:65px;">
+      <span id="init-formula" style="font-size:.8em;color:var(--text-muted);">${formulaSpan}</span>
+    </div>
+    <div class="turn-tracker">${slotsHtml}</div>
+  </div>`;
+}
+// ─── Pannello: trackers + spell slots ───
+function buildPanelTrackers(){
+  const S=SESSION, C=CHAR;
+  const cur=S.currency||{pp:0,gp:0,ep:0,sp:0,cp:0};
+  // ── Top row: Inspiration + Currency side by side (stack on mobile) ──
+  const hasHeroic=S.inspiration, hasBardic=S.bardicInspiration, bardDie=S.bardicInspirationDie||'d6';
+  const diePills=['d6','d8','d10','d12'].map(d=>`<span class="insp-die-pill${bardDie===d?' active':''}" onclick="setBardicDie('${d}')">${d}</span>`).join('');
+  const inspCard=`<div class="pn-card">
+    <div class="label">✨ ${T('inspiration')}</div>
+    <button class="insp-btn heroic${hasHeroic?' active':''}${hasBardic?' disabled':''}" onclick="toggleHeroicInspiration()" data-tip="${T('heroicInspirationTip')}">⭐ ${T('heroicInspiration')}</button>
+    <button class="insp-btn bardic${hasBardic?' active':''}${hasHeroic?' disabled':''}" onclick="toggleBardicInspiration()" data-tip="${T('bardicInspirationTip')}">🎶 ${T('bardicInspiration')}</button>
+    ${hasBardic?`<div class="insp-die-row">${diePills}</div>`:''}
+  </div>`;
+  const curCard=`<div class="pn-card">
+    <div class="label">🪙 ${T('currencyLabel')}</div>
+    <div class="cur-rows">${COINS.map(c=>`<div class="cur-row${CUR_COIN===c.id?' cur-sel':''}" data-coin="${c.id}" onclick="selectCurTab('${c.id}')" title="${c.tip}">${c.emoji} ${c.label} <span class="cur-val">${cur[c.id]||0}</span></div>`).join('')}</div>
+    <div class="cur-controls" style="margin-top:5px;">
+      <button class="cur-btn" onclick="adjustCur(-1)">−</button>
+      <input id="cur-step" class="cur-step" type="number" min="1" value="1">
+      <button class="cur-btn" onclick="adjustCur(1)">+</button>
     </div>
   </div>`;
-  // Quick Actions — auto-generated from spells + weapons + manual actions
+  const topRow=`<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:8px;margin-bottom:12px;">${inspCard}${curCard}</div>`;
+  let cards='';
+  (CHAR.equipment||[]).forEach(e=>{
+    if(!e.tracked) return;
+    const tid='eq-'+slugify(e.name);
+    const used=SESSION.trackers?.[tid]?.used||0;
+    const total=e.quantity||1;
+    const emoji=e.emoji||'📦';
+    let pips=''; for(let j=0;j<total;j++) pips+=`<div class="pip${j<used?' used':''}" onclick="clickTrackerPip('${tid}',${j})">${emoji}</div>`;
+    const useBtn=e.isPotion
+      ?`<button class="btn danger" onclick="usePotionTracker('${tid}')">${T('spend')} (${e.potionFormula||''})</button>`
+      :`<button class="btn danger" onclick="useTracker('${tid}')">${T('spend')}</button>`;
+    cards+=`<div class="pn-card" id="tracker-card-${tid}"><div class="label">${emoji} ${e.name||''}</div><div class="pips" id="pips-${tid}">${pips}</div><div class="btn-row">${useBtn}<button class="btn" onclick="resetTracker('${tid}')">${T('reset')} (${total})</button></div></div>`;
+  });
+  (CHAR.features||[]).forEach(f=>{
+    (f.trackers||[]).forEach(t=>{
+      const label=t.label||f.title;
+      const emoji=t.emoji||f.emoji;
+      const tid=slugify(label);
+      const used=SESSION.trackers?.[tid]?.used||0;
+      const total=t.total||1;
+      let pips=''; for(let j=0;j<total;j++) pips+=`<div class="pip${j<used?' used':''}" onclick="clickTrackerPip('${tid}',${j})">${t.showDie&&t.die?t.die:(emoji||'●')}</div>`;
+      cards+=`<div class="pn-card" id="tracker-card-${tid}"><div class="label">${emoji||''} ${label||''}</div><div class="pips" id="pips-${tid}">${pips}</div><div class="btn-row"><button class="btn danger" onclick="useTracker('${tid}')">${T('spend')}</button><button class="btn" onclick="resetTracker('${tid}')">${T('reset')} (${total})</button></div></div>`;
+    });
+  });
+  (CHAR.spellSlots||[]).forEach(sl=>{
+    const lv=sl.level; const tot=sl.total||0;
+    const used=SESSION.spellSlots?.[lv]?.used||0;
+    const color=DND.slotColors[lv]||'var(--accent)';
+    let pips=''; for(let j=0;j<tot;j++) pips+=`<div class="pip${j<used?' used':''}" style="${j<used?'':'border-color:'+color+';background:'+color+';'}" onclick="clickSlotPip(${lv},${j})">${lv}</div>`;
+    cards+=`<div class="pn-card"><div class="label" style="color:${color};">✨ Slot Lv${lv}</div><div class="pips" id="slot${lv}-pips">${pips}</div><div class="btn-row"><button class="btn danger" onclick="useSlot(${lv})">${T('spend')}</button><button class="btn" onclick="resetSlot(${lv})">${T('reset')} (${tot})</button></div></div>`;
+  });
+  return topRow+(cards?`<div class="pn-grid">${cards}</div>`:'');
+}
+
+// ─── Pannello: availability helpers ───
+function resolveActionName(id){
+  if(!id) return null;
+  if(id.startsWith('sp-')){const sp=(CHAR.spells||[]).find(s=>'sp-'+slugify(s.name||'')===id);return sp?((sp.emoji||'')+' '+(sp.name||'')).trim():null;}
+  if(id.startsWith('w-')){const w=(CHAR.weapons||[]).find(w=>'w-'+slugify(w.name||'')===id);return w?((w.emoji||'')+' '+(w.name||'')).trim():null;}
+  if(id.startsWith('fa-')){for(const f of (CHAR.features||[])) for(const a of (f.actions||[])) if('fa-'+slugify(a.label||f.title||'')===id) return ((a.emoji||f.emoji||'')+' '+(a.label||f.title||'')).trim();}
+  return null;
+}
+function isSpellAvailable(sp){
+  if((sp.level||0)===0) return true;
+  return (CHAR.spellSlots||[]).some(sl=>sl.level>=sp.level&&(SESSION.spellSlots?.[sl.level]?.used||0)<(sl.total||0));
+}
+function isFeatureActionAvailable(f){
+  if(!(f.trackers||[]).length) return true;
+  return f.trackers.some(t=>{const tid=slugify(t.label||f.title);return (SESSION.trackers?.[tid]?.used||0)<(t.total||1);});
+}
+// ─── Pannello: quick actions ───
+function buildPanelActions(){
+  const C=CHAR;
   const actTypes=['action','bonus','reaction'];
+  const ta=SESSION.turnActions&&!Array.isArray(SESSION.turnActions)?SESSION.turnActions:{};
+  const slotOf=t=>t==='bonus'?'bonus':t==='reaction'?'reaction':'action';
   const actFilter=`<div class="action-filter-row">
-    <button class="filter-btn active" onclick="filterActions(this,'all')">${T('allActions')}</button>
-    ${actTypes.map(t=>`<button class="filter-btn" onclick="filterActions(this,'${t}')">${dndTr('actionLabels',t)||DND.actionLabels[t]}</button>`).join('')}
+    <button class="filter-btn${ACTION_FILTER==='all'?' active':''}" onclick="filterActions(this,'all')">${T('allActions')}</button>
+    ${actTypes.map(t=>`<button class="filter-btn${ACTION_FILTER===t?' active':''}" onclick="filterActions(this,'${t}')">${dndTr('actionLabels',t)||DND.actionLabels[t]}</button>`).join('')}
   </div>`;
-  function actionBadge(type){
+  const badge=type=>{
     const cls=type==='action'?'badge-azione':type==='bonus'?'badge-bonus':type==='reaction'?'badge-reazione':'badge-azione';
     return `<span class="action-badge ${cls}">${dndTr('actionLabels',type)||DND.actionLabels[type]}</span>`;
-  }
-  function spellQuickNote(sp){
+  };
+  const spellNote=sp=>{
     const parts=[];
     const firstLine=(sp.description||'').split('\n')[0].replace(/\*\*/g,'').trim().slice(0,55);
     if(firstLine) parts.push(firstLine);
-    if(sp.saveAbility) parts.push(T('ts')+' '+sp.saveAbility);
+    if(sp.saveAbility) parts.push(T('ts')+' '+abilityShortName(sp.saveAbility));
     if(sp.concentration) parts.push(T('concentration'));
     if(sp.ritual) parts.push(T('ritual'));
     if(sp.range) parts.push(sp.range);
     if((sp.level||0)>0) parts.push(T('slotLvLabel')+' '+sp.level+'+');
     return parts.join(' | ');
-  }
-  const spellEntries=(C.spells||[]).map(sp=>{const t=normalizeActionType(sp.actionType||'action');return `<div class="action-entry" data-type="${t}">
-    ${actionBadge(t)}
-    <div class="action-entry-body">
-      <div class="action-entry-name">${sp.emoji||''} ${sp.name||''}</div>
-      <div class="action-entry-note">${spellQuickNote(sp)}</div>
-    </div></div>`;}).join('');
+  };
   const pb=C.proficiencyBonusOverride??(C.proficiencyBonus||computedPB(C.level||1));
   const scores=finalScores(C);
+  const spellEntries=(C.spells||[]).map(sp=>{
+    const t=normalizeActionType(sp.actionType||'action');
+    const id='sp-'+slugify(sp.name||'');
+    const isUsed=ta[slotOf(t)]===id;
+    const isUnavail=!isSpellAvailable(sp);
+    const hidden=ACTION_FILTER!=='all'&&t!==ACTION_FILTER;
+    const cls=`action-entry${isUsed?' used':''}${isUnavail?' unavail':''}`;
+    return `<div class="${cls}" data-type="${t}"${hidden?' style="display:none"':''} onclick="useAction('${t}','${id}')">${badge(t)}${isUsed?'<span class="action-entry-check">✓</span>':''}<div class="action-entry-body"><div class="action-entry-name">${sp.emoji||''} ${sp.name||''}</div><div class="action-entry-note">${spellNote(sp)}</div></div></div>`;
+  }).join('');
   const weaponEntries=(C.weapons||[]).map(w=>{
     const atkMod=abilityMod(scores[w.attackStat]||10);
     const magic=w.magicBonus||0;
     const atk=w.attackBonusOverride!=null?modStr(w.attackBonusOverride):modStr(pb+atkMod+magic);
     const dmgMod=atkMod+magic;
     const dmg=w.damageOverride||(w.damageDie||'?')+(dmgMod>=0?'+'+dmgMod:dmgMod);
-    return `<div class="action-entry" data-type="action">
-    ${actionBadge('action')}
-    <div class="action-entry-body">
-      <div class="action-entry-name">${w.emoji||''} ${w.name||''}</div>
-      <div class="action-entry-note">${atk} | ${dmg} ${dndTr('damageTypes',w.damageType)||w.damageType||''}${w.properties?' | '+w.properties:''}</div>
-    </div></div>`;}).join('');
-  // Feature-embedded actions (v3: plural actions[] array)
-  const featureActionEntries=(C.features||[]).flatMap(f=>
-    (f.actions||[]).map(a=>{
-      const t=normalizeActionType(a.type||'action');
-      const label=a.label||f.title;
-      const emoji=a.emoji||f.emoji;
-      return `<div class="action-entry" data-type="${t}">
-      ${actionBadge(t)}
-      <div class="action-entry-body">
-        <div class="action-entry-name">${emoji||''} ${label||''}</div>
-        <div class="action-entry-note">${a.description||''}</div>
-      </div></div>`;
-    })
-  ).join('');
-  const allEntries=spellEntries+weaponEntries+featureActionEntries;
-  const actionsCard=`<div class="pn-card" style="margin-top:14px;">
-    <div class="label">${T('quickActions')}</div>
+    const id='w-'+slugify(w.name||'');
+    const isUsed=ta['action']===id;
+    const hidden=ACTION_FILTER!=='all'&&ACTION_FILTER!=='action';
+    const cls=`action-entry${isUsed?' used':''}`;
+    return `<div class="${cls}" data-type="action"${hidden?' style="display:none"':''} onclick="useAction('action','${id}')">${badge('action')}${isUsed?'<span class="action-entry-check">✓</span>':''}<div class="action-entry-body"><div class="action-entry-name">${w.emoji||''} ${w.name||''}</div><div class="action-entry-note">${atk} | ${dmg} ${dndTr('damageTypes',w.damageType)||w.damageType||''}${w.properties?' | '+w.properties:''}</div></div></div>`;
+  }).join('');
+  const featureEntries=(C.features||[]).flatMap(f=>(f.actions||[]).map(a=>{
+    const t=normalizeActionType(a.type||'action');
+    const id='fa-'+slugify(a.label||f.title||'');
+    const isUsed=ta[slotOf(t)]===id;
+    const isUnavail=!isFeatureActionAvailable(f);
+    const hidden=ACTION_FILTER!=='all'&&t!==ACTION_FILTER;
+    const cls=`action-entry${isUsed?' used':''}${isUnavail?' unavail':''}`;
+    return `<div class="${cls}" data-type="${t}"${hidden?' style="display:none"':''} onclick="useAction('${t}','${id}')">${badge(t)}${isUsed?'<span class="action-entry-check">✓</span>':''}<div class="action-entry-body"><div class="action-entry-name">${a.emoji||f.emoji||''} ${a.label||f.title||''}</div><div class="action-entry-note">${a.description||''}</div></div></div>`;
+  })).join('');
+  const all=spellEntries+weaponEntries+featureEntries;
+  return `<div class="pn-card" style="margin-top:14px;">
+    <div class="label">${T('quickActions')} <span class="help-icon" data-tip="${T('helpQuickActions')}">?</span></div>
     ${actFilter}
-    <div id="action-list">${allEntries||`<p class="empty-state">${T('noActions')}</p>`}</div>
+    <div id="action-list">${all||`<p class="empty-state">${T('noActions')}</p>`}</div>
   </div>`;
-  // Session save/load
-  const sessionCard=`<div class="pn-card" style="margin-top:14px;">
-    <div class="label">${T('session')}</div>
-    <div class="btn-row" style="margin-top:8px;">
-      <button class="btn long-rest" onclick="exportCharacter()">${T('saveSession')}</button>
-      <label class="btn short-rest" style="cursor:pointer;">${T('loadSession')}<input type="file" id="import-session-click" accept=".json" onchange="importSession(event)" style="display:none;"></label>
-      <button class="btn" onclick="copyToClipboard()">${T('copyClipboard')}</button>
-    </div>
-    <div style="font-size:.75em;color:var(--text-muted);margin-top:6px;">${T('sessionNote')}</div>
-  </div>`;
-  // Notes
-  const notesCard=`<div class="pn-card" style="margin-top:14px;">
-    <div class="label">${T('note')}</div>
-    <textarea id="note-rapide" placeholder="${T('notePlaceholder')}">${S.notes||''}</textarea>
-  </div>`;
-  return condSection+restsLog+actionsCard+sessionCard+notesCard;
 }
 // ═══════════════ RENDER SECTIONS ═══════════════
 function buildLevelUpChecks(C,newLv,pbChanged,isCaster,featName){
@@ -2883,11 +3173,17 @@ function renderSpellsSection(){
   // Spell filter bar
   const SF=SPELL_FILTER;
   const schoolOpts2=[...new Set((C.spells||[]).map(s=>s.school).filter(Boolean))];
+  const allLevels=[...new Set((C.spells||[]).map(s=>s.level))].sort((a,b)=>a-b);
+  const levelTabs=allLevels.length>1?`<div class="spell-level-tabs">
+    <button class="spell-lvtab${SF.level===null?' active':''}" onclick="setSpellFilter('level',null)">${T('allActions')}</button>
+    ${allLevels.map(lv=>`<button class="spell-lvtab${SF.level===lv?' active':''}" onclick="setSpellFilter('level',${lv})">${lv===0?T('cantrips'):`${T('spellLvPrefix')} ${lv}`}</button>`).join('')}
+  </div>`:'';
   const filterBar=`<div class="spell-filter-bar">
+    ${levelTabs}
     <input type="text" id="sf-text" placeholder="${T('spellFilterPh')}" value="${SF.text||''}" oninput="setSpellFilter('text',this.value)">
     <button class="spell-filter-btn${SF.prepared?' active':''}" onclick="setSpellFilter('prepared',${!SF.prepared})">${T('filterPrepared')}</button>
     ${schoolOpts2.map(s=>`<button class="spell-filter-btn${SF.school===s?' active':''}" onclick="setSpellFilter('school','${SF.school===s?'':s}')">${dndTr('schools',s)||s}</button>`).join('')}
-    ${SF.text||SF.school||SF.action||SF.prepared?`<button class="spell-filter-btn" onclick="clearSpellFilter()">✕</button>`:''}
+    ${SF.text||SF.school||SF.action||SF.prepared||SF.level!==null?`<button class="spell-filter-btn" onclick="clearSpellFilter()">✕</button>`:''}
   </div>`;
   // Group spells by level
   const spells=C.spells||[];
@@ -2895,6 +3191,7 @@ function renderSpellsSection(){
   if(!levels.includes(0)&&spells.some(s=>s.level===0)) levels.unshift(0);
   let spellSections='';
   levels.forEach(lv=>{
+    if(SF.level!==null&&SF.level!==lv) return;
     let lvSpells=spells.filter(s=>s.level===lv);
     // Apply filters
     if(SF.text) lvSpells=lvSpells.filter(s=>(s.name||'').toLowerCase().includes(SF.text.toLowerCase())||(s.originalName||'').toLowerCase().includes(SF.text.toLowerCase()));
@@ -2928,13 +3225,14 @@ function renderSpellsSection(){
           ${sp.range?`<span class="spell-meta-chip">📍 ${sp.range}</span>`:''}
           ${sp.duration?`<span class="spell-meta-chip">⏱ ${sp.duration}</span>`:''}
           ${sp.concentration?`<span class="spell-meta-chip conc">🔮 ${T('concentration')}</span>`:''}
-          ${sp.saveAbility?`<span class="spell-meta-chip">TS ${abilityShortName(sp.saveAbility)}</span>`:''}
+          ${sp.saveAbility?`<span class="spell-meta-chip">${T('ts')} ${abilityShortName(sp.saveAbility)}</span>`:''}
           ${sp.school?`<span class="spell-meta-chip">${dndTr('schools',sp.school)||sp.school}</span>`:''}
           ${sp.components?[sp.components.v?'V':'',sp.components.s?'S':'',sp.components.m?'M':''].filter(Boolean).map(c=>`<span class="spell-comp-badge">${c}</span>`).join(''):''}
         </div>
         <div class="spell-card-desc">${md(sp.description||'')}</div>
         ${sp.scaling?`<div class="spell-card-scaling">📈 ${md(sp.scaling)}</div>`:''}
         ${sp.notes?`<div class="spell-card-notes">${md(pinNotes(sp.notes))}</div>`:''}
+        ${!EDIT_MODE?`<div style="margin-top:8px;"><button class="btn" onclick="castSpell(${realIdx})">${T('castBtn')}</button></div>`:''}
       </div>`;
     }).join('');
     spellSections+=`<div class="spell-level-section">
@@ -2989,7 +3287,7 @@ function renderWeapons(){
   </div>`;
   return `${sectionHeader('weapons',EDIT_MODE?`<button class="btn-edit-sm edit-only" style="margin-left:auto" onclick="addWeapon()">＋</button>`:'')}
     <div class="section-header-line"></div>
-    ${unarmedCard}${cards||`<p class="empty-state">${T('noWeapons')}</p>`}
+    ${unarmedCard}${cards||`<p class="empty-state">${T('noWeapons')}</p>${EDIT_MODE?`<div style="display:flex;justify-content:center;margin:12px 0;"><button class="add-btn edit-only" onclick="addWeapon()">${T('addWeapon')}</button></div>`:''}`}
     ${EDIT_MODE?`<button class="add-btn edit-only" onclick="addWeapon()">${T('addWeapon')}</button>`:''}
     <hr>`;
 }
@@ -3006,7 +3304,7 @@ function renderEquipment(){
   }).join('');
   // Regular equipment rows
   const rows=(C.equipment||[]).map((e,i)=>`<tr>
-    <td>${e.emoji||''} ${e.name||''} ${e.attuned?`<span class="attune-chip">${T('attuned')}</span>`:''}</td><td>${e.notes?md(pinNotes(e.notes)):''}</td>
+    <td>${e.emoji||''} ${e.name||''} ${e.attuned?`<span class="attune-chip">${T('attuned')}</span>`:''}</td><td>${e.notes?md(e.notes):''}</td>
     ${EDIT_MODE?`<td><button class="btn-edit-sm" onclick="editEquip(${i})">✏️</button> <button class="btn-del-sm" onclick="deleteEquip(${i})">🗑</button></td>`:''}
   </tr>`).join('');
   const attunedCount=(C.equipment||[]).filter(e=>e.attuned).length;
@@ -3018,6 +3316,7 @@ function renderEquipment(){
     ${EDIT_MODE?'<td></td>':''}</tr>`;
   return `${sectionHeader('equipment',(EDIT_MODE?`<button class="btn-edit-sm edit-only" style="margin-left:auto" onclick="addEquip()">＋</button>`:'')+attuneBadge)}
     <div class="section-header-line"></div>
+    ${!weaponRows&&!rows?`<p class="empty-state">${T('noEquip')}</p>${EDIT_MODE?`<div style="display:flex;justify-content:center;margin:8px 0;"><button class="add-btn edit-only" onclick="addEquip()">${T('addItem')}</button></div>`:''}`:''}
     <table class="equip-table"><tr><th>${T('itemCol')}</th><th>${T('notesCol')}</th>${EDIT_MODE?'<th></th>':''}</tr>
       ${weaponRows}${rows}${goldRow}</table>
     ${EDIT_MODE?`<button class="add-btn edit-only" onclick="addEquip()">${T('addItem')}</button>`:''}
@@ -3068,11 +3367,18 @@ function renderLore(){
 function addLog(msg,type=''){
   const w=document.getElementById('log-wrap'); if(!w) return;
   const empty=w.querySelector('p[style*="font-style:italic"]');if(empty)w.innerHTML='';
-  const p=document.createElement('p'); p.className=type; p.innerHTML=msg;
+  const ts=new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+  const p=document.createElement('p'); p.className=type;
+  p.innerHTML=`<span style="font-size:.75em;opacity:.5;margin-right:5px;">${ts}</span>${msg}`;
   w.prepend(p); while(w.children.length>40) w.removeChild(w.lastChild);
   SESSION.logEntries=SESSION.logEntries||[];
   SESSION.logEntries.unshift({msg,type,t:Date.now()});
   if(SESSION.logEntries.length>40) SESSION.logEntries.pop();
+}
+function clearLog(){
+  SESSION.logEntries=[];
+  saveAll();
+  renderPanel();
 }
 function updateHPDisplay(){
   const S=SESSION, C=CHAR;
@@ -3129,6 +3435,34 @@ function clickHDPip(i){
   const used=SESSION.hitDice?.used||0;
   if(i<used) SESSION.hitDice.used=i; else SESSION.hitDice.used=i+1;
   renderPanel(); saveAll();
+}
+function consumeSpellSlot(level){
+  if(!level||level===0) return null;
+  const slots=(CHAR.spellSlots||[]).filter(sl=>sl.level>=level).sort((a,b)=>a.level-b.level);
+  for(const sl of slots){
+    const used=SESSION.spellSlots?.[sl.level]?.used||0;
+    if(used<(sl.total||0)){
+      if(!SESSION.spellSlots[sl.level]) SESSION.spellSlots[sl.level]={used:0};
+      SESSION.spellSlots[sl.level].used++;
+      return sl.level;
+    }
+  }
+  return null;
+}
+function castSpell(idx){
+  const sp=(CHAR.spells||[])[idx]; if(!sp) return;
+  const name=(sp.emoji?sp.emoji+' ':'')+sp.name;
+  let msg;
+  if(!sp.level||sp.level===0){
+    msg=T('logCastCantrip').replace('{name}',name);
+  } else {
+    const slotLv=consumeSpellSlot(sp.level);
+    if(slotLv==null){showToast(T('noSlotsLeft'),'error');return;}
+    msg=T('logCast').replace('{name}',name).replace('{N}',slotLv);
+  }
+  addLog(msg,'log-damage');
+  saveAll(); renderAll();
+  showToast(msg,'success');
 }
 function useSlot(lv){
   const s=SESSION.spellSlots[lv]; if(!s) return;
@@ -3228,16 +3562,77 @@ function setAidBonus(){
   inp.addEventListener('blur',save);
   inp.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();save();}if(e.key==='Escape'){el.textContent=modStr(cur);}});
 }
+function togglePanelSection(id){
+  if(!SESSION.panelSections) SESSION.panelSections={stats:true,combat:false,conditions:false,trackers:false,rest:false,session:true};
+  SESSION.panelSections[id]=!SESSION.panelSections[id];
+  saveAll();renderPanel();
+}
+function resetTurnSlots(){SESSION.turnSlots={action:false,bonus:false,movement:false};SESSION.turnActions={action:null,bonus:null,reaction:null};}
+function useAction(type,id){
+  if(!SESSION.turnActions||Array.isArray(SESSION.turnActions)) SESSION.turnActions={action:null,bonus:null,reaction:null};
+  if(!SESSION.turnSlots) SESSION.turnSlots={action:false,bonus:false,movement:false};
+  const slot=type==='bonus'?'bonus':type==='reaction'?'reaction':'action';
+  const current=SESSION.turnActions[slot];
+  if(current===id){
+    // Toggle off: deselect and uncheck slot
+    SESSION.turnActions[slot]=null;
+    if(slot!=='reaction') SESSION.turnSlots[slot]=false;
+  } else {
+    // Select (replacing any previous selection for this slot)
+    SESSION.turnActions[slot]=id;
+    if(slot!=='reaction') SESSION.turnSlots[slot]=true;
+  }
+  // Auto-advance round when all 3 slots are checked
+  if(SESSION.turnSlots.action&&SESSION.turnSlots.bonus&&SESSION.turnSlots.movement){changeRound(1);return;}
+  saveAll();renderPanel();
+}
+function toggleTurnSlot(key){
+  if(!SESSION.turnSlots) SESSION.turnSlots={action:false,bonus:false,movement:false};
+  SESSION.turnSlots[key]=!SESSION.turnSlots[key];
+  // If unchecking a slot directly, clear its selected action
+  if(!SESSION.turnSlots[key]&&SESSION.turnActions&&!Array.isArray(SESSION.turnActions)) SESSION.turnActions[key]=null;
+  // Auto-advance round when action AND bonus AND movement are all checked
+  if(SESSION.turnSlots.action&&SESSION.turnSlots.bonus&&SESSION.turnSlots.movement){changeRound(1);return;}
+  saveAll();renderPanel();
+}
 function changeRound(d){
   SESSION.round=Math.max(1,(SESSION.round||1)+d);
-  const rv=document.getElementById('round-val'); if(rv) rv.textContent=SESSION.round;
+  const toastMsgs=[];
+  if(d>0){
+    const ta=SESSION.turnActions&&!Array.isArray(SESSION.turnActions)?SESSION.turnActions:{};
+    for(const slot of ['action','bonus','reaction']){
+      const id=ta[slot]; if(!id||!id.startsWith('sp-')) continue;
+      const sp=(CHAR.spells||[]).find(s=>'sp-'+slugify(s.name||'')===id);
+      if(!sp) continue;
+      const name=(sp.emoji?sp.emoji+' ':'')+sp.name;
+      let msg;
+      if(!sp.level||sp.level===0){
+        msg=T('logCastCantrip').replace('{name}',name);
+      } else {
+        const slotLv=consumeSpellSlot(sp.level);
+        msg=slotLv!=null?T('logCast').replace('{name}',name).replace('{N}',slotLv):T('noSlotsLeft')+': '+name;
+      }
+      addLog(msg,'log-damage');
+      toastMsgs.push(msg);
+    }
+    resetTurnSlots();
+  }
+  saveAll(); renderPanel();
+  if(toastMsgs.length) showToast(toastMsgs.join(' · '),'success');
+}
+function resetRound(){SESSION.round=1;resetTurnSlots();saveAll();renderPanel();}
+function setConc(val){
+  SESSION.concentration=val;
+  const st=document.getElementById('conc-status');
+  if(st){st.textContent=val?T('concActive')+val:T('concNone');st.className='conc-status-text'+(val?' conc-active':'');}
   saveAll();
 }
-function resetRound(){SESSION.round=1;const rv=document.getElementById('round-val');if(rv)rv.textContent=1;saveAll();}
 function dropConc(){
-  const el=document.getElementById('conc-spell-input');
-  if(el?.value) addLog(`${T('logConc')} "${el.value}" ${T('logConcStop')}`,'log-damage');
-  if(el) el.value=''; SESSION.concentration='';
+  const name=SESSION.concentration||'';
+  if(name) addLog(`${T('logConc')} "${name}" ${T('logConcStop')}`,'log-damage');
+  SESSION.concentration='';
+  const sel=document.getElementById('conc-select'); if(sel) sel.value='';
+  const txt=document.getElementById('conc-spell-input'); if(txt) txt.value='';
   const st=document.getElementById('conc-status');
   if(st){st.textContent=T('concNone');st.className='conc-status-text';}
   saveAll();
@@ -3248,7 +3643,28 @@ function toggleCond(el,name){
   SESSION.conditions=SESSION.conditions||[];
   if(active){if(!SESSION.conditions.includes(name))SESSION.conditions.push(name);addLog(`${T('logCondOn')} ${displayName}`,'log-damage');}
   else{SESSION.conditions=SESSION.conditions.filter(c=>c!==name);addLog(`${T('logCondOff')} ${displayName}`,'log-heal');}
+  updateActiveConds(); saveAll();
+}
+function removeCondition(name){
+  SESSION.conditions=(SESSION.conditions||[]).filter(c=>c!==name);
+  addLog(`${T('logCondOff')} ${dndTr('conditions',name)||name}`,'log-heal');
+  updateActiveConds();
+  // sync the grid button if visible
+  const btn=document.querySelector(`.cond-btn.active`);
+  document.querySelectorAll('.cond-btn').forEach(b=>{
+    if(b.getAttribute('onclick')&&b.getAttribute('onclick').includes(`'${name}'`)) b.classList.remove('active');
+  });
   saveAll();
+}
+function updateActiveConds(){
+  const bar=document.getElementById('active-cond-bar');
+  if(!bar) return;
+  const conds=SESSION.conditions||[];
+  const exh=SESSION.exhaustion||0;
+  let html=conds.map(c=>`<span class="active-cond-pill" title="${T('clickToRemove')}" onclick="removeCondition('${c.replace(/'/g,"\\'")}')">● ${dndTr('conditions',c)||c}</span>`).join('');
+  if(exh>0) html+=`<span class="active-exh-pill">💀 ${T('exhaustion')} ${exh}</span>`;
+  bar.innerHTML=html;
+  bar.style.display=(conds.length||exh>0)?'flex':'none';
 }
 function toggleDeathPip(el,type,idx){
   el.classList.toggle('used');
@@ -3262,22 +3678,34 @@ function resetDeathSaves(){
   document.querySelectorAll('.death-pip').forEach(p=>p.classList.remove('used'));
   SESSION.deathSucc=0; SESSION.deathFail=0; addLog(T('logDeathReset')); saveAll();
 }
-function toggleInspiration(){
+function toggleHeroicInspiration(){
+  if(SESSION.bardicInspiration){showToast(T('inspirationConflict'),'error');return;}
   SESSION.inspiration=!SESSION.inspiration;
-  addLog(SESSION.inspiration?T('logInspGained'):T('logInspSpent'), SESSION.inspiration?'log-heal':'log-damage');
-  renderPanel(); saveAll();
+  addLog(SESSION.inspiration?T('logInspGained'):T('logInspSpent'),SESSION.inspiration?'log-heal':'log-damage');
+  renderPanel();saveAll();
+}
+function toggleBardicInspiration(){
+  if(SESSION.inspiration){showToast(T('inspirationConflict'),'error');return;}
+  SESSION.bardicInspiration=!SESSION.bardicInspiration;
+  addLog(SESSION.bardicInspiration?T('logBardicGained'):T('logBardicSpent'),SESSION.bardicInspiration?'log-heal':'log-damage');
+  renderPanel();saveAll();
+}
+function setBardicDie(die){
+  SESSION.bardicInspirationDie=die;
+  renderPanel();saveAll();
 }
 function changeExhaustion(d){
   SESSION.exhaustion=Math.max(0,Math.min(6,(SESSION.exhaustion||0)+d));
   renderPanel(); saveAll();
 }
 function setSpellFilter(key,val){
-  SPELL_FILTER[key]=(key==='prepared'?(val===true||val==='true'):val);
+  if(key==='level') SPELL_FILTER.level=(val===null||val==='null')?null:Number(val);
+  else SPELL_FILTER[key]=(key==='prepared'?(val===true||val==='true'):val);
   const sy=window.scrollY; renderAll(); window.scrollTo(0,sy);
   if(key==='text'){const el=document.getElementById('sf-text');if(el){el.focus();const l=(val||'').length;el.setSelectionRange(l,l);}}
 }
 function clearSpellFilter(){
-  SPELL_FILTER={text:'',school:'',action:'',prepared:false};
+  SPELL_FILTER={text:'',school:'',action:'',prepared:false,level:null};
   const sy=window.scrollY; renderAll(); window.scrollTo(0,sy);
 }
 function longRest(){
@@ -3307,25 +3735,30 @@ function longRest(){
 }
 function shortRest(){
   const C=CHAR, S=SESSION;
+  const summaryParts=[];
   // Reset short-rest equipment trackers
   (C.equipment||[]).forEach(e=>{
     if(!e.tracked||e.recovery!=='short') return;
     const tid='eq-'+slugify(e.name);
-    if(S.trackers[tid]) S.trackers[tid].used=0;
+    if(S.trackers[tid]&&S.trackers[tid].used>0){S.trackers[tid].used=0;summaryParts.push(e.name);}
   });
   // Reset short-rest feature trackers
   (C.features||[]).forEach(f=>{
     (f.trackers||[]).forEach(t=>{
       if(t.recovery!=='short') return;
       const tid=slugify(t.label||f.title);
-      if(S.trackers[tid]) S.trackers[tid].used=0;
+      if(S.trackers[tid]&&S.trackers[tid].used>0){S.trackers[tid].used=0;summaryParts.push(t.label||f.title);}
     });
   });
   // Reset Pact Magic spell slots
+  let pactReset=false;
   (C.spellSlots||[]).forEach(sl=>{
-    if(sl.pactMagic && S.spellSlots?.[sl.level]) S.spellSlots[sl.level].used=0;
+    if(sl.pactMagic&&S.spellSlots?.[sl.level]&&S.spellSlots[sl.level].used>0){
+      S.spellSlots[sl.level].used=0; pactReset=true;
+    }
   });
-  addLog(T('logShortRest'),'log-heal');
+  if(pactReset) summaryParts.push(T('pactMagic'));
+  S._shortRestSummary=summaryParts;
   S.hdDialog=true;
   renderPanel(); saveAll();
 }
@@ -3335,10 +3768,16 @@ function adjustHDQty(delta){
   const available=(C.level||1)-(SESSION.hitDice?.used||0);
   const qty=Math.max(1,Math.min(available,+el.textContent+delta));
   el.textContent=qty;
+  updateHdFormula();
+}
+function updateHdFormula(){
+  const C=CHAR;
+  const qtyEl=document.getElementById('hd-qty');
+  const qty=qtyEl?+qtyEl.textContent:1;
   const conMod=abilityMod(finalScores(C).CON||10);
-  const modStr=conMod>=0?`+${conMod}`:String(conMod);
+  const ms=conMod>=0?`+${conMod}`:String(conMod);
   const fEl=document.getElementById('hd-formula');
-  if(fEl) fEl.textContent=`${qty}d${C.hitDieType||8}${modStr}`;
+  if(fEl) fEl.textContent=`${qty}d${C.hitDieType||8}${ms}`;
 }
 function applyHDResult(){
   const S=SESSION, C=CHAR;
@@ -3355,16 +3794,20 @@ function applyHDResult(){
   S.hp.current=Math.min(effMax,before+Math.max(0,healed));
   S.hitDice.used=(S.hitDice.used||0)+n;
   const actualHealed=S.hp.current-before;
-  addLog(`${T('logHD')} ${n}d${C.hitDieType||8} → +${actualHealed} ${T('hpAbbr')}`,'log-heal');
-  showToast(T('toastShortRest').replace('{N}',actualHealed),'success');
+  const parts=S._shortRestSummary||[];
+  const summaryStr=[`+${actualHealed} HP`,...parts.map(p=>p+' ↺')].join(' · ');
+  addLog(`${T('shortRest')}: ${summaryStr}`,'log-heal');
+  showToast(`☕ ${summaryStr}`,'success');
   closeHDDialog();
 }
 function closeHDDialog(skipped=false){
   SESSION.hdDialog=false;
+  delete SESSION._shortRestSummary;
   renderPanel(); updateHPDisplay(); saveAll();
   if(skipped) showToast(T('toastShortRestSkipped'),'info');
 }
 function filterActions(btn,type){
+  ACTION_FILTER=type;
   document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
   document.querySelectorAll('#action-list .action-entry').forEach(el=>{
@@ -3454,13 +3897,14 @@ function importSession(event){importCharacter(event);}
 // ═══════════════ WIZARD ENGINE ═══════════════
 let WIZ_CONFIG=null, WIZ_STEP=0, WIZ_DATA={}, WIZ_EDIT_IDX=null, WIZ_KEY=null;
 const COINS=[
-  {id:'pp',emoji:'🔮',label:'PP'},
-  {id:'gp',emoji:'🥇',label:'GP'},
-  {id:'ep',emoji:'⚡',label:'EP'},
-  {id:'sp',emoji:'🥈',label:'SP'},
-  {id:'cp',emoji:'🟤',label:'CP'},
+  {id:'pp',emoji:'🔮',label:'PP',tip:'Platinum Pieces'},
+  {id:'gp',emoji:'🥇',label:'GP',tip:'Gold Pieces'},
+  {id:'ep',emoji:'⚡',label:'EP',tip:'Electrum Pieces'},
+  {id:'sp',emoji:'🥈',label:'SP',tip:'Silver Pieces'},
+  {id:'cp',emoji:'🟤',label:'CP',tip:'Copper Pieces'},
 ];
 let CUR_COIN='gp';
+let ACTION_FILTER='all';
 let WIZ_BLOCKS=[], WIZ_ALGO_STEPS=[];
 let WIZ_TRACKERS=[], WIZ_ACTIONS=[], WIZ_TAGS=[];
 let WIZ_TRK_EDIT=-1, WIZ_ACT_EDIT=-1;
@@ -3623,7 +4067,7 @@ function renderSpellPreview(){
   const atype=dndTr('actionLabels',normalizeActionType(actionType))||actionType||'';
   return `<div id="wiz-preview" class="wiz-preview"><div class="wiz-preview-label">${T('wizPreview')}</div><div class="wiz-preview-content"><div class="spell-card" style="border-left-color:${color};margin:0;">
     <div class="spell-card-header"><span style="font-size:1.1em;">${emoji}</span> <span class="spell-card-name">${name||'...'}</span> ${origName?`<span class="spell-card-original">(${origName})</span>`:''} ${tags}</div>
-    <div class="spell-card-meta">${atype?`<span class="spell-meta-chip">${atype}</span>`:''}${rit?`<span class="spell-meta-chip ritual">R ${T('ritual')}</span>`:''}${range?`<span class="spell-meta-chip">📍 ${range}</span>`:''}${duration?`<span class="spell-meta-chip">⏱ ${duration}</span>`:''}${conc?`<span class="spell-meta-chip conc">🔮 ${T('concentration')}</span>`:''}${saveAb?`<span class="spell-meta-chip">TS ${abilityShortName(saveAb)}</span>`:''}${school?`<span class="spell-meta-chip">${dndTr('schools',school)||school}</span>`:''}</div>
+    <div class="spell-card-meta">${atype?`<span class="spell-meta-chip">${atype}</span>`:''}${rit?`<span class="spell-meta-chip ritual">R ${T('ritual')}</span>`:''}${range?`<span class="spell-meta-chip">📍 ${range}</span>`:''}${duration?`<span class="spell-meta-chip">⏱ ${duration}</span>`:''}${conc?`<span class="spell-meta-chip conc">🔮 ${T('concentration')}</span>`:''}${saveAb?`<span class="spell-meta-chip">${T('ts')} ${abilityShortName(saveAb)}</span>`:''}${school?`<span class="spell-meta-chip">${dndTr('schools',school)||school}</span>`:''}</div>
     ${desc?`<div class="spell-card-desc">${md(desc)}</div>`:''}${scaling?`<div class="spell-card-scaling">📈 ${md(scaling)}</div>`:''}${notes?`<div class="spell-card-notes">${md(pinNotes(notes))}</div>`:''}
   </div></div></div>`;
 }
@@ -4673,6 +5117,7 @@ const WIZARDS = {
     } else {
       if(SESSION?.hp) SESSION.hp.current=Math.min((+d.hpMax||10)+(SESSION.hp.aidBonus||0),SESSION.hp.current||0);
     }
+    if(d._bgFeat) base.bgFeat=d._bgFeat;
     CHAR=base; syncSession();
     if(!isEdit) SESSION.showGettingStarted=true;
   }
@@ -5197,6 +5642,7 @@ function flattenChar(){
       return {_bgAsiMode:'two',_bgAsi1:p2?.[0]||'',_bgAsi2:p1?.[0]||''};
     })(),
     // Origin feat step prefill
+    _bgFeat: C.bgFeat||'',
     _originFeat2:C.humanOriginFeat||'',
   };
 }
@@ -5284,7 +5730,7 @@ function deleteSidebarItem(idx){
   const item=(CHAR.sidebar||[])[idx];
   // Don't allow deleting built-in sections
   if(typeof item==='string' && SECTION_REGISTRY[item] && !SECTION_REGISTRY[item].deletable){
-    toast(T('sbCantDelete'),'error'); return;
+    showToast(T('sbCantDelete'),'error'); return;
   }
   // Separators: delete without confirm (trivial to re-add)
   if(typeof item==='object' && item.type==='sep'){
@@ -5467,6 +5913,8 @@ let _toastTimer=null;
 function showToast(msg,type='info',btn=null){
   const tc=document.getElementById('toast-container');
   if(!tc)return;
+  // Auto-add undo button on success toasts when a snapshot is available
+  if(type==='success'&&PREV_STATE&&!btn) btn={label:T('undo'),fn:undoLast};
   const t=document.createElement('div');
   t.className='toast '+type;
   const span=document.createElement('span');span.textContent=msg;t.appendChild(span);

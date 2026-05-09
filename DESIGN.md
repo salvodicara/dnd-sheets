@@ -306,7 +306,7 @@ Done:
 **Goal:** Track Bardic/Heroic Inspiration and Exhaustion level in the game panel.
 
 Done:
-- **Inspiration**: Toggle button in game panel. `SESSION.inspiration` boolean. No dice — player decides.
+- **Inspiration**: Dual-toggle in game panel. `SESSION.inspiration` (Heroic, boolean) and `SESSION.bardicInspiration` (Bardic, boolean) + `SESSION.bardicInspirationDie` ('d6'–'d12'). Mutually exclusive — enabling one while the other is active shows a conflict toast. Bardic toggle reveals a die-type selector (d6/d8/d10/d12) so the recipient can record what the Bard gave them. Both have hover tooltips explaining the D&D 2024 rules.
 - **Exhaustion**: 0–6 level tracker in game panel. `SESSION.exhaustion` integer. Long rest reduces by 1 (per D&D 2024). Level 6 = dead. Each level shows penalty summary.
 
 ### Phase 23: Multi-Currency
