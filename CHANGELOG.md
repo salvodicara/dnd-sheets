@@ -5,7 +5,11 @@ Entries are in reverse-chronological order. Uncommitted work appears under `[Unr
 
 ---
 
-## [Unreleased] — Phase 40: Variable-Cost Tracker Actions & Numeric Pool Trackers
+## [Unreleased]
+
+---
+
+## [d2a13a4] — Phase 40: Variable-Cost Tracker Actions & Numeric Pool Trackers
 
 ### Added (`index.html`)
 - **`trackerCost` field on feature actions** — optional integer (default 1) specifying how many tracker uses an action consumes per activation. Fully backward-compatible: omitting the field is identical to `trackerCost: 1`
