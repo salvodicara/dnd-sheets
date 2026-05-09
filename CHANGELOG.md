@@ -5,7 +5,11 @@ Entries are in reverse-chronological order. Uncommitted work appears under `[Unr
 
 ---
 
-## [Unreleased] — Phase 41: Bug Fixes, Tooltip Consistency, Schema Corrections
+## [Unreleased]
+
+---
+
+## [9141784] — Phase 41: Bug Fixes, Tooltip Consistency, Schema Corrections
 
 ### Fixed (`index.html`)
 - **`damageModOverride` backward compat** — renderers (`weaponDmg()` and action bar) now check `damageModOverride` (old integer field) as a fallback when `damageOverride` (current string field) is absent; `syncSession()` migration silently converts old integer field to canonical `damageOverride: "XdY+N"` string on load
