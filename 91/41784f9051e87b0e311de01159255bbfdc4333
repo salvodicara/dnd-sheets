@@ -1,0 +1,46 @@
+DESIGN.md
+  s_a2686e1bd10a0b::t_fed4e178da3551 12
+CLAUDE.md
+  s_a2686e1bd10a0b::t_9d77295cc02632 469
+  s_a2686e1bd10a0b::t_028cf7a721bf1d 440,442-444
+  s_a2686e1bd10a0b::t_16f5f7d49de875 140
+  s_a2686e1bd10a0b::t_e2b73a79e1fe6d 575,582-585
+  s_a2686e1bd10a0b::t_aaabf701a6ae0f 399-415
+  s_a2686e1bd10a0b::t_0b2b6f915bffdb 142-148
+  s_a2686e1bd10a0b::t_a7642e5868aecb 508,521
+  s_a2686e1bd10a0b::t_2b9d3ea9976253 483
+examples/catalion_di_sancaldo_bard_3_2026-05-06.json
+  s_a2686e1bd10a0b::t_0cff1327b157f9 61
+  s_a2686e1bd10a0b::t_c72b20aff71084 258
+CHANGELOG.md
+  s_a2686e1bd10a0b::t_735200b749accb 8-32
+index.html
+  s_a2686e1bd10a0b::t_981a7d96316512 2950-2951
+  s_a2686e1bd10a0b::t_bbc1f56008c330 3213
+  s_a2686e1bd10a0b::t_818a17e2438bf2 4101
+  s_a2686e1bd10a0b::t_058eb59f22e6b7 3086
+  s_a2686e1bd10a0b::t_710e980d356f50 5222,5240-5247
+  s_a2686e1bd10a0b::t_316abb430c53cb 5552,5554-5555,5570-5581
+  s_a2686e1bd10a0b::t_6fbb019f921ff9 2201-2204
+  s_a2686e1bd10a0b::t_eacf86da6f6079 5859
+  s_a2686e1bd10a0b::t_78f51269b25f61 3304-3307
+  s_a2686e1bd10a0b::t_6a1264aceac8c0 5289
+  s_a2686e1bd10a0b::t_6d59b4909d948d 5721-5722
+  s_a2686e1bd10a0b::t_b24ee8585f5cc3 2774-2775
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.4.4",
+  "base_commit_sha": "9141784f9051e87b0e311de01159255bbfdc4333",
+  "prompts": {},
+  "sessions": {
+    "s_a2686e1bd10a0b": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_1f3472d43ffeU5S5xIy31PI8wi",
+        "model": "claude-sonnet-4.6"
+      },
+      "human_author": "Salvatore Di Cara <salvodicara@gmail.com>"
+    }
+  }
+}
