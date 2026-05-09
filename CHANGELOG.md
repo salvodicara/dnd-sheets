@@ -5,7 +5,35 @@ Entries are in reverse-chronological order. Uncommitted work appears under `[Unr
 
 ---
 
-## [Unreleased] — Phase 39: Feature Tracker Linking & Floating Tooltips
+## [Unreleased] — Phase 40: Variable-Cost Tracker Actions & Numeric Pool Trackers
+
+### Added (`index.html`)
+- **`trackerCost` field on feature actions** — optional integer (default 1) specifying how many tracker uses an action consumes per activation. Fully backward-compatible: omitting the field is identical to `trackerCost: 1`
+- **Numeric pool trackers (`isPool`)** — feature trackers and equipment items can now be marked as pools. A pool stores a total of points (e.g. 25 HP, 4 Sorcery Points) rather than a discrete number of pips. The game panel renders pool cards with a large `remaining / total unit` display, a thin progress bar, and an inline "Spend N" input + button
+- **`spendPool(id)`** — new function; reads the amount from `#pool-amt-{id}`, validates, logs (`logPoolSpend` key), re-renders
+- **`findTrackerById(id)` extended** — now returns `isPool` and `unit` for both equipment and feature trackers
+- **Pool wizard UI (feature tracker editor)** — "Numeric pool" checkbox; when checked, die/showDie fields hide, unit input appears, total field placeholder changes to "Pool maximum"
+- **Pool wizard UI (equipment wizard)** — `isPool` checkbox + `unit` field; mutually exclusive with `isPotion`/`potionFormula` (hidden when pool is active); quantity field relabels to "Pool maximum"
+- **New i18n keys (EN + IT):** `poolMode`, `poolModeHint`, `poolUnit`, `poolMax`, `trackerCostChange`, `trackerCostLabel`, `logPoolSpend`, `spendPool`
+- **CSS additions:** `.pool-display`, `.pool-unit-lbl`, `.pool-track`, `.pool-fill`, `.pool-spend-row`, `.pool-spend-input`, `.trk-cost-hint`, `.trk-cost-hint .change-link`
+
+### Changed (`index.html`)
+- **`changeRound(+1)`** — decrements tracker uses by `a.trackerCost||1` (not always 1); checks `remaining >= cost` before consuming (availability check updated to match)
+- **`buildPanelActions()`** — cost-aware dimming: action badge dims when `remaining < cost` (not just `remaining === 0`); note text shows `×N` suffix when cost > 1
+- **`renderWizTrackerList()`** — pool trackers now display `"25 HP pool · long"` instead of `"25 / long"`
+- **`renderWizActionList()`** — linked actions now show `🔗 ×2` badge when cost > 1 (previously showed `🔗 Tracker link` with no cost info)
+- **`editWizAction()` tracker dropdown** — pool trackers labelled `"25 HP, long"` (using `unit`) instead of `"25 uses, long"`
+- **Action cost UI in wizard** — collapsed by default ("Consumes 1 use(s) · change"); clicking "change" reveals inline number input; cost > 1 pre-expands on edit
+
+### Fixed (`index.html`)
+- **Pool Spend button** — correctly uses `T('spendPool')` → "Spend" (distinct from pip tracker's `T('spend')` → "Use 1")
+
+### Added (`examples/`)
+- **`test_tracker_features_2026-05-09.json`** — test character demonstrating both features: Discipline Points pool (5 pts, short rest) with 3 actions at costs 1, 2, 1; Second Wind pip tracker; Lay on Hands equipment pool (25 HP, long rest)
+
+---
+
+## [342b95f] — Phase 39: Feature Tracker Linking & Floating Tooltips
 
 ### Added (`index.html`)
 - **`trackerLink` field on feature actions** — links an action to a tracker (any tracker across all features, including cross-feature links). When the round advances (`changeRound(+1)`) and the linked action is queued in Quick Actions, the tracker is automatically decremented, with a log entry and toast notification

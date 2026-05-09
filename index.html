@@ -707,6 +707,17 @@ body.edit-mode::after{content:'';position:fixed;inset:0;pointer-events:none;box-
   max-width:320px;min-width:200px;white-space:normal;text-align:left;line-height:1.6;
   box-shadow:0 3px 12px rgba(0,0,0,.28);pointer-events:none;
   transform:translateX(-50%) translateY(-100%);display:none;}
+/* ── Pool tracker card ── */
+.pool-display{font-size:1.4em;font-weight:700;text-align:center;color:var(--text);padding:4px 0 2px;line-height:1.1;}
+.pool-unit-lbl{font-size:.72em;color:var(--text-muted);font-weight:400;}
+.pool-track{height:5px;background:var(--border-light);border-radius:3px;margin:5px 0 8px;}
+.pool-fill{height:100%;border-radius:3px;background:var(--accent);transition:width .3s;}
+.pool-spend-row{display:flex;align-items:center;gap:6px;margin-top:2px;}
+.pool-spend-input{width:52px;padding:3px 6px;border:1.5px solid var(--border-light);border-radius:6px;
+  background:var(--bg-card2);color:var(--text);font-size:.9em;text-align:center;}
+/* ── Tracker cost hint (action wizard) ── */
+.trk-cost-hint{font-size:.82em;color:var(--text-muted);margin-top:5px;cursor:pointer;user-select:none;}
+.trk-cost-hint .change-link{color:var(--accent);text-decoration:none;}
 .exhaustion-row{display:flex;align-items:center;gap:8px;margin-top:6px;}
 .exhaustion-val{font-size:1.2em;font-weight:700;min-width:20px;text-align:center;color:var(--text);}
 .exhaustion-val.danger{color:var(--hp-red);}
@@ -1222,6 +1233,13 @@ const BASE = {
     lbl_uses:'uses left',
     logTrackerUse:'⚡ {name}: 1 use spent',
     logTrackerNoUses:'❌ {name}: no uses remaining',
+    poolMode:'Numeric pool',
+    poolModeHint:'Use for HP pools, point pools, etc. Tracks a total value instead of discrete uses. The Spend button will prompt for how many points to deduct.',
+    poolUnit:'Unit label (e.g. HP)',
+    poolMax:'Pool maximum',
+    trackerCostChange:'change',
+    trackerCostLabel:'uses per activation',
+    logPoolSpend:'{emoji}{name}: spent {amount} {unit}, {remaining} remaining',
    secStats:'Stats', secCombat:'Combat', secConditions:'Conditions', secTrackers:'Trackers',
    secRest:'Rest', secSession:'Session',
   rests:'😴 Rests', longRest:'🌙 Long Rest', shortRest:'☕ Short Rest',
@@ -1233,7 +1251,7 @@ const BASE = {
   session:'💾 Session', saveSession:'💾 Save JSON', loadSession:'📂 Load JSON',
   copyClipboard:'📋 Copy JSON', sessionNote:'JSON contains everything: sheet + session.',
   damage:'💥 Damage', heal:'💚 Heal', tempHPBtn:'🛡️ Temp HP',
-  spend:'Use 1', reset:'Reset', spendFull:'Spend 1 HD',
+  spend:'Use 1', spendPool:'Spend', reset:'Reset', spendFull:'Spend 1 HD',
   hdNote:'Recover ½ on short rest',
   potionUseNote:'Bonus Action',
   abilitiesTitle:'Ability Scores', tsTitle:'🛡️ Saving Throws',
@@ -1678,6 +1696,13 @@ const TRANSLATIONS = {
       lbl_uses:'usi rimasti',
       logTrackerUse:'⚡ {name}: 1 uso speso',
       logTrackerNoUses:'❌ {name}: nessun uso rimasto',
+      poolMode:'Pool numerico',
+      poolModeHint:'Usa per pool di PF, punti, ecc. Tiene traccia di un valore totale invece di usi discreti. Il pulsante Spendi chiederà quanti punti detrarre.',
+      poolUnit:'Etichetta unità (es. PF)',
+      poolMax:'Massimo del pool',
+      trackerCostChange:'modifica',
+      trackerCostLabel:'usi per attivazione',
+      logPoolSpend:'{emoji}{name}: spesi {amount} {unit}, rimasti {remaining}',
      secStats:'Statistiche', secCombat:'Combattimento', secConditions:'Condizioni', secTrackers:'Tracker',
      secRest:'Riposo', secSession:'Sessione',
     rests:'😴 Riposi', longRest:'🌙 Riposo Lungo', shortRest:'☕ Riposo Breve',
@@ -1689,7 +1714,7 @@ const TRANSLATIONS = {
     session:'💾 Sessione', saveSession:'💾 Salva JSON', loadSession:'📂 Carica JSON',
     copyClipboard:'📋 Copia JSON', sessionNote:'Il JSON contiene tutto: scheda + sessione.',
     damage:'💥 Danno', heal:'💚 Cura', tempHPBtn:'🛡️ PF Temp',
-    spend:'Spendi 1', reset:'Reset', spendFull:'Spendi 1 HD',
+    spend:'Spendi 1', spendPool:'Spendi', reset:'Reset', spendFull:'Spendi 1 HD',
     hdNote:'Recuperi ½ con riposo breve',
     potionUseNote:'Azione Bonus',
     abilitiesTitle:'Caratteristiche', tsTitle:'🛡️ Tiri Salvezza',
@@ -2828,21 +2853,27 @@ function buildPanelTrackers(){
     const used=SESSION.trackers?.[tid]?.used||0;
     const total=e.quantity||1;
     const emoji=e.emoji||'📦';
-    let pips=''; for(let j=0;j<total;j++) pips+=`<div class="pip${j<used?' used':''}" onclick="clickTrackerPip('${tid}',${j})">${emoji}</div>`;
-    const useBtn=e.isPotion
-      ?`<button class="btn danger" onclick="usePotionTracker('${tid}')">${T('spend')} (${e.potionFormula||''})</button>`
-      :`<button class="btn danger" onclick="useTracker('${tid}')">${T('spend')}</button>`;
-    cards+=`<div class="pn-card" id="tracker-card-${tid}"><div class="label">${emoji} ${e.name||''}</div><div class="pips" id="pips-${tid}">${pips}</div><div class="btn-row">${useBtn}<button class="btn" onclick="resetTracker('${tid}')">${T('reset')} (${total})</button></div></div>`;
+    if(e.isPool){
+      const remaining=total-used; const pct=total>0?Math.round((remaining/total)*100):0;
+      cards+=`<div class="pn-card" id="tracker-card-${tid}"><div class="label">${emoji} ${e.name||''}</div><div class="pool-display">${remaining} <span class="pool-unit-lbl">/ ${total} ${e.unit||'pts'}</span></div><div class="pool-track"><div class="pool-fill" style="width:${pct}%"></div></div><div class="pool-spend-row"><input type="number" id="pool-amt-${tid}" class="pool-spend-input" min="1" max="${remaining}" value="1"><button class="btn danger" onclick="spendPool('${tid}')">${T('spendPool')}</button><button class="btn" onclick="resetTracker('${tid}')">${T('reset')}</button></div></div>`;
+    } else {
+      let pips=''; for(let j=0;j<total;j++) pips+=`<div class="pip${j<used?' used':''}" onclick="clickTrackerPip('${tid}',${j})">${emoji}</div>`;
+      const useBtn=e.isPotion?`<button class="btn danger" onclick="usePotionTracker('${tid}')">${T('spend')} (${e.potionFormula||''})</button>`:`<button class="btn danger" onclick="useTracker('${tid}')">${T('spend')}</button>`;
+      cards+=`<div class="pn-card" id="tracker-card-${tid}"><div class="label">${emoji} ${e.name||''}</div><div class="pips" id="pips-${tid}">${pips}</div><div class="btn-row">${useBtn}<button class="btn" onclick="resetTracker('${tid}')">${T('reset')} (${total})</button></div></div>`;
+    }
   });
   (CHAR.features||[]).forEach(f=>{
     (f.trackers||[]).forEach(t=>{
-      const label=t.label||f.title;
-      const emoji=t.emoji||f.emoji;
+      const label=t.label||f.title; const emoji=t.emoji||f.emoji;
       const tid=slugify(label);
-      const used=SESSION.trackers?.[tid]?.used||0;
-      const total=t.total||1;
-      let pips=''; for(let j=0;j<total;j++) pips+=`<div class="pip${j<used?' used':''}" onclick="clickTrackerPip('${tid}',${j})">${t.showDie&&t.die?t.die:(emoji||'●')}</div>`;
-      cards+=`<div class="pn-card" id="tracker-card-${tid}"><div class="label">${emoji||''} ${label||''}</div><div class="pips" id="pips-${tid}">${pips}</div><div class="btn-row"><button class="btn danger" onclick="useTracker('${tid}')">${T('spend')}</button><button class="btn" onclick="resetTracker('${tid}')">${T('reset')} (${total})</button></div></div>`;
+      const used=SESSION.trackers?.[tid]?.used||0; const total=t.total||1;
+      if(t.isPool){
+        const remaining=total-used; const pct=total>0?Math.round((remaining/total)*100):0;
+        cards+=`<div class="pn-card" id="tracker-card-${tid}"><div class="label">${emoji||''} ${label||''}</div><div class="pool-display">${remaining} <span class="pool-unit-lbl">/ ${total} ${t.unit||'pts'}</span></div><div class="pool-track"><div class="pool-fill" style="width:${pct}%"></div></div><div class="pool-spend-row"><input type="number" id="pool-amt-${tid}" class="pool-spend-input" min="1" max="${remaining}" value="1"><button class="btn danger" onclick="spendPool('${tid}')">${T('spendPool')}</button><button class="btn" onclick="resetTracker('${tid}')">${T('reset')}</button></div></div>`;
+      } else {
+        let pips=''; for(let j=0;j<total;j++) pips+=`<div class="pip${j<used?' used':''}" onclick="clickTrackerPip('${tid}',${j})">${t.showDie&&t.die?t.die:(emoji||'●')}</div>`;
+        cards+=`<div class="pn-card" id="tracker-card-${tid}"><div class="label">${emoji||''} ${label||''}</div><div class="pips" id="pips-${tid}">${pips}</div><div class="btn-row"><button class="btn danger" onclick="useTracker('${tid}')">${T('spend')}</button><button class="btn" onclick="resetTracker('${tid}')">${T('reset')} (${total})</button></div></div>`;
+      }
     });
   });
   (CHAR.spellSlots||[]).forEach(sl=>{
@@ -2923,17 +2954,23 @@ function buildPanelActions(){
     const t=normalizeActionType(a.type||'action');
     const id='fa-'+slugify(a.label||f.title||'');
     const isUsed=ta[slotOf(t)]===id;
-     const isUnavail=a.trackerLink
-      ?(()=>{const found=findTrackerByTid(a.trackerLink);return found?(SESSION.trackers?.[a.trackerLink]?.used||0)>=(found.tracker.total||1):false;})()
+    const cost=a.trackerCost||1;
+    const isUnavail=a.trackerLink
+      ?(()=>{const found=findTrackerByTid(a.trackerLink);if(!found)return false;const rem=(found.tracker.total||1)-(SESSION.trackers?.[a.trackerLink]?.used||0);return rem<cost;})()
       :!isFeatureActionAvailable(f);
-     const hidden=ACTION_FILTER!=='all'&&t!==ACTION_FILTER;
-     const cls=`action-entry${isUsed?' used':''}${isUnavail?' unavail':''}`;
-     let noteText=a.description||'';
-     if(a.trackerLink){
-       const found=findTrackerByTid(a.trackerLink);
-       if(found){const tr=found.tracker;const rem=(tr.total||0)-(SESSION.trackers?.[a.trackerLink]?.used||0);const usesStr=rem+'/'+tr.total+' '+T('lbl_uses');noteText=noteText?noteText+' · '+usesStr:usesStr;}
-     }
-     return `<div class="${cls}" data-type="${t}"${hidden?' style="display:none"':''} onclick="useAction('${t}','${id}')">${badge(t)}${isUsed?'<span class="action-entry-check">✓</span>':''}<div class="action-entry-body"><div class="action-entry-name">${a.emoji||f.emoji||''} ${a.label||f.title||''}</div><div class="action-entry-note">${noteText}</div></div></div>`;
+    const hidden=ACTION_FILTER!=='all'&&t!==ACTION_FILTER;
+    const cls=`action-entry${isUsed?' used':''}${isUnavail?' unavail':''}`;
+    let noteText=a.description||'';
+    if(a.trackerLink){
+      const found=findTrackerByTid(a.trackerLink);
+      if(found){
+        const tr=found.tracker; const rem=(tr.total||0)-(SESSION.trackers?.[a.trackerLink]?.used||0);
+        const costBadge=cost>1?` ×${cost}`:'';
+        const usesStr=rem+'/'+tr.total+' '+T('lbl_uses')+costBadge;
+        noteText=noteText?noteText+' · '+usesStr:usesStr;
+      }
+    }
+    return `<div class="${cls}" data-type="${t}"${hidden?' style="display:none"':''} onclick="useAction('${t}','${id}')">${badge(t)}${isUsed?'<span class="action-entry-check">✓</span>':''}<div class="action-entry-body"><div class="action-entry-name">${a.emoji||f.emoji||''} ${a.label||f.title||''}</div><div class="action-entry-note">${noteText}</div></div></div>`;
    })).join('');
   const all=spellEntries+weaponEntries+featureEntries;
   return `<div class="pn-card" style="margin-top:14px;">
@@ -3493,13 +3530,15 @@ function clickSlotPip(lv,j){
   renderPanel(); saveAll();
 }
 function findTrackerById(id){
-  // Check equipment trackers
   const eq=(CHAR.equipment||[]).find(e=>e.tracked && 'eq-'+slugify(e.name)===id);
-  if(eq) return {label:eq.name, emoji:eq.emoji||'📦', total:eq.quantity||1, potionFormula:eq.potionFormula, isPotion:eq.isPotion};
-  // Check feature-embedded trackers (plural array)
+  if(eq) return {label:eq.name, emoji:eq.emoji||'📦', total:eq.quantity||1,
+    potionFormula:eq.potionFormula, isPotion:eq.isPotion,
+    isPool:eq.isPool||false, unit:eq.unit||'pts'};
   for(const f of (CHAR.features||[])){
     for(const t of (f.trackers||[])){
-      if(slugify(t.label||f.title)===id) return {label:t.label||f.title, emoji:t.emoji||f.emoji, total:t.total, die:t.die};
+      if(slugify(t.label||f.title)===id) return {label:t.label||f.title,
+        emoji:t.emoji||f.emoji, total:t.total, die:t.die,
+        isPool:t.isPool||false, unit:t.unit||'pts'};
     }
   }
   return null;
@@ -3513,6 +3552,19 @@ function useTracker(id){
 }
 function resetTracker(id){
   if(SESSION.trackers[id]) SESSION.trackers[id].used=0;
+  renderPanel(); saveAll();
+}
+function spendPool(id){
+  const t=findTrackerById(id); const s=SESSION.trackers[id];
+  if(!t||!s) return;
+  const amt=+(document.getElementById('pool-amt-'+id)?.value)||1;
+  const remaining=(t.total||0)-(s.used||0);
+  if(amt<1){showToast('Amount must be at least 1','error');return;}
+  if(amt>remaining){showToast(`Only ${remaining} ${t.unit||'pts'} remaining`,'error');return;}
+  s.used+=amt;
+  const newRem=remaining-amt;
+  const msg=T('logPoolSpend').replace('{emoji}',t.emoji?t.emoji+' ':'').replace('{name}',t.label).replace('{amount}',amt).replace('{unit}',t.unit||'pts').replace('{remaining}',newRem);
+  addLog(msg,'log-damage');
   renderPanel(); saveAll();
 }
 function clickTrackerPip(id,j){
@@ -3639,13 +3691,15 @@ function changeRound(d){
           if(!found) continue;
           const total=found.tracker.total||0;
           const used=(SESSION.trackers?.[tid]?.used)||0;
+          const cost=a.trackerCost||1;
           const name=((a.emoji||f.emoji||'')+' '+(a.label||f.title||'')).trim();
           let msg;
-          if(used<total){
+          if(total-used>=cost){
             if(!SESSION.trackers) SESSION.trackers={};
             if(!SESSION.trackers[tid]) SESSION.trackers[tid]={used:0};
-            SESSION.trackers[tid].used++;
-            msg=T('logTrackerUse').replace('{name}',name);
+            const cost=a.trackerCost||1;
+            SESSION.trackers[tid].used=Math.min(total, SESSION.trackers[tid].used+cost);
+            msg=T('logTrackerUse').replace('{name}',name)+(cost>1?` (×${cost})`:'');
           } else {
             msg=T('logTrackerNoUses').replace('{name}',name);
           }
@@ -4464,7 +4518,7 @@ function renderFeatureStep3(){
 }
 function renderWizTrackerList(){
   return WIZ_TRACKERS.map((t,i)=>`<div class="cb-row" id="wiz-trk-${i}">
-    <span>${t.emoji||'●'} ${t.label||'('+T('tracker')+')'} — ${t.total||1} / ${dndTr('recovery',t.recovery)||t.recovery||'long'}</span>
+    <span>${t.emoji||'●'} ${t.label||'('+T('tracker')+')'} — ${t.isPool?`${t.total||1} ${t.unit||'pts'} pool`:`${t.total||1} uses`} · ${dndTr('recovery',t.recovery)||t.recovery||'long'}</span>
     <div style="display:flex;gap:4px;">
       <button class="btn-edit-sm" onclick="editWizTracker(${i})">✏️</button>
       <button class="btn-del-sm" onclick="deleteWizTracker(${i})">🗑</button>
@@ -4484,31 +4538,55 @@ function editWizTracker(i){
       <input id="wte-emoji" class="wiz-input" style="width:3em" placeholder="●" value="${t.emoji||''}">
     </div>
     <div style="display:flex;gap:6px;margin-bottom:6px;">
-      <input id="wte-total" class="wiz-input" type="number" min="1" style="width:60px" placeholder="${T('wiz_f_totalUses')}" value="${t.total||1}">
+      <input id="wte-total" class="wiz-input" type="number" min="1" style="width:70px" placeholder="${t.isPool?T('poolMax'):T('wiz_f_totalUses')}" value="${t.total||1}">
       <select id="wte-recovery" class="wiz-input" style="flex:1">${recOpts}</select>
     </div>
-    <div style="display:flex;gap:6px;margin-bottom:6px;align-items:center;">
+    <div id="wte-die-row" style="display:flex;gap:6px;margin-bottom:6px;align-items:center;${t.isPool?'display:none':''}">
       <input id="wte-die" class="wiz-input" style="width:60px" placeholder="${T('f_die')}" value="${t.die||''}">
       <label style="display:flex;align-items:center;gap:4px;"><input type="checkbox" id="wte-showdie" ${t.showDie?'checked':''}> ${T('f_showDie')}</label>
+    </div>
+    <div style="margin-bottom:6px;">
+      <label style="display:flex;align-items:center;gap:6px;">
+        <input type="checkbox" id="wte-ispool" ${t.isPool?'checked':''}>
+        <span style="font-size:.85em;">${T('poolMode')} <span class="help-icon" data-tip="${T('poolModeHint')}">?</span></span>
+      </label>
+    </div>
+    <div id="wte-unit-row" style="margin-bottom:6px;${t.isPool?'':'display:none'}">
+      <input id="wte-unit" class="wiz-input" placeholder="${T('poolUnit')}" value="${(t.unit||'').replace(/"/g,'&quot;')}">
     </div>
     <div style="display:flex;gap:6px;">
       <button class="btn" onclick="saveWizTracker(${i})">✓ ${T('wizSave')}</button>
       <button class="btn" onclick="cancelWizTrkEdit()">✕</button>
     </div></div>`;
+  const poolCb=document.getElementById('wte-ispool');
+  const unitRow=document.getElementById('wte-unit-row');
+  const dieRow=document.getElementById('wte-die-row');
+  const totalInput=document.getElementById('wte-total');
+  if(poolCb){poolCb.addEventListener('change',()=>{
+    const on=poolCb.checked;
+    if(unitRow) unitRow.style.display=on?'':'none';
+    if(dieRow) dieRow.style.display=on?'none':'flex';
+    if(totalInput) totalInput.placeholder=on?T('poolMax'):T('wiz_f_totalUses');
+  });}
 }
 function collectTrkEdit(i){
+  const isPool=!!document.getElementById('wte-ispool')?.checked;
   const t={
     label:document.getElementById('wte-label')?.value||'',
     emoji:document.getElementById('wte-emoji')?.value||'',
     total:+(document.getElementById('wte-total')?.value)||1,
     recovery:document.getElementById('wte-recovery')?.value||'long',
     die:document.getElementById('wte-die')?.value||'',
-    showDie:!!document.getElementById('wte-showdie')?.checked
+    showDie:!!document.getElementById('wte-showdie')?.checked,
+    isPool,
+    unit:document.getElementById('wte-unit')?.value||''
   };
-  if(!t.die) delete t.die;
-  if(!t.showDie) delete t.showDie;
+  if(!t.die||t.isPool) delete t.die;
+  if(!t.showDie||t.isPool) delete t.showDie;
   if(!t.emoji) delete t.emoji;
   if(!t.label) delete t.label;
+  if(!t.isPool) delete t.isPool;
+  if(!t.unit) delete t.unit;
   WIZ_TRACKERS[i]=t;
 }
 function saveWizTracker(i){
@@ -4523,7 +4601,7 @@ function refreshWizTrackerList(){
 }
 function renderWizActionList(){
   return WIZ_ACTIONS.map((a,i)=>`<div class="cb-row" id="wiz-act-${i}">
-    <span>${a.emoji||'⚡'} ${a.label||'('+T('action')+')'} — ${dndTr('actionLabels',a.type)||a.type||'action'}${a.trackerLink?` <span style="font-size:.72em;color:var(--accent);margin-left:3px;">🔗 ${T('actionTrackerLink')}</span>`:''}</span>
+    <span>${a.emoji||'⚡'} ${a.label||'('+T('action')+')'} — ${dndTr('actionLabels',a.type)||a.type||'action'}${a.trackerLink?` <span style="font-size:.72em;color:var(--accent);margin-left:3px;">🔗${a.trackerCost&&a.trackerCost>1?' ×'+a.trackerCost:''}</span>`:''}</span>
     <div style="display:flex;gap:4px;">
       <button class="btn-edit-sm" onclick="editWizAction(${i})">✏️</button>
       <button class="btn-del-sm" onclick="deleteWizAction(${i})">🗑</button>
@@ -4543,16 +4621,18 @@ function editWizAction(i){
   WIZ_TRACKERS.forEach(t=>{
     const tid=slugify(t.label||featureTitle);
     const name=(t.emoji?t.emoji+' ':'')+(t.label||featureTitle);
-    allOpts.push(`<option value="${tid}"${a.trackerLink===tid?' selected':''}>${name} — ${t.total||0} uses, ${t.recovery||'long'}</option>`);
+    allOpts.push(`<option value="${tid}"${a.trackerLink===tid?' selected':''}>${name} — ${t.total||0} ${t.isPool?(t.unit||'pts'):T('lbl_uses')}, ${t.recovery||'long'}</option>`);
   });
   (CHAR.features||[]).forEach((f,fi)=>{
     if(WIZ_EDIT_IDX!=null&&fi===WIZ_EDIT_IDX) return; // skip self (WIZ_TRACKERS is authoritative)
     (f.trackers||[]).forEach(t=>{
       const tid=slugify(t.label||f.title);
       const name=(t.emoji?t.emoji+' ':'')+(t.label?t.label+' ('+f.title+')':f.title);
-      allOpts.push(`<option value="${tid}"${a.trackerLink===tid?' selected':''}>${name} — ${t.total||0} uses, ${t.recovery||'long'}</option>`);
+      allOpts.push(`<option value="${tid}"${a.trackerLink===tid?' selected':''}>${name} — ${t.total||0} ${t.isPool?(t.unit||'pts'):T('lbl_uses')}, ${t.recovery||'long'}</option>`);
     });
   });
+  const initCost=a.trackerCost&&a.trackerCost>1?a.trackerCost:1;
+  const hasCostOverride=a.trackerCost&&a.trackerCost>1;
   const trackerOpts=allOpts.length?allOpts.join(''):`<option disabled>${T('actionTrackerNoTrackers')}</option>`;
   body.innerHTML=`<div class="wiz-field"><label class="wiz-label">${T('action')}</label>
     <div style="display:flex;gap:6px;margin-bottom:6px;">
@@ -4572,11 +4652,35 @@ function editWizAction(i){
         <option value="">— ${T('actionTrackerNone')} —</option>
         ${trackerOpts}
       </select>
+      <div id="wae-cost-row" style="${a.trackerLink?'':'display:none'}">
+        <div id="wae-cost-hint" class="trk-cost-hint" style="${hasCostOverride?'display:none':''}">
+          Consumes <span id="wae-cost-val">${initCost}</span> use(s) · <span class="change-link" onclick="wizShowCostInput()">${T('trackerCostChange')}</span>
+        </div>
+        <div id="wae-cost-input-row" style="display:${hasCostOverride?'flex':'none'};align-items:center;gap:6px;margin-top:4px;">
+          <input type="number" id="wae-cost" class="wiz-input" min="1" max="99" style="width:60px" value="${initCost}" oninput="wizUpdateCostDisplay()">
+          <span style="font-size:.82em;color:var(--text-muted);">${T('trackerCostLabel')}</span>
+        </div>
+      </div>
     </div>
     <div style="display:flex;gap:6px;margin-top:10px;">
       <button class="btn" onclick="saveWizAction(${i})">✓ ${T('wizSave')}</button>
       <button class="btn" onclick="cancelWizActEdit()">✕</button>
     </div></div>`;
+  document.getElementById('wae-tracker-link')?.addEventListener('change',function(){
+    const row=document.getElementById('wae-cost-row');
+    if(row) row.style.display=this.value?'':'none';
+  });
+}
+function wizShowCostInput(){
+  const hint=document.getElementById('wae-cost-hint');
+  const inp=document.getElementById('wae-cost-input-row');
+  if(hint) hint.style.display='none';
+  if(inp) inp.style.display='flex';
+}
+function wizUpdateCostDisplay(){
+  const v=+(document.getElementById('wae-cost')?.value)||1;
+  const el=document.getElementById('wae-cost-val');
+  if(el) el.textContent=v;
 }
 function collectActEdit(i){
   const a={
@@ -4586,6 +4690,9 @@ function collectActEdit(i){
     description:document.getElementById('wae-desc')?.value||'',
     trackerLink:document.getElementById('wae-tracker-link')?.value||''
   };
+  const costInputVisible=document.getElementById('wae-cost-input-row')?.style.display!=='none';
+  const costVal=+(document.getElementById('wae-cost')?.value)||1;
+  if(a.trackerLink && costInputVisible && costVal>1) a.trackerCost=costVal;
   if(!a.emoji) delete a.emoji;
   if(!a.label) delete a.label;
   if(!a.trackerLink) delete a.trackerLink;
@@ -5328,16 +5435,32 @@ const WIZARDS = {
     {id:'quantity',label:'wiz_f_quantity',type:'number',min:1,default:1},
     {id:'emoji',label:'f_emoji',type:'emoji'},
     {id:'recovery',label:'f_recovery',type:'select',options:()=>recoveryOpts(),hint:'hint_trackerRecovery'},
+    {id:'isPool',label:'poolMode',type:'checkbox',hint:'poolModeHint'},
+    {id:'unit',label:'poolUnit',type:'text'},
     {id:'isPotion',label:'wiz_f_isPotionCheck',type:'checkbox'},
     {id:'potionFormula',label:'wiz_f_potionFormula',type:'text',hint:'hint_potionFormula'},
   ], _afterRender(data){
     function toggleTrackerFields(){
       const on=document.getElementById('wf-tracked')?.checked;
-      ['quantity','emoji','recovery','isPotion','potionFormula'].forEach(f=>{
+      ['quantity','emoji','recovery','isPool','isPotion'].forEach(f=>{
         const el=document.getElementById('wf-'+f)?.closest('.wiz-field');
         if(el) el.style.display=on?'':'none';
       });
-      if(on) togglePotionFields();
+      if(on){ togglePoolFields(); togglePotionFields(); }
+      else {
+        ['unit','potionFormula'].forEach(f=>{const el=document.getElementById('wf-'+f)?.closest('.wiz-field');if(el)el.style.display='none';});
+      }
+    }
+    function togglePoolFields(){
+      const isP=document.getElementById('wf-isPool')?.checked;
+      const unitEl=document.getElementById('wf-unit')?.closest('.wiz-field');
+      const potEl=document.getElementById('wf-isPotion')?.closest('.wiz-field');
+      if(unitEl) unitEl.style.display=isP?'':'none';
+      if(potEl) potEl.style.display=isP?'none':'';
+      // Relabel quantity field
+      const ql=document.getElementById('wf-quantity')?.closest('.wiz-field')?.querySelector('.wiz-label');
+      if(ql) ql.textContent=isP?T('poolMax'):T('wiz_f_quantity');
+      if(isP) togglePotionFields();
     }
     function togglePotionFields(){
       const isP=document.getElementById('wf-isPotion')?.checked;
@@ -5346,6 +5469,8 @@ const WIZARDS = {
     }
     const cb=document.getElementById('wf-tracked');
     if(cb) cb.addEventListener('change',toggleTrackerFields);
+    const poolCb=document.getElementById('wf-isPool');
+    if(poolCb) poolCb.addEventListener('change',togglePoolFields);
     const pb=document.getElementById('wf-isPotion');
     if(pb) pb.addEventListener('change',togglePotionFields);
     toggleTrackerFields();
@@ -5357,7 +5482,8 @@ const WIZARDS = {
       e.tracked=true; e.quantity=+d.quantity||1;
       if(d.emoji) e.emoji=d.emoji;
       e.recovery=d.recovery||'manual';
-      if(d.isPotion){ e.isPotion=true; e.potionFormula=d.potionFormula||''; }
+      if(d.isPool){ e.isPool=true; if(d.unit) e.unit=d.unit; }
+      else if(d.isPotion){ e.isPotion=true; e.potionFormula=d.potionFormula||''; }
     }
     if(!CHAR.equipment)CHAR.equipment=[];
     // Migrate SESSION tracker ID on rename

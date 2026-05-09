@@ -8,7 +8,7 @@
 - **v0 (Complete):** Core character sheet, wizard system, i18n skeleton, dark/light themes
 - **v1 (Complete):** UX overhaul, i18n completion, sidebar architecture, smart features, D&D 2024 parity
 - **v1.2 (Complete):** UI redesign (gold/navy palette, header polish), mobile UX, UX polish
-- **v1.1 (Complete):** Full level-up wizard (ASI step ✅), feat database with searchable picker ✅, origin feat step in char-create wizard ✅
+- **v1.3 (Complete):** Variable-cost tracker actions (`trackerCost`), numeric pool trackers (`isPool`/`unit`), unified floating tooltip system
 
 ---
 
@@ -793,30 +793,16 @@ Done:
 
 ## Known Missing Features / Future Work
 
-### `trackerLink` variable cost (`cost` field)
+### ~~`trackerLink` variable cost (`cost` field)~~ ✅ COMPLETE (Phase 40)
 
-**Status:** Not implemented. `trackerLink` always consumes exactly 1 use.
-
-**Problem:** Some D&D 2024 abilities spend more than 1 tracker use per activation:
-- Monk Ki/Discipline Points: most abilities cost 1, but some cost 2–3
-- Sorcerer Metamagic: Careful/Twinned = 1 pt, Heightened = 3 pts, Quickened = 2 pts
-
-**Proposed data model:** add optional `cost: integer` (default `1`) to the action object's `trackerLink`:
-```json
-{ "trackerLink": "ki-points", "cost": 2 }
-```
-`changeRound(+1)` would decrement `SESSION.trackers[tid].used` by `cost` (clamped to tracker total).
-
-**Proposed wizard UI:** The action editor shows the tracker dropdown as today (1 use, no extra field visible). A muted secondary line — e.g. `"Costs 1 use · change"` — appears beneath the dropdown once a tracker is linked. Clicking "change" reveals an inline number input. This keeps the default (cost = 1) invisible and the configuration opt-in.
+**Implemented as `trackerCost` on action objects.** Optional integer (default 1). `changeRound(+1)` decrements by `cost`, clamped to tracker total. Availability check dims action when `remaining < cost`. Quick Actions badge shows `×N` suffix when cost > 1. Wizard UI: collapsed "Consumes 1 use(s) · change" → inline input on click.
 
 ---
 
-### Numeric pool trackers (Lay on Hands)
+### ~~Numeric pool trackers (Lay on Hands)~~ ✅ COMPLETE (Phase 40)
 
-**Status:** Not implemented. All trackers are pip-based (integer uses).
+**Implemented as `isPool: true` + `unit: string` on tracker objects.** `total` = pool max for feature trackers; `quantity` = pool max for equipment items (no redundant field). `SESSION.trackers[id].used` = points spent. Game panel renders pool card: `remaining / total unit` + thin progress bar + inline Spend input + "Spend" button. `spendPool(id)` function handles validation + logging. Long/short rest recovery identical to pip trackers.
 
-**Problem:** Paladin's Lay on Hands is a **HP pool** (e.g. 25 points at level 5). Each use spends a variable number of points (1 per HP restored, 5 to cure a disease/poison). A pip tracker cannot model this naturally.
+**UX decision:** Lay on Hands and other variable-spend pool abilities do NOT use `trackerLink`. The player declares the action in Quick Actions (added to next-round queue), then manually spends from the pool card. This is intentional — pool spend amount is variable and unknown at queue time.
 
-**Proposed data model:** add optional `poolType: "numeric"` and `poolMax: number` to tracker objects. `SESSION.trackers[id]` would store `{ used: number }` as today, but `used` would represent points spent (not pips). The game panel would render it as `X / Y pts` instead of pip dots.
-
-**Wizard UI:** when "Track quantity" is checked in the equipment/feature wizard, offer a toggle between "Pip uses (default)" and "Numeric pool". If numeric, show a "Pool size" number input. The Spend button in the game panel would prompt for how many points to spend (or use a small inline stepper).
+---

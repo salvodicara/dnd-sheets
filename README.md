@@ -17,7 +17,9 @@ Open `index.html` in any browser. No server, no build step, no internet required
 - **Hit Dice** -- clickable pip UI for tracking usage
 - **Death Saving Throws** -- success/failure pip toggles
 - **Spell Slots** -- per-level pip trackers, color-coded (9 levels)
-- **Custom Resource Trackers** -- feature-embedded (bardic inspiration, etc.) or equipment-based (potions, scrolls)
+- **Custom Resource Trackers** — feature-embedded (bardic inspiration, ki points, etc.) or equipment-based (potions, scrolls). Two modes:
+  - **Pip trackers** — discrete uses (default); optional die shown on pip (e.g. d6 for Bardic Inspiration)
+  - **Numeric pool trackers** — point pools (e.g. Lay on Hands 25 HP, Sorcery Points); spend any amount via an inline input in the game panel
 - **Potion Tracker** -- auto-heals on use via dice formula (configured in equipment wizard)
 - **Concentration** -- toggle with visual indicator
 - **Round & Initiative Counter**
@@ -49,6 +51,8 @@ Open `index.html` in any browser. No server, no build step, no internet required
 - Weapons auto-appear in equipment table (single source of truth, no duplication)
 - Feature sections with recursive content blocks (paragraph, bullets, table, note, header, subfeature)
 - Features can embed trackers and quick actions (rendered in the game panel)
+  - Actions can be linked to a tracker; advancing the round automatically decrements the tracker
+  - Multi-use actions (e.g. Stunning Strike costs 2 ki) are configured with a `trackerCost` field
 - Custom color tags (up to 3 per feature)
 
 ### UI / UX

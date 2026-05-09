@@ -102,6 +102,24 @@ CB_EDIT_DATA  -- deep clone of block being edited (for cancel/restore)
 - `deleteEquip()` cleans up SESSION tracker data.
 - `longRest()` resets equipment trackers respecting the `recovery` field.
 
+#### Two Tracker Modes: Pip vs Pool
+
+Both feature trackers and equipment trackers support two modes:
+
+**Pip tracker (default):** discrete uses rendered as dot pips. Fields: `total` (count), optional `die`/`showDie`.
+
+**Pool tracker (`isPool: true`):** a numeric point pool (e.g. 25 HP, 4 Sorcery Points). Fields: `isPool: true`, `unit: string` (display label), `total` = pool max. `SESSION.trackers[id].used` = points spent. Renders as `remaining / total unit` with a progress bar and inline Spend input.
+
+Rules:
+- For equipment pools: `quantity` doubles as pool max — no separate `poolMax` field.
+- For feature pools: `total` is the pool max.
+- `isPool` and `isPotion` are mutually exclusive on equipment items.
+- Pool trackers use the same recovery/rest logic as pip trackers.
+- `spendPool(id)` handles validation, logging (`logPoolSpend` key), and re-render.
+- `findTrackerById(id)` returns `isPool` and `unit` for both tracker types.
+
+**UX decision (Lay on Hands pattern):** variable-spend pool abilities (where the amount spent per use is unknown at queue time) should NOT use `trackerLink`. The player declares the action in Quick Actions (queued for next round), then manually spends from the pool card. Fixed-cost pool abilities (always costs N pts) CAN use `trackerLink` + `trackerCost: N`.
+
 #### Weapons in Equipment
 - Weapons auto-appear in the equipment table as derived rows — no manual duplication.
 - Weapon rows show damage/properties as notes, styled with `.equip-weapon-row` (italic, muted).
@@ -176,6 +194,8 @@ CB_EDIT_DATA  -- deep clone of block being edited (for cancel/restore)
 | `translateSource(src)` | Translate feature source for display |
 | `initSbResize()` | Attach drag listener to `#sb-resize` handle |
 | `updateFixedControls()` | Sync header tab labels and theme/lang buttons |
+| `spendPool(id)` | Spend points from a numeric pool tracker; validates, logs, re-renders |
+| `findTrackerById(id)` | Look up any tracker by session ID; returns `{tracker, feature, isPool, unit}` |
 
 ## AI Assistant (`assistant.html`)
 
@@ -445,11 +465,14 @@ name           string
 emoji          string (optional)
 notes          string
 tracked        boolean — if true, shows pip tracker in game panel
-quantity       integer  (required if tracked)
+quantity       integer  (required if tracked; doubles as pool max when isPool:true)
 recovery       "long"|"short"|"manual"  (required if tracked)
 isPotion       boolean (optional) — tapping auto-heals via potionFormula
 potionFormula  string (required if isPotion) — e.g. "2d4+2"
+isPool         boolean (optional) — if true, renders as numeric point pool instead of pips
+unit           string (required if isPool) — display label, e.g. "HP", "pts"
 ```
+Note: `isPool` and `isPotion` are mutually exclusive.
 
 ### CHAR.features[] (each feature / class ability)
 ```
@@ -476,18 +499,22 @@ Tracker object (within a feature):
 ```
 label     string (optional — shown as pip label)
 emoji     string (optional)
-total     integer
+total     integer — pip count, or pool max when isPool:true
 recovery  "long"|"short"|"manual"
-die       string (optional) — e.g. "d6", displayed on the pip
-showDie   boolean (optional)
+die       string (optional) — e.g. "d6", displayed on the pip (omit if isPool)
+showDie   boolean (optional, omit if isPool)
+isPool    boolean (optional) — if true, renders as numeric point pool instead of pips
+unit      string (required if isPool) — display label, e.g. "pts", "HP"
 ```
 
 Action object (within a feature — shown in game panel action bar):
 ```
-label       string (optional)
-emoji       string (optional)
-type        "action"|"bonus"|"reaction"|"free"
-description string — short one-line summary for the action badge
+label        string (optional)
+emoji        string (optional)
+type         "action"|"bonus"|"reaction"|"free"
+description  string — short one-line summary for the action badge
+trackerLink  string (optional) — session ID of a tracker this action consumes
+trackerCost  integer (optional, default 1) — how many uses to consume per activation
 ```
 
 ### CHAR.combatAlgorithm[] (decision-tree combat guide)
