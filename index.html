@@ -1256,22 +1256,22 @@ const BASE = {
     hint_statAC:'Armor Class — your defense against attacks.',
     hint_statSpeed:'Movement speed per turn.',
     hint_statInit:'Initiative modifier — added to d20 at combat start.',
-    hint_statPB:'Proficiency Bonus — added to proficient skills and attacks.',
+    hint_statPB:'Proficiency Bonus — added to proficient skills, saves, and attacks.',
     hint_statPassPerc:'Passive Perception — used by DM without a roll.',
     hint_statSpellDC:'Spell Save DC — difficulty for targets resisting your spells.',
     hint_statSpellAtk:'Spell Attack bonus — added to d20 when targeting with a spell.',
    hint_turnAction:'Your main action this turn (Attack, Cast a Spell, Dash…)',
    hint_turnBonus:'Bonus action if you have one available.',
    hint_turnMovement:'Check when you have used your movement speed.',
-    helpCombat:'Tick Action, Bonus, and Movement as you use them — tick a box even to skip that action. All 3 checked auto-advances the round; press + at any time to advance manually. Spell slots for any selected spell are consumed automatically on advance. Enter your d20 roll to see your initiative total.',
-    helpQuickActions:'Tap an entry to mark it as your action for that slot — the slot gets checked automatically. Tap again to deselect. A new selection replaces the previous one. Dimmed entries have no resources left (no spell slots, tracker uses exhausted).',
-    helpHP:'Aid spell raises both max and current HP until a long rest. Temp HP absorbs damage first and does not stack — keep the higher value.',
-    helpConc:'Only one concentration spell at a time. When you take damage, make a CON save (DC 10 or half damage, whichever is higher) or lose concentration.',
-    helpDeathSaves:'At the start of each turn while unconscious: 10+ = success (3 = stable); 9− = failure (3 = death); nat 20 = regain 1 HP; nat 1 = two failures.',
-    helpHitDice:'Roll during a short rest and add CON mod to recover HP. Long rest restores up to half your total hit dice.',
-    helpExhaustion:'Each level: −2 to all d20 rolls and speed. Level 6 = death. Long rest removes 1 level.',
+    helpCombat:'Check each slot as you use it (or to skip it). All 3 checked = round auto-advances; + advances manually. Selected spell slots consumed on advance. Enter d20 for initiative total.',
+    helpQuickActions:'Tap to select as your action for that slot (auto-checks it). Tap again to deselect. Dimmed = no resources left.',
+    helpHP:'Aid raises max + current HP until long rest. Temp HP absorbs damage first; doesn\'t stack — keep the higher.',
+    helpConc:'One concentration spell at a time. On damage: CON save (DC 10 or ½ damage, higher wins) or lose it.',
+    helpDeathSaves:'10+ = success (3 = stable) · 9− = failure (3 = death) · nat 20 = 1 HP · nat 1 = 2 failures.',
+    helpHitDice:'Short rest: roll + CON mod to recover HP. Long rest restores up to half your total.',
+    helpExhaustion:'−2 to d20 rolls and speed per level. Level 6 = death. Long rest removes 1.',
     actionTrackerLink:'Auto-spend tracker use',
-    actionTrackerLinkHint:'Link this action to one of its feature\'s trackers. When you select it in Quick Actions and the round advances (+), one use is automatically deducted — just like spell slots. The tracker\'s Spend button still works at any time for manual control.',
+    actionTrackerLinkHint:'Auto-deducts 1 use when selected in Quick Actions and the round advances (+). Manual spend still works.',
     actionTrackerSelect:'Which tracker to spend',
     actionTrackerNone:'No resource cost',
     actionTrackerNoTrackers:'Add trackers to this feature first',
@@ -1279,7 +1279,7 @@ const BASE = {
     logTrackerUse:'⚡ {name}: 1 use spent',
     logTrackerNoUses:'❌ {name}: no uses remaining',
     poolMode:'Numeric pool',
-    poolModeHint:'Use for HP pools, point pools, etc. Tracks a total value instead of discrete uses. The Spend button will prompt for how many points to deduct.',
+    poolModeHint:'Numeric pool (HP, points, etc.) instead of discrete pips. Spend prompts for amount.',
     poolUnit:'Unit label (e.g. HP)',
     poolMax:'Pool maximum',
     trackerCostChange:'change',
@@ -1338,7 +1338,7 @@ const BASE = {
   f_range:'Range', f_concentration:'Concentration', f_duration:'Duration',
   f_saveAbility:'Saving Throw (ability)', f_desc:'Description',
   f_scaling:'Scaling', f_notes:'Notes',
-  tags:'Tags', hint_tags:'Add up to 3 colored labels to categorize this entry (e.g. "Ranged", "AoE", "Concentration"). Purely organizational — no mechanical effect.', addTag:'＋ Add Tag', tagLabel:'Label', tagColor:'Color',
+  tags:'Tags', hint_tags:'Up to 3 colored labels (e.g. "Ranged", "AoE"). No mechanical effect.', addTag:'＋ Add Tag', tagLabel:'Label', tagColor:'Color',
   tagColor_green:'Green', tagColor_blue:'Blue', tagColor_purple:'Purple', tagColor_red:'Red', tagColor_orange:'Orange',
   f_wName:'Weapon Name', f_quantity:'Quantity', f_damage:'Damage Formula',
   f_damageType:'Damage Type', f_attackBonus:'Attack Bonus', f_attackStat:'Attack Ability',
@@ -1421,13 +1421,13 @@ const BASE = {
   wiz_levelUp_title:'Level Up', wiz_levelUp_step1:'HP Increase', wiz_levelUp_step2:'Checklist',
   wiz_levelUp_step_asi:'Ability Score Improvement',
   wiz_levelUp_hpGain:'HP gained', wiz_levelUp_avg:'Average', wiz_levelUp_useAvgCheck:'Use average HP instead of rolling',
-  hint_levelUp_hpGain:'Roll your hit die + CON modifier, or check "Use average" to auto-fill.',
+  hint_levelUp_hpGain:'Roll hit die + CON mod, or use average to auto-fill.',
   wiz_levelUp_asiMode_one:'+2 to One Ability', wiz_levelUp_asiMode_two:'+1/+1 to Two Abilities', wiz_levelUp_asiMode_feat:'Take a Feat',
   wiz_levelUp_asiPlus2Label:'Choose ability to improve by +2',
   wiz_levelUp_asiPlus1aLabel:'First ability (+1)', wiz_levelUp_asiPlus1bLabel:'Second ability (+1)',
   wiz_levelUp_asiFeatLabel:'Feat to take',
   wiz_levelUp_asiSameError:'Choose two different abilities',
-  hint_levelUp_asi:'At this level you can improve your ability scores or take a feat instead.',
+  hint_levelUp_asi:'Improve ability scores or take a feat.',
   lu_check_features:'Review new class features for this level',
   lu_check_scaled:'Check for scaling changes — update tracker totals, damage dice, and feature descriptions as needed (e.g. Bardic Inspiration die, Sneak Attack, spell DCs)',
   lu_check_cantrips:'Cantrip damage scales at this level — update cantrip descriptions',
@@ -1533,7 +1533,7 @@ const BASE = {
   wiz_f_concentrationCheck:'Requires concentration',
   wiz_f_ritualCheck:'Can be cast as ritual',
   prepared:'Prepared', unprepared:'Unprepared', ritual:'Ritual',
-  hint_ritual:'Ritual spells can be cast without using a spell slot, taking 10 extra minutes.',
+  hint_ritual:'Cast without a slot, but takes 10 extra minutes.',
   wiz_f_damageFull:'Damage (e.g. 1d8+3)',
   wiz_f_attackStatLabel:'Attack Ability',
   wiz_f_attackBonusTotal:'Total Attack Bonus',
@@ -1550,7 +1550,7 @@ const BASE = {
   wiz_f_potionNotes:'Potion notes',
   wiz_f_tracked:'Track quantity',
   wiz_f_quantity:'Quantity',
-  hint_equipTracked:'Enable to track uses/quantity in the game panel (e.g. potions, scrolls)',
+  hint_equipTracked:'Show as tracker in the game panel.',
   wiz_f_conditionName:'Condition name',
   wiz_f_slotLevel:'Slot Level',
   wiz_f_slotTotal:'Slot Count',
@@ -1577,65 +1577,65 @@ const BASE = {
   wiz_ph_languages:'E.g. Common, Dwarvish',
   wiz_ph_attackBonus:'+5',
   wiz_ph_trackerID:'bardic_inspiration',
-  hint_featureTitle:'The name shown as the feature heading.',
-  hint_featureEmoji:'Shown before the title in the feature heading.',
-  hint_featureSubtitle:'Short description shown below the title.',
-  hint_featureSource:'Where this feature comes from (class, race, feat, etc.).',
+  hint_featureTitle:'Feature heading name.',
+  hint_featureEmoji:'Appears before the title.',
+  hint_featureSubtitle:'Shown below the title.',
+  hint_featureSource:'Class, race, feat, etc.',
   // Wizard hints — char create
-  hint_quote:'A short phrase or motto displayed under the character name.',
+  hint_quote:'Motto shown under the character name.',
   hint_languages:'Comma-separated list of languages the character speaks.',
-  hint_playerName:'The real-life player controlling this character.',
-  hint_hpMax:'Maximum hit points at full health.',
-  hint_hitDie:'Hit die type for this class (used for healing during short rests).',
+  hint_playerName:'Your real name as the player.',
+  hint_hpMax:'Maximum hit points.',
+  hint_hitDie:'Hit die type for this class (used to heal during short rests).',
   hint_ac:'Armor Class — how hard the character is to hit.',
   hint_armorNote:'Optional note about armor type or AC calculation.',
   hint_speed:'Movement speed per turn (e.g. 9m or 30ft).',
   // Wizard hints — spell
-  hint_spellOriginalName:'Original English name, if you use a translated name above.',
+  hint_spellOriginalName:'English name (if using a translated name above).',
   hint_spellRange:'E.g. 36m, Touch, Self, etc.',
-  hint_spellDuration:'E.g. Instantaneous, 1 minute, Concentration up to 1 hour.',
-  hint_spellSaveAbility:'The ability score used for the saving throw, if any.',
-  hint_spellDesc:'Describe what the spell does. Use **bold** and *italic* for formatting.',
-  hint_spellScaling:'How the spell improves when cast at higher levels.',
+  hint_spellDuration:'E.g. Instantaneous, 1 min, Concentration up to 1 hour.',
+  hint_spellSaveAbility:'Only if the spell requires a saving throw.',
+  hint_spellDesc:'Describe what the spell does. Supports **bold** and *italic*.',
+  hint_spellScaling:'Effect when cast at a higher level.',
   hint_spellNotes:'Personal reminders, rulings, or tactical notes.',
   // Wizard hints — weapon
-  hint_damageDie:'The dice rolled for damage, e.g. 1d8, 2d6.',
-  hint_attackStat:'The ability score added to attack and damage rolls.',
-  hint_magicBonus:'Bonus from magical enchantment (+1, +2, +3). Added to attack and damage.',
+  hint_damageDie:'E.g. 1d8, 2d6.',
+  hint_attackStat:'Added to attack and damage rolls.',
+  hint_magicBonus:'+1/+2/+3 from enchantment, added to attack and damage.',
   hint_weaponProperties:'E.g. Finesse, Light, Thrown (6/18m).',
   wiz_f_atkBonusOverride:'Custom Attack Bonus (override)',
   wiz_f_dmgOverride:'Custom Damage (override)',
   wiz_f_saveDCOverride:'Custom Spell Save DC (override)',
   wiz_f_spellAtkOverride:'Custom Spell Attack Bonus (override)',
   wiz_f_profBonusOverride:'Custom Proficiency Bonus (override)',
-  hint_atkBonusOverride:'Leave empty to auto-compute (PB + ability mod + magic bonus).',
-  hint_dmgOverride:'Leave empty to auto-compute (damage die + ability mod + magic bonus). E.g. 1d8+5.',
-  hint_saveDCOverride:'Leave empty to auto-compute (8 + PB + ability modifier).',
-  hint_spellAtkOverride:'Leave empty to auto-compute (PB + ability modifier).',
-  hint_profBonusOverride:'Leave empty to auto-compute from level. Use only for homebrew or special cases.',
+  hint_atkBonusOverride:'Auto: PB + ability mod + magic bonus.',
+  hint_dmgOverride:'Auto: die + ability mod + magic bonus. E.g. 1d8+5.',
+  hint_saveDCOverride:'Auto: 8 + PB + ability mod.',
+  hint_spellAtkOverride:'Auto: PB + ability mod.',
+  hint_profBonusOverride:'Auto-computed from level. Homebrew / special cases only.',
   // Wizard hints — tracker
-  hint_trackerLabel:'The name shown on the game panel pip tracker.',
-  hint_trackerTotal:'How many uses before a rest is needed.',
+  hint_trackerLabel:'Shown on the game panel tracker.',
+  hint_trackerTotal:'Uses before a rest.',
   hint_trackerRecovery:'When uses are restored (short rest, long rest, or manual).',
-  hint_trackerDie:'Optional die to roll when using (e.g. 1d6+2).',
-  hint_trackerShowDie:'Show a roll button next to the tracker on the game panel.',
-  hint_potionFormula:'Dice formula for healing (e.g. 2d4+2).',
+  hint_trackerDie:'Die shown on use (e.g. 1d6+2).',
+  hint_trackerShowDie:'Show a roll button on the tracker.',
+  hint_potionFormula:'Healing formula, e.g. 2d4+2.',
   // Wizard hints — algo
-  hint_algoBlockTitle:'A label for this decision block (e.g. "Turn Start", "Bonus Action").',
+  hint_algoBlockTitle:'E.g. "Turn Start", "Bonus Action".',
   // Wizard hints — spellcasting
-  hint_magicAbility:'The ability score used for spellcasting (auto-sets DC and attack bonus).',
+  hint_magicAbility:'Sets spell DC and attack bonus.',
   hint_magicFocus:'Spellcasting focus or component pouch.',
-  hint_preparedCaster:'If checked, spells can be toggled as prepared/unprepared.',
+  hint_preparedCaster:'Enables prepared/unprepared spell tracking.',
   // Wizard hints — block composition
-  hint_contentBlocks:'Build the feature content by adding blocks: paragraphs, bullet lists, tables, notes, headers, or sub-features. The preview below shows the result.',
-  hint_algoSteps:'Add decision steps to this block. Each step has a question and bullet-point options. The preview below shows the result.',
-  hint_spellDescStep:'Describe the spell effect and add optional details. The preview below shows the final spell card.',
+  hint_contentBlocks:'Paragraphs, bullets, tables, notes, headers, or sub-features. Preview below.',
+  hint_algoSteps:'Question + bullet options per step. Preview below.',
+  hint_spellDescStep:'Preview below shows the final spell card.',
   // Spell level prefix for lvOpts
   lvPrefix:'Lv',
   // Inspiration
   inspiration:'Inspiration', logInspGained:'Inspiration gained!', logInspSpent:'Inspiration spent.',
-  heroicInspiration:'Heroic', heroicInspirationTip:'Heroic Inspiration — granted by the DM. Spend to reroll any d20 roll.',
-  bardicInspiration:'Bardic', bardicInspirationTip:'Bardic Inspiration — gifted by a Bard. Add the die to a failed d20 Test within 1 hour.',
+  heroicInspiration:'Heroic', heroicInspirationTip:'DM-granted. Spend to reroll any d20.',
+  bardicInspiration:'Bardic', bardicInspirationTip:'Gifted by a Bard. Add the die to any d20 Test within 1 hour.',
   inspirationConflict:'You can only hold one type of inspiration at a time.',
   logBardicGained:'Bardic Inspiration gained!', logBardicSpent:'Bardic Inspiration spent.',
   currencyLabel:'Currency',
@@ -1651,10 +1651,10 @@ const BASE = {
   unarmedStrike:'Unarmed Strike',
   // Mastery
   wiz_f_mastery:'Weapon Mastery', masteryLabel:'Mastery',
-  hint_mastery:'D&D 2024 mastery property for this weapon (granted by class). E.g. Cleave, Nick, Push.',
+  hint_mastery:'D&D 2024 mastery (granted by class). E.g. Cleave, Nick, Push.',
   // Spell components
   wiz_f_compV:'Verbal (V)', wiz_f_compS:'Somatic (S)', wiz_f_compM:'Material (M)',
-  wiz_f_spellComponents:'Spell Components', hint_spellComponents:'V = must speak aloud; S = must gesture with a free hand; M = requires a physical material (listed if it has a cost or is consumed).',
+  wiz_f_spellComponents:'Spell Components', hint_spellComponents:'V = verbal; S = somatic (free hand); M = material (listed if costly or consumed).',
   wiz_f_compMaterial:'Material component', hint_compMaterial:'E.g. "a pinch of sand", "a brass rod worth 10 GP (consumed)".',
   spellComponents:'Components',
   // Attunement
@@ -1662,7 +1662,7 @@ const BASE = {
   attunementCount:'{N}/3 attuned',
   // Prepared spell count
   wiz_f_preparedMax:'Prepared Spell Limit',
-  hint_preparedMax:'Max prepared spells (leave blank to not show a limit).',
+  hint_preparedMax:'Leave blank to hide the limit.',
   preparedCount:'{N}/{M} prepared',
   // Spell filter
   spellFilterPh:'Filter spells…', filterPrepared:'Prepared',
@@ -1673,7 +1673,7 @@ const BASE = {
   lbl_weaponProf:'Weapon Proficiencies', lbl_armorProf:'Armor Proficiencies',
   wiz_f_toolProf:'Tool Proficiencies', hint_toolProf:'E.g. Thieves\' tools, Herbalism kit, Lute.',
   lbl_toolProf:'Tool Proficiencies',
-  wiz_f_initiativeBonus:'Initiative Bonus', hint_initiativeBonus:'Flat bonus added to your DEX modifier for initiative (e.g. +2 from Alert feat). Leave blank for no bonus.',
+  wiz_f_initiativeBonus:'Initiative Bonus', hint_initiativeBonus:'Added on top of DEX mod (e.g. +2 from Alert).',
    lbl_initiativeBonus:'Initiative Bonus',
    // Lore section
   characterLore:'Character Lore', noLore:'No lore defined yet.', editLore:'✏️ Edit Lore',
@@ -1690,7 +1690,7 @@ const BASE = {
   hint_loreIdeals:'The principles your character believes in.',
   hint_loreBonds:'Connections to the world: people, places, events.',
   hint_loreFlaws:'Weaknesses, fears, or vices.',
-  hint_loreBackstory:'Where your character comes from and what shaped them.',
+  hint_loreBackstory:'Origins and formative experiences.',
   // Feat picker
   wiz_step_originFeat:'Origin Feat',
   originFeatFromBg:'Background feat',
@@ -1722,22 +1722,22 @@ const TRANSLATIONS = {
       hint_statAC:'Classe Armatura — la tua difesa contro gli attacchi.',
       hint_statSpeed:'Velocità di movimento per turno.',
       hint_statInit:'Modificatore di Iniziativa — aggiunto al d20 all\'inizio del combattimento.',
-      hint_statPB:'Bonus di Competenza — aggiunto a abilità e attacchi con competenza.',
+      hint_statPB:'Bonus di Competenza — aggiunto a abilità, TS e attacchi con competenza.',
       hint_statPassPerc:'Percezione Passiva — usata dal DM senza tiro.',
       hint_statSpellDC:'CD Incantesimo — difficoltà per resistere ai tuoi incantesimi.',
       hint_statSpellAtk:'Bonus Attacco Incantesimo — aggiunto al d20 per attacchi con incantesimi.',
      hint_turnAction:'La tua azione principale (Attacca, Lancia incantesimo, Scatta…)',
      hint_turnBonus:'Azione bonus se ne hai una disponibile.',
            hint_turnMovement:'Segna quando hai usato la tua velocità di movimento.',
-      helpCombat:'Spunta Azione, Bonus e Movimento man mano che li usi — spunta anche per saltare un\'azione. Tutti e 3 spuntati = il round avanza automaticamente; premi + in qualsiasi momento per avanzare manualmente. Gli slot degli incantesimi selezionati vengono consumati automaticamente all\'avanzamento. Inserisci il tiro d20 per vedere il totale di iniziativa.',
-      helpQuickActions:'Tocca una voce per segnarla come azione per quello slot — lo slot si spunta da solo. Tocca di nuovo per deselezionare. Una nuova selezione sostituisce la precedente. Voci in grigio = nessuna risorsa disponibile.',
-      helpHP:'L\'incantesimo Rinforzo aumenta sia il massimo che gli HP attuali fino al riposo lungo. Gli HP temporanei assorbono i danni per primi e non si accumulano — tieni il valore più alto.',
-      helpConc:'Un solo incantesimo da concentrazione alla volta. Quando subisci danni, esegui un TS su COS (CD 10 o metà danni, il maggiore) o perdi la concentrazione.',
-      helpDeathSaves:'All\'inizio di ogni turno da incosciente: 10+ = successo (3 = stabile); 9− = fallimento (3 = morte); 20 naturale = recuperi 1 HP; 1 naturale = due fallimenti.',
-      helpHitDice:'Tira durante un riposo breve e aggiungi il mod. di COS per recuperare HP. Il riposo lungo ripristina fino a metà dei Dadi Vita totali.',
-      helpExhaustion:'Ogni livello: −2 a tutti i tiri d20 e alla velocità. Livello 6 = morte. Il riposo lungo rimuove 1 livello.',
+      helpCombat:'Spunta ogni slot man mano che lo usi (anche per saltarlo). Tutti e 3 = round avanza; + avanza manualmente. Slot incantesimi consumati all\'avanzamento. Inserisci d20 per il totale iniziativa.',
+      helpQuickActions:'Tocca per selezionare come azione per quello slot (si spunta da solo). Tocca di nuovo per deselezionare. Grigio = nessuna risorsa.',
+      helpHP:'Rinforzo aumenta max + HP attuali fino al riposo lungo. PF temp assorbono i danni; non si accumulano — tieni il maggiore.',
+      helpConc:'Un solo incantesimo da concentrazione. Su danno: TS su COS (CD 10 o ½ danno, il maggiore) o perdi la concentrazione.',
+      helpDeathSaves:'10+ = successo (3 = stabile) · 9− = fallimento (3 = morte) · nat 20 = 1 HP · nat 1 = 2 fallimenti.',
+      helpHitDice:'Riposo breve: tira + mod COS per recuperare HP. Riposo lungo ripristina fino a metà del totale.',
+      helpExhaustion:'−2 a tiri d20 e velocità per livello. Livello 6 = morte. Riposo lungo rimuove 1.',
       actionTrackerLink:'Consuma uso tracker automaticamente',
-      actionTrackerLinkHint:'Collega questa azione a uno dei tracker della feature. Quando la selezioni nelle Azioni Rapide e avanzi il round (+), un uso viene detratto automaticamente — esattamente come gli slot degli incantesimi. Il pulsante Usa sul tracker funziona sempre anche manualmente.',
+      actionTrackerLinkHint:'Detrae 1 uso automaticamente quando selezionata in Azioni Rapide e il round avanza (+). Il consumo manuale funziona sempre.',
       actionTrackerSelect:'Quale tracker consumare',
       actionTrackerNone:'Nessun costo di risorse',
       actionTrackerNoTrackers:'Aggiungi prima i tracker a questa feature',
@@ -1745,7 +1745,7 @@ const TRANSLATIONS = {
       logTrackerUse:'⚡ {name}: 1 uso speso',
       logTrackerNoUses:'❌ {name}: nessun uso rimasto',
       poolMode:'Pool numerico',
-      poolModeHint:'Usa per pool di PF, punti, ecc. Tiene traccia di un valore totale invece di usi discreti. Il pulsante Spendi chiederà quanti punti detrarre.',
+      poolModeHint:'Pool numerico (PF, punti, ecc.) invece di pip discreti. Il pulsante Spendi chiede la quantità.',
       poolUnit:'Etichetta unità (es. PF)',
       poolMax:'Massimo del pool',
       trackerCostChange:'modifica',
@@ -1804,7 +1804,7 @@ const TRANSLATIONS = {
     f_range:'Raggio', f_concentration:'Concentrazione', f_duration:'Durata',
     f_saveAbility:'Tiro Salvezza (caratteristica)', f_desc:'Descrizione',
     f_scaling:'Progressione (scaling)', f_notes:'Note',
-    tags:'Etichette', hint_tags:'Aggiungi fino a 3 etichette colorate per categorizzare questa voce (es. "Distanza", "AoE", "Concentrazione"). Solo organizzative — nessun effetto meccanico.', addTag:'＋ Aggiungi etichetta', tagLabel:'Nome', tagColor:'Colore',
+    tags:'Etichette', hint_tags:'Fino a 3 etichette colorate (es. "Distanza", "AoE"). Nessun effetto meccanico.', addTag:'＋ Aggiungi etichetta', tagLabel:'Nome', tagColor:'Colore',
     tagColor_green:'Verde', tagColor_blue:'Blu', tagColor_purple:'Viola', tagColor_red:'Rosso', tagColor_orange:'Arancione',
     f_wName:'Nome Arma', f_quantity:'Quantità', f_damage:'Formula Danno',
     f_damageType:'Tipo Danno', f_attackBonus:'Bonus Attacco', f_attackStat:'Caratteristica Attacco',
@@ -1904,13 +1904,13 @@ const TRANSLATIONS = {
     wiz_levelUp_title:'Sali di Livello', wiz_levelUp_step1:'Aumento PF', wiz_levelUp_step2:'Lista di controllo',
     wiz_levelUp_step_asi:'Miglioramento Caratteristica',
     wiz_levelUp_hpGain:'PF guadagnati', wiz_levelUp_avg:'Media', wiz_levelUp_useAvgCheck:'Usa la media PF invece di tirare',
-    hint_levelUp_hpGain:'Tira il tuo dado vita + modificatore COS, oppure spunta "Usa media" per compilare automaticamente.',
+    hint_levelUp_hpGain:'Tira dado vita + mod COS, o usa la media per compilare automaticamente.',
     wiz_levelUp_asiMode_one:'+2 a Una Caratteristica', wiz_levelUp_asiMode_two:'+1/+1 a Due Caratteristiche', wiz_levelUp_asiMode_feat:'Scegli un\'Impresa',
     wiz_levelUp_asiPlus2Label:'Scegli la caratteristica da migliorare di +2',
     wiz_levelUp_asiPlus1aLabel:'Prima caratteristica (+1)', wiz_levelUp_asiPlus1bLabel:'Seconda caratteristica (+1)',
     wiz_levelUp_asiFeatLabel:'Impresa da scegliere',
     wiz_levelUp_asiSameError:'Scegli due caratteristiche diverse',
-    hint_levelUp_asi:'A questo livello puoi migliorare i punteggi di caratteristica o scegliere un\'impresa.',
+    hint_levelUp_asi:'Migliora i punteggi di caratteristica o scegli un\'impresa.',
     lu_check_features:'Controlla le nuove capacità di classe per questo livello',
     lu_check_scaled:'Controlla le capacità che scalano — aggiorna i totali dei tracker, i dadi di danno e le descrizioni (es. dado Ispirazione Bardica, Attacco Furtivo, CD degli incantesimi)',
     lu_check_cantrips:'Il danno dei trucchetti scala a questo livello — aggiorna le descrizioni dei trucchetti',
@@ -1991,7 +1991,7 @@ const TRANSLATIONS = {
     wiz_f_concentrationCheck:'Richiede concentrazione',
     wiz_f_ritualCheck:'Può essere lanciato come rituale',
     prepared:'Preparato', unprepared:'Non preparato', ritual:'Rituale',
-    hint_ritual:'Gli incantesimi rituali possono essere lanciati senza usare uno slot, impiegando 10 minuti in più.',
+    hint_ritual:'Lanciabile senza slot, ma impiega 10 minuti in più.',
     wiz_f_damageFull:'Danno (es. 1d8+3)',
     wiz_f_attackStatLabel:'Caratteristica Attacco',
     wiz_f_attackBonusTotal:'Bonus Attacco totale',
@@ -2008,7 +2008,7 @@ const TRANSLATIONS = {
     wiz_f_potionNotes:'Note pozione',
     wiz_f_tracked:'Traccia quantità',
     wiz_f_quantity:'Quantità',
-    hint_equipTracked:'Attiva per tracciare usi/quantità nel pannello di gioco (es. pozioni, pergamene)',
+    hint_equipTracked:'Mostra come tracker nel pannello di gioco.',
     wiz_f_conditionName:'Nome condizione',
     wiz_f_slotLevel:'Livello Slot',
     wiz_f_slotTotal:'Totale Slot',
@@ -2052,7 +2052,7 @@ const TRANSLATIONS = {
     hint_spellRange:'Es. 36m, Contatto, Sé stesso, ecc.',
     hint_spellDuration:'Es. Istantanea, 1 minuto, Concentrazione fino a 1 ora.',
     hint_spellSaveAbility:'La caratteristica usata per il tiro salvezza, se presente.',
-    hint_spellDesc:'Descrivi cosa fa l\'incantesimo. Usa **grassetto** e *corsivo* per formattare.',
+    hint_spellDesc:'Descrivi cosa fa l\'incantesimo. Supporta **grassetto** e *corsivo*.',
     hint_spellScaling:'Come migliora l\'incantesimo lanciato a livelli superiori.',
     hint_spellNotes:'Promemoria personali, ruling o note tattiche.',
     hint_damageDie:'I dadi tirati per il danno, es. 1d8, 2d6.',
@@ -2064,29 +2064,28 @@ const TRANSLATIONS = {
     wiz_f_saveDCOverride:'CD Incantesimo personalizzata (override)',
     wiz_f_spellAtkOverride:'Bonus Attacco Incantesimo personalizzato (override)',
     wiz_f_profBonusOverride:'Bonus Competenza personalizzato (override)',
-    hint_atkBonusOverride:'Lascia vuoto per calcolo automatico (BC + mod caratteristica + bonus magico).',
-    hint_dmgOverride:'Lascia vuoto per calcolo automatico (dado + mod caratteristica + bonus magico). Es. 1d8+5.',
-    hint_saveDCOverride:'Lascia vuoto per calcolo automatico (8 + BC + modificatore caratteristica).',
-    hint_spellAtkOverride:'Lascia vuoto per calcolo automatico (BC + modificatore caratteristica).',
-    hint_profBonusOverride:'Lascia vuoto per calcolo automatico dal livello. Usa solo per homebrew o casi speciali.',
-    hint_trackerLabel:'Il nome mostrato nel tracker del pannello di gioco.',
-    hint_trackerTotal:'Quanti usi prima che serva un riposo.',
-    hint_trackerRecovery:'Quando gli usi vengono ripristinati (riposo breve, lungo o manuale).',
-    hint_trackerDie:'Dado opzionale da tirare quando si usa (es. 1d6+2).',
-    hint_trackerShowDie:'Mostra un pulsante per tirare accanto al tracker nel pannello.',
-    hint_potionFormula:'Formula di guarigione (es. 2d4+2).',
-    hint_algoBlockTitle:'Un\'etichetta per questo blocco decisionale (es. "Inizio Turno", "Azione Bonus").',
-    hint_magicAbility:'La caratteristica usata per lanciare incantesimi (imposta automaticamente CD e bonus attacco).',
+    hint_atkBonusOverride:'Auto: BC + mod caratteristica + bonus magico.',
+    hint_dmgOverride:'Auto: dado + mod caratteristica + bonus magico. Es. 1d8+5.',
+    hint_saveDCOverride:'Auto: 8 + BC + mod caratteristica.',
+    hint_spellAtkOverride:'Auto: BC + mod caratteristica.',
+    hint_profBonusOverride:'Auto dal livello. Solo per homebrew o casi speciali.',
+    hint_trackerLabel:'Mostrato nel tracker del pannello di gioco.',
+    hint_trackerTotal:'Usi prima di un riposo.',
+    hint_trackerDie:'Dado mostrato all\'uso (es. 1d6+2).',
+    hint_trackerShowDie:'Mostra un pulsante dado nel tracker.',
+    hint_potionFormula:'Formula di cura, es. 2d4+2.',
+    hint_algoBlockTitle:'Es. "Inizio Turno", "Azione Bonus".',
+    hint_magicAbility:'Imposta CD incantesimi e bonus attacco.',
     hint_magicFocus:'Focus di lancio o borsa dei componenti.',
     hint_preparedCaster:'Se attivo, gli incantesimi possono essere preparati/rimossi.',
-    hint_contentBlocks:'Costruisci il contenuto aggiungendo blocchi: paragrafi, elenchi, tabelle, note, intestazioni o sotto-capacità. L\'anteprima in basso mostra il risultato.',
-    hint_algoSteps:'Aggiungi passaggi decisionali a questo blocco. Ogni passo ha una domanda e opzioni a punto elenco. L\'anteprima in basso mostra il risultato.',
-    hint_spellDescStep:'Descrivi l\'effetto dell\'incantesimo e aggiungi dettagli opzionali. L\'anteprima in basso mostra la scheda finale.',
+    hint_contentBlocks:'Paragrafi, elenchi, tabelle, note, intestazioni o sotto-capacità. Anteprima in basso.',
+    hint_algoSteps:'Domanda + opzioni a punti per passo. Anteprima in basso.',
+    hint_spellDescStep:'L\'anteprima in basso mostra la scheda finale.',
     lvPrefix:'Lv',
     // Inspiration
     inspiration:'Ispirazione', logInspGained:'Ispirazione ottenuta!', logInspSpent:'Ispirazione spesa.',
-    heroicInspiration:'Eroica', heroicInspirationTip:'Ispirazione Eroica — concessa dal DM. Spendila per rilanciare qualsiasi d20.',
-    bardicInspiration:'Bardica', bardicInspirationTip:'Ispirazione Bardica — donata da un Bardo. Aggiungi il dado a un test d20 fallito entro 1 ora.',
+    heroicInspiration:'Eroica', heroicInspirationTip:'Concessa dal DM. Spendi per rilanciare qualsiasi d20.',
+    bardicInspiration:'Bardica', bardicInspirationTip:'Donata da un Bardo. Aggiungi il dado a qualsiasi test d20 entro 1 ora.',
     inspirationConflict:'Puoi avere un solo tipo di ispirazione alla volta.',
     logBardicGained:'Ispirazione Bardica ottenuta!', logBardicSpent:'Ispirazione Bardica spesa.',
     currencyLabel:'Monete',
@@ -2102,10 +2101,10 @@ const TRANSLATIONS = {
     unarmedStrike:'Attacco Senz\'Armi',
     // Mastery
     wiz_f_mastery:'Maestria Arma', masteryLabel:'Maestria',
-    hint_mastery:'Proprietà di maestria D&D 2024 per quest\'arma (concessa dalla classe). Es. Falciata, Intralciare.',
+    hint_mastery:'Maestria D&D 2024 (concessa dalla classe). Es. Falciata, Intralciare.',
     // Spell components
     wiz_f_compV:'Verbale (V)', wiz_f_compS:'Somatico (S)', wiz_f_compM:'Materiale (M)',
-    wiz_f_spellComponents:'Componenti Incantesimo', hint_spellComponents:'V = deve parlare ad alta voce; S = deve gesticolare con una mano libera; M = richiede un materiale fisico (indicato se ha un costo o viene consumato).',
+    wiz_f_spellComponents:'Componenti Incantesimo', hint_spellComponents:'V = verbale; S = somatico (mano libera); M = materiale (indicato se costoso o consumato).',
     wiz_f_compMaterial:'Componente materiale', hint_compMaterial:'Es. "un pizzico di sabbia", "un\'asta di ottone da 10 PO (consumata)".',
     spellComponents:'Componenti',
     // Attunement
@@ -2113,7 +2112,7 @@ const TRANSLATIONS = {
     attunementCount:'{N}/3 in sintonia',
     // Prepared spell count
     wiz_f_preparedMax:'Limite Incantesimi Preparati',
-    hint_preparedMax:'Numero massimo di incantesimi preparati (lascia vuoto per non mostrare un limite).',
+    hint_preparedMax:'Lascia vuoto per nascondere il limite.',
     preparedCount:'{N}/{M} preparati',
     // Spell filter
     spellFilterPh:'Filtra incantesimi…', filterPrepared:'Preparati',
@@ -2124,7 +2123,7 @@ const TRANSLATIONS = {
     lbl_weaponProf:'Competenze Armi', lbl_armorProf:'Competenze Armature',
     wiz_f_toolProf:'Competenze Strumenti', hint_toolProf:'Es. Attrezzi da ladro, Kit da erborista, Liuto.',
     lbl_toolProf:'Competenze Strumenti',
-    wiz_f_initiativeBonus:'Bonus Iniziativa', hint_initiativeBonus:'Bonus fisso aggiunto al modificatore DES per l\'iniziativa (es. +2 dal talento Alert). Lascia vuoto per nessun bonus.',
+    wiz_f_initiativeBonus:'Bonus Iniziativa', hint_initiativeBonus:'Aggiunto al modificatore DES (es. +2 dal talento Alert).',
      lbl_initiativeBonus:'Bonus Iniziativa',
      // Lore section
     characterLore:'Storia del Personaggio', noLore:'Nessuna storia definita.', editLore:'✏️ Modifica Storia',
@@ -6350,28 +6349,41 @@ function splashNewChar(){
 }
 // Unified floating tooltip for all [data-tip] elements app-wide.
 // position:fixed escapes overflow:auto clipping (modal, scroll containers, etc.)
+// On touch devices, taps fire a synthetic mouseover but never mouseout — so we
+// use a touchPending flag: touchstart sets it (and hides any lingering tip),
+// then mouseover schedules an auto-dismiss after 1.5 s if the flag is set.
 (function(){
-  let tip = null;
+  let tip = null, hideTimer = null, touchPending = false;
   function ensureTip(){
     if (!tip){ tip = document.createElement('div'); tip.className = 'floating-tip'; document.body.appendChild(tip); }
     return tip;
   }
+  function hideTip(){
+    if (tip) tip.style.display = 'none';
+    clearTimeout(hideTimer); hideTimer = null;
+  }
+  document.addEventListener('touchstart', function(){
+    touchPending = true;
+    hideTip();
+  }, {passive:true});
   document.addEventListener('mouseover', function(e){
     const el = e.target.closest('[data-tip]');
     if (!el) return;
+    clearTimeout(hideTimer); hideTimer = null;
     const t = ensureTip();
     t.textContent = el.dataset.tip;
     const r = el.getBoundingClientRect();
     t.style.left = (r.left + r.width / 2) + 'px';
     t.style.top  = (r.top - 7) + 'px';
     t.style.display = 'block';
+    if (touchPending){ touchPending = false; hideTimer = setTimeout(hideTip, Math.min(Math.max(el.dataset.tip.length * 50, 1500), 5000)); }
   });
   document.addEventListener('mouseout', function(e){
     const el = e.target.closest('[data-tip]');
     if (!el || !tip) return;
     // Don't hide when moving to a child of the same element
     if (el.contains(e.relatedTarget)) return;
-    tip.style.display = 'none';
+    hideTip();
   });
 })();
 document.addEventListener('DOMContentLoaded', init);

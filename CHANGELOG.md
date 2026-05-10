@@ -5,6 +5,16 @@ Entries are in reverse-chronological order. Uncommitted work appears under `[Unr
 
 ---
 
+## [Unreleased] — Mobile Tooltip Fix & Tooltip Copy Trim
+
+### Fixed (`index.html`)
+- **Mobile tooltip persists on tap** — floating tooltip now auto-dismisses on touch devices; `touchstart` sets a `touchPending` flag and clears any lingering tip immediately; `mouseover` schedules auto-hide with a delay proportional to text length (50 ms/char, clamped 1.5 s – 5 s); desktop `mouseover`/`mouseout` flow is completely unchanged
+
+### Changed (`index.html`)
+- **Tooltip copy trimmed** — shortened the genuinely long tooltips in both EN and IT while leaving short/explanatory ones intact; affected keys: `helpCombat`, `helpQuickActions`, `helpHP`, `helpConc`, `helpDeathSaves`, `helpHitDice`, `helpExhaustion`, `actionTrackerLinkHint`, `poolModeHint`, `hint_contentBlocks`, `hint_algoSteps`, `hint_spellDescStep`, `hint_spellComponents`, `hint_tags`, `hint_mastery`, all `hint_*Override` keys, `hint_preparedMax`, `hint_initiativeBonus`, `hint_magicAbility`, tracker sub-hints, inspiration tips, `hint_ritual`, `hint_equipTracked`, `hint_levelUp_*`
+
+---
+
 ## [7053c39] — Phase 42+43: Wizard UX Polish, Cancel/Discard Discipline & Bug Fixes
 
 ### Changed (`index.html`)
