@@ -25,7 +25,7 @@
 17. **No commits unless told to.** Never create git commits unless the user explicitly asks.
 18. **CHANGELOG discipline.** Every time `CHANGELOG.md` is touched: (a) run `git log --oneline` to find the commit hash that corresponds to the current `[Unreleased]` block and replace `[Unreleased]` with that hash, (b) insert a fresh `## [Unreleased] — <title>` block at the top for the new work. Never leave old work permanently under `[Unreleased]`.
 19. **Grill before building.** Before implementing any new feature or meaningfully modifying an existing one, always load the `grill-me` skill and interview the user to resolve all design decisions. Do this implicitly — the user does not need to ask for it.
-20. **Cancel = discard for new items.** Inline sub-editors (tracker, action, content block, algo step) push a new empty item into their array *before* opening the editor. If the user cancels or presses ✕ on a *newly-added* item (one that has never been saved), that item must be spliced out entirely — not left as an empty placeholder. Implement with an `IS_NEW` flag (e.g. `WIZ_TRK_IS_NEW`, `CB_IS_NEW`, `ALGO_IS_NEW`): set `true` on add, clear on save; cancel branch checks the flag and splices if true.
+20. **Cancel = discard for new items.** Inline sub-editors (tracker, action, content block, algo step) push a new empty item into their array *before* opening the editor. If the user cancels or presses ✕ on a *newly-added* item (one that has never been saved), that item must be spliced out entirely — not left as an empty placeholder. Implement with an `IS_NEW` flag (e.g. `WIZ.trkIsNew`, `WIZ.cbIsNew`, `ALGO_IS_NEW`): set `true` on add, clear on save; cancel branch checks the flag and splices if true.
 21. **Wizard visual consistency.** All wizards must look and feel as if designed together. Use `.wiz-field` (wrapper, `margin-bottom:20px`), `.wiz-label` (uppercase, 0.75em, 700 weight), and `.wiz-input` (padded input/textarea/select) throughout every wizard and sub-editor. Never use ad-hoc inline styles for layout inside wizard bodies. Treat wizard UI as the primary interaction surface of the app.
 22. **UI consistency across pages.** `index.html` and `assistant.html` must feel like a single app. Any CSS rule that affects shared UI (header, tabs, ctrl-btns, theme variables, scrollbars) **must be applied identically in both files**. Checklist when touching shared UI: (a) mirror the change in the other file, (b) ensure `--sidebar-bg`, `--accent`, and other theme variables resolve to the same values in both files, (c) both files must have a flash-prevention `<script>` in `<head>` that reads `dnd-theme` from localStorage before first paint, (d) tab layout must never shift between pages — use `border-bottom:2px solid transparent` on inactive tabs so the active underline slot is always reserved.
 
@@ -65,15 +65,15 @@ fully persisted across reloads and device transfers.
 
 Wizard-related globals (managed by wizard lifecycle):
 ```
-WIZ_DATA      -- collected wizard data across steps
-WIZ_KEY       -- current wizard name (set in openWizard, cleared in closeWizard)
-WIZ_BLOCKS    -- content blocks array for feature wizard
-WIZ_TAGS      -- tags array [{label,color}] for feature/spell/weapon wizards
-WIZ_TRACKERS  -- trackers array for feature wizard step 3
-WIZ_ACTIONS   -- actions array for feature wizard step 3
-WIZ_ALGO_STEPS -- algo steps array for algorithm wizard
-CB_EDIT_IDX   -- index of content block being edited inline (-1 = none)
-CB_EDIT_DATA  -- deep clone of block being edited (for cancel/restore)
+WIZ.data      -- collected wizard data across steps
+WIZ.key       -- current wizard name (set in openWizard, cleared in closeWizard)
+WIZ.blocks    -- content blocks array for feature wizard
+WIZ.tags      -- tags array [{label,color}] for feature/spell/weapon wizards
+WIZ.trackers  -- trackers array for feature wizard step 3
+WIZ.actions   -- actions array for feature wizard step 3
+WIZ.algoSteps -- algo steps array for algorithm wizard
+WIZ.cbEditIdx -- index of content block being edited inline (-1 = none)
+WIZ.cbEditData -- deep clone of block being edited (for cancel/restore)
 ```
 
 #### Rendering
@@ -95,6 +95,7 @@ CB_EDIT_DATA  -- deep clone of block being edited (for cancel/restore)
 - Custom features: resolved by matching `slugify(feature.title)` against sidebar IDs.
 - Separators: `{type:'sep'}` objects in the sidebar array.
 - In edit mode, sidebar items show drag handles for reorder and a trash drop zone for deletion.
+- **Drag implementation uses Pointer Events** (`pointerdown/move/up/cancel`), NOT the HTML5 DnD API. The HTML5 DnD API is incompatible with dynamic DOM re-renders (breaks drag after innerHTML swap). State: single `let SB_DRAG = null` object. Functions: `sbPointerDown` (on drag handle, calls `setPointerCapture`), `sbPointerMove` (moves ghost, auto-scrolls, hit-tests), `sbPointerUp` (executes drop synchronously — no deferral needed). Ghost element has `pointer-events:none` so `document.elementFromPoint` sees items below it. Works identically on mouse, touch and pen — no separate touch handlers. Never add `draggable` attributes or `ondragstart/dragend` handlers to sidebar items.
 
 #### Equipment-Based Tracking
 - Standalone `CHAR.trackers[]` was removed. All trackers are now either feature-embedded or equipment-based.
@@ -152,15 +153,15 @@ ALL tooltips app-wide use `<span class="help-icon" data-tip="...">?</span>` plus
 #### Tag System
 - Features, spells, and weapons support `tags: [{label, color}]` — array of 0-3 tags.
 - Preset colors: `green`, `blue`, `purple`, `red`, `orange`. CSS vars: `--tag-green`, etc.
-- `WIZ_TAGS=[]` global populated from `prefill.tags` in `openWizard()`, cleared in `closeWizard()`.
+- `WIZ.tags=[]` global populated from `prefill.tags` in `openWizard()`, cleared in `closeWizard()`.
 - `renderTags(tags)` renders tags as `<span class="feature-tag tag-{color}">`.
 - Tag editor injected via `_afterRender` in feature/spell/weapon wizard steps.
 
 #### Live Wizard Preview
-- `WIZ_KEY` global tracks current wizard name (set in `openWizard()`, cleared in `closeWizard()`).
+- `WIZ.key` global tracks current wizard name (set in `openWizard()`, cleared in `closeWizard()`).
 - Four preview functions: `renderFeaturePreview()`, `renderSpellPreview()`, `renderWeaponPreview()`, `renderAlgoPreview()`.
 - Four inject functions: `injectFeaturePreview()`, `injectSpellPreview()`, `injectWeaponPreview()`, `injectAlgoPreview()`.
-- Generic dispatcher: `injectWizPreview()` checks `WIZ_KEY` and calls the right inject function.
+- Generic dispatcher: `injectWizPreview()` checks `WIZ.key` and calls the right inject function.
 - All preview-enabled wizard steps have `_afterRender` hooks. Step 1 fields have live `input`/`change` listeners.
 - CSS: `.wiz-preview` (dashed border box), `.wiz-preview-label`, `.wiz-preview-content` (pointer-events:none).
 

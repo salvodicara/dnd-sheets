@@ -5,6 +5,20 @@ Entries are in reverse-chronological order. Uncommitted work appears under `[Unr
 
 ---
 
+## [Unreleased] — Pointer-Events Drag, Wizard Headers, Advanced Group Polish
+
+### Fixed (`index.html`)
+- **Sidebar drag-and-drop completely rewritten with Pointer Events** — HTML5 DnD API and the separate touch-drag system (`sbTouchStart/Move/End`) removed entirely. A single `SB_DRAG` state object and three functions (`sbPointerDown`, `sbPointerMove`, `sbPointerUp`) handle mouse, touch, and pen uniformly via `setPointerCapture`. No browser drag state machine → no re-render corruption → no "must scroll to resume drag" bug. `deleteSidebarItem` is called directly in `sbPointerUp` with zero deferral; the previous `SB_PENDING_DELETE` + `setTimeout` workarounds are gone.
+- **Subfeature sub-block type label not translated** — type badge next to each sub-block row inside the subfeature editor was showing the raw key (e.g. `paragraph`); fixed via `dndTr('blockTypes', sb.type)`. The add-sub-block `<select>` options also now use translated labels.
+
+### Changed (`index.html`)
+- **Sidebar auto-scroll while dragging** — built directly into `sbPointerMove`; proportional speed up to 12 px/frame within a 60 px edge zone; works identically on desktop and mobile since `pointermove` fires for all pointer types
+- **Ghost drag element** — semi-transparent clone of the source item follows the pointer during drag; source item fades to 35% opacity; `pointer-events:none` on ghost ensures `document.elementFromPoint` hit-tests the items and trash zone underneath
+- **Block editor type header** — inline content-block editor (`editBlock`) now opens with a `.wiz-section-label` banner showing the verb ("New" / "Edit", driven by `WIZ.cbIsNew`) and the translated block type ("Paragraph", "Subfeature", etc.); `cbEditBlockAdd`/`cbEditBlockEdit` i18n keys added in EN + IT
+- **Advanced override group redesign** — dropped the full border-box card entirely; replaced with a left-accent rule (`border-left: 2px solid var(--border)`) with `padding-left: 14px`. Summary label now matches `.wiz-label` conventions (uppercase, tracked, 0.72 em). No background tint — fields sit visually inline with the wizard, just offset by the left rule. Auto-open behavior retained (group opens automatically when editing a character that already has override values set).
+
+---
+
 ## [bc1cd45] — Mobile Tooltip Fix & Tooltip Copy Trim
 
 ### Fixed (`index.html`)

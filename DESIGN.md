@@ -863,6 +863,33 @@ Three bugs survived Phase 42: (1) the overlay backdrop's double-click-to-discard
 
 ---
 
+## Phase 44: Pointer-Events Drag, Wizard Headers, Advanced Group Polish
+
+### Problem
+Three independent issues: (1) Sidebar drag-and-drop broke after deleting an item — the user had to scroll the sidebar before drag would resume. Multiple attempts to patch the HTML5 DnD API (SB_PENDING_DELETE flag, setTimeout in dragend, void offsetHeight reflow) all failed because the root cause is the API itself: it maintains internal state that gets corrupted when the DOM is re-rendered during or immediately after the drag lifecycle. (2) The inline content-block editor had no header — users couldn't tell what type of block they were editing or whether they were adding or editing. (3) The Advanced (override) collapsible group inside wizards looked like a card, too similar to the live-preview card, and didn't feel integrated with the wizard's own visual language.
+
+### Changes
+
+**Sidebar drag-and-drop: full rewrite with Pointer Events**
+- Removed: HTML5 DnD attributes (`draggable`, `ondragstart/over/drop/dragend`), the separate touch-drag system (`sbTouchStart/Move/End`), all state globals (`SB_DRAG_IDX`, `SB_TOUCH_DRAG`, `SB_PENDING_DELETE`, `SB_DRAG_Y`, `SB_AUTO_SCROLL_RAF`), all helper functions (`sbDragStart/Over/Drop/End`, `sbTrashOver/Leave/Drop`, `sbTouchStart/Move/End`, `sbAutoScroll`, `sbScrollStart/Stop`), document-level `touchmove`/`touchend` listeners.
+- Added: Single `let SB_DRAG = null` global (holds `{fromIdx, item, ghost, offsetX, offsetY, startX, startY, dragging, overIdx, overTrash}`), three functions (`sbPointerDown`, `sbPointerMove`, `sbPointerUp`).
+- `sbPointerDown` on the drag handle span: guards `EDIT_MODE`, `SB_DRAG` already active, non-primary button; calls `handle.setPointerCapture(e.pointerId)` so all subsequent move/up events for that pointer route to the handle regardless of position.
+- `sbPointerMove`: 5 px threshold before drag is considered started. On threshold cross: clones item as a fixed-position ghost with `pointer-events:none` (critical — allows `document.elementFromPoint` to see items underneath), fades source to 35% opacity, shows trash zone. Each move: repositions ghost, auto-scrolls sidebar (proportional speed within 60 px edge zones, inline in `pointermove` — no RAF loop needed), hit-tests via `elementFromPoint` and toggles `.drag-over` on items and trash.
+- `sbPointerUp`: removes ghost, restores opacity, calls `deleteSidebarItem` or performs reorder synchronously — no deferral of any kind. Pointer events have no internal drag state machine, so re-rendering the DOM during `pointerup` is safe.
+- HTML template: `draggable` attribute removed from `.sb-item-edit` divs; `onpointerdown/move/up/cancel` on the `<span class="drag-handle">`; `draggable="false"` on `<a>` links (prevents browser's default link-drag from interfering); trash zone has no DnD event attributes (hit-tested manually via `elementFromPoint`).
+- CSS: removed `.sb-item-edit[draggable="true"]` cursor rules and `.sb-touch-dragging` class; added `touch-action:none; cursor:grab;` to `.drag-handle` directly; new `.sb-dragging` class fades source item.
+
+**Block editor type header**
+- `editBlock(i)` now prepends a `.wiz-section-label` banner: `"${verb} — ${typeLabel}"` where `verb` is `T('cbEditBlockAdd')` ("New") when `WIZ.cbIsNew`, else `T('cbEditBlockEdit')` ("Edit"); `typeLabel` is `dndTr('blockTypes', b.type)`.
+- New i18n keys: `cbEditBlockAdd` ("New" / "Nuovo"), `cbEditBlockEdit` ("Edit" / "Modifica").
+
+**Advanced override group**
+- `.wiz-adv-body`: removed border-box and background; replaced with `border-left: 2px solid var(--border); padding-left: 14px`. No background tint.
+- `.wiz-advanced-group summary`: now uppercase, letter-spaced, 0.72 em — matches `.wiz-label` conventions so the toggle reads as a section label, not an isolated small-text control.
+- `.wiz-advanced-group`: removed `border-top` separator; uses `margin-top: 16px` for spacing instead.
+
+---
+
 ## Known Missing Features / Future Work
 
 ### ~~`trackerLink` variable cost (`cost` field)~~ ✅ COMPLETE (Phase 40)

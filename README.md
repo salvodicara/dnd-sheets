@@ -60,7 +60,7 @@ Open `index.html` in any browser. No server, no build step, no internet required
 - English / Italian language toggle (extensible i18n system)
 - Edit mode -- togglable add/edit/delete controls throughout the sheet
 - Responsive mobile layout (hamburger menu at 768px)
-- Sidebar navigation with drag-and-drop section reordering (mouse and touch)
+- Sidebar navigation with drag-and-drop section reordering — pointer-events based (mouse, touch, and pen; no HTML5 DnD)
 - Live wizard preview -- see how your feature/spell/weapon will look as you fill in fields
 - Toast notifications for feedback
 - Modal wizard system for all CRUD operations
@@ -84,7 +84,7 @@ A companion chat page that connects to the character sheet via localStorage.
 
 ```
 dnd-sheets/
-  index.html       Main character sheet (~5,200 lines)
+  index.html       Main character sheet (~6,400 lines)
   assistant.html   AI assistant companion page (~1,430 lines)
   chronicles.html  Campaign chronicle reader/editor (~540 lines)
   CLAUDE.md        AI steering document (golden rules, architecture)

@@ -398,6 +398,15 @@ select.wiz-input option{background:var(--bg-card);}
 .wiz-section-label{font-size:.74em;font-weight:700;color:var(--text-muted);
   text-transform:uppercase;letter-spacing:.6px;}
 
+/* Advanced (override) collapsible group */
+.wiz-advanced-group{margin-top:16px;}
+.wiz-advanced-group summary{display:flex;align-items:center;gap:5px;font-size:.72em;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--text-faint);cursor:pointer;list-style:none;user-select:none;padding:4px 0;}
+.wiz-advanced-group summary::-webkit-details-marker{display:none;}
+.wiz-advanced-group summary::before{content:'▶';font-size:.65em;line-height:1;}
+.wiz-advanced-group[open] summary::before{content:'▼';}
+.wiz-advanced-group[open] summary{color:var(--text-muted);}
+.wiz-adv-body{border-left:2px solid var(--border);padding-left:14px;margin-top:6px;}
+
 .wiz-preview{margin-top:18px;padding:14px;background:var(--bg-card2);border:1px dashed var(--border);border-radius:8px;}
 .wiz-preview-label{font-size:.78em;color:var(--text-muted);margin-bottom:10px;text-transform:uppercase;letter-spacing:1px;}
 .wiz-preview-content{pointer-events:none;}
@@ -498,11 +507,10 @@ body.edit-mode::after{content:'';position:fixed;inset:0;pointer-events:none;box-
 .sb-item-edit{display:flex;align-items:center;gap:2px;padding:1px 4px 1px 6px;
   border-left:3px solid transparent;transition:border-color .15s,background .15s;}
 .sb-item-edit.drag-over{border-left-color:var(--accent);background:var(--sidebar-hover);}
-.sb-item-edit.sb-touch-dragging{opacity:.45;background:var(--sidebar-hover);}
-.sb-item-edit[draggable="true"]{cursor:grab;}
-.sb-item-edit[draggable="true"]:active{cursor:grabbing;}
+.sb-item-edit.sb-dragging{opacity:.35;}
 .drag-handle{color:var(--sidebar-text);opacity:.4;font-size:1em;user-select:none;
-  padding:0 3px;flex-shrink:0;line-height:1;}
+  touch-action:none;cursor:grab;padding:0 3px;flex-shrink:0;line-height:1;}
+.drag-handle:active{cursor:grabbing;}
 .sb-item-edit a{flex:1;color:var(--sidebar-text);text-decoration:none;font-size:.82em;
   padding:3px 2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0;}
 .sb-item-edit a:hover{color:var(--text);}
@@ -1443,8 +1451,15 @@ const BASE = {
   wizRequired:'Required field', wizSaved:'✅ Saved!', wizEdit:'edit', wizPreview:'Preview',
   contentBlocks:'Content Blocks', addBlock:'＋ Block',
   addRow:'＋ Row', cbBulletsHint:'One bullet point per line',
+  cbEditBlockAdd:'New', cbEditBlockEdit:'Edit',
   cbeKey:'Key', cbeValue:'Value',
   cbSubTitle:'Subfeature title', cbSubEmoji:'Emoji',
+  hint_blockTypeParagraph:'Rich text — supports **bold** and *italic*.',
+  hint_blockTypeBullets:'Unordered list of items.',
+  hint_blockTypeTable:'Two-column key / value grid.',
+  hint_blockTypeNote:'Pinned tip, visually highlighted with 📌.',
+  hint_blockTypeHeader:'Bold section heading within the feature.',
+  hint_blockTypeSubfeature:'A named sub-section with its own emoji, tags, and nested content blocks — useful for Battle Master maneuvers, Invocations, etc.',
   cbAddSubBlock:'＋ Sub-block',
   algoSteps:'Algorithm Steps', addStep:'＋ Step',
   algoStepQuestion:'Step question (optional):',
@@ -1630,6 +1645,7 @@ const BASE = {
   hint_contentBlocks:'Paragraphs, bullets, tables, notes, headers, or sub-features. Preview below.',
   hint_algoSteps:'Question + bullet options per step. Preview below.',
   hint_spellDescStep:'Preview below shows the final spell card.',
+  hint_weaponDescStep:'Preview below shows the final weapon card.',
   // Spell level prefix for lvOpts
   lvPrefix:'Lv',
   // Inspiration
@@ -1675,6 +1691,7 @@ const BASE = {
   lbl_toolProf:'Tool Proficiencies',
   wiz_f_initiativeBonus:'Initiative Bonus', hint_initiativeBonus:'Added on top of DEX mod (e.g. +2 from Alert).',
    lbl_initiativeBonus:'Initiative Bonus',
+   advancedOverrides:'Advanced (Overrides)',
    // Lore section
   characterLore:'Character Lore', noLore:'No lore defined yet.', editLore:'✏️ Edit Lore',
   loreTraits:'Personality Traits', loreIdeals:'Ideals', loreBonds:'Bonds', loreFlaws:'Flaws',
@@ -1926,8 +1943,15 @@ const TRANSLATIONS = {
     wizRequired:'Campo obbligatorio', wizSaved:'✅ Salvato!', wizEdit:'modifica', wizPreview:'Anteprima',
     contentBlocks:'Blocchi di Contenuto', addBlock:'＋ Blocco',
     addRow:'＋ Riga', cbBulletsHint:'Un punto elenco per riga',
+    cbEditBlockAdd:'Nuovo', cbEditBlockEdit:'Modifica',
     cbeKey:'Chiave', cbeValue:'Valore',
     cbSubTitle:'Titolo sotto-capacità', cbSubEmoji:'Emoji',
+    hint_blockTypeParagraph:'Testo con **grassetto** e *corsivo*.',
+    hint_blockTypeBullets:'Lista di elementi puntati.',
+    hint_blockTypeTable:'Griglia a due colonne chiave / valore.',
+    hint_blockTypeNote:'Nota in evidenza con 📌.',
+    hint_blockTypeHeader:'Titolo di sezione in grassetto.',
+    hint_blockTypeSubfeature:'Una sotto-sezione con proprio emoji, tag e blocchi di contenuto — utile per Manovre, Invocazioni, ecc.',
     cbAddSubBlock:'＋ Sotto-blocco',
     algoSteps:'Passi Algoritmo', addStep:'＋ Passo',
     algoStepQuestion:'Domanda del passo (opzionale):',
@@ -2081,6 +2105,7 @@ const TRANSLATIONS = {
     hint_contentBlocks:'Paragrafi, elenchi, tabelle, note, intestazioni o sotto-capacità. Anteprima in basso.',
     hint_algoSteps:'Domanda + opzioni a punti per passo. Anteprima in basso.',
     hint_spellDescStep:'L\'anteprima in basso mostra la scheda finale.',
+    hint_weaponDescStep:'L\'anteprima in basso mostra la scheda arma finale.',
     lvPrefix:'Lv',
     // Inspiration
     inspiration:'Ispirazione', logInspGained:'Ispirazione ottenuta!', logInspSpent:'Ispirazione spesa.',
@@ -2125,6 +2150,7 @@ const TRANSLATIONS = {
     lbl_toolProf:'Competenze Strumenti',
     wiz_f_initiativeBonus:'Bonus Iniziativa', hint_initiativeBonus:'Aggiunto al modificatore DES (es. +2 dal talento Alert).',
      lbl_initiativeBonus:'Bonus Iniziativa',
+     advancedOverrides:'Avanzato (Override)',
      // Lore section
     characterLore:'Storia del Personaggio', noLore:'Nessuna storia definita.', editLore:'✏️ Modifica Storia',
     loreTraits:'Tratti della Personalità', loreIdeals:'Ideali', loreBonds:'Legami', loreFlaws:'Difetti',
@@ -2448,105 +2474,75 @@ function ensureSidebar(){
     return (CHAR.features||[]).some(f=>slugify(f.title)===item || f.sectionId===item);
   });
 }
-// ── Sidebar drag-and-drop ──
-let SB_DRAG_IDX=null;
-let SB_TOUCH_DRAG=null;
+// ── Sidebar drag-and-drop (pointer events — works on desktop + mobile, no HTML5 DnD) ──
+let SB_DRAG=null; // {fromIdx,item,ghost,offsetX,offsetY,startX,startY,dragging,overIdx,overTrash}
 function moveSidebarItem(idx,dir){
   const arr=CHAR.sidebar||[]; const to=idx+dir;
   if(to<0||to>=arr.length) return;
   [arr[idx],arr[to]]=[arr[to],arr[idx]];
   saveAll(); renderSidebar(); renderSections();
 }
-function sbDragStart(e,idx){
-  SB_DRAG_IDX=idx; e.dataTransfer.effectAllowed='move';
-  const trash=document.getElementById('sb-trash');
-  if(trash) trash.classList.add('visible');
-}
-function sbDragOver(e,idx){
-  e.preventDefault(); e.dataTransfer.dropEffect='move';
-  document.querySelectorAll('.sb-item-edit').forEach((el,i)=>
-    el.classList.toggle('drag-over', i===idx && i!==SB_DRAG_IDX));
-  const trash=document.getElementById('sb-trash');
-  if(trash) trash.classList.remove('drag-over');
-}
-function sbDrop(e,idx){
+function sbPointerDown(e,idx){
+  if(!EDIT_MODE||SB_DRAG||e.button!==0) return;
   e.preventDefault();
-  document.querySelectorAll('.sb-item-edit').forEach(el=>el.classList.remove('drag-over'));
-  if(SB_DRAG_IDX===null||SB_DRAG_IDX===idx){SB_DRAG_IDX=null;return;}
-  const arr=CHAR.sidebar||[];
-  const [item]=arr.splice(SB_DRAG_IDX,1);
-  arr.splice(idx,0,item);
-  CHAR.sidebar=arr; SB_DRAG_IDX=null;
-  saveAll(); renderSidebar(); renderSections();
+  const handle=e.currentTarget;
+  const item=handle.closest('.sb-item-edit');
+  const r=item.getBoundingClientRect();
+  SB_DRAG={fromIdx:idx,item,ghost:null,offsetX:e.clientX-r.left,offsetY:e.clientY-r.top,
+    startX:e.clientX,startY:e.clientY,dragging:false,overIdx:null,overTrash:false};
+  handle.setPointerCapture(e.pointerId);
 }
-function sbDragEnd(){
-  SB_DRAG_IDX=null;
-  document.querySelectorAll('.sb-item-edit').forEach(el=>el.classList.remove('drag-over'));
-  const trash=document.getElementById('sb-trash');
-  if(trash){ trash.classList.remove('visible','drag-over'); }
-}
-function sbTrashOver(e){
-  e.preventDefault(); e.dataTransfer.dropEffect='move';
-  const trash=document.getElementById('sb-trash');
-  if(trash) trash.classList.add('drag-over');
-  document.querySelectorAll('.sb-item-edit').forEach(el=>el.classList.remove('drag-over'));
-}
-function sbTrashLeave(e){
-  const trash=document.getElementById('sb-trash');
-  if(trash) trash.classList.remove('drag-over');
-}
-function sbTrashDrop(e){
-  e.preventDefault();
-  const trash=document.getElementById('sb-trash');
-  if(trash){ trash.classList.remove('visible','drag-over'); }
-  if(SB_DRAG_IDX===null) return;
-  const idx=SB_DRAG_IDX; SB_DRAG_IDX=null;
-  deleteSidebarItem(idx);
-}
-// ── Sidebar touch drag (mobile) ──
-function sbTouchStart(e,idx){
-  if(!EDIT_MODE) return;
-  e.stopPropagation();
-  SB_TOUCH_DRAG={fromIdx:idx,targetIdx:null};
-  const items=document.querySelectorAll('.sb-item-edit');
-  if(items[idx]) items[idx].classList.add('sb-touch-dragging');
-  const trash=document.getElementById('sb-trash');
-  if(trash) trash.classList.add('visible');
-}
-function sbTouchMove(e){
-  if(!SB_TOUCH_DRAG) return;
-  e.preventDefault();
-  const touch=e.touches[0];
-  const items=[...document.querySelectorAll('.sb-item-edit')];
-  items.forEach(el=>el.classList.remove('drag-over'));
-  const el=document.elementFromPoint(touch.clientX,touch.clientY);
-  const item=el?.closest('.sb-item-edit');
-  const trash=document.getElementById('sb-trash');
-  if(item){
-    const idx=items.indexOf(item);
-    if(idx!==-1&&idx!==SB_TOUCH_DRAG.fromIdx){item.classList.add('drag-over');SB_TOUCH_DRAG.targetIdx=idx;}
-    else SB_TOUCH_DRAG.targetIdx=null;
-    if(trash) trash.classList.remove('drag-over');
-  } else if(trash){
-    const r=trash.getBoundingClientRect();
-    const over=touch.clientX>=r.left&&touch.clientX<=r.right&&touch.clientY>=r.top&&touch.clientY<=r.bottom;
-    trash.classList.toggle('drag-over',over);
-    SB_TOUCH_DRAG.targetIdx=over?'trash':null;
+function sbPointerMove(e){
+  if(!SB_DRAG) return;
+  const dx=e.clientX-SB_DRAG.startX, dy=e.clientY-SB_DRAG.startY;
+  if(!SB_DRAG.dragging){
+    if(Math.hypot(dx,dy)<5) return;
+    SB_DRAG.dragging=true;
+    const r=SB_DRAG.item.getBoundingClientRect();
+    const ghost=SB_DRAG.item.cloneNode(true);
+    ghost.style.cssText=`position:fixed;left:${r.left}px;top:${r.top}px;width:${r.width}px;`+
+      `opacity:.85;pointer-events:none;z-index:9999;`+
+      `box-shadow:0 4px 20px rgba(0,0,0,.28);border-radius:6px;background:var(--bg-card);`;
+    document.body.appendChild(ghost);
+    SB_DRAG.ghost=ghost;
+    SB_DRAG.item.classList.add('sb-dragging');
+    document.getElementById('sb-trash')?.classList.add('visible');
   }
+  SB_DRAG.ghost.style.left=(e.clientX-SB_DRAG.offsetX)+'px';
+  SB_DRAG.ghost.style.top=(e.clientY-SB_DRAG.offsetY)+'px';
+  // Auto-scroll
+  const sidebar=document.getElementById('sidebar');
+  if(sidebar){
+    const sr=sidebar.getBoundingClientRect(),zone=60,spd=12;
+    if(e.clientY<sr.top+zone) sidebar.scrollTop-=spd*((sr.top+zone-e.clientY)/zone);
+    else if(e.clientY>sr.bottom-zone) sidebar.scrollTop+=spd*((e.clientY-(sr.bottom-zone))/zone);
+  }
+  // Hit-test (ghost has pointer-events:none so it doesn't block elementFromPoint)
+  const under=document.elementFromPoint(e.clientX,e.clientY);
+  const overItem=under?.closest('.sb-item-edit');
+  const overTrash=!!under?.closest('#sb-trash');
+  const items=[...document.querySelectorAll('.sb-item-edit')];
+  const overIdx=overItem?items.indexOf(overItem):null;
+  items.forEach((el,i)=>el.classList.toggle('drag-over',i===overIdx&&i!==SB_DRAG.fromIdx));
+  document.getElementById('sb-trash')?.classList.toggle('drag-over',overTrash);
+  SB_DRAG.overIdx=overIdx; SB_DRAG.overTrash=overTrash;
 }
-function sbTouchEnd(){
-  if(!SB_TOUCH_DRAG) return;
-  const{fromIdx,targetIdx}=SB_TOUCH_DRAG;
-  SB_TOUCH_DRAG=null;
-  document.querySelectorAll('.sb-item-edit').forEach(el=>el.classList.remove('drag-over','sb-touch-dragging'));
-  const trash=document.getElementById('sb-trash');
-  if(trash) trash.classList.remove('visible','drag-over');
-  if(targetIdx==='trash'){deleteSidebarItem(fromIdx);}
-  else if(targetIdx!==null&&targetIdx!==fromIdx){
+function sbPointerUp(e){
+  if(!SB_DRAG) return;
+  const{fromIdx,ghost,item,dragging,overIdx,overTrash}=SB_DRAG;
+  if(ghost) ghost.remove();
+  item.classList.remove('sb-dragging');
+  document.querySelectorAll('.sb-item-edit').forEach(el=>el.classList.remove('drag-over'));
+  document.getElementById('sb-trash')?.classList.remove('visible','drag-over');
+  SB_DRAG=null;
+  if(!dragging) return;
+  if(overTrash){
+    deleteSidebarItem(fromIdx);
+  } else if(overIdx!==null&&overIdx!==fromIdx){
     const arr=CHAR.sidebar||[];
     const[moved]=arr.splice(fromIdx,1);
-    arr.splice(targetIdx,0,moved);
-    CHAR.sidebar=arr;saveAll();renderSidebar();renderSections();
+    arr.splice(overIdx,0,moved);
+    CHAR.sidebar=arr; saveAll(); renderSidebar(); renderSections();
   }
 }
 // ─── SIDEBAR ───
@@ -2581,16 +2577,17 @@ function renderSidebar(){
   }
   let html='';
   if(EDIT_MODE){
+    const ptrAttr=`onpointerdown="sbPointerDown(event,IDX)" onpointermove="sbPointerMove(event)" onpointerup="sbPointerUp(event)" onpointercancel="sbPointerUp(event)"`;
     html+=(CHAR.sidebar||[]).map((item,i)=>{
-      const dAttr=`draggable="true" ondragstart="sbDragStart(event,${i})" ondragover="sbDragOver(event,${i})" ondrop="sbDrop(event,${i})" ondragend="sbDragEnd()"`;
+      const ha=ptrAttr.replaceAll('IDX',i);
       if(typeof item==='object' && item.type==='sep'){
-        return `<div class="sb-item-edit" ${dAttr}><span class="drag-handle" ontouchstart="sbTouchStart(event,${i})">⋮⋮</span><span class="sep-label">────</span></div>`;
+        return `<div class="sb-item-edit"><span class="drag-handle" ${ha}>⋮⋮</span><span class="sep-label">────</span></div>`;
       }
       const resolved=resolveSidebarItem(item);
       if(!resolved) return '';
-      return `<div class="sb-item-edit" ${dAttr}><span class="drag-handle" ontouchstart="sbTouchStart(event,${i})">⋮⋮</span><a href="#${resolved.id}" onclick="closeSidebarMobile()">${resolved.emoji||''} ${resolved.label||''}</a></div>`;
+      return `<div class="sb-item-edit"><span class="drag-handle" ${ha}>⋮⋮</span><a href="#${resolved.id}" onclick="closeSidebarMobile()" draggable="false">${resolved.emoji||''} ${resolved.label||''}</a></div>`;
     }).join('');
-    html+=`<div class="sb-trash-zone" id="sb-trash" ondragover="sbTrashOver(event)" ondragleave="sbTrashLeave(event)" ondrop="sbTrashDrop(event)">${T('sbTrashLabel')}</div>`;
+    html+=`<div class="sb-trash-zone" id="sb-trash">${T('sbTrashLabel')}</div>`;
   } else {
     html+=(CHAR.sidebar||[]).map((item,i)=>{
       if(typeof item==='object' && item.type==='sep') return `<div class="nav-sep"></div>`;
@@ -2680,21 +2677,34 @@ function renderPanel(){
     }
     saveAll();
   });
+  const hpAmtEl=document.getElementById('hp-amount');
+  if(hpAmtEl) hpAmtEl.addEventListener('keydown',e=>{if(e.key==='Enter')applyDamage();});
   const noteEl=document.getElementById('note-rapide');
   if(noteEl) noteEl.addEventListener('input',e=>{SESSION.notes=e.target.value;saveAll();});
 }
 function buildPanel(){
   const S=SESSION, C=CHAR;
+  const combatContent=buildPanelTurnTracker()+buildPanelActions()+buildPanelCombatCards(S,C);
+  return buildPanelSection('stats','📊',T('secStats'),buildPanelStats(S,C))
+    +buildPanelSection('combat','⚔️',T('secCombat'),combatContent)
+    +buildPanelSection('conditions','⚠️',T('secConditions'),buildPanelConditions(S,C))
+    +buildPanelSection('trackers','🎲',T('secTrackers'),buildPanelTrackers())
+    +buildPanelSection('rest','😴',T('secRest'),buildPanelRest(S,C))
+    +buildPanelSection('session','💾',T('secSession'),buildPanelSession(S));
+}
+// ─── Pannello: stats section (HP card + stat strip + save throws) ───
+function buildPanelStats(S,C){
   const effMax=(C.hp?.max||0)+(S.hp?.aidBonus||0);
   const hpCurr=S.hp?.current??0;
   const hpPct=effMax>0?Math.max(0,Math.min(100,(hpCurr/effMax)*100)):0;
   const hpColor=hpPct>50?'var(--hp-green)':hpPct>25?'var(--hp-yellow)':'var(--hp-red)';
+  const conds=S.conditions||[];const exh=S.exhaustion||0;
+  const pills=conds.map(c=>`<span class="active-cond-pill" data-tip="${T('clickToRemove')}" onclick="removeCondition('${c.replace(/'/g,"\\'")}')">● ${dndTr('conditions',c)||c}</span>`).join('');
+  const exhPill=exh>0?`<span class="active-exh-pill" data-tip="${T('clickToReduceExh')}" onclick="changeExhaustion(-1)">💀 ${T('exhaustion')} ${exh}</span>`:'';
+  const condBar=(conds.length||exh>0)?`<div class="active-cond-bar" id="active-cond-bar">${pills}${exhPill}</div>`:`<div class="active-cond-bar" id="active-cond-bar" style="display:none;"></div>`;
   const hpCard=`<div class="pn-card" style="grid-column:span 2;">
     <div class="label">${T('hp')} <span class="help-icon" data-tip="${T('helpHP')}">?</span></div>
-    <div class="value-row">
-      <div class="big-val" id="hp-curr">${hpCurr}</div>
-      <div class="max-val">/ <span id="hp-max-disp">${effMax}</span></div>
-    </div>
+    <div class="value-row"><div class="big-val" id="hp-curr">${hpCurr}</div><div class="max-val">/ <span id="hp-max-disp">${effMax}</span></div></div>
     <div class="hp-bar-wrap"><div class="hp-bar" id="hp-bar" style="width:${hpPct}%;background:${hpColor};"></div></div>
     <div class="hp-input-row">
       <input type="number" id="hp-amount" placeholder="val" min="1">
@@ -2704,9 +2714,11 @@ function buildPanel(){
     </div>
     <div class="temp-hp-info">${T('tempHP')}: <span id="temp-hp-disp" style="color:var(--accent);font-weight:bold;">${S.hp?.temp||0}</span>
     &nbsp;|&nbsp;${T('aidBonus')}: <span id="aid-disp" style="color:var(--edit-mode-color);font-weight:600;cursor:pointer;text-decoration:underline dotted;" onclick="setAidBonus()">${modStr(S.hp?.aidBonus||0)}</span></div>
-     ${(()=>{const conds=S.conditions||[];const exh=S.exhaustion||0;const pills=conds.map(c=>`<span class="active-cond-pill" data-tip="${T('clickToRemove')}" onclick="removeCondition('${c.replace(/'/g,"\\'")}')">● ${dndTr('conditions',c)||c}</span>`).join('');const exhPill=exh>0?`<span class="active-exh-pill" data-tip="${T('clickToReduceExh')}" onclick="changeExhaustion(-1)">💀 ${T('exhaustion')} ${exh}</span>`:'';return (conds.length||exh>0)?`<div class="active-cond-bar" id="active-cond-bar">${pills}${exhPill}</div>`:`<div class="active-cond-bar" id="active-cond-bar" style="display:none;"></div>`;})()}
-  </div>`;
-  // ── Combat section content ──
+    ${condBar}</div>`;
+  return `<div class="pn-grid">${hpCard}</div>`+buildPanelStatStrip()+buildPanelSaveThrows();
+}
+// ─── Pannello: concentration + death saves cards ───
+function buildPanelCombatCards(S,C){
   const concSpells=(C.spells||[]).filter(sp=>sp.concentration);
   const concInput=concSpells.length
     ?`<select id="conc-select" onchange="setConc(this.value)"><option value="">— ${T('none')} —</option>${concSpells.map(sp=>`<option value="${sp.name||''}"${(S.concentration||'')===(sp.name||'')?' selected':''}>${sp.emoji||'🔮'} ${sp.name||''}</option>`).join('')}</select>`
@@ -2716,81 +2728,7 @@ function buildPanel(){
   for(let i=0;i<3;i++){dSucc+=`<div class="death-pip succ${i<(S.deathSucc||0)?' used':''}" onclick="toggleDeathPip(this,'succ',${i})"></div>`;}
   for(let i=0;i<3;i++){dFail+=`<div class="death-pip fail${i<(S.deathFail||0)?' used':''}" onclick="toggleDeathPip(this,'fail',${i})"></div>`;}
   const deathCard=`<div class="pn-card"><div class="label">${T('deathSaves')} <span class="help-icon" data-tip="${T('helpDeathSaves')}">?</span></div><div class="death-row"><span style="font-size:.8em;color:var(--death-succ);">✅</span><div class="death-pips" id="death-succ">${dSucc}</div></div><div class="death-row"><span style="font-size:.8em;color:var(--death-fail);">❌</span><div class="death-pips" id="death-fail">${dFail}</div></div><div class="btn-row"><button class="btn" onclick="resetDeathSaves()">${T('reset')}</button></div></div>`;
-  const combatContent=buildPanelTurnTracker()+buildPanelActions()+`<div class="pn-grid" style="margin-top:14px;">${concCard}${deathCard}</div>`;
-  // ── Conditions section content ──
-  const stdConds=DND.conditions||[];
-  const customConds=C.customConditions||[];
-  const condGrid=stdConds.map(c=>`<div class="cond-btn${(S.conditions||[]).includes(c)?' active':''}" onclick="toggleCond(this,'${c.replace(/'/g,"\\'")}')">
-    ${dndTr('conditions',c)||c}
-  </div>`).join('')+customConds.map((c,i)=>`<div class="cond-btn${(S.conditions||[]).includes(c)?' active':''}" onclick="toggleCond(this,'${c.replace(/'/g,"\\'")}')">
-    ${c}${EDIT_MODE?`<button class="btn-del-sm" onclick="event.stopPropagation();deleteCondition(${i})" style="margin-left:4px;">×</button>`:''}
-  </div>`).join('');
-  const exhaustionContent=`<div class="exhaustion-row" style="margin-top:10px;border-top:1px solid var(--border-light);padding-top:8px;">
-    <span style="font-size:.8em;color:var(--text-muted);">${T('exhaustion')} <span class="help-icon" data-tip="${T('helpExhaustion')}">?</span></span>
-    <button class="btn" onclick="changeExhaustion(-1)" style="padding:1px 8px;font-size:.9em;">−</button>
-    <span class="exhaustion-val${(S.exhaustion||0)>=3?' danger':''}">${S.exhaustion||0}</span>
-    <button class="btn" onclick="changeExhaustion(1)" style="padding:1px 8px;font-size:.9em;">+</button>
-    ${(S.exhaustion||0)>0?`<span class="exhaustion-penalty">${T('exhaustionPenalty').replace('{N}',S.exhaustion||0)}</span>`:''}
-  </div>`;
-  const conditionsContent=`<div class="cond-grid" id="cond-grid">${condGrid}</div>
-    ${EDIT_MODE?`<button class="add-btn edit-only" onclick="addCondition()" style="margin-top:8px;">${T('addCondition')}</button>`:''}
-    ${exhaustionContent}`;
-  // ── Rest section content ──
-  const available=(C.level||1)-(S.hitDice?.used||0);
-  const hdType='d'+(C.hitDieType||8);
-  const hdLabel2=`d${C.hitDieType||8}`;
-  const hdUsed=S.hitDice?.used||0;
-  let hdPips=''; for(let i=0;i<(C.level||1);i++) hdPips+=`<div class="pip${i<hdUsed?' used':''}" title="${hdLabel2}" onclick="clickHDPip(${i})">${hdLabel2}</div>`;
-  const hdCard=`<div class="pn-card" style="margin-bottom:12px;"><div class="label">${T('hitDice')} (${hdLabel2}) <span class="help-icon" data-tip="${T('helpHitDice')}">?</span></div><div class="pips" id="hd-pips">${hdPips}</div><div class="btn-row"><button class="btn heal" onclick="spendHD()">${T('spendFull')}</button><button class="btn" onclick="resetHD()">${T('reset')}</button></div><div style="margin-top:4px;font-size:.75em;color:var(--text-muted);">${T('hdNote')}</div></div>`;
-  const conMod=abilityMod(finalScores(C).CON||10);
-  const hdModStr=conMod>=0?`+${conMod}`:String(conMod);
-  const restsContent=S.hdDialog
-    ?(available>0
-      ?`<div class="label">${T('hdDialogTitle').replace('{A}',available).replace('{D}',hdType)}</div>
-        <div class="hd-qty-row"><button class="btn-qty" onclick="adjustHDQty(-1)">−</button>
-          <span class="hd-qty-val" id="hd-qty">1</span>
-          <button class="btn-qty" onclick="adjustHDQty(1)">＋</button>
-          <span id="hd-formula" style="font-size:.8em;color:var(--text-muted);margin-left:4px;">1${hdType}${hdModStr}</span></div>
-        <input type="number" id="hd-result" min="0" placeholder="${T('hdEnterResult')}" style="width:72px;margin:6px 0;padding:4px 6px;border:1px solid var(--border);border-radius:5px;background:var(--bg-card);color:var(--text);">
-        <div class="btn-row"><button class="btn heal" onclick="applyHDResult()">${T('hdApply')}</button>
-          <button class="btn" onclick="closeHDDialog(true)">${T('hdSkip')}</button></div>`
-      :`<div class="label">${T('hdNoHD')}</div>
-        <div class="btn-row"><button class="btn" onclick="closeHDDialog(true)">${T('hdSkip')}</button></div>`)
-    :`<div class="btn-row" style="margin-bottom:6px;">
-        <button class="btn long-rest" onclick="longRest()">${T('longRest')}</button>
-        <button class="btn short-rest" onclick="shortRest()">${T('shortRest')}</button>
-      </div>
-      <div style="font-size:.75em;color:var(--text-muted);">${T('longRestNote')}<br>${T('shortRestNote')}</div>`;
-  const restContent=hdCard+`<div class="pn-card">${restsContent}</div>`;
-  // ── Session section content ──
-  const logEntries=(S.logEntries||[]);
-  const logHtml=logEntries.length>0
-    ?logEntries.map(e=>{const ts=e.t?new Date(e.t).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}):'';return `<p class="${e.type||''}"><span style="font-size:.75em;opacity:.5;margin-right:5px;">${ts}</span>${e.msg}</p>`;}).join('')
-    :`<p style="color:var(--text-faint);font-style:italic;">${T('logEmpty')}</p>`;
-  const sessionContent=`<div class="pn-card" style="margin-bottom:12px;"><div class="label">${T('note')}</div><textarea id="note-rapide" placeholder="${T('notePlaceholder')}">${S.notes||''}</textarea></div>
-    <div class="pn-card" style="margin-bottom:12px;">
-      <div style="display:flex;align-items:center;justify-content:space-between;">
-        <div class="label">${T('log')}</div>
-        ${logEntries.length>0?`<button class="btn-del-sm" onclick="clearLog()" style="font-size:.75em;padding:2px 8px;">${T('clearLog')}</button>`:''}
-      </div>
-      <div id="log-wrap">${logHtml}</div>
-    </div>
-    <div class="pn-card">
-      <div class="label">${T('session')}</div>
-      <div class="btn-row" style="margin-top:8px;">
-        <button class="btn long-rest" onclick="exportCharacter()">${T('saveSession')}</button>
-        <label class="btn short-rest" style="cursor:pointer;">${T('loadSession')}<input type="file" id="import-session-click" accept=".json" onchange="importSession(event)" style="display:none;"></label>
-        <button class="btn" onclick="copyToClipboard()">${T('copyClipboard')}</button>
-      </div>
-      <div style="font-size:.75em;color:var(--text-muted);margin-top:6px;">${T('sessionNote')}</div>
-    </div>`;
-  const statsContent=`<div class="pn-grid">${hpCard}</div>`+buildPanelStatStrip()+buildPanelSaveThrows();
-  return buildPanelSection('stats','📊',T('secStats'),statsContent)
-    +buildPanelSection('combat','⚔️',T('secCombat'),combatContent)
-    +buildPanelSection('conditions','⚠️',T('secConditions'),conditionsContent)
-    +buildPanelSection('trackers','🎲',T('secTrackers'),buildPanelTrackers())
-    +buildPanelSection('rest','😴',T('secRest'),restContent)
-    +buildPanelSection('session','💾',T('secSession'),sessionContent);
+  return `<div class="pn-grid" style="margin-top:14px;">${concCard}${deathCard}</div>`;
 }
 // ─── Pannello: collapsible section wrapper ───
 function buildPanelSection(id, emoji, label, content){
@@ -3011,13 +2949,13 @@ function buildPanelActions(){
     const isUsed=ta[slotOf(t)]===id;
     const cost=a.trackerCost||1;
     const isUnavail=a.trackerLink
-      ?(()=>{const found=findTrackerByTid(a.trackerLink);if(!found)return false;const rem=(found.tracker.total||1)-(SESSION.trackers?.[a.trackerLink]?.used||0);return rem<cost;})()
+      ?(()=>{const found=findTrackerByIndex(a.trackerLink);if(!found)return false;const rem=(found.tracker.total||1)-(SESSION.trackers?.[a.trackerLink]?.used||0);return rem<cost;})()
       :!isFeatureActionAvailable(f);
     const hidden=ACTION_FILTER!=='all'&&t!==ACTION_FILTER;
     const cls=`action-entry${isUsed?' used':''}${isUnavail?' unavail':''}`;
     let noteText=a.description||'';
     if(a.trackerLink){
-      const found=findTrackerByTid(a.trackerLink);
+      const found=findTrackerByIndex(a.trackerLink);
       if(found){
         const tr=found.tracker; const rem=(tr.total||0)-(SESSION.trackers?.[a.trackerLink]?.used||0);
         const costBadge=cost>1?` ×${cost}`:'';
@@ -3033,6 +2971,79 @@ function buildPanelActions(){
     ${actFilter}
     <div id="action-list">${all||`<p class="empty-state">${T('noActions')}</p>`}</div>
   </div>`;
+}
+// ─── Pannello: conditions grid + exhaustion ───
+function buildPanelConditions(S,C){
+  const stdConds=DND.conditions||[];
+  const customConds=C.customConditions||[];
+  const condGrid=stdConds.map(c=>`<div class="cond-btn${(S.conditions||[]).includes(c)?' active':''}" onclick="toggleCond(this,'${c.replace(/'/g,"\\'")}')">
+    ${dndTr('conditions',c)||c}
+  </div>`).join('')+customConds.map((c,i)=>`<div class="cond-btn${(S.conditions||[]).includes(c)?' active':''}" onclick="toggleCond(this,'${c.replace(/'/g,"\\'")}')">
+    ${c}${EDIT_MODE?`<button class="btn-del-sm" onclick="event.stopPropagation();deleteCondition(${i})" style="margin-left:4px;">×</button>`:''}
+  </div>`).join('');
+  const exhaustionContent=`<div class="exhaustion-row" style="margin-top:10px;border-top:1px solid var(--border-light);padding-top:8px;">
+    <span style="font-size:.8em;color:var(--text-muted);">${T('exhaustion')} <span class="help-icon" data-tip="${T('helpExhaustion')}">?</span></span>
+    <button class="btn" onclick="changeExhaustion(-1)" style="padding:1px 8px;font-size:.9em;">−</button>
+    <span class="exhaustion-val${(S.exhaustion||0)>=3?' danger':''}">${S.exhaustion||0}</span>
+    <button class="btn" onclick="changeExhaustion(1)" style="padding:1px 8px;font-size:.9em;">+</button>
+    ${(S.exhaustion||0)>0?`<span class="exhaustion-penalty">${T('exhaustionPenalty').replace('{N}',S.exhaustion||0)}</span>`:''}
+  </div>`;
+  return `<div class="cond-grid" id="cond-grid">${condGrid}</div>
+    ${EDIT_MODE?`<button class="add-btn edit-only" onclick="addCondition()" style="margin-top:8px;">${T('addCondition')}</button>`:''}
+    ${exhaustionContent}`;
+}
+// ─── Pannello: hit dice pips + rest buttons (+ HD spend dialog) ───
+function buildPanelRest(S,C){
+  const hdLabel=`d${C.hitDieType||8}`;
+  const hdUsed=S.hitDice?.used||0;
+  const available=(C.level||1)-hdUsed;
+  const hdType='d'+(C.hitDieType||8);
+  let hdPips=''; for(let i=0;i<(C.level||1);i++) hdPips+=`<div class="pip${i<hdUsed?' used':''}" title="${hdLabel}" onclick="clickHDPip(${i})">${hdLabel}</div>`;
+  const hdCard=`<div class="pn-card" style="margin-bottom:12px;"><div class="label">${T('hitDice')} (${hdLabel}) <span class="help-icon" data-tip="${T('helpHitDice')}">?</span></div><div class="pips" id="hd-pips">${hdPips}</div><div class="btn-row"><button class="btn heal" onclick="spendHD()">${T('spendFull')}</button><button class="btn" onclick="resetHD()">${T('reset')}</button></div><div style="margin-top:4px;font-size:.75em;color:var(--text-muted);">${T('hdNote')}</div></div>`;
+  const conMod=abilityMod(finalScores(C).CON||10);
+  const hdModStr=conMod>=0?`+${conMod}`:String(conMod);
+  const restsContent=S.hdDialog
+    ?(available>0
+      ?`<div class="label">${T('hdDialogTitle').replace('{A}',available).replace('{D}',hdType)}</div>
+        <div class="hd-qty-row"><button class="btn-qty" onclick="adjustHDQty(-1)">−</button>
+          <span class="hd-qty-val" id="hd-qty">1</span>
+          <button class="btn-qty" onclick="adjustHDQty(1)">＋</button>
+          <span id="hd-formula" style="font-size:.8em;color:var(--text-muted);margin-left:4px;">1${hdType}${hdModStr}</span></div>
+        <input type="number" id="hd-result" min="0" placeholder="${T('hdEnterResult')}" style="width:72px;margin:6px 0;padding:4px 6px;border:1px solid var(--border);border-radius:5px;background:var(--bg-card);color:var(--text);">
+        <div class="btn-row"><button class="btn heal" onclick="applyHDResult()">${T('hdApply')}</button>
+          <button class="btn" onclick="closeHDDialog(true)">${T('hdSkip')}</button></div>`
+      :`<div class="label">${T('hdNoHD')}</div>
+        <div class="btn-row"><button class="btn" onclick="closeHDDialog(true)">${T('hdSkip')}</button></div>`)
+    :`<div class="btn-row" style="margin-bottom:6px;">
+        <button class="btn long-rest" onclick="longRest()">${T('longRest')}</button>
+        <button class="btn short-rest" onclick="shortRest()">${T('shortRest')}</button>
+      </div>
+      <div style="font-size:.75em;color:var(--text-muted);">${T('longRestNote')}<br>${T('shortRestNote')}</div>`;
+  return hdCard+`<div class="pn-card">${restsContent}</div>`;
+}
+// ─── Pannello: notes, action log, session export/import ───
+function buildPanelSession(S){
+  const logEntries=S.logEntries||[];
+  const logHtml=logEntries.length>0
+    ?logEntries.map(e=>{const ts=e.t?new Date(e.t).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}):'';return `<p class="${e.type||''}"><span style="font-size:.75em;opacity:.5;margin-right:5px;">${ts}</span>${e.msg}</p>`;}).join('')
+    :`<p style="color:var(--text-faint);font-style:italic;">${T('logEmpty')}</p>`;
+  return `<div class="pn-card" style="margin-bottom:12px;"><div class="label">${T('note')}</div><textarea id="note-rapide" placeholder="${T('notePlaceholder')}">${S.notes||''}</textarea></div>
+    <div class="pn-card" style="margin-bottom:12px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;">
+        <div class="label">${T('log')}</div>
+        ${logEntries.length>0?`<button class="btn-del-sm" onclick="clearLog()" style="font-size:.75em;padding:2px 8px;">${T('clearLog')}</button>`:''}
+      </div>
+      <div id="log-wrap">${logHtml}</div>
+    </div>
+    <div class="pn-card">
+      <div class="label">${T('session')}</div>
+      <div class="btn-row" style="margin-top:8px;">
+        <button class="btn long-rest" onclick="exportCharacter()">${T('saveSession')}</button>
+        <label class="btn short-rest" style="cursor:pointer;">${T('loadSession')}<input type="file" id="import-session-click" accept=".json" onchange="importSession(event)" style="display:none;"></label>
+        <button class="btn" onclick="copyToClipboard()">${T('copyClipboard')}</button>
+      </div>
+      <div style="font-size:.75em;color:var(--text-muted);margin-top:6px;">${T('sessionNote')}</div>
+    </div>`;
 }
 // ═══════════════ RENDER SECTIONS ═══════════════
 function buildLevelUpChecks(C,newLv,pbChanged,isCaster,featName){
@@ -3537,7 +3548,7 @@ function clickHDPip(i){
   renderPanel(); saveAll();
 }
 // Returns {tracker, feature} for any tracker across all features, by session ID
-function findTrackerByTid(tid){
+function findTrackerByIndex(tid){
   for(const f of (CHAR.features||[])){
     for(const t of (f.trackers||[])){
       if(slugify(t.label||f.title)===tid) return {tracker:t,feature:f};
@@ -3748,7 +3759,7 @@ function changeRound(d){
           if('fa-'+slugify(a.label||f.title||'')!==id) continue;
           if(!a.trackerLink) continue;
           const tid=a.trackerLink;
-          const found=findTrackerByTid(tid);
+          const found=findTrackerByIndex(tid);
           if(!found) continue;
           const total=found.tracker.total||0;
           const used=(SESSION.trackers?.[tid]?.used)||0;
@@ -4050,7 +4061,7 @@ function importCharacter(event){
 }
 function importSession(event){importCharacter(event);}
 // ═══════════════ WIZARD ENGINE ═══════════════
-let WIZ_CONFIG=null, WIZ_STEP=0, WIZ_DATA={}, WIZ_EDIT_IDX=null, WIZ_KEY=null, WIZ_CLOSE_PENDING=false;
+const WIZ={config:null,step:0,data:{},editIdx:null,key:null,closePending:false,blocks:[],algoSteps:[],trackers:[],actions:[],tags:[],trkEdit:-1,actEdit:-1,trkIsNew:false,actIsNew:false,cbEditIdx:-1,cbEditData:null,cbIsNew:false};
 const COINS=[
   {id:'pp',emoji:'🔮',label:'PP',tip:'Platinum Pieces'},
   {id:'gp',emoji:'🥇',label:'GP',tip:'Gold Pieces'},
@@ -4060,69 +4071,90 @@ const COINS=[
 ];
 let CUR_COIN='gp';
 let ACTION_FILTER='all';
-let WIZ_BLOCKS=[], WIZ_ALGO_STEPS=[];
-let WIZ_TRACKERS=[], WIZ_ACTIONS=[], WIZ_TAGS=[];
-let WIZ_TRK_EDIT=-1, WIZ_ACT_EDIT=-1, WIZ_TRK_IS_NEW=false, WIZ_ACT_IS_NEW=false;
 
+
+// Helper: wrap wizard fields in a collapsible Advanced group
+function wizAdvancedGroup(fieldIds, label){
+  const fields=fieldIds.map(id=>{const el=document.getElementById('wf-'+id);return el?el.closest('.wiz-field'):null;}).filter(Boolean);
+  if(!fields.length) return;
+  const det=document.createElement('details');
+  det.className='wiz-advanced-group';
+  const sum=document.createElement('summary');
+  sum.textContent=label;
+  det.appendChild(sum);
+  const body=document.createElement('div');
+  body.className='wiz-adv-body';
+  det.appendChild(body);
+  fields[0].parentNode.insertBefore(det,fields[0]);
+  fields.forEach(f=>body.appendChild(f));
+  // Auto-open when editing a character that already has values in these fields
+  const hasValue=fields.some(f=>{
+    const inp=f.querySelector('input,select,textarea');
+    if(!inp) return false;
+    const v=inp.value;
+    return v!==''&&v!=='0'&&v!==null&&v!==undefined;
+  });
+  if(hasValue) det.open=true;
+}
 function openWizard(configKey, editIdx=null, prefill={}){
-  WIZ_KEY=configKey;
-  WIZ_CONFIG=WIZARDS[configKey];
-  if(!WIZ_CONFIG){console.error('Unknown wizard:',configKey);return;}
+  WIZ.key=configKey;
+  WIZ.config=WIZARDS[configKey];
+  if(!WIZ.config){console.error('Unknown wizard:',configKey);return;}
   // Allow wizards to compute steps dynamically at open time
-  if(typeof WIZ_CONFIG._buildSteps==='function'){
-    WIZ_CONFIG=Object.assign({},WIZ_CONFIG,{steps:WIZ_CONFIG._buildSteps()});
+  if(typeof WIZ.config._buildSteps==='function'){
+    WIZ.config=Object.assign({},WIZ.config,{steps:WIZ.config._buildSteps()});
   }
-  WIZ_STEP=0; WIZ_EDIT_IDX=editIdx; WIZ_DATA={...prefill};
-  WIZ_BLOCKS=(prefill.contentBlocks||[]).map(b=>JSON.parse(JSON.stringify(b)));
-  WIZ_ALGO_STEPS=[...(prefill.steps||[])];
-  WIZ_TRACKERS=(prefill.trackers||[]).map(t=>({...t}));
-  WIZ_ACTIONS=(prefill.actions||[]).map(a=>({...a}));
-  WIZ_TAGS=(prefill.tags||[]).map(t=>({...t}));
+  WIZ.step=0; WIZ.editIdx=editIdx; WIZ.data={...prefill};
+  WIZ.blocks=(prefill.contentBlocks||[]).map(b=>JSON.parse(JSON.stringify(b)));
+  WIZ.algoSteps=[...(prefill.steps||[])];
+  WIZ.trackers=(prefill.trackers||[]).map(t=>({...t}));
+  WIZ.actions=(prefill.actions||[]).map(a=>({...a}));
+  WIZ.tags=(prefill.tags||[]).map(t=>({...t}));
   document.getElementById('wizard-overlay').style.display='flex';
   renderWizardStep();
 }
 function closeWizard(){
   document.getElementById('wizard-overlay').style.display='none';
-  WIZ_CLOSE_PENDING=false;
-  WIZ_CONFIG=null; WIZ_KEY=null; WIZ_DATA={}; WIZ_BLOCKS=[]; WIZ_ALGO_STEPS=[];
-  WIZ_TRACKERS=[]; WIZ_ACTIONS=[]; WIZ_TAGS=[]; WIZ_TRK_EDIT=-1; WIZ_ACT_EDIT=-1; WIZ_TRK_IS_NEW=false; WIZ_ACT_IS_NEW=false;
+  WIZ.closePending=false;
+  WIZ.config=null; WIZ.key=null; WIZ.data={}; WIZ.blocks=[]; WIZ.algoSteps=[];
+  WIZ.trackers=[]; WIZ.actions=[]; WIZ.tags=[]; WIZ.trkEdit=-1; WIZ.actEdit=-1; WIZ.trkIsNew=false; WIZ.actIsNew=false;
 }
 function wizBack(){
   // Cancel any active inline edit before navigating back
-  if(CB_EDIT_IDX>=0){cancelBlockEdit();return;}
+  if(WIZ.cbEditIdx>=0){cancelBlockEdit();return;}
   if(ALGO_EDIT_IDX>=0){cancelAlgoStep();return;}
-  if(WIZ_TRK_EDIT>=0){cancelWizTrkEdit();return;}
-  if(WIZ_ACT_EDIT>=0){cancelWizActEdit();return;}
-  if(WIZ_STEP>0){WIZ_STEP--;renderWizardStep();}
+  if(WIZ.trkEdit>=0){cancelWizTrkEdit();return;}
+  if(WIZ.actEdit>=0){cancelWizActEdit();return;}
+  if(WIZ.step>0){WIZ.step--;renderWizardStep();}
 }
 function wizNext(){
   // Auto-save any active inline edit before proceeding
-  if(WIZ_TRK_EDIT>=0){collectTrkEdit(WIZ_TRK_EDIT);WIZ_TRK_EDIT=-1;}
-  if(WIZ_ACT_EDIT>=0){collectActEdit(WIZ_ACT_EDIT);WIZ_ACT_EDIT=-1;}
+  if(WIZ.trkEdit>=0){collectTrkEdit(WIZ.trkEdit);WIZ.trkEdit=-1;}
+  if(WIZ.actEdit>=0){collectActEdit(WIZ.actEdit);WIZ.actEdit=-1;}
   collectStepData();
   const err=validateStep();
   if(err){showToast(err,'error');return;}
-  if(WIZ_STEP<WIZ_CONFIG.steps.length-1){WIZ_STEP++;renderWizardStep();}
+  if(WIZ.step<WIZ.config.steps.length-1){WIZ.step++;renderWizardStep();}
   else wizFinish();
 }
 function renderWizardStep(){
-  const step=WIZ_CONFIG.steps[WIZ_STEP];
-  const total=WIZ_CONFIG.steps.length;
-  document.getElementById('wiz-title').textContent=T(WIZ_CONFIG.title)+(WIZ_EDIT_IDX!==null?' ('+T('wizEdit')+')':'');
-  document.getElementById('wiz-step-label').textContent=`${T('step')} ${WIZ_STEP+1} / ${total}: ${T(step.label)}`;
-  document.getElementById('wiz-progress').style.width=`${((WIZ_STEP+1)/total)*100}%`;
+  const step=WIZ.config.steps[WIZ.step];
+  const total=WIZ.config.steps.length;
+  document.getElementById('wiz-title').textContent=T(WIZ.config.title)+(WIZ.editIdx!==null?' ('+T('wizEdit')+')':'');
+  document.getElementById('wiz-step-label').textContent=`${T('step')} ${WIZ.step+1} / ${total}: ${T(step.label)}`;
+  document.getElementById('wiz-progress').style.width=`${((WIZ.step+1)/total)*100}%`;
   const backBtn=document.getElementById('wiz-back');
-  backBtn.disabled=(WIZ_STEP===0);
-  backBtn.style.display=(WIZ_STEP===0)?'none':'';
+  backBtn.disabled=(WIZ.step===0);
+  backBtn.style.display=(WIZ.step===0)?'none':'';
   backBtn.textContent=T('wizBack');
   document.getElementById('wiz-cancel').textContent=T('wizCancel');
-  document.getElementById('wiz-next').textContent=(WIZ_STEP===total-1)?T('wizSave'):T('wizNext');
+  document.getElementById('wiz-next').textContent=(WIZ.step===total-1)?T('wizSave'):T('wizNext');
   let html='';
   // Custom step renderer overrides default field-based rendering
   if(step._renderStep){
-    html=step._renderStep(WIZ_DATA);
+    html=step._renderStep(WIZ.data);
     document.getElementById('wiz-body').innerHTML=html;
-    if(step._afterRender) step._afterRender(WIZ_DATA);
+    if(step._afterRender) step._afterRender(WIZ.data);
     return;
   }
   // support _buildFields() for lazy field generation (e.g. language-dependent)
@@ -4132,12 +4164,12 @@ function renderWizardStep(){
   if(step.hasContentBlocks) html+=renderContentBlockEditor();
   if(step.hasAlgoSteps) html+=renderAlgoStepEditor();
   document.getElementById('wiz-body').innerHTML=html;
-  // Restore values from WIZ_DATA (use lazy fields if defined)
+  // Restore values from WIZ.data (use lazy fields if defined)
   const restoreFields=step._buildFields?step._buildFields():(step.fields||[]);
   restoreFields.forEach(f=>{
     const el=document.getElementById('wf-'+f.id);
     if(!el)return;
-    const val=WIZ_DATA[f.id]??f.default??'';
+    const val=WIZ.data[f.id]??f.default??'';
     if(f.type==='checkbox') el.checked=!!val;
     else if(f.type==='select-or-custom'){
       const optArr=typeof f.options==='function'?f.options():(f.options||[]);
@@ -4149,13 +4181,13 @@ function renderWizardStep(){
     else el.value=val;
   });
   // Call _afterRender hook for field-based steps too (e.g. class→subclass dependency)
-  if(step._afterRender) step._afterRender(WIZ_DATA);
+  if(step._afterRender) step._afterRender(WIZ.data);
   // Always sync the live preview after the step is fully rendered
   injectWizPreview();
 }
 function renderField(f){
   let inp='';
-  const val=WIZ_DATA[f.id]??f.default??'';
+  const val=WIZ.data[f.id]??f.default??'';
   if(f.type==='text'||f.type==='number'){
     const lbl=f.label?`<label for="wf-${f.id}" class="wiz-label">${T(f.label)}${f.required?` <span style="color:var(--accent)">*</span>`:''}${f.hint?` <span class="help-icon" data-tip="${T(f.hint).replace(/"/g,'&quot;')}">?</span>`:''}</label>`:'';
     inp=`<input id="wf-${f.id}" class="wiz-input" type="${f.type}" placeholder="${T(f.placeholder||'')}" value="${val}" ${f.min!==undefined?'min='+f.min:''} ${f.max!==undefined?'max='+f.max:''}>`;
@@ -4179,7 +4211,7 @@ function renderField(f){
     // Multiple checkboxes side-by-side in one row
     const lbl=f.label?`<div class="wiz-label">${T(f.label)}${f.hint?` <span class="help-icon" data-tip="${T(f.hint).replace(/"/g,'&quot;')}">?</span>`:''}</div>`:'';
     const pills=(f.items||[]).map(item=>{
-      const v=WIZ_DATA[item.id]??false;
+      const v=WIZ.data[item.id]??false;
       return `<label class="wiz-check-pill"><input id="wf-${item.id}" type="checkbox" ${v?'checked':''}> ${item.text||T(item.label||'')}</label>`;
     }).join('');
     return `<div class="wiz-field">${lbl}<div class="wiz-check-group">${pills}</div></div>`;
@@ -4206,18 +4238,18 @@ function renderField(f){
 // ── Feature wizard live preview ──
 function renderFeaturePreview(){
   const el=id=>document.getElementById('wf-'+id);
-  const title=el('title')?.value||WIZ_DATA.title||'';
-  const emoji=el('emoji')?.value||WIZ_DATA.emoji||'';
-  const subtitle=el('subtitle')?.value||WIZ_DATA.subtitle||'';
+  const title=el('title')?.value||WIZ.data.title||'';
+  const emoji=el('emoji')?.value||WIZ.data.emoji||'';
+  const subtitle=el('subtitle')?.value||WIZ.data.subtitle||'';
   const srcEl=el('source'),srcC=document.getElementById('wf-source-custom');
-  const source=srcEl?(srcEl.value==='_custom'?(srcC?.value||''):srcEl.value):(WIZ_DATA.source||'');
-  const tags=renderTags(WIZ_TAGS);
+  const source=srcEl?(srcEl.value==='_custom'?(srcC?.value||''):srcEl.value):(WIZ.data.source||'');
+  const tags=renderTags(WIZ.tags);
   const srcTag=source?`<span class="feature-source">${translateSource(source)}</span>`:'';
   const subLine=subtitle?`<div class="feature-subtitle">${md(subtitle)}</div>`:'';
-  const blocks=(WIZ_BLOCKS||[]).map(b=>renderContentBlock(b)).join('');
-  const tList=(WIZ_TRACKERS||[]).length?`<div class="preview-meta">📊 ${WIZ_TRACKERS.map(t=>`${t.emoji||'●'} ${t.label||title} (${t.total||1})`).join(', ')}</div>`:'';
-  const aList=(WIZ_ACTIONS||[]).length?`<div class="preview-meta">⚡ ${WIZ_ACTIONS.map(a=>`${a.emoji||'▶'} ${a.label||title}`).join(', ')}</div>`:'';
-  if(!title&&!blocks&&!WIZ_TRACKERS.length&&!WIZ_ACTIONS.length) return '';
+  const blocks=(WIZ.blocks||[]).map(b=>renderContentBlock(b)).join('');
+  const tList=(WIZ.trackers||[]).length?`<div class="preview-meta">📊 ${WIZ.trackers.map(t=>`${t.emoji||'●'} ${t.label||title} (${t.total||1})`).join(', ')}</div>`:'';
+  const aList=(WIZ.actions||[]).length?`<div class="preview-meta">⚡ ${WIZ.actions.map(a=>`${a.emoji||'▶'} ${a.label||title}`).join(', ')}</div>`:'';
+  if(!title&&!blocks&&!WIZ.trackers.length&&!WIZ.actions.length) return '';
   return `<div id="wiz-preview" class="wiz-preview"><div class="wiz-preview-label">${T('wizPreview')}</div><div class="wiz-preview-content"><h2>${emoji} ${title||'...'} ${tags} ${srcTag}</h2><div class="section-header-line"></div>${subLine}${blocks}${tList}${aList}</div></div>`;
 }
 function injectFeaturePreview(){
@@ -4229,21 +4261,21 @@ function injectFeaturePreview(){
 // ── Spell wizard live preview ──
 function renderSpellPreview(){
   const el=id=>document.getElementById('wf-'+id);
-  const name=el('name')?.value||WIZ_DATA.name||'';
-  const origName=el('originalName')?.value||WIZ_DATA.originalName||'';
-  const emoji=el('emoji')?.value||WIZ_DATA.emoji||'';
-  const level=+(el('level')?.value??WIZ_DATA.level??0);
-  const school=el('school')?.value||WIZ_DATA.school||'';
-  const actionType=el('actionType')?.value||WIZ_DATA.actionType||'';
-  const range=el('range')?.value||WIZ_DATA.range||'';
-  const duration=el('duration')?.value||WIZ_DATA.duration||'';
-  const conc=el('concentration')?.checked??WIZ_DATA.concentration??false;
-  const rit=el('ritual')?.checked??WIZ_DATA.ritual??false;
-  const saveAb=el('saveAbility')?.value||WIZ_DATA.saveAbility||'';
-  const desc=el('description')?.value||WIZ_DATA.description||'';
-  const scaling=el('scaling')?.value||WIZ_DATA.scaling||'';
-  const notes=el('notes')?.value||WIZ_DATA.notes||'';
-  const tags=renderTags(WIZ_TAGS);
+  const name=el('name')?.value||WIZ.data.name||'';
+  const origName=el('originalName')?.value||WIZ.data.originalName||'';
+  const emoji=el('emoji')?.value||WIZ.data.emoji||'';
+  const level=+(el('level')?.value??WIZ.data.level??0);
+  const school=el('school')?.value||WIZ.data.school||'';
+  const actionType=el('actionType')?.value||WIZ.data.actionType||'';
+  const range=el('range')?.value||WIZ.data.range||'';
+  const duration=el('duration')?.value||WIZ.data.duration||'';
+  const conc=el('concentration')?.checked??WIZ.data.concentration??false;
+  const rit=el('ritual')?.checked??WIZ.data.ritual??false;
+  const saveAb=el('saveAbility')?.value||WIZ.data.saveAbility||'';
+  const desc=el('description')?.value||WIZ.data.description||'';
+  const scaling=el('scaling')?.value||WIZ.data.scaling||'';
+  const notes=el('notes')?.value||WIZ.data.notes||'';
+  const tags=renderTags(WIZ.tags);
   if(!name&&!desc) return '';
   const color=DND.slotColors[level]||'var(--accent)';
   const atype=dndTr('actionLabels',normalizeActionType(actionType))||actionType||'';
@@ -4262,17 +4294,17 @@ function injectSpellPreview(){
 // ── Weapon wizard live preview ──
 function renderWeaponPreview(){
   const el=id=>document.getElementById('wf-'+id);
-  const name=el('name')?.value||WIZ_DATA.name||'';
-  const emoji=el('emoji')?.value||WIZ_DATA.emoji||'';
-  const damageDie=el('damageDie')?.value||WIZ_DATA.damageDie||'';
+  const name=el('name')?.value||WIZ.data.name||'';
+  const emoji=el('emoji')?.value||WIZ.data.emoji||'';
+  const damageDie=el('damageDie')?.value||WIZ.data.damageDie||'';
   const dtSel=el('damageType'),dtC=document.getElementById('wf-damageType-custom');
-  const damageType=dtSel?(dtSel.value==='_custom'?(dtC?.value||''):dtSel.value):(WIZ_DATA.damageType||'');
-  const attackStat=el('attackStat')?.value||WIZ_DATA.attackStat||'';
-  const magicBonus=+(el('magicBonus')?.value??WIZ_DATA.magicBonus??0);
-  const qty=+(el('quantity')?.value??WIZ_DATA.quantity??1);
-  const props=el('properties')?.value||WIZ_DATA.properties||'';
-  const notes=el('notes')?.value||WIZ_DATA.notes||'';
-  const tags=renderTags(WIZ_TAGS);
+  const damageType=dtSel?(dtSel.value==='_custom'?(dtC?.value||''):dtSel.value):(WIZ.data.damageType||'');
+  const attackStat=el('attackStat')?.value||WIZ.data.attackStat||'';
+  const magicBonus=+(el('magicBonus')?.value??WIZ.data.magicBonus??0);
+  const qty=+(el('quantity')?.value??WIZ.data.quantity??1);
+  const props=el('properties')?.value||WIZ.data.properties||'';
+  const notes=el('notes')?.value||WIZ.data.notes||'';
+  const tags=renderTags(WIZ.tags);
   if(!name&&!damageDie) return '';
   const scores=finalScores(CHAR);
   const pb=CHAR?.proficiencyBonusOverride??(CHAR?.proficiencyBonus||computedPB(CHAR?.level||1));
@@ -4297,9 +4329,9 @@ function injectWeaponPreview(){
 // ── Algorithm wizard live preview ──
 function renderAlgoPreview(){
   const el=id=>document.getElementById('wf-'+id);
-  const title=el('title')?.value||WIZ_DATA.title||'';
-  const emoji=el('emoji')?.value||WIZ_DATA.emoji||'';
-  const steps=(WIZ_ALGO_STEPS||[]);
+  const title=el('title')?.value||WIZ.data.title||'';
+  const emoji=el('emoji')?.value||WIZ.data.emoji||'';
+  const steps=(WIZ.algoSteps||[]);
   if(!title&&!steps.length) return '';
   const stepsHtml=steps.map(st=>`<div class="algo-step${st.indent?' indent':''}">
     ${st.question?`<div class="algo-step-question">${md(st.question)}</div>`:''}
@@ -4317,36 +4349,36 @@ function injectAlgoPreview(){
 }
 // ── Generic wizard preview dispatcher ──
 function injectWizPreview(){
-  if(WIZ_KEY==='feature') injectFeaturePreview();
-  else if(WIZ_KEY==='spell') injectSpellPreview();
-  else if(WIZ_KEY==='weapon') injectWeaponPreview();
-  else if(WIZ_KEY==='algoblock') injectAlgoPreview();
+  if(WIZ.key==='feature') injectFeaturePreview();
+  else if(WIZ.key==='spell') injectSpellPreview();
+  else if(WIZ.key==='weapon') injectWeaponPreview();
+  else if(WIZ.key==='algoblock') injectAlgoPreview();
 }
 function collectStepData(){
-  const step=WIZ_CONFIG?.steps[WIZ_STEP];
+  const step=WIZ.config?.steps[WIZ.step];
   if(!step)return;
-  if(step._collectData){ step._collectData(WIZ_DATA); return; }
+  if(step._collectData){ step._collectData(WIZ.data); return; }
   const fields=step._buildFields?step._buildFields():(step.fields||[]);
   fields.forEach(f=>{
     if(f.type==='checkbox-group'){
-      (f.items||[]).forEach(item=>{const e=document.getElementById('wf-'+item.id);if(e)WIZ_DATA[item.id]=e.checked;});
+      (f.items||[]).forEach(item=>{const e=document.getElementById('wf-'+item.id);if(e)WIZ.data[item.id]=e.checked;});
       return;
     }
     const el=document.getElementById('wf-'+f.id);
     if(!el)return;
-    if(f.type==='checkbox') WIZ_DATA[f.id]=el.checked;
-    else if(f.type==='number') WIZ_DATA[f.id]=el.value!==''?Number(el.value):null;
+    if(f.type==='checkbox') WIZ.data[f.id]=el.checked;
+    else if(f.type==='number') WIZ.data[f.id]=el.value!==''?Number(el.value):null;
     else if(f.type==='select-or-custom'){
       const ci=document.getElementById('wf-'+f.id+'-custom');
-      WIZ_DATA[f.id]=el.value==='_custom'?(ci?.value||''):el.value;
+      WIZ.data[f.id]=el.value==='_custom'?(ci?.value||''):el.value;
     }
-    else WIZ_DATA[f.id]=el.value;
+    else WIZ.data[f.id]=el.value;
   });
 }
 function validateStep(){
-  const step=WIZ_CONFIG?.steps[WIZ_STEP];
+  const step=WIZ.config?.steps[WIZ.step];
   if(!step)return null;
-  if(step._validateStep) return step._validateStep(WIZ_DATA);
+  if(step._validateStep) return step._validateStep(WIZ.data);
   const fields=step._buildFields?step._buildFields():(step.fields||[]);
   for(const f of fields){
     if(f.required){
@@ -4369,24 +4401,26 @@ function wizFinish(){
   collectStepData();
   const err=validateStep();
   if(err){showToast(err,'error');return;}
-  WIZ_CONFIG.onSave(WIZ_DATA, WIZ_EDIT_IDX, WIZ_BLOCKS, WIZ_ALGO_STEPS);
+  WIZ.config.onSave(WIZ.data, WIZ.editIdx, WIZ.blocks, WIZ.algoSteps);
   closeWizard(); saveAll(); renderAll();
   showToast(T('wizSaved'),'success');
 }
 // ── Content Block Editor ──
 function renderContentBlockEditor(){
-  let rows=WIZ_BLOCKS.map((b,i)=>`<div class="cb-row" id="cb-row-${i}">
+  let rows=WIZ.blocks.map((b,i)=>`<div class="cb-row" id="cb-row-${i}">
     <span>${b.emoji||''} <strong>${b.type}</strong>: ${String(b.text||b.title||b.label||b.bullets?.join(', ')||(b.rows?b.rows.length+' rows':'')||'').slice(0,50)}</span>
     <div style="display:flex;gap:4px;">
       <button class="btn-edit-sm" onclick="editBlock(${i})">✏️</button>
       <button class="btn-del-sm" onclick="deleteBlock(${i})">🗑</button>
       ${i>0?`<button class="btn-edit-sm" onclick="moveBlock(${i},-1)">▲</button>`:''}
-      ${i<WIZ_BLOCKS.length-1?`<button class="btn-edit-sm" onclick="moveBlock(${i},1)">▼</button>`:''}
+      ${i<WIZ.blocks.length-1?`<button class="btn-edit-sm" onclick="moveBlock(${i},1)">▼</button>`:''}
     </div>
   </div>`).join('');
   const typePills=Object.entries(DND.blockTypes).map(([k,enV])=>{
     const icons={paragraph:'¶',bullets:'•',table:'⊞',note:'📌',header:'H',subfeature:'🔷'};
-    return `<button class="cb-type-pill" onclick="addBlock('${k}')" title="${dndTr('blockTypes',k)||enV}">${icons[k]||'+'} ${dndTr('blockTypes',k)||enV}</button>`;
+    const tipKey={paragraph:'hint_blockTypeParagraph',bullets:'hint_blockTypeBullets',table:'hint_blockTypeTable',note:'hint_blockTypeNote',header:'hint_blockTypeHeader',subfeature:'hint_blockTypeSubfeature'};
+    const label=dndTr('blockTypes',k)||enV;
+    return `<button class="cb-type-pill" onclick="addBlock('${k}')" data-tip="${T(tipKey[k])||label}">${icons[k]||'+'} ${label}</button>`;
   }).join('');
   return `<div class="wiz-field"><label class="wiz-label">${T('contentBlocks')}</label>
     <p class="wiz-step-desc">${T('hint_contentBlocks')}</p>
@@ -4395,18 +4429,21 @@ function renderContentBlockEditor(){
 }
 function addBlock(type){
   if(!type) type=document.getElementById('cb-type-sel')?.value||'paragraph';
-  WIZ_BLOCKS.push({type,text:'',title:'',emoji:'',rows:[],bullets:[],contentBlocks:[]});
-  CB_IS_NEW=true;
+  WIZ.blocks.push({type,text:'',title:'',emoji:'',rows:[],bullets:[],contentBlocks:[]});
+  WIZ.cbIsNew=true;
   refreshCBEditor();
-  editBlock(WIZ_BLOCKS.length-1);
+  editBlock(WIZ.blocks.length-1);
 }
-let CB_EDIT_IDX=-1, CB_EDIT_DATA=null, CB_IS_NEW=false;
+
 function editBlock(i){
-  CB_EDIT_IDX=i;
-  if(!CB_EDIT_DATA||CB_EDIT_DATA._srcIdx!==i) CB_EDIT_DATA={...JSON.parse(JSON.stringify(WIZ_BLOCKS[i])),_srcIdx:i};
+  WIZ.cbEditIdx=i;
+  if(!WIZ.cbEditData||WIZ.cbEditData._srcIdx!==i) WIZ.cbEditData={...JSON.parse(JSON.stringify(WIZ.blocks[i])),_srcIdx:i};
   const row=document.getElementById('cb-row-'+i); if(!row) return;
-  const b=CB_EDIT_DATA;
-  let html='<div style="width:100%;padding:6px 0;">';
+  const b=WIZ.cbEditData;
+  const typeLabel=dndTr('blockTypes',b.type)||b.type;
+  const verb=WIZ.cbIsNew?T('cbEditBlockAdd'):T('cbEditBlockEdit');
+  let html=`<div style="width:100%;padding:6px 0;">
+    <div class="wiz-section-label" style="margin:0 0 10px;color:var(--accent);">${verb} — ${typeLabel}</div>`;
   if(b.type==='paragraph'||b.type==='note'){
     html+=`<textarea id="cbe-text" class="wiz-input" rows="3">${b.text||''}</textarea>`;
   } else if(b.type==='header'){
@@ -4422,20 +4459,20 @@ function editBlock(i){
     <button class="btn" onclick="saveBlockEdit()">✓ ${T('wizSave')}</button>
     <button class="btn" onclick="cancelBlockEdit()">✕</button></div></div>`;
   row.innerHTML=html;
-  WIZ_BLOCKS.forEach((_,j)=>{if(j!==i){const r=document.getElementById('cb-row-'+j);if(r)r.classList.add('cb-dimmed');}});
+  WIZ.blocks.forEach((_,j)=>{if(j!==i){const r=document.getElementById('cb-row-'+j);if(r)r.classList.add('cb-dimmed');}});
   const addCtrl=document.getElementById('cb-add-controls');if(addCtrl)addCtrl.style.display='none';
 }
-function deleteBlock(i){WIZ_BLOCKS.splice(i,1);CB_EDIT_IDX=-1;CB_EDIT_DATA=null;CB_IS_NEW=false;refreshCBEditor();}
+function deleteBlock(i){WIZ.blocks.splice(i,1);WIZ.cbEditIdx=-1;WIZ.cbEditData=null;WIZ.cbIsNew=false;refreshCBEditor();}
 function saveBlockEdit(){
-  if(CB_EDIT_IDX<0||!CB_EDIT_DATA)return;
+  if(WIZ.cbEditIdx<0||!WIZ.cbEditData)return;
   cbeCollectFromDOM();
-  delete CB_EDIT_DATA._srcIdx;
-  WIZ_BLOCKS[CB_EDIT_IDX]=CB_EDIT_DATA;
-  CB_EDIT_IDX=-1;CB_EDIT_DATA=null;CB_IS_NEW=false;refreshCBEditor();
+  delete WIZ.cbEditData._srcIdx;
+  WIZ.blocks[WIZ.cbEditIdx]=WIZ.cbEditData;
+  WIZ.cbEditIdx=-1;WIZ.cbEditData=null;WIZ.cbIsNew=false;refreshCBEditor();
 }
 function cancelBlockEdit(){
-  if(CB_IS_NEW){WIZ_BLOCKS.splice(CB_EDIT_IDX,1);}
-  CB_EDIT_IDX=-1;CB_EDIT_DATA=null;CB_IS_NEW=false;refreshCBEditor();
+  if(WIZ.cbIsNew){WIZ.blocks.splice(WIZ.cbEditIdx,1);}
+  WIZ.cbEditIdx=-1;WIZ.cbEditData=null;WIZ.cbIsNew=false;refreshCBEditor();
 }
 function cbeRenderTable(b){
   const rows=b.rows||[];
@@ -4452,14 +4489,14 @@ function cbeRenderTable(b){
 }
 function cbeAddTableRow(){
   cbeCollectFromDOM();
-  CB_EDIT_DATA.rows=CB_EDIT_DATA.rows||[];
-  CB_EDIT_DATA.rows.push(['','']);
-  editBlock(CB_EDIT_IDX);
+  WIZ.cbEditData.rows=WIZ.cbEditData.rows||[];
+  WIZ.cbEditData.rows.push(['','']);
+  editBlock(WIZ.cbEditIdx);
 }
 function cbeDeleteTableRow(idx){
   cbeCollectFromDOM();
-  CB_EDIT_DATA.rows.splice(idx,1);
-  editBlock(CB_EDIT_IDX);
+  WIZ.cbEditData.rows.splice(idx,1);
+  editBlock(WIZ.cbEditIdx);
 }
 function cbeRenderSubfeature(b){
   let html=`<div style="display:flex;gap:6px;margin-bottom:6px;">
@@ -4469,17 +4506,18 @@ function cbeRenderSubfeature(b){
   const subs=b.contentBlocks||[];
   subs.forEach((sb,i)=>{
     const txt=sb.type==='bullets'?(sb.bullets||[]).join('\n'):(sb.text||'');
+    const typeLabel=dndTr('blockTypes',sb.type)||sb.type;
     html+=`<div class="cbe-sub-row" style="display:flex;gap:4px;margin-bottom:4px;align-items:flex-start;">
-      <span style="min-width:55px;font-size:.78em;color:var(--text-muted);padding-top:6px;">${sb.type}</span>
+      <span style="min-width:55px;font-size:.78em;color:var(--text-muted);padding-top:6px;">${typeLabel}</span>
       <textarea class="wiz-input cbe-sub-text" data-type="${sb.type}" rows="2" style="flex:1">${txt}</textarea>
       <button class="btn-del-sm" style="margin-top:4px;" onclick="cbeDeleteSubBlock(${i})">🗑</button>
     </div>`;
   });
   html+=`<div style="display:flex;gap:4px;margin-top:4px;">
     <select id="cbe-sub-type" class="wiz-input" style="flex:1;">
-      <option value="paragraph">paragraph</option>
-      <option value="bullets">bullets</option>
-      <option value="note">note</option>
+      <option value="paragraph">${dndTr('blockTypes','paragraph')||'Paragraph'}</option>
+      <option value="bullets">${dndTr('blockTypes','bullets')||'List'}</option>
+      <option value="note">${dndTr('blockTypes','note')||'Note'}</option>
     </select>
     <button class="btn" onclick="cbeAddSubBlock()">${T('cbAddSubBlock')}</button>
   </div>`;
@@ -4489,17 +4527,17 @@ function cbeRenderSubfeature(b){
 function cbeAddSubBlock(){
   cbeCollectFromDOM();
   const type=document.getElementById('cbe-sub-type')?.value||'paragraph';
-  CB_EDIT_DATA.contentBlocks=CB_EDIT_DATA.contentBlocks||[];
-  CB_EDIT_DATA.contentBlocks.push(type==='bullets'?{type,bullets:[]}:{type,text:''});
-  editBlock(CB_EDIT_IDX);
+  WIZ.cbEditData.contentBlocks=WIZ.cbEditData.contentBlocks||[];
+  WIZ.cbEditData.contentBlocks.push(type==='bullets'?{type,bullets:[]}:{type,text:''});
+  editBlock(WIZ.cbEditIdx);
 }
 function cbeDeleteSubBlock(idx){
   cbeCollectFromDOM();
-  CB_EDIT_DATA.contentBlocks.splice(idx,1);
-  editBlock(CB_EDIT_IDX);
+  WIZ.cbEditData.contentBlocks.splice(idx,1);
+  editBlock(WIZ.cbEditIdx);
 }
 function cbeCollectFromDOM(){
-  if(!CB_EDIT_DATA)return; const b=CB_EDIT_DATA;
+  if(!WIZ.cbEditData)return; const b=WIZ.cbEditData;
   if(b.type==='paragraph'||b.type==='note') b.text=document.getElementById('cbe-text')?.value||'';
   else if(b.type==='header'){b.text=document.getElementById('cbe-text')?.value||'';b.title=b.text;}
   else if(b.type==='bullets') b.bullets=(document.getElementById('cbe-text')?.value||'').split('\n').filter(Boolean);
@@ -4514,23 +4552,23 @@ function cbeCollectFromDOM(){
       const ta=r.querySelector('.cbe-sub-text');const type=ta?.dataset.type||'paragraph';const txt=ta?.value||'';
       if(type==='bullets')blocks.push({type,bullets:txt.split('\n').filter(Boolean)});else blocks.push({type,text:txt});
     });b.contentBlocks=blocks;
-    // Tags are managed live via cbeAddTag/cbeDeleteTag on CB_EDIT_DATA.tags
+    // Tags are managed live via cbeAddTag/cbeDeleteTag on WIZ.cbEditData.tags
   }
 }
 function moveBlock(i,dir){
-  const j=i+dir; if(j<0||j>=WIZ_BLOCKS.length)return;
-  [WIZ_BLOCKS[i],WIZ_BLOCKS[j]]=[WIZ_BLOCKS[j],WIZ_BLOCKS[i]];
+  const j=i+dir; if(j<0||j>=WIZ.blocks.length)return;
+  [WIZ.blocks[i],WIZ.blocks[j]]=[WIZ.blocks[j],WIZ.blocks[i]];
   refreshCBEditor();
 }
 function refreshCBEditor(){
   const wrap=document.getElementById('cb-list'); if(!wrap)return;
-  wrap.innerHTML=WIZ_BLOCKS.map((b,i)=>`<div class="cb-row" id="cb-row-${i}">
+  wrap.innerHTML=WIZ.blocks.map((b,i)=>`<div class="cb-row" id="cb-row-${i}">
     <span>${b.emoji||''} <strong>${b.type}</strong>: ${String(b.text||b.title||b.label||b.bullets?.join(', ')||(b.rows?b.rows.length+' rows':'')||'').slice(0,50)}</span>
     <div style="display:flex;gap:4px;">
       <button class="btn-edit-sm" onclick="editBlock(${i})">✏️</button>
       <button class="btn-del-sm" onclick="deleteBlock(${i})">🗑</button>
       ${i>0?`<button class="btn-edit-sm" onclick="moveBlock(${i},-1)">▲</button>`:''}
-      ${i<WIZ_BLOCKS.length-1?`<button class="btn-edit-sm" onclick="moveBlock(${i},1)">▼</button>`:''}
+      ${i<WIZ.blocks.length-1?`<button class="btn-edit-sm" onclick="moveBlock(${i},1)">▼</button>`:''}
     </div>
   </div>`).join('');
   const addCtrl=document.getElementById('cb-add-controls');if(addCtrl)addCtrl.style.display='';
@@ -4538,13 +4576,13 @@ function refreshCBEditor(){
 }
 let ALGO_EDIT_IDX=-1, ALGO_IS_NEW=false;
 function renderAlgoStepEditor(){
-  let rows=WIZ_ALGO_STEPS.map((s,i)=>`<div class="cb-row" id="algo-row-${i}">
+  let rows=WIZ.algoSteps.map((s,i)=>`<div class="cb-row" id="algo-row-${i}">
     <span>${s.question?'❓ '+s.question.slice(0,40):s.bullets?.join(', ').slice(0,40)||'(step)'}${s.indent?' ↳':''}</span>
     <div style="display:flex;gap:4px;">
       <button class="btn-edit-sm" onclick="editAlgoStep(${i})">✏️</button>
       <button class="btn-del-sm" onclick="deleteAlgoStep(${i})">🗑</button>
       ${i>0?`<button class="btn-edit-sm" onclick="moveAlgoStep(${i},-1)">▲</button>`:''}
-      ${i<WIZ_ALGO_STEPS.length-1?`<button class="btn-edit-sm" onclick="moveAlgoStep(${i},1)">▼</button>`:''}
+      ${i<WIZ.algoSteps.length-1?`<button class="btn-edit-sm" onclick="moveAlgoStep(${i},1)">▼</button>`:''}
     </div>
   </div>`).join('');
   return `<div class="wiz-field"><label class="wiz-label">${T('algoSteps')}</label>
@@ -4553,14 +4591,14 @@ function renderAlgoStepEditor(){
     <button class="btn" onclick="addAlgoStep()" style="margin-top:8px;">${T('addStep')}</button></div>`;
 }
 function addAlgoStep(){
-  WIZ_ALGO_STEPS.push({question:'',bullets:[],indent:false});
+  WIZ.algoSteps.push({question:'',bullets:[],indent:false});
   ALGO_IS_NEW=true;
   refreshAlgoStepEditor();
-  editAlgoStep(WIZ_ALGO_STEPS.length-1);
+  editAlgoStep(WIZ.algoSteps.length-1);
 }
 function editAlgoStep(i){
   ALGO_EDIT_IDX=i;
-  const s=WIZ_ALGO_STEPS[i];
+  const s=WIZ.algoSteps[i];
   const row=document.getElementById('algo-row-'+i);if(!row) return;
   row.innerHTML=`<div style="width:100%;padding:6px 0;">
     <input id="ase-q" class="wiz-input" type="text" placeholder="${T('algoStepQuestion')}" value="${(s.question||'').replace(/"/g,'&quot;')}" style="margin-bottom:6px;">
@@ -4572,34 +4610,34 @@ function editAlgoStep(i){
       <button class="btn" onclick="saveAlgoStep(${i})">✓ ${T('wizSave')}</button>
       <button class="btn" onclick="cancelAlgoStep()">✕</button>
     </div></div>`;
-  WIZ_ALGO_STEPS.forEach((_,j)=>{if(j!==i){const r=document.getElementById('algo-row-'+j);if(r)r.classList.add('cb-dimmed');}});
+  WIZ.algoSteps.forEach((_,j)=>{if(j!==i){const r=document.getElementById('algo-row-'+j);if(r)r.classList.add('cb-dimmed');}});
 }
 function saveAlgoStep(i){
   const q=document.getElementById('ase-q')?.value||'';
   const bRaw=document.getElementById('ase-b')?.value||'';
   const indent=!!document.getElementById('ase-indent')?.checked;
-  WIZ_ALGO_STEPS[i]={question:q,bullets:bRaw.split('\n').filter(Boolean),indent};
+  WIZ.algoSteps[i]={question:q,bullets:bRaw.split('\n').filter(Boolean),indent};
   ALGO_EDIT_IDX=-1; ALGO_IS_NEW=false; refreshAlgoStepEditor();
 }
 function cancelAlgoStep(){
-  if(ALGO_IS_NEW){WIZ_ALGO_STEPS.splice(ALGO_EDIT_IDX,1);}
+  if(ALGO_IS_NEW){WIZ.algoSteps.splice(ALGO_EDIT_IDX,1);}
   ALGO_EDIT_IDX=-1; ALGO_IS_NEW=false; refreshAlgoStepEditor();
 }
-function deleteAlgoStep(i){WIZ_ALGO_STEPS.splice(i,1);ALGO_EDIT_IDX=-1;ALGO_IS_NEW=false;refreshAlgoStepEditor();}
+function deleteAlgoStep(i){WIZ.algoSteps.splice(i,1);ALGO_EDIT_IDX=-1;ALGO_IS_NEW=false;refreshAlgoStepEditor();}
 function moveAlgoStep(i,dir){
-  const j=i+dir; if(j<0||j>=WIZ_ALGO_STEPS.length)return;
-  [WIZ_ALGO_STEPS[i],WIZ_ALGO_STEPS[j]]=[WIZ_ALGO_STEPS[j],WIZ_ALGO_STEPS[i]];
+  const j=i+dir; if(j<0||j>=WIZ.algoSteps.length)return;
+  [WIZ.algoSteps[i],WIZ.algoSteps[j]]=[WIZ.algoSteps[j],WIZ.algoSteps[i]];
   refreshAlgoStepEditor();
 }
 function refreshAlgoStepEditor(){
   const wrap=document.getElementById('algo-step-list');if(!wrap)return;
-  wrap.innerHTML=WIZ_ALGO_STEPS.map((s,i)=>`<div class="cb-row" id="algo-row-${i}">
+  wrap.innerHTML=WIZ.algoSteps.map((s,i)=>`<div class="cb-row" id="algo-row-${i}">
     <span>${s.question?'❓ '+s.question.slice(0,40):s.bullets?.join(', ').slice(0,40)||'(step)'}${s.indent?' ↳':''}</span>
     <div style="display:flex;gap:4px;">
       <button class="btn-edit-sm" onclick="editAlgoStep(${i})">✏️</button>
       <button class="btn-del-sm" onclick="deleteAlgoStep(${i})">🗑</button>
       ${i>0?`<button class="btn-edit-sm" onclick="moveAlgoStep(${i},-1)">▲</button>`:''}
-      ${i<WIZ_ALGO_STEPS.length-1?`<button class="btn-edit-sm" onclick="moveAlgoStep(${i},1)">▼</button>`:''}
+      ${i<WIZ.algoSteps.length-1?`<button class="btn-edit-sm" onclick="moveAlgoStep(${i},1)">▼</button>`:''}
     </div>
   </div>`).join('');
   injectAlgoPreview();
@@ -4617,7 +4655,7 @@ function renderFeatureStep3(){
   return html;
 }
 function renderWizTrackerList(){
-  return WIZ_TRACKERS.map((t,i)=>`<div class="cb-row" id="wiz-trk-${i}">
+  return WIZ.trackers.map((t,i)=>`<div class="cb-row" id="wiz-trk-${i}">
     <span>${t.emoji||'●'} ${t.label||'('+T('tracker')+')'} — ${t.isPool?`${t.total||1} ${t.unit||'pts'} pool`:`${t.total||1} uses`} · ${dndTr('recovery',t.recovery)||t.recovery||'long'}</span>
     <div style="display:flex;gap:4px;">
       <button class="btn-edit-sm" onclick="editWizTracker(${i})">✏️</button>
@@ -4625,12 +4663,12 @@ function renderWizTrackerList(){
     </div></div>`).join('');
 }
 function addWizTracker(){
-  WIZ_TRACKERS.push({label:'',emoji:'',total:1,recovery:'long'});
-  WIZ_TRK_IS_NEW=true;
-  editWizTracker(WIZ_TRACKERS.length-1);
+  WIZ.trackers.push({label:'',emoji:'',total:1,recovery:'long'});
+  WIZ.trkIsNew=true;
+  editWizTracker(WIZ.trackers.length-1);
 }
 function editWizTracker(i){
-  WIZ_TRK_EDIT=i; const t=WIZ_TRACKERS[i];
+  WIZ.trkEdit=i; const t=WIZ.trackers[i];
   const body=document.getElementById('wiz-body'); if(!body) return;
   const recOpts=recoveryOpts().map(o=>`<option value="${o.v}"${o.v===t.recovery?' selected':''}>${o.l}</option>`).join('');
   body.innerHTML=`<div class="wiz-field"><label class="wiz-label">${T('tracker')}</label>
@@ -4688,15 +4726,15 @@ function collectTrkEdit(i){
   if(!t.label) delete t.label;
   if(!t.isPool) delete t.isPool;
   if(!t.unit) delete t.unit;
-  WIZ_TRACKERS[i]=t;
+  WIZ.trackers[i]=t;
 }
 function saveWizTracker(i){
-  collectTrkEdit(i); WIZ_TRK_EDIT=-1; WIZ_TRK_IS_NEW=false; renderWizardStep();
+  collectTrkEdit(i); WIZ.trkEdit=-1; WIZ.trkIsNew=false; renderWizardStep();
 }
-function deleteWizTracker(i){WIZ_TRACKERS.splice(i,1);WIZ_TRK_EDIT=-1;WIZ_TRK_IS_NEW=false;renderWizardStep();}
+function deleteWizTracker(i){WIZ.trackers.splice(i,1);WIZ.trkEdit=-1;WIZ.trkIsNew=false;renderWizardStep();}
 function cancelWizTrkEdit(){
-  if(WIZ_TRK_IS_NEW){WIZ_TRACKERS.splice(WIZ_TRK_EDIT,1);}
-  WIZ_TRK_EDIT=-1;WIZ_TRK_IS_NEW=false;renderWizardStep();
+  if(WIZ.trkIsNew){WIZ.trackers.splice(WIZ.trkEdit,1);}
+  WIZ.trkEdit=-1;WIZ.trkIsNew=false;renderWizardStep();
 }
 function refreshWizTrackerList(){
   const w=document.getElementById('wiz-trk-list');if(!w)return;
@@ -4704,7 +4742,7 @@ function refreshWizTrackerList(){
   injectWizPreview();
 }
 function renderWizActionList(){
-  return WIZ_ACTIONS.map((a,i)=>`<div class="cb-row" id="wiz-act-${i}">
+  return WIZ.actions.map((a,i)=>`<div class="cb-row" id="wiz-act-${i}">
     <span>${a.emoji||'⚡'} ${a.label||'('+T('action')+')'} — ${dndTr('actionLabels',a.type)||a.type||'action'}${a.trackerLink?` <span style="font-size:.72em;color:var(--accent);margin-left:3px;">🔗${a.trackerCost&&a.trackerCost>1?' ×'+a.trackerCost:''}</span>`:''}</span>
     <div style="display:flex;gap:4px;">
       <button class="btn-edit-sm" onclick="editWizAction(${i})">✏️</button>
@@ -4712,24 +4750,24 @@ function renderWizActionList(){
     </div></div>`).join('');
 }
 function addWizAction(){
-  WIZ_ACTIONS.push({label:'',emoji:'',type:'action',description:''});
-  WIZ_ACT_IS_NEW=true;
-  editWizAction(WIZ_ACTIONS.length-1);
+  WIZ.actions.push({label:'',emoji:'',type:'action',description:''});
+  WIZ.actIsNew=true;
+  editWizAction(WIZ.actions.length-1);
 }
 function editWizAction(i){
-  WIZ_ACT_EDIT=i; const a=WIZ_ACTIONS[i];
+  WIZ.actEdit=i; const a=WIZ.actions[i];
   const body=document.getElementById('wiz-body'); if(!body) return;
   const typeOpts=actionTypeOpts().map(o=>`<option value="${o.v}"${o.v===a.type?' selected':''}>${o.l}</option>`).join('');
-  const featureTitle=WIZ_DATA?.title||'';
-  // Build tracker list: current feature (unsaved WIZ_TRACKERS) + all other saved features
+  const featureTitle=WIZ.data?.title||'';
+  // Build tracker list: current feature (unsaved WIZ.trackers) + all other saved features
   const allOpts=[];
-  WIZ_TRACKERS.forEach(t=>{
+  WIZ.trackers.forEach(t=>{
     const tid=slugify(t.label||featureTitle);
     const name=(t.emoji?t.emoji+' ':'')+(t.label||featureTitle);
     allOpts.push(`<option value="${tid}"${a.trackerLink===tid?' selected':''}>${name} — ${t.total||0} ${t.isPool?(t.unit||'pts'):T('lbl_uses')}, ${dndTr('recovery',t.recovery)||t.recovery||'long'}</option>`);
   });
   (CHAR.features||[]).forEach((f,fi)=>{
-    if(WIZ_EDIT_IDX!=null&&fi===WIZ_EDIT_IDX) return; // skip self (WIZ_TRACKERS is authoritative)
+    if(WIZ.editIdx!=null&&fi===WIZ.editIdx) return; // skip self (WIZ.trackers is authoritative)
     (f.trackers||[]).forEach(t=>{
       const tid=slugify(t.label||f.title);
       const name=(t.emoji?t.emoji+' ':'')+(t.label?t.label+' ('+f.title+')':f.title);
@@ -4801,15 +4839,15 @@ function collectActEdit(i){
   if(!a.emoji) delete a.emoji;
   if(!a.label) delete a.label;
   if(!a.trackerLink) delete a.trackerLink;
-  WIZ_ACTIONS[i]=a;
+  WIZ.actions[i]=a;
 }
 function saveWizAction(i){
-  collectActEdit(i); WIZ_ACT_EDIT=-1; WIZ_ACT_IS_NEW=false; renderWizardStep();
+  collectActEdit(i); WIZ.actEdit=-1; WIZ.actIsNew=false; renderWizardStep();
 }
-function deleteWizAction(i){WIZ_ACTIONS.splice(i,1);WIZ_ACT_EDIT=-1;WIZ_ACT_IS_NEW=false;renderWizardStep();}
+function deleteWizAction(i){WIZ.actions.splice(i,1);WIZ.actEdit=-1;WIZ.actIsNew=false;renderWizardStep();}
 function cancelWizActEdit(){
-  if(WIZ_ACT_IS_NEW){WIZ_ACTIONS.splice(WIZ_ACT_EDIT,1);}
-  WIZ_ACT_EDIT=-1;WIZ_ACT_IS_NEW=false;renderWizardStep();
+  if(WIZ.actIsNew){WIZ.actions.splice(WIZ.actEdit,1);}
+  WIZ.actEdit=-1;WIZ.actIsNew=false;renderWizardStep();
 }
 function refreshWizActionList(){
   const w=document.getElementById('wiz-act-list');if(!w)return;
@@ -4820,11 +4858,11 @@ function refreshWizActionList(){
 const TAG_COLORS=['green','blue','purple','red','orange'];
 function renderTagEditor(){
   const colorOpts=TAG_COLORS.map(c=>`<option value="${c}">${T('tagColor_'+c)}</option>`).join('');
-  const rows=WIZ_TAGS.map((t,i)=>`<div style="display:flex;gap:4px;align-items:center;margin-bottom:4px;">
+  const rows=WIZ.tags.map((t,i)=>`<div style="display:flex;gap:4px;align-items:center;margin-bottom:4px;">
     <span class="feature-tag tag-${t.color||'green'}">${t.label||'?'}</span>
     <button class="btn-del-sm" onclick="deleteWizTag(${i})">🗑</button>
   </div>`).join('');
-  const canAdd=WIZ_TAGS.length<3;
+  const canAdd=WIZ.tags.length<3;
   return `<div class="wiz-field"><label class="wiz-label">${T('tags')} <span class="help-icon" data-tip="${T('hint_tags').replace(/"/g,'&quot;')}">?</span></label>
     <div id="wiz-tag-list">${rows}</div>
     ${canAdd?`<div id="wiz-tag-add" style="display:flex;gap:4px;margin-top:4px;">
@@ -4835,30 +4873,30 @@ function renderTagEditor(){
   </div>`;
 }
 function addWizTag(){
-  if(WIZ_TAGS.length>=3) return;
+  if(WIZ.tags.length>=3) return;
   const label=document.getElementById('wiz-tag-label')?.value?.trim();
   const color=document.getElementById('wiz-tag-color')?.value||'green';
   if(!label) return;
-  WIZ_TAGS.push({label,color});
+  WIZ.tags.push({label,color});
   refreshTagEditor();
 }
-function deleteWizTag(i){WIZ_TAGS.splice(i,1);refreshTagEditor();}
+function deleteWizTag(i){WIZ.tags.splice(i,1);refreshTagEditor();}
 function refreshTagEditor(){
   const wrap=document.getElementById('wiz-tag-list');
   const addCtrl=document.getElementById('wiz-tag-add');
-  if(wrap) wrap.innerHTML=WIZ_TAGS.map((t,i)=>`<div style="display:flex;gap:4px;align-items:center;margin-bottom:4px;">
+  if(wrap) wrap.innerHTML=WIZ.tags.map((t,i)=>`<div style="display:flex;gap:4px;align-items:center;margin-bottom:4px;">
     <span class="feature-tag tag-${t.color||'green'}">${t.label||'?'}</span>
     <button class="btn-del-sm" onclick="deleteWizTag(${i})">🗑</button>
   </div>`).join('');
   if(addCtrl){
-    if(WIZ_TAGS.length>=3) addCtrl.style.display='none';
+    if(WIZ.tags.length>=3) addCtrl.style.display='none';
     else{addCtrl.style.display='';const inp=document.getElementById('wiz-tag-label');if(inp)inp.value='';}
   }
   injectWizPreview();
 }
 // ── Content-block tag editor (subfeatures) ──
 function cbeRenderTagEditor(){
-  const tags=CB_EDIT_DATA?.tags||[];
+  const tags=WIZ.cbEditData?.tags||[];
   const colorOpts=TAG_COLORS.map(c=>`<option value="${c}">${T('tagColor_'+c)}</option>`).join('');
   const rows=tags.map((t,i)=>`<div style="display:flex;gap:4px;align-items:center;margin-bottom:4px;">
     <span class="feature-tag tag-${t.color||'green'}">${t.label||'?'}</span>
@@ -4875,22 +4913,22 @@ function cbeRenderTagEditor(){
   </div>`;
 }
 function cbeAddTag(){
-  if(!CB_EDIT_DATA) return;
-  if(!CB_EDIT_DATA.tags) CB_EDIT_DATA.tags=[];
-  if(CB_EDIT_DATA.tags.length>=3) return;
+  if(!WIZ.cbEditData) return;
+  if(!WIZ.cbEditData.tags) WIZ.cbEditData.tags=[];
+  if(WIZ.cbEditData.tags.length>=3) return;
   const label=document.getElementById('cbe-tag-label')?.value?.trim();
   const color=document.getElementById('cbe-tag-color')?.value||'green';
   if(!label) return;
-  CB_EDIT_DATA.tags.push({label,color});
+  WIZ.cbEditData.tags.push({label,color});
   cbeRefreshTagEditor();
 }
 function cbeDeleteTag(i){
-  if(!CB_EDIT_DATA?.tags) return;
-  CB_EDIT_DATA.tags.splice(i,1);
+  if(!WIZ.cbEditData?.tags) return;
+  WIZ.cbEditData.tags.splice(i,1);
   cbeRefreshTagEditor();
 }
 function cbeRefreshTagEditor(){
-  const tags=CB_EDIT_DATA?.tags||[];
+  const tags=WIZ.cbEditData?.tags||[];
   const wrap=document.getElementById('cbe-tag-list');
   const addCtrl=document.getElementById('cbe-tag-add');
   if(wrap) wrap.innerHTML=tags.map((t,i)=>`<div style="display:flex;gap:4px;align-items:center;margin-bottom:4px;">
@@ -4951,28 +4989,28 @@ function renderAbilityBuyStep(data){
 function abAdj(ability,dir){
   const el=document.getElementById('wf-'+ability);
   if(!el)return;
-  const isFree=!!WIZ_DATA._abFreeMode;
+  const isFree=!!WIZ.data._abFreeMode;
   let v=+(el.value||10)+dir;
   if(!isFree){ v=Math.max(PB_MIN,Math.min(PB_MAX,v)); }
   else { v=Math.max(1,Math.min(30,v)); }
-  WIZ_DATA[ability]=v;
+  WIZ.data[ability]=v;
   renderWizardStep();
 }
 function abSet(ability,val){
-  WIZ_DATA[ability]=Math.max(1,Math.min(30,+(val||10)));
+  WIZ.data[ability]=Math.max(1,Math.min(30,+(val||10)));
   renderWizardStep();
 }
 function abBudgetChange(val){
-  WIZ_DATA.abilityBudget=Math.max(1,+(val||PB_DEFAULT_BUDGET));
+  WIZ.data.abilityBudget=Math.max(1,+(val||PB_DEFAULT_BUDGET));
   renderWizardStep();
 }
 function abToggleMode(){
   // Collect current values before re-render
   DND.abilities.forEach(a=>{
     const el=document.getElementById('wf-'+a);
-    if(el) WIZ_DATA[a]=+(el.value||10);
+    if(el) WIZ.data[a]=+(el.value||10);
   });
-  WIZ_DATA._abFreeMode=!WIZ_DATA._abFreeMode;
+  WIZ.data._abFreeMode=!WIZ.data._abFreeMode;
   renderWizardStep();
 }
 // ── Background ASI step ──
@@ -5020,12 +5058,12 @@ function renderBackgroundAsiStep(data){
 function bgAsiChange(){
   const s1=document.getElementById('wf-bgAsi1');
   const s2=document.getElementById('wf-bgAsi2');
-  if(s1) WIZ_DATA._bgAsi1=s1.value;
-  if(s2) WIZ_DATA._bgAsi2=s2.value;
+  if(s1) WIZ.data._bgAsi1=s1.value;
+  if(s2) WIZ.data._bgAsi2=s2.value;
 }
 function bgAsiToggleMode(){
   bgAsiChange();
-  WIZ_DATA._bgAsiMode=WIZ_DATA._bgAsiMode==='three'?'two':'three';
+  WIZ.data._bgAsiMode=WIZ.data._bgAsiMode==='three'?'two':'three';
   renderWizardStep();
 }
 // ── Level-Up ASI step helpers ──
@@ -5067,13 +5105,13 @@ function renderLevelUpAsiStep(data){
 function luAsiChange(){
   const s1=document.getElementById('wf-luAsi1');
   const s2=document.getElementById('wf-luAsi2');
-  if(s1) WIZ_DATA._luAsi1=s1.value;
-  if(s2) WIZ_DATA._luAsi2=s2.value;
+  if(s1) WIZ.data._luAsi1=s1.value;
+  if(s2) WIZ.data._luAsi2=s2.value;
   // feat value read live via fp-asi-value in _collectData / _validateStep
 }
 function luAsiToggleMode(mode){
   luAsiChange();
-  WIZ_DATA._luAsiMode=mode;
+  WIZ.data._luAsiMode=mode;
   renderWizardStep();
 }
 // Helpers
@@ -5178,8 +5216,8 @@ function fpSetType(id,type){
 }
 // ── Origin Feat step renderer ──
 function renderOriginFeatStep(data){
-  const bg=data.background||WIZ_DATA.background||'';
-  const race=data.race||WIZ_DATA.race||'';
+  const bg=data.background||WIZ.data.background||'';
+  const race=data.race||WIZ.data.race||'';
   const isHuman=(race==='Human'||race==='Umano');
   const bgFeatName=DND.backgroundFeats[bg]||null;
   const bgLabel=bg?dndTr('backgrounds',bg):bg;
@@ -5215,7 +5253,7 @@ const WIZARDS = {
       {id:'name',label:'f_name',type:'text',placeholder:'wiz_ph_name',required:true},
       {id:'race',label:'f_race',type:'select-or-custom',options:()=>raceOpts(),required:true},
       {id:'class',label:'f_class',type:'select-or-custom',options:()=>classOpts(),required:true},
-      {id:'subclass',label:'wiz_f_subclass',type:'select-or-custom',options:()=>subclassOpts(WIZ_DATA.class||'')},
+      {id:'subclass',label:'wiz_f_subclass',type:'select-or-custom',options:()=>subclassOpts(WIZ.data.class||'')},
       {id:'level',label:'f_level',type:'number',min:1,max:20,default:1,required:true},
       {id:'alignment',label:'f_alignment',type:'select',options:()=>alignOpts()},
       {id:'background',label:'f_background',type:'select-or-custom',options:()=>backgroundOpts()},
@@ -5227,12 +5265,12 @@ const WIZARDS = {
       if(!classSel) return;
       classSel.addEventListener('change',function(){
         const cls=this.value==='_custom'?'':this.value;
-        WIZ_DATA.class=cls;
+        WIZ.data.class=cls;
         const subSel=document.getElementById('wf-subclass');
         if(subSel){
           const opts=subclassOpts(cls);
           subSel.innerHTML=opts.map(o=>`<option value="${o.v}">${o.l}</option>`).join('');
-          WIZ_DATA.subclass='';
+          WIZ.data.subclass='';
           const ci=document.getElementById('wf-subclass-custom');
           if(ci){ci.value='';ci.style.display='none';}
         }
@@ -5294,17 +5332,17 @@ const WIZARDS = {
       {id:'weaponProficiencies',label:'wiz_f_weaponProf',type:'text',hint:'hint_weaponProf'},
       {id:'armorProficiencies',label:'wiz_f_armorProf',type:'text',hint:'hint_armorProf'},
       {id:'toolProficiencies',label:'wiz_f_toolProf',type:'text',hint:'hint_toolProf'},
-      {id:'initiativeBonus',label:'wiz_f_initiativeBonus',type:'number',hint:'hint_initiativeBonus'},
-      {id:'proficiencyBonusOverride',label:'wiz_f_profBonusOverride',type:'number',hint:'hint_profBonusOverride'},
-    ]},
+       {id:'initiativeBonus',label:'wiz_f_initiativeBonus',type:'number',hint:'hint_initiativeBonus'},
+       {id:'proficiencyBonusOverride',label:'wiz_f_profBonusOverride',type:'number',hint:'hint_profBonusOverride'},
+     ], _afterRender(){wizAdvancedGroup(['initiativeBonus','proficiencyBonusOverride'],T('advancedOverrides'));}},
     {label:'wiz_step_savingThrows', desc:'wiz_step_savingThrowsDesc', fields:[], _buildFields(){
       return [{
         type:'checkbox-group', label:'wiz_f_tsProf',
         items: DND.abilities.map(a=>({id:'saves'+a, text:abilityShortName(a)}))
       }];
     }},
-    {label:'wiz_step_skills', fields:[], _buildFields(){
-      return DND.standardSkills.map(sk=>({
+     {label:'wiz_step_skills', fields:[], _buildFields(){
+       return [...DND.standardSkills].sort((a,b)=>skillName(a).localeCompare(skillName(b))).map(sk=>({
         id:'sk_'+sk.id, label:skillName(sk),
         type:'select',
         options:[
@@ -5322,7 +5360,7 @@ const WIZARDS = {
       {id:'sc_preparedMax',label:'wiz_f_preparedMax',type:'number',min:0,hint:'hint_preparedMax'},
     ], _afterRender(data){
       // Auto-fill ability and preparedCaster based on class chosen in step 1
-      const cls=data.class||WIZ_DATA.class;
+      const cls=data.class||WIZ.data.class;
       const autoAbility=DND.casterAbility[cls];
       const desc=document.getElementById('wiz-body');
       if(desc&&!desc.querySelector('.wiz-spellsetup-desc')){
@@ -5476,7 +5514,7 @@ const WIZARDS = {
       school:d.school,actionType:d.actionType,range:d.range,duration:d.duration,
       concentration:!!d.concentration,ritual:!!d.ritual,saveAbility:d.saveAbility,description:d.description,
       scaling:d.scaling,notes:d.notes};
-    if(WIZ_TAGS.length) sp.tags=[...WIZ_TAGS];
+    if(WIZ.tags.length) sp.tags=[...WIZ.tags];
     // Components
     const hasComp=d.compV||d.compS||d.compM;
     if(hasComp) sp.components={v:!!d.compV,s:!!d.compS,m:!!d.compM,material:d.compM?d.compMaterial||'':''};
@@ -5518,7 +5556,7 @@ const WIZARDS = {
     ], _afterRender(data){
       const body=document.getElementById('wiz-body');
       if(body){
-        body.insertAdjacentHTML('afterbegin',`<p class="wiz-step-desc">${T('hint_spellDescStep')}</p>`);
+        body.insertAdjacentHTML('afterbegin',`<p class="wiz-step-desc">${T('hint_weaponDescStep')}</p>`);
         body.insertAdjacentHTML('beforeend',renderTagEditor());
       }
     injectWeaponPreview();
@@ -5530,12 +5568,13 @@ const WIZARDS = {
     });
     const dtC=document.getElementById('wf-damageType-custom');
     if(dtC) dtC.addEventListener('input',injectWeaponPreview);
+    wizAdvancedGroup(['magicBonus','attackBonusOverride','damageOverride'],T('advancedOverrides'));
   }}],
   onSave(d,idx){
     const w={name:d.name,emoji:d.emoji,damageDie:d.damageDie,damageType:d.damageType,
       attackStat:d.attackStat,quantity:+d.quantity||1,
       properties:d.properties,notes:d.notes};
-    if(WIZ_TAGS.length) w.tags=[...WIZ_TAGS];
+    if(WIZ.tags.length) w.tags=[...WIZ.tags];
     if(+d.magicBonus) w.magicBonus=+d.magicBonus;
     if(d.mastery) w.mastery=d.mastery;
     if(d.attackBonusOverride!==''&&d.attackBonusOverride!=null) w.attackBonusOverride=+d.attackBonusOverride;
@@ -5657,10 +5696,10 @@ const WIZARDS = {
     const hasUnlabeledTrackers=oldTrackers.some(t=>!t.label);
     const f={title:d.title,emoji:d.emoji,subtitle:d.subtitle,source:d.source,
       contentBlocks:blocks};
-    if(WIZ_TAGS.length) f.tags=[...WIZ_TAGS];
+    if(WIZ.tags.length) f.tags=[...WIZ.tags];
     // Trackers & actions from step 3 list editor
-    if(WIZ_TRACKERS.length) f.trackers=[...WIZ_TRACKERS];
-    if(WIZ_ACTIONS.length) f.actions=[...WIZ_ACTIONS];
+    if(WIZ.trackers.length) f.trackers=[...WIZ.trackers];
+    if(WIZ.actions.length) f.actions=[...WIZ.actions];
     if(!CHAR.features)CHAR.features=[];
     if(idx!==null&&idx!==undefined){
       CHAR.features[idx]=f;
@@ -5768,6 +5807,7 @@ const WIZARDS = {
     }
     const pcb=document.getElementById('wf-preparedCaster');
     if(pcb){pcb.addEventListener('change',togglePrepMax);togglePrepMax();}
+    wizAdvancedGroup(['saveDCOverride','attackBonusOverride'],T('advancedOverrides'));
   }}],
   onSave(d){
     CHAR.spellcasting={ability:d.ability,focus:d.focus,preparedCaster:!!d.preparedCaster};
@@ -5784,7 +5824,7 @@ const WIZARDS = {
   title:'wiz_skills_title',
   // fields built lazily so currentLang is resolved at open time
   steps:[{label:'skills', fields:[], _buildFields(){
-    return DND.standardSkills.map(sk=>({
+    return [...DND.standardSkills].sort((a,b)=>skillName(a).localeCompare(skillName(b))).map(sk=>({
       id:'sk_'+sk.id, label:skillName(sk),
       type:'select',
       options:[
@@ -5857,7 +5897,7 @@ const WIZARDS = {
         const newLv2=(C.level||1)+1;
         const pbChanged=computedPB(newLv2)!==computedPB(C.level||1);
         const isCaster=!!(C.spellcasting?.ability);
-        const featName=(WIZ_DATA._luAsiMode||'one')==='feat'?WIZ_DATA._luFeat:null;
+        const featName=(WIZ.data._luAsiMode||'one')==='feat'?WIZ.data._luFeat:null;
         const checks=buildLevelUpChecks(C,newLv2,pbChanged,isCaster,featName);
         return `<p style="color:var(--accent);font-weight:700;font-size:1.1em;margin:0 0 6px;">⬆️ Level ${C.level||1} → ${newLv2}</p>`
           +`<p style="color:var(--text-muted);font-size:.88em;margin:0 0 14px;">${T('lu_remindersDesc')}</p>`
@@ -6015,9 +6055,9 @@ function editFeature(idx){
   const f=(CHAR.features||[])[idx];
   const flat={...f};
   openWizard('feature',idx,flat);
-  WIZ_BLOCKS=[...(f.contentBlocks||[])];
-  WIZ_TRACKERS=(f.trackers||[]).map(t=>({...t}));
-  WIZ_ACTIONS=(f.actions||[]).map(a=>({...a}));
+  WIZ.blocks=[...(f.contentBlocks||[])];
+  WIZ.trackers=(f.trackers||[]).map(t=>({...t}));
+  WIZ.actions=(f.actions||[]).map(a=>({...a}));
 }
 function deleteFeature(idx){
   if(!confirm(T('confirmDelete')))return;
@@ -6029,12 +6069,11 @@ function deleteFeature(idx){
   saveAll(); renderAll();
 }
 // Algo blocks
-// Algo blocks
 function addAlgoBlock(){ openWizard('algoblock',null,{}); }
 function editAlgoBlock(idx){
   const b=(CHAR.combatAlgorithm||[])[idx];
   openWizard('algoblock',idx,{...b});
-  WIZ_ALGO_STEPS=[...(b.steps||[])];
+  WIZ.algoSteps=[...(b.steps||[])];
 }
 function deleteAlgoBlock(idx){ if(!confirm(T('confirmDelete')))return; CHAR.combatAlgorithm.splice(idx,1); saveAll(); renderAll(); }
 // Skills
@@ -6075,9 +6114,6 @@ function deleteSidebarItem(idx){
   }
   (CHAR.sidebar||[]).splice(idx,1);
   saveAll(); renderAll();
-}
-function editSidebarItem(idx){
-  // Sidebar items are now ID strings — editing not needed (sections have their own edit buttons)
 }
 // Condition CRUD
 function addCondition(){ openWizard('condition',null,{}); }
@@ -6135,11 +6171,11 @@ function onOverlayClick(event){
   // Close wizard if the backdrop itself was clicked (not the modal box inside)
   if(event&&event.target&&event.target.id==='wizard-overlay'){
     // Require double-click to discard a new character creation in progress
-    if(WIZ_KEY==='char-create'&&!CHAR?.name){
-      if(WIZ_CLOSE_PENDING){closeWizard();return;}
-      WIZ_CLOSE_PENDING=true;
+    if(WIZ.key==='char-create'&&!CHAR?.name){
+      if(WIZ.closePending){closeWizard();return;}
+      WIZ.closePending=true;
       showToast(T('wiz_close_confirm'),'error');
-      setTimeout(()=>{WIZ_CLOSE_PENDING=false;},3000);
+      setTimeout(()=>{WIZ.closePending=false;},3000);
       return;
     }
     closeWizard();return;
@@ -6172,8 +6208,6 @@ function changePortraitFromModal(){
     portraitZoom=Math.max(0.5,Math.min(5,portraitZoom+(e.deltaY<0?0.15:-0.15)));
     document.getElementById('portrait-lightbox-img').style.transform=`scale(${portraitZoom})`;
   },{passive:false});
-  document.addEventListener('touchmove',function(e){if(SB_TOUCH_DRAG) sbTouchMove(e);},{passive:false});
-  document.addEventListener('touchend',function(){if(SB_TOUCH_DRAG) sbTouchEnd();});
   document.addEventListener('touchmove',function(e){
     if(!document.getElementById('portrait-lightbox')?.classList.contains('open')) return;
     if(e.touches.length!==2) return;
@@ -6290,21 +6324,8 @@ function init(){
   renderAll();
   // Wizard modal close on overlay click
   // Concentration input sync
-  const ci=document.getElementById('conc-spell-input');
-  if(ci){
-    ci.addEventListener('change',function(){
-      SESSION.concentration=ci.value;
-      const st=document.getElementById('conc-status');
-      if(st){
-        st.textContent=ci.value?ci.value:T('concNone');
-        st.className='conc-status-text'+(ci.value?' conc-active':'');
-      }
-      saveAll();
-    });
-  }
-  // HP amount enter key
-  const hpAmt=document.getElementById('hp-amount');
-  if(hpAmt) hpAmt.addEventListener('keydown',function(e){if(e.key==='Enter')applyDamage();});
+  // Redundant conc-spell-input binding removed — handled in renderPanel()
+  // hp-amount Enter key binding removed — handled in renderPanel()
   // Sidebar resize
   const savedSbW=localStorage.getItem('sidebarWidth');
   if(savedSbW) document.documentElement.style.setProperty('--sidebar-w',savedSbW);
