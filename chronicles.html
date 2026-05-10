@@ -262,6 +262,8 @@ var STRINGS={
 };
 var currentLang=localStorage.getItem('dnd-lang')||'en';
 function S(k){return(STRINGS[currentLang]||STRINGS.en)[k]||STRINGS.en[k]||k;}
+var FLAG_IT='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 3 2" width="20" height="13" style="vertical-align:middle;border-radius:2px;margin-right:3px"><rect width="1" height="2" fill="#009246"/><rect x="1" width="1" height="2" fill="#fff"/><rect x="2" width="1" height="2" fill="#CE2B37"/></svg>';
+var FLAG_GB='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 30" width="20" height="13" style="vertical-align:middle;border-radius:2px;margin-right:3px"><rect width="60" height="30" fill="#012169"/><path d="M0,0L60,30M60,0L0,30" stroke="#fff" stroke-width="8"/><path d="M0,0L60,30M60,0L0,30" stroke="#C8102E" stroke-width="4"/><path d="M30,0V30M0,15H60" stroke="#fff" stroke-width="12"/><path d="M30,0V30M0,15H60" stroke="#C8102E" stroke-width="6"/></svg>';
 
 // ── State ────────────────────────────────────────────────────────────────
 var CAMPAIGN=null;
@@ -312,9 +314,9 @@ function applyLang(){
   Object.keys(ids).forEach(function(id){
     var el=document.getElementById(id);if(el)el.textContent=S(ids[id]);
   });
-  document.getElementById('btn-lang').textContent=currentLang==='en'?'🇮🇹 IT':'🇬🇧 EN';
+  document.getElementById('btn-lang').innerHTML=(currentLang==='en'?FLAG_IT:FLAG_GB)+(currentLang==='en'?'IT':'EN');
   var ovl=document.getElementById('overflow-lang');
-  if(ovl)ovl.textContent=currentLang==='en'?'🇮🇹 IT Language':'🇬🇧 EN Language';
+  if(ovl)ovl.innerHTML=(currentLang==='en'?FLAG_IT:FLAG_GB)+(currentLang==='en'?'IT Language':'EN Language');
 }
 
 // ── Sidebar ──────────────────────────────────────────────────────────────

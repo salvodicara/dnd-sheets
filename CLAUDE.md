@@ -21,7 +21,7 @@
 13. **Read DESIGN.md first.** For any new implementation work, read `DESIGN.md` before starting -- it contains all design decisions, the v1 phase plan, and the target data model.
 14. **English source code.** ALL identifiers (variable names, function names, CSS classes/IDs, translation keys, section IDs) must be English. Only the string VALUES in `TRANSLATIONS.it` are Italian. If you encounter Italian identifiers in the codebase, rename them to English immediately.
 15. **English canonical D&D names.** All fixed D&D names (races, classes, backgrounds, subclasses, conditions, schools, damage types, etc.) are stored in English in the data model. Localization happens only at display time via `dndTr()`. The char-create wizard uses `select-or-custom` fields for these, with a "Custom..." option for homebrew.
-16. **Backward compatibility: ask before breaking.** The app is deployed and real users have saved JSON. Prefer additive changes (new fields with safe defaults). If a breaking data model change would lead to significantly better design, **ask the user first** — don't just do it. If approved, add a silent migration in `syncSession()` / `ensureSidebar()` so old data upgrades automatically.
+16. **Backward compatibility: schema is frozen for real users.** Real users are saving characters with this app. The JSON schema must be treated as a stable public contract. Never remove, rename, or change the semantics of any existing field. Only additive changes (new optional fields with safe defaults) are allowed. If a breaking change is truly unavoidable, ask the user first — never just do it. Always add a silent migration in `syncSession()` / `ensureSidebar()` so old saves upgrade automatically without data loss. When in doubt, do not break.
 17. **No commits unless told to.** Never create git commits unless the user explicitly asks.
 18. **CHANGELOG discipline.** Every time `CHANGELOG.md` is touched: (a) run `git log --oneline` to find the commit hash that corresponds to the current `[Unreleased]` block and replace `[Unreleased]` with that hash, (b) insert a fresh `## [Unreleased] — <title>` block at the top for the new work. Never leave old work permanently under `[Unreleased]`.
 19. **Grill before building.** Before implementing any new feature or meaningfully modifying an existing one, always load the `grill-me` skill and interview the user to resolve all design decisions. Do this implicitly — the user does not need to ask for it.
@@ -165,11 +165,19 @@ ALL tooltips app-wide use `<span class="help-icon" data-tip="...">?</span>` plus
 - All preview-enabled wizard steps have `_afterRender` hooks. Step 1 fields have live `input`/`change` listeners.
 - CSS: `.wiz-preview` (dashed border box), `.wiz-preview-label`, `.wiz-preview-content` (pointer-events:none).
 
+#### Wizard Overlay Dismissal
+- **Editing wizard** (`WIZ.editIdx !== null`): a single click on the backdrop calls `wizSaveAndClose()` immediately — no data loss ever.
+- **Creation wizard** (all others except `char-create`): first click shows a toast ("Click outside again to save and close") and sets `WIZ.closePending=true`; second click within 3 s calls `wizSaveAndClose()`.
+- **`char-create`** with no `CHAR.name` yet: first click shows a discard-warning toast; second click calls `closeWizard()` (discards) — this is the only path that discards on overlay click.
+- **Cancel / ✕ buttons**: always call `closeWizard()` (explicit discard). This is the only way a non-char-create wizard can discard without saving.
+- `wizSaveAndClose()` auto-saves all open inline editors (content block, algo step, tracker, action) then calls `wizFinish()`. If validation fails, wizFinish toasts the error and stays open.
+
 #### Tracker/Action Page-Replacement UX
 - `editWizTracker(i)` and `editWizAction(i)` replace entire `wiz-body.innerHTML` with a dedicated editor form.
 - Save/cancel calls `renderWizardStep()` to restore step 3.
 - `collectTrkEdit(i)` / `collectActEdit(i)` — extracted data-collection helpers.
-- `wizNext()` auto-saves any active tracker/action edit. `wizBack()` intercepts and cancels active edits.
+- `wizNext()` auto-saves **all four** active inline editors (content block, algo step, tracker, action) before proceeding.
+- `wizBack()` also **saves** (not cancels) any open inline editor and stays on the current step; pressing Back a second time then navigates back. This ensures no work is lost on implicit navigation.
 
 #### i18n System
 - `BASE` object contains all English strings (~330 keys).
@@ -181,6 +189,7 @@ ALL tooltips app-wide use `<span class="help-icon" data-tip="...">?</span>` plus
 - **All translation keys must be English identifiers** (e.g. `addWeapon`, not `aggiungiArma`).
 - **Section title translations must NOT include emojis** -- emojis live only in `SECTION_REGISTRY`.
 - **Never hardcode user-visible strings** -- always use `T()` or `dndTr()`.
+- **Language toggle flags:** `FLAG_IT` and `FLAG_GB` are JS constants (compact inline SVGs, ~220–350 chars each) defined near `toggleLang()` in each file. They are injected via `innerHTML` into `#btn-lang` and `#overflow-lang` on every `updateFixedControls()` / `applyLang()` call. Never use OS flag emoji (🇬🇧 🇮🇹) — they render as letter pairs on Windows.
 
 #### Key Functions Reference
 | Function | Purpose |
@@ -207,6 +216,7 @@ ALL tooltips app-wide use `<span class="help-icon" data-tip="...">?</span>` plus
 | `updateFixedControls()` | Sync header tab labels and theme/lang buttons |
 | `spendPool(id)` | Spend points from a numeric pool tracker; validates, logs, re-renders |
 | `findTrackerById(id)` | Look up any tracker by session ID; returns `{tracker, feature, isPool, unit}` |
+| `wizSaveAndClose()` | Auto-save all open inline editors then call `wizFinish()`; used by overlay-click dismissal |
 
 ## AI Assistant (`assistant.html`)
 

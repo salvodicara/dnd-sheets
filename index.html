@@ -1330,7 +1330,7 @@ const BASE = {
    custom:'Custom…', customPh:'Type a custom value',
    sidebarEmpty:'Sidebar is empty. Enable edit mode (✏️) to add features.',
    editBtn:'✏️', delBtn:'🗑',
-   langToggle:'🇮🇹 IT',
+   langToggle:'IT',
   splashSub:'Interactive Character Sheet — D&D 2024',
   splashImport:'Import JSON', splashImportDesc:'Load your existing sheet',
   splashCreate:'Create Character', splashCreateDesc:'Step-by-step guided wizard',
@@ -1372,7 +1372,7 @@ const BASE = {
   toastShortRest:'☕ Short rest — +{N} HP',
   toastShortRestSkipped:'☕ Short rest taken.',
   undo:'Undo', undone:'✓ Action undone.',
-  clickToRemove:'Click to remove', clickToReduceExh:'Click to reduce exhaustion by 1', wiz_close_confirm:'Click outside again to discard and close.',
+  clickToRemove:'Click to remove', clickToReduceExh:'Click to reduce exhaustion by 1', wiz_close_confirm:'Click outside again to discard and close.', wiz_save_on_close:'Click outside again to save and close.',
   hdDialogTitle:'Spend Hit Dice ({A} available — {D})',
   hdApply:'Apply Healing',
   hdEnterResult:'HP healed (enter result)',
@@ -1805,7 +1805,7 @@ const TRANSLATIONS = {
     custom:'Personalizzato…', customPh:'Inserisci un valore personalizzato',
     sidebarEmpty:'Sidebar vuota. Abilita modalità modifica (✏️) per aggiungere capacità.',
     editBtn:'✏️', delBtn:'🗑',
-      langToggle:'🇬🇧 EN', editMode:'✏️ Modifica Scheda', editDone:'✓ Fine Modifica',
+      langToggle:'EN', editMode:'✏️ Modifica Scheda', editDone:'✓ Fine Modifica',
     splashSub:'Scheda Personaggio Interattiva — D&D 2024',
     splashImport:'Importa JSON', splashImportDesc:'Carica la tua scheda esistente',
     splashCreate:'Crea Personaggio', splashCreateDesc:'Wizard guidato passo per passo',
@@ -1864,7 +1864,7 @@ const TRANSLATIONS = {
     toastShortRest:'☕ Riposo breve — +{N} PF',
     toastShortRestSkipped:'☕ Riposo breve completato.',
     undo:'Annulla', undone:'✓ Azione annullata.',
-    clickToRemove:'Clicca per rimuovere', clickToReduceExh:'Clicca per ridurre lo sfinimento di 1', wiz_close_confirm:'Clicca di nuovo fuori per scartare e chiudere.',
+    clickToRemove:'Clicca per rimuovere', clickToReduceExh:'Clicca per ridurre lo sfinimento di 1', wiz_close_confirm:'Clicca di nuovo fuori per scartare e chiudere.', wiz_save_on_close:'Clicca di nuovo fuori per salvare e chiudere.',
     hdDialogTitle:'Spendi Dadi Vita ({A} disponibili — {D})',
     hdApply:'Applica Cura',
     hdEnterResult:'PF curati (inserisci il risultato)',
@@ -2342,7 +2342,7 @@ function updateFixedControls(){
   const themeBtn=document.getElementById('btn-theme');
   const langBtn=document.getElementById('btn-lang');
   if(themeBtn){themeBtn.textContent=isDark?'☀️':'🌙';themeBtn.title=T('titleTheme');}
-  if(langBtn){langBtn.textContent=T('langToggle');langBtn.title=T('titleLang');}
+  if(langBtn){langBtn.innerHTML=(currentLang==='en'?FLAG_IT:FLAG_GB)+T('langToggle');langBtn.title=T('titleLang');}
   const tabChar=document.getElementById('hdr-tab-char');
   const tabAI=document.getElementById('hdr-tab-ai');
   if(tabChar) tabChar.textContent=T('hdrCharacter');
@@ -2356,7 +2356,7 @@ function updateFixedControls(){
   const ob=document.getElementById('overflow-theme');
   if(ob) ob.textContent=(isDark?'☀️':'🌙')+' '+T('overflowTheme');
   const ol=document.getElementById('overflow-lang');
-  if(ol) ol.textContent=T('langToggle')+' '+T('overflowLang');
+  if(ol) ol.innerHTML=(currentLang==='en'?FLAG_IT:FLAG_GB)+T('langToggle')+' '+T('overflowLang');
   renderFAB();
 }
 function renderFAB(){
@@ -4120,15 +4120,17 @@ function closeWizard(){
   WIZ.trackers=[]; WIZ.actions=[]; WIZ.tags=[]; WIZ.trkEdit=-1; WIZ.actEdit=-1; WIZ.trkIsNew=false; WIZ.actIsNew=false;
 }
 function wizBack(){
-  // Cancel any active inline edit before navigating back
-  if(WIZ.cbEditIdx>=0){cancelBlockEdit();return;}
-  if(ALGO_EDIT_IDX>=0){cancelAlgoStep();return;}
-  if(WIZ.trkEdit>=0){cancelWizTrkEdit();return;}
-  if(WIZ.actEdit>=0){cancelWizActEdit();return;}
+  // Save any active inline edit — never discard on implicit navigation
+  if(WIZ.cbEditIdx>=0){saveBlockEdit();return;}
+  if(ALGO_EDIT_IDX>=0){saveAlgoStep(ALGO_EDIT_IDX);return;}
+  if(WIZ.trkEdit>=0){collectTrkEdit(WIZ.trkEdit);WIZ.trkEdit=-1;WIZ.trkIsNew=false;renderWizardStep();return;}
+  if(WIZ.actEdit>=0){collectActEdit(WIZ.actEdit);WIZ.actEdit=-1;WIZ.actIsNew=false;renderWizardStep();return;}
   if(WIZ.step>0){WIZ.step--;renderWizardStep();}
 }
 function wizNext(){
   // Auto-save any active inline edit before proceeding
+  if(WIZ.cbEditIdx>=0) saveBlockEdit();
+  if(ALGO_EDIT_IDX>=0) saveAlgoStep(ALGO_EDIT_IDX);
   if(WIZ.trkEdit>=0){collectTrkEdit(WIZ.trkEdit);WIZ.trkEdit=-1;}
   if(WIZ.actEdit>=0){collectActEdit(WIZ.actEdit);WIZ.actEdit=-1;}
   collectStepData();
@@ -4402,8 +4404,16 @@ function wizFinish(){
   const err=validateStep();
   if(err){showToast(err,'error');return;}
   WIZ.config.onSave(WIZ.data, WIZ.editIdx, WIZ.blocks, WIZ.algoSteps);
-  closeWizard(); saveAll(); renderAll();
+  closeWizard(); syncSession(); saveAll(); renderAll();
   showToast(T('wizSaved'),'success');
+}
+function wizSaveAndClose(){
+  // Auto-save any active inline editors before finishing
+  if(WIZ.cbEditIdx>=0) saveBlockEdit();
+  if(ALGO_EDIT_IDX>=0) saveAlgoStep(ALGO_EDIT_IDX);
+  if(WIZ.trkEdit>=0){collectTrkEdit(WIZ.trkEdit);WIZ.trkEdit=-1;}
+  if(WIZ.actEdit>=0){collectActEdit(WIZ.actEdit);WIZ.actEdit=-1;}
+  wizFinish();
 }
 // ── Content Block Editor ──
 function renderContentBlockEditor(){
@@ -6150,6 +6160,8 @@ document.addEventListener('click',function(e){
   const btn=document.getElementById('hdr-overflow-btn');
   if(menu&&btn&&!menu.contains(e.target)&&e.target!==btn) closeOverflowMenu();
 });
+const FLAG_IT='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 3 2" width="20" height="13" style="vertical-align:middle;border-radius:2px;margin-right:3px"><rect width="1" height="2" fill="#009246"/><rect x="1" width="1" height="2" fill="#fff"/><rect x="2" width="1" height="2" fill="#CE2B37"/></svg>';
+const FLAG_GB='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 30" width="20" height="13" style="vertical-align:middle;border-radius:2px;margin-right:3px"><rect width="60" height="30" fill="#012169"/><path d="M0,0L60,30M60,0L0,30" stroke="#fff" stroke-width="8"/><path d="M0,0L60,30M60,0L0,30" stroke="#C8102E" stroke-width="4"/><path d="M30,0V30M0,15H60" stroke="#fff" stroke-width="12"/><path d="M30,0V30M0,15H60" stroke="#C8102E" stroke-width="6"/></svg>';
 function toggleLang(){
   currentLang=currentLang==='it'?'en':'it';
   localStorage.setItem('dnd-lang',currentLang);
@@ -6168,9 +6180,8 @@ function toggleSidebar(){
   if(overlay) overlay.classList.toggle('visible',open);
 }
 function onOverlayClick(event){
-  // Close wizard if the backdrop itself was clicked (not the modal box inside)
   if(event&&event.target&&event.target.id==='wizard-overlay'){
-    // Require double-click to discard a new character creation in progress
+    // char-create with no name yet: double-click to DISCARD (long multi-step process)
     if(WIZ.key==='char-create'&&!CHAR?.name){
       if(WIZ.closePending){closeWizard();return;}
       WIZ.closePending=true;
@@ -6178,7 +6189,14 @@ function onOverlayClick(event){
       setTimeout(()=>{WIZ.closePending=false;},3000);
       return;
     }
-    closeWizard();return;
+    // Editing: single click → save immediately (no data loss ever)
+    if(WIZ.editIdx!==null){wizSaveAndClose();return;}
+    // Creation: require a second click → save (prevents accidental close)
+    if(WIZ.closePending){wizSaveAndClose();return;}
+    WIZ.closePending=true;
+    showToast(T('wiz_save_on_close'),'info');
+    setTimeout(()=>{WIZ.closePending=false;},3000);
+    return;
   }
   const sb=document.getElementById('sidebar');
   const overlay=document.getElementById('sidebar-overlay');

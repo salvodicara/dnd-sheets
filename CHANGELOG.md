@@ -5,7 +5,23 @@ Entries are in reverse-chronological order. Uncommitted work appears under `[Unr
 
 ---
 
-## [Unreleased] — CHANGELOG completion
+## [Unreleased] — Wizard Save-on-Dismiss, Inline Editor Auto-Save, Cross-Platform Flags
+
+### Fixed (`index.html`)
+- **Clicking outside a wizard no longer discards data.** `onOverlayClick` now follows a 3-branch save policy: editing wizards save immediately on a single click; creation wizards require a second click to save (info toast on first click); `char-create` with no character name retains the old double-click-to-discard guard as the one intentional discard path. Cancel/✕ buttons remain the only explicit discard path for all other wizards.
+- **`wizNext()` now auto-saves content block and algo step inline editors** before advancing. Previously only tracker and action sub-editors were auto-saved; content block (`WIZ.cbEditIdx`) and algo step (`ALGO_EDIT_IDX`) edits were silently discarded if the user clicked Next while still inside the sub-editor.
+- **`wizBack()` now saves instead of cancels all inline editors.** Pressing Back while a content block, algo step, tracker, or action sub-editor is open now saves the edit and stays on the current step (instead of discarding it). A second Back press then navigates to the previous step.
+
+### Added (`index.html`)
+- **`wizSaveAndClose()`** — new helper that auto-saves all four active inline editors (block, algo step, tracker, action) then calls `wizFinish()`. Used by the overlay-click dismissal paths. Validation errors from `wizFinish()` show a toast and keep the wizard open.
+- **`wiz_save_on_close` i18n key** — "Click outside again to save and close." / "Clicca di nuovo fuori per salvare e chiudere." — shown as an info toast on first overlay click for creation wizards.
+
+### Added (all three pages)
+- **Inline SVG language flags** (`FLAG_IT`, `FLAG_GB`) — compact SVG constants (~220 and ~350 chars) replace OS regional indicator emoji for the language toggle button and overflow menu item in `index.html`, `assistant.html`, and `chronicles.html`. Renders identically on macOS, Windows, Linux, and all mobile browsers. OS flag emoji are unreliable on Windows (render as "GB"/"IT" letter pairs).
+
+---
+
+## [7bccc2c] — CHANGELOG completion
 
 ---
 

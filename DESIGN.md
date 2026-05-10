@@ -890,7 +890,52 @@ Three independent issues: (1) Sidebar drag-and-drop broke after deleting an item
 
 ---
 
-## Known Missing Features / Future Work
+---
+
+## Phase 45: Wizard Save-on-Dismiss, Inline Editor Auto-Save, Cross-Platform Flags
+
+### Problem
+Three separate UX regressions discovered during real play:
+
+1. **Wizard overlay click discarded data.** Clicking outside a creation wizard silently called `closeWizard()`, throwing away all entered data. Editing wizards had the same issue. Only `char-create` had a double-click guard, and it led to *discard*, not save.
+2. **`wizNext()` / `wizBack()` lost content block and algo step edits.** `wizNext()` auto-saved tracker and action sub-editors but completely skipped `WIZ.cbEditIdx` (content blocks) and `ALGO_EDIT_IDX` (algo steps). `wizBack()` explicitly *cancelled* all four editors instead of saving them.
+3. **Flag emoji rendered as letter pairs on Windows.** OS regional indicator emoji (🇬🇧, 🇮🇹) are unsupported on Windows 10 and inconsistent on Windows 11, showing as "GB"/"IT" two-letter codes instead of flags.
+
+### Changes
+
+**`onOverlayClick()` — 3-branch save logic:**
+- **Editing wizard** (`WIZ.editIdx !== null`): single click → `wizSaveAndClose()`. Rationale: the user is editing an existing item; losing changes on an accidental mis-click is never acceptable.
+- **Creation wizard** (any key except `char-create`): first click → info toast "Click outside again to save and close" + `WIZ.closePending=true`; second click within 3 s → `wizSaveAndClose()`. The double-click guard prevents accidental dismissal while still not losing data.
+- **`char-create` with no `CHAR.name`**: first click → error toast "Click outside again to discard and close"; second click → `closeWizard()` (discard). This is intentional — a partial char-create has nothing meaningful to save; the double-click is a safety gate, not a save path.
+- **Cancel / ✕**: always `closeWizard()` (explicit discard). Unchanged.
+
+**`wizSaveAndClose()` — new helper:**
+- Auto-saves all four active inline editors (`saveBlockEdit`, `saveAlgoStep`, `collectTrkEdit`, `collectActEdit`) before calling `wizFinish()`.
+- `wizFinish()` handles collect → validate → `onSave` → `closeWizard` → toast. If validation fails, it toasts the error and stays open — the overlay click cannot force-close over a validation error.
+
+**`wizNext()` — content block and algo step auto-save added:**
+- Previously only saved tracker (`WIZ.trkEdit`) and action (`WIZ.actEdit`) sub-editors.
+- Now also calls `saveBlockEdit()` when `WIZ.cbEditIdx >= 0` and `saveAlgoStep(ALGO_EDIT_IDX)` when `ALGO_EDIT_IDX >= 0` before collecting step data.
+
+**`wizBack()` — save instead of cancel:**
+- Previously called `cancelBlockEdit()`, `cancelAlgoStep()`, `cancelWizTrkEdit()`, `cancelWizActEdit()` — each of which discarded unsaved edits (and spliced newly-added items).
+- Now calls the save equivalent for each editor: `saveBlockEdit()`, `saveAlgoStep(ALGO_EDIT_IDX)`, `collectTrkEdit + reset`, `collectActEdit + reset`.
+- Behaviour preserved: pressing Back while an inline editor is open closes the editor (saving it) and stays on the current step. A second Back press then navigates to the previous step.
+
+**Inline SVG language flags (`FLAG_IT`, `FLAG_GB`):**
+- Two JS constants defined near `toggleLang()` in all three files (`index.html`, `assistant.html`, `chronicles.html`).
+- `FLAG_IT`: 3-rect SVG using `viewBox="0 0 3 2"` — Italian tricolore (green/white/red). ~220 chars.
+- `FLAG_GB`: Union Jack SVG using `viewBox="0 0 60 30"` — blue background, white/red diagonal crosses, white/red orthogonal cross. ~350 chars.
+- Both injected via `innerHTML` (not `textContent`) into `#btn-lang` and `#overflow-lang` on every `updateFixedControls()` / `applyLang()` call. The SVG carries `style="vertical-align:middle;border-radius:2px;margin-right:3px"`.
+- Rationale: OS flag emoji are unreliable on Windows (renders as "GB"/"IT" letter pairs). Inline SVG is zero-dependency and pixel-identical across all platforms and browsers.
+
+**CLAUDE.md:**
+- "Wizard Overlay Dismissal" sub-section added to Architecture documenting the 3-branch logic.
+- "Tracker/Action Page-Replacement UX" section updated: `wizNext()` and `wizBack()` descriptions corrected.
+- "i18n System" section: added `FLAG_IT` / `FLAG_GB` rule (never OS emoji, always inline SVG).
+- `wizSaveAndClose()` added to Key Functions Reference table.
+
+---
 
 ### ~~`trackerLink` variable cost (`cost` field)~~ ✅ COMPLETE (Phase 40)
 

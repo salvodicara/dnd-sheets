@@ -1,0 +1,112 @@
+{
+  "version": "3.0",
+  "savedAt": "2026-05-10T00:00:00.000Z",
+  "character": {
+    "name": "Aria Swiftblade",
+    "quote": "Steel bends. Purpose does not.",
+    "race": "Elf", "class": "Fighter", "subclass": "Battle Master", "level": 5,
+    "alignment": "Neutral Good", "background": "Soldier", "playerName": "Player Name",
+    "speed": "9 m", "ac": 16, "armorNote": "Chain Mail + shield", "hp": { "max": 44 },
+    "hitDieType": 10, "initiativeBonus": 0, "languages": "Common, Elvish",
+    "toolProficiencies": "Vehicles (Land)", "abilityBudget": 27, "proficiencyBonusOverride": null,
+    "levelUpChecklist": [{ "text": "Choose a new Battle Master maneuver", "done": false }],
+    "backgroundAsi": { "STR": 2, "CON": 1 }, "humanOriginFeat": "Alert", "bgFeat": "Skilled",
+    "lore": {
+      "traits": "I am always polite and respectful.",
+      "ideals": "Responsibility — I do what I must.",
+      "bonds": "I fight for those who cannot fight for themselves.",
+      "flaws": "I made a terrible mistake in battle that cost many lives.",
+      "backstory": "A veteran soldier who survived the siege of Ironhold.",
+      "age": "128", "height": "5'8\"", "weight": "130 lbs",
+      "eyes": "Green", "hair": "Silver", "skin": "Pale"
+    },
+    "abilityScores": { "STR": 15, "DEX": 13, "CON": 14, "INT": 10, "WIS": 12, "CHA": 8 },
+    "savingThrows": ["STR", "CON"],
+    "skills": {
+      "athletics": "proficient", "perception": "proficient",
+      "history": "expertise", "survival": "halfProficiency"
+    },
+    "spellcasting": {
+      "ability": "INT", "preparedCaster": true, "focus": "Arcane focus",
+      "preparedMax": 6, "saveDCOverride": null, "attackBonusOverride": null
+    },
+    "spellSlots": [
+      { "level": 1, "total": 4 },
+      { "level": 2, "total": 2, "pactMagic": true }
+    ],
+    "spells": [{
+      "level": 1, "name": "Magic Missile", "originalName": "Magic Missile",
+      "emoji": "✨", "actionType": "action", "school": "Evocation", "range": "36 m",
+      "concentration": false, "duration": "Instantaneous", "saveAbility": "DEX",
+      "description": "Three darts each deal **1d4+1** force damage. Auto-hits.",
+      "scaling": "+1 dart per slot level above 1st",
+      "notes": "📌 Great for finishing blows — never misses",
+      "components": { "v": true, "s": true, "m": false, "material": "" },
+      "tags": [{ "label": "Force", "color": "purple" }], "prepared": true
+    }],
+    "weapons": [{
+      "name": "Longsword", "quantity": 1, "emoji": "⚔️",
+      "damageDie": "1d8", "damageType": "Slashing", "attackStat": "STR",
+      "attackBonusOverride": null, "damageOverride": null, "magicBonus": 1,
+      "properties": "Versatile (1d10)", "mastery": "Sap",
+      "notes": "Family heirloom — enchanted +1",
+      "tags": [{ "label": "Main", "color": "blue" }]
+    }],
+    "equipment": [
+      { "name": "Healing Potion", "emoji": "🧪", "notes": "Standard healing potion",
+        "tracked": true, "quantity": 3, "recovery": "manual", "isPotion": true, "potionFormula": "2d4+2" },
+      { "name": "Javelin", "emoji": "🏹", "notes": "Thrown (9/36 m)",
+        "tracked": true, "quantity": 5, "recovery": "long" },
+      { "name": "Ki Points", "emoji": "🌀", "notes": "Monk resource — spend for special moves",
+        "tracked": true, "quantity": 5, "recovery": "short", "isPool": true, "unit": "pts" }
+    ],
+    "features": [{
+      "title": "Action Surge", "emoji": "⚡", "subtitle": "Once per rest, take an extra action",
+      "source": "Fighter", "tags": [{ "label": "Combat", "color": "red" }],
+      "contentBlocks": [
+        { "type": "paragraph", "text": "On your turn, push beyond your normal limits for one extra action." },
+        { "type": "note", "text": "📌 Save this for the most critical moment of the fight." },
+        { "type": "header", "text": "When to use" },
+        { "type": "bullets", "bullets": ["Killing blow on a dangerous enemy", "Escaping a bad position"] },
+        { "type": "table", "rows": [["Uses", "1 (2 at level 17)"], ["Recovery", "Short or Long Rest"]] },
+        { "type": "subfeature", "title": "Indomitable", "emoji": "🛡️", "tags": [],
+          "contentBlocks": [{ "type": "paragraph", "text": "Reroll a failed saving throw. Once per long rest." }] }
+      ],
+      "trackers": [{
+        "label": "Action Surge", "emoji": "⚡",
+        "total": 1, "recovery": "short", "die": "d6", "showDie": false
+      }],
+      "actions": [{
+        "label": "Action Surge", "emoji": "⚡", "type": "action",
+        "description": "Take one additional action this turn",
+        "trackerLink": "action-surge", "trackerCost": 1
+      }]
+    }],
+    "combatAlgorithm": [{
+      "emoji": "⚔️", "title": "YOUR TURN",
+      "steps": [
+        { "question": "Can you reach a target?",
+          "bullets": ["YES → Attack with Longsword", "NO → Dash or throw Javelin"] },
+        { "indent": true, "bullets": ["Use Action Surge if enemy is nearly dead"] }
+      ]
+    }],
+    "customConditions": ["Shield of Faith active (+2 AC)"],
+    "sidebar": [
+      "game-panel", "base-data", "skills", "spells", "weapons", "equipment",
+      { "type": "sep" }, "action-surge", "algorithm"
+    ]
+  },
+  "session": {
+    "hp": { "current": 32, "temp": 5, "aidBonus": 0 },
+    "hitDice": { "used": 1 },
+    "trackers": { "action-surge": { "used": 0 } },
+    "spellSlots": { "1": { "used": 2 }, "2": { "used": 0 } },
+    "currency": { "pp": 0, "gp": 45, "ep": 0, "sp": 12, "cp": 7 },
+    "round": 1, "concentration": "Bless", "initiative": "+3",
+    "conditions": ["Blessed"], "deathSucc": 0, "deathFail": 0,
+    "inspiration": false, "bardicInspiration": false, "bardicInspirationDie": "d6",
+    "exhaustion": 0,
+    "notes": "Tower key is with the guard captain. Stealth approach at dawn.",
+    "portrait": null, "logEntries": [], "showGettingStarted": false
+  }
+}
