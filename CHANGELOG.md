@@ -5,7 +5,31 @@ Entries are in reverse-chronological order. Uncommitted work appears under `[Unr
 
 ---
 
-## [Unreleased]
+## [Unreleased] — Phase 42+43: Wizard UX Polish, Cancel/Discard Discipline & Bug Fixes
+
+### Changed (`index.html`)
+- **Wizard CSS overhaul** — added full CSS for `.wiz-field`, `.wiz-label`, `.wiz-input`, `textarea.wiz-input`, checkbox rows, `.wiz-section` / `.wiz-section-label` dividers, `.cb-type-pills` / `.cb-type-pill` block-type picker; all wizard and sub-editor HTML now uses these classes consistently
+- **Content block add area** — replaced `<select>` + "Add" button with a row of type-pill buttons (¶ Paragraph, • List, ⊞ Table, 📌 Note, H Header, 🔷 Subfeature) in a dashed-border zone; `addBlock(type)` now takes type as argument
+- **Game panel tooltip text** — `helpHP`, `helpConc`, `helpDeathSaves`, `helpHitDice`, `helpExhaustion` rewritten to 1–2 concise lines in both EN and IT; `trackerHint` and `actionHint` trimmed
+- **"Core Stats" rename** — `secStats` key changed from "Stats" to "Core Stats" in BASE; Italian stays "Statistiche"
+- **Algo step emoji default** — `algoblock` wizard config sets `default:'🔷'` on emoji field; `onSave` falls back to `'🔷'` if empty
+
+### Fixed (`index.html`)
+- **Overlay backdrop close ignored on new character** — `onOverlayClick()` checked `WIZ_KEY==='createChar'` (wrong key); corrected to `'char-create'` so the double-click-to-discard confirmation actually fires during new character creation
+- **Mobile stat strip label overlap** — added `@media(max-width:768px)` block (matching the app's main mobile breakpoint): `.stat-strip` switches to 4-column grid, `.stat-sep` hidden, `.stat-cell` gets card border+padding, `.stat-cell-lbl` allows text wrap
+- **Cancel = discard for new sub-items** — all four inline editors (trackers, actions, content blocks, algo steps) now use an `IS_NEW` flag (`WIZ_TRK_IS_NEW`, `WIZ_ACT_IS_NEW`, `CB_IS_NEW`, `ALGO_IS_NEW`); cancelling a newly-added item splices it out instead of leaving an empty ghost entry
+- **Wizard Cancel/Back buttons hardcoded Italian** — `wizCancel` / `wizBack` i18n keys added to BASE + TRANSLATIONS.it; `renderWizardStep()` now sets all three footer button texts via `T()`
+- **Recovery labels not translated** — tracker-link dropdown in `editWizAction()` now calls `dndTr('recovery', t.recovery)` on both short and long rest options
+- **Spell wizard duplicate component labels** — introduced `{type:'section'}` field type (`.wiz-section` / `.wiz-section-label`); spell wizard uses it for a "Spell Components" header with tooltip instead of duplicate outer labels on the three checkbox fields
+- **Tags tooltip missing** — `hint_tags` key added (EN + IT); `?` tooltip applied to tag editor label in both `renderTagEditor()` and `cbeRenderTagEditor()`
+- **Exhaustion pill not clickable** — both rendering sites (inline panel and `updateCondBar`) add `onclick="changeExhaustion(-1)"` + `data-tip` tooltip; CSS hover state added
+
+### Added (`CLAUDE.md`)
+- **Golden Rule 20: Cancel = discard for new items** — documents the IS_NEW flag pattern for all inline sub-editors
+- **Golden Rule 21: Wizard visual consistency** — mandates `.wiz-field`/`.wiz-label`/`.wiz-input` throughout every wizard and sub-editor; no ad-hoc inline styles in wizard bodies
+
+### Added (`DESIGN.md`)
+- **Phase 42 block** — documents all wizard CSS changes, cancel/discard discipline, i18n fixes, and new `{type:'section'}` field type
 
 ---
 

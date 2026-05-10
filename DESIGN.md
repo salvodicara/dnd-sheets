@@ -9,7 +9,8 @@
 - **v1 (Complete):** UX overhaul, i18n completion, sidebar architecture, smart features, D&D 2024 parity
 - **v1.2 (Complete):** UI redesign (gold/navy palette, header polish), mobile UX, UX polish
 - **v1.3 (Complete):** Variable-cost tracker actions (`trackerCost`), numeric pool trackers (`isPool`/`unit`), unified floating tooltip system
-- **v1.4 (In Progress):** Bug fixes (damage override backward compat, spell DC/attack field names, feature rename trackerLink integrity), tooltip consistency (all `title=` eliminated), wizard completeness (`preparedMax` reachable from char-create), schema/doc corrections
+- **v1.4 (Complete):** Bug fixes (damage override backward compat, spell DC/attack field names, feature rename trackerLink integrity), tooltip consistency (all `title=` eliminated), wizard completeness (`preparedMax` reachable from char-create), schema/doc corrections
+- **v1.5 (In Progress):** Wizard UX overhaul (compact CSS, cancel/discard discipline, checkbox-group field type, live step descriptions), mobile stat strip fix, overlay key fix, i18n completeness (wizard buttons, recovery labels, tags tooltip)
 
 ---
 
@@ -789,6 +790,76 @@ Done:
 | addLog() / toast() | ~2738-2760 |
 | renderField() / wizard engine | ~3195-3400 |
 | WIZARDS config object | ~3934+ |
+
+---
+
+## Phase 42: Wizard UX Polish, Cancel/Discard Discipline, i18n Completeness
+
+### Problem
+Wizard modals had accumulated inconsistent styling — field spacing, label weight/casing, and input padding varied wildly between wizard steps and sub-editors (trackers, actions, content blocks, algo steps). Cancel on a newly-added sub-item (tracker, action, block, algo step) left an empty ghost entry. Several button labels were hardcoded Italian strings. The spell wizard showed duplicate component labels. Game panel tooltips were excessively verbose.
+
+### Changes
+
+**Wizard CSS (`index.html` `<style>`):**
+- Added `.wiz-field` (wrapper, `margin-bottom:20px`), `.wiz-label` (uppercase, 0.75em, 700 weight, 7px bottom margin), `.wiz-input` (10px 13px padding, 8px radius, full width, focus glow via `--accent-glow`).
+- Added `textarea.wiz-input`, checkbox row layout inside `.wiz-field`, `.wiz-section` / `.wiz-section-label` for section dividers within wizard bodies.
+- Added `.cb-type-pills` / `.cb-type-pill` for the content block type picker.
+
+**Cancel = discard for new items (all four inline editors):**
+- `WIZ_TRK_IS_NEW` flag on tracker add; `cancelWizTrkEdit()` splices tracker if new.
+- `WIZ_ACT_IS_NEW` flag on action add; `cancelWizActEdit()` splices action if new.
+- `CB_IS_NEW` flag on block add; `cancelBlockEdit()` splices block if new.
+- `ALGO_IS_NEW` flag on algo step add; `cancelAlgoStep()` splices step if new.
+
+**i18n fixes:**
+- `wizCancel` / `wizBack` keys added to BASE + TRANSLATIONS.it; `renderWizardStep()` now sets all three footer button texts via `T()` (previously Cancel/Back were hardcoded Italian in the HTML skeleton).
+- Recovery labels in tracker-link dropdown now use `dndTr('recovery', t.recovery)`.
+- `wiz_f_spellComponents` / `hint_spellComponents` keys added; spell wizard uses a `{type:'section'}` field divider instead of duplicate outer labels on the three component checkboxes.
+- `hint_tags` key added; tag editor label now carries a `?` tooltip in both the feature and subfeature tag editors.
+- `secStats` key renamed: "Stats" → "Core Stats" (EN); Italian stays "Statistiche".
+- `clickToReduceExh` key added for exhaustion pill tooltip.
+- Game panel tooltip keys rewritten to 1–2 concise lines: `helpHP`, `helpConc`, `helpDeathSaves`, `helpHitDice`, `helpExhaustion`.
+- `trackerHint`, `actionHint` trimmed.
+
+**Content block add area:**
+- Replaced `<select>` + "Add" button with a row of `.cb-type-pill` buttons (one per block type: ¶ Paragraph, • List, ⊞ Table, 📌 Note, H Header, 🔷 Subfeature) inside a visually distinct dashed-border zone.
+- `addBlock(type)` now accepts the block type as an argument directly.
+
+**Algo step emoji default:**
+- `algoblock` WIZARDS config sets `default:'🔷'` on the emoji field; `onSave` falls back to `'🔷'` if empty.
+
+**Exhaustion pill UX:**
+- Both rendering sites (inline in `buildPanel` and in `updateCondBar`) now add `onclick="changeExhaustion(-1)"` and a `data-tip` tooltip. CSS `.active-exh-pill:hover` hover state added.
+
+**`{type:'section'}` field type:**
+- New field type in `renderField()` that renders a styled sub-header (`.wiz-section` / `.wiz-section-label`) with optional tooltip. Used by spell wizard for "Spell Components" divider.
+
+**CLAUDE.md:**
+- Added Golden Rule 20: Cancel = discard for new items (IS_NEW flag pattern).
+- Added Golden Rule 21: Wizard visual consistency (`.wiz-field`/`.wiz-label`/`.wiz-input` everywhere).
+
+---
+
+## Phase 43: Bug Fixes & Mobile Polish
+
+### Problem
+Three bugs survived Phase 42: (1) the overlay backdrop's double-click-to-discard guard for new character creation was checking the wrong wizard key and never fired; (2) the game panel stat strip showed overlapping/clipped labels at mobile widths because the existing `@media(max-width:768px)` block did not reflow the strip; (3) a botched attempt to fix a speculative point-buy inflation bug incorrectly subtracted `backgroundAsi` from `abilityScores` in `flattenChar()`, causing the budget to show surplus points on edit.
+
+### Changes
+
+**`onOverlayClick()` key fix:**
+- `WIZ_KEY==='createChar'` corrected to `WIZ_KEY==='char-create'`. The wizard is registered under `'char-create'`; the wrong key silently bypassed the double-click confirmation every time.
+
+**Mobile stat strip (`@media(max-width:768px)`):**
+- New rules appended to the 768px media query (the app's main mobile breakpoint, where the sidebar collapses and `#main` gets full viewport width).
+- `.stat-strip` switches from `display:flex` to `display:grid; grid-template-columns:repeat(4,1fr)`, giving each cell ~83px on a 375px viewport — enough for all labels to wrap cleanly.
+- `.stat-sep` gets `display:none` (separators make no sense in a grid).
+- `.stat-cell` gets card-style `background`, `border`, and `padding` for visual grouping.
+- `.stat-cell-lbl` gets `white-space:normal; text-align:center` so long labels ("Passive Perception", "Prof. Bonus") wrap instead of overflowing.
+- Breakpoint rationale: 480px (tried first) is too narrow — it never fires for desktop resize tests or large phones in landscape. 768px matches the existing sidebar-collapse breakpoint.
+
+**`flattenChar()` revert:**
+- A prior attempted fix subtracted `backgroundAsi` from `abilityScores` before passing to the wizard, incorrectly assuming old saves had ASI baked in. In reality `abilityScores` has always stored only base point-buy scores (separate from `backgroundAsi`); `onSave` never bakes them together. The subtraction was reverted; `flattenChar()` now passes `sc.STR`, `sc.DEX`, … as-is.
 
 ---
 
