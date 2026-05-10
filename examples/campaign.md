@@ -331,3 +331,57 @@ Il gruppo monta e parte. **Phandalin** rimane alle spalle. Davanti a loro, la st
 *Fine dell'Atto I*
 
 ---
+
+---
+---
+
+## EPISODIO 8 — L'Owlbear
+**10 maggio 2026**
+
+---
+
+Sul carretto verso **Weaven Thor**, con il tempo e il dondolio della strada, il gruppo comincia a parlare. Storie, origini, com'è andata prima che tutto questo cominciasse.
+
+Viene fuori che **Santaera** ha incontrato **Gundren** per la prima volta in una taverna. Viene fuori anche che **Briox** è particolarmente legato al nano — più di quanto si potesse immaginare, più di un semplice rapporto di lavoro.
+
+Quella notte, al campo, **Mandorlino** e **Catalion** finiscono vicini davanti al fuoco e legano — due persone molto diverse che trovano un terreno comune nel silenzio.
+
+---
+
+La notte porta un incontro inatteso.
+
+**Catalion** e **Mandorlino** sono di guardia quando dal bosco sbuca un **owlbear**. Prima che chiunque possa reagire, la bestia afferra **Mandorlino** e lo trascina via nel buio.
+
+**Catalion** non aspetta: lancia *Dissonant Whispers* con tutto quello che ha. La creatura urla di terrore e fugge — ma **Mandorlino** è ancora tra i suoi artigli.
+
+---
+
+Gli urli svegliano tutti. Tranne **Bo**, che dorme come un sasso.
+
+**Chiaviddu** scocca una freccia nel buio. **Santaera** segue. Le frecce colpiscono la bestia. **Mandorlino**, ancora nella sua stretta, riesce a liberare un braccio e la finisce.
+
+**Briox** nel frattempo aveva tentato di prendere posizione teletrasportandosi su un albero. L'idea era buona. L'atterraggio no: cade giù. **Santaera** era pronto a prenderlo al volo ma manca il momento, e **Briox** atterra malamente.
+
+---
+
+La carcassa viene riportata all'accampamento.
+
+**Bo** si sveglia, vede l'owlbear morto, e inizia a lavorare in silenzio. Con la cura di chi sa quello che fa, ricava dalla bestia quello che serve: pelli, denti, piume, ossa. Distribuisce collanine ai compagni. Nessuno chiede, nessuno rifiuta.
+
+---
+
+Il gruppo riprende il cammino verso **Weaven Thor**.
+
+A un certo punto la strada si fa più stretta e i cavalli diventano un rischio — troppo rumorosi, troppo visibili. Il carretto e le cavalcature vengono nascosti in una radura tra gli alberi. Si procede a piedi.
+
+**Chiaviddu** va avanti da solo a fare ricognizione, come sempre.
+
+---
+
+Quando le prime sagome dell'accampamento orchesco si profilano tra gli alberi, il gruppo si prepara.
+
+Il piano è semplice: **Mandorlino** lancia *Fire Bolt* in rapida successione per appiccare il fuoco all'accampamento e attirare gli orchi fuori allo scoperto, dove il gruppo li può aspettare. Ma il fuoco non prende. Niente fiamme, niente panico, niente orda di orchi che corre verso di loro in disordine.
+
+Invece, gli orchi si allertano e rispondono con una pioggia di frecce.
+
+La battaglia per **Weaven Thor** sta per cominciare.

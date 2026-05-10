@@ -1283,16 +1283,29 @@ const BASE = {
     actionTrackerSelect:'Which tracker to spend',
     actionTrackerNone:'No resource cost',
     actionTrackerNoTrackers:'Add trackers to this feature first',
-    lbl_uses:'uses left',
-    logTrackerUse:'⚡ {name}: 1 use spent',
-    logTrackerNoUses:'❌ {name}: no uses remaining',
-    poolMode:'Numeric pool',
-    poolModeHint:'Numeric pool (HP, points, etc.) instead of discrete pips. Spend prompts for amount.',
-    poolUnit:'Unit label (e.g. HP)',
-    poolMax:'Pool maximum',
-    trackerCostChange:'change',
-    trackerCostLabel:'uses per activation',
-    logPoolSpend:'{emoji}{name}: spent {amount} {unit}, {remaining} remaining',
+     lbl_uses:'uses left',
+     logTrackerUse:'⚡ {name}: 1 use spent',
+     logTrackerNoUses:'❌ {name}: no uses remaining',
+     poolMode:'Numeric pool',
+     poolModeHint:'Numeric pool (HP, points, etc.) instead of discrete pips. Spend prompts for amount.',
+     poolUnit:'Unit label (e.g. HP)',
+     poolMax:'Pool maximum',
+     trackerCostChange:'change',
+     trackerCostLabel:'uses per activation',
+     logPoolSpend:'{emoji}{name}: spent {amount} {unit}, {remaining} remaining',
+     trkHdr_name:'Name & Icon',
+     trkHdr_nameHint:'Label and icon shown on the tracker card in the game panel.',
+     trkHdr_usesRec:'Uses & Recovery',
+     trkHdr_usesRecHint:'How many uses this tracker has and when they refill (long rest, short rest, or manual).',
+     trkHdr_die:'Pip Die',
+     trkHdr_dieHint:'Optional die label shown inside each pip (e.g. d6 for Bardic Inspiration). Enable "Show die on pips" to display it instead of the default dot.',
+     trkHdr_mode:'Tracker Mode',
+     actHdr_name:'Label & Icon',
+     actHdr_nameHint:'Name and icon shown in the Quick Actions bar during play.',
+     actHdr_type:'Action Type',
+     actHdr_typeHint:'When in the turn this action is taken: Action, Bonus Action, Reaction, or Free Action.',
+     actHdr_desc:'Description',
+     actHdr_descHint:'Short one-line summary displayed inside the action badge in the game panel.',
    secStats:'Core Stats', secCombat:'Combat', secConditions:'Conditions', secTrackers:'Trackers',
    secRest:'Rest', secSession:'Session',
   rests:'😴 Rests', longRest:'🌙 Long Rest', shortRest:'☕ Short Rest',
@@ -1330,7 +1343,7 @@ const BASE = {
    custom:'Custom…', customPh:'Type a custom value',
    sidebarEmpty:'Sidebar is empty. Enable edit mode (✏️) to add features.',
    editBtn:'✏️', delBtn:'🗑',
-   langToggle:'IT',
+     langToggle:'EN',
   splashSub:'Interactive Character Sheet — D&D 2024',
   splashImport:'Import JSON', splashImportDesc:'Load your existing sheet',
   splashCreate:'Create Character', splashCreateDesc:'Step-by-step guided wizard',
@@ -1642,7 +1655,7 @@ const BASE = {
   hint_magicFocus:'Spellcasting focus or component pouch.',
   hint_preparedCaster:'Enables prepared/unprepared spell tracking.',
   // Wizard hints — block composition
-  hint_contentBlocks:'Paragraphs, bullets, tables, notes, headers, or sub-features. Preview below.',
+  hint_contentBlocks:'Build the visible body of this feature — add paragraphs, bullet lists, tables, notes, headings, or sub-features. Arrange them in the order you want them to appear on the sheet. Preview updates live below.',
   hint_algoSteps:'Question + bullet options per step. Preview below.',
   hint_spellDescStep:'Preview below shows the final spell card.',
   hint_weaponDescStep:'Preview below shows the final weapon card.',
@@ -1766,6 +1779,19 @@ const TRANSLATIONS = {
       trackerCostChange:'modifica',
       trackerCostLabel:'usi per attivazione',
       logPoolSpend:'{emoji}{name}: spesi {amount} {unit}, rimasti {remaining}',
+      trkHdr_name:'Nome & Icona',
+      trkHdr_nameHint:'Etichetta e icona mostrate nella scheda tracker nel pannello di gioco.',
+      trkHdr_usesRec:'Usi & Recupero',
+      trkHdr_usesRecHint:'Quanti usi ha questo tracker e quando si ricaricano (riposo lungo, breve o manuale).',
+      trkHdr_die:'Dado Pip',
+      trkHdr_dieHint:'Dado opzionale mostrato dentro ogni pip (es. d6 per Ispirazione Bardica). Abilita "Mostra dado sui pip" per visualizzarlo invece del punto.',
+      trkHdr_mode:'Modalità Tracker',
+      actHdr_name:'Etichetta & Icona',
+      actHdr_nameHint:'Nome e icona mostrati nella barra Azioni Rapide durante il gioco.',
+      actHdr_type:'Tipo di Azione',
+      actHdr_typeHint:'Quando nel turno viene usata questa azione: Azione, Azione Bonus, Reazione o Azione Libera.',
+      actHdr_desc:'Descrizione',
+      actHdr_descHint:'Breve riassunto mostrato nel badge azione nel pannello di gioco.',
      secStats:'Statistiche', secCombat:'Combattimento', secConditions:'Condizioni', secTrackers:'Tracker',
      secRest:'Riposo', secSession:'Sessione',
     rests:'😴 Riposi', longRest:'🌙 Riposo Lungo', shortRest:'☕ Riposo Breve',
@@ -1803,7 +1829,7 @@ const TRANSLATIONS = {
     custom:'Personalizzato…', customPh:'Inserisci un valore personalizzato',
     sidebarEmpty:'Sidebar vuota. Abilita modalità modifica (✏️) per aggiungere capacità.',
     editBtn:'✏️', delBtn:'🗑',
-      langToggle:'EN', editMode:'✏️ Modifica Scheda', editDone:'✓ Fine Modifica',
+      langToggle:'IT', editMode:'✏️ Modifica Scheda', editDone:'✓ Fine Modifica',
     splashSub:'Scheda Personaggio Interattiva — D&D 2024',
     splashImport:'Importa JSON', splashImportDesc:'Carica la tua scheda esistente',
     splashCreate:'Crea Personaggio', splashCreateDesc:'Wizard guidato passo per passo',
@@ -2100,7 +2126,7 @@ const TRANSLATIONS = {
     hint_magicAbility:'Imposta CD incantesimi e bonus attacco.',
     hint_magicFocus:'Focus di lancio o borsa dei componenti.',
     hint_preparedCaster:'Se attivo, gli incantesimi possono essere preparati/rimossi.',
-    hint_contentBlocks:'Paragrafi, elenchi, tabelle, note, intestazioni o sotto-capacità. Anteprima in basso.',
+    hint_contentBlocks:'Costruisci il corpo visibile di questa capacità — aggiungi paragrafi, elenchi, tabelle, note, intestazioni o sotto-capacità. Ordinali come vuoi che appaiano sulla scheda. L\'anteprima si aggiorna in tempo reale in basso.',
     hint_algoSteps:'Domanda + opzioni a punti per passo. Anteprima in basso.',
     hint_spellDescStep:'L\'anteprima in basso mostra la scheda finale.',
     hint_weaponDescStep:'L\'anteprima in basso mostra la scheda arma finale.',
@@ -2338,7 +2364,7 @@ function updateFixedControls(){
   const themeBtn=document.getElementById('btn-theme');
   const langBtn=document.getElementById('btn-lang');
   if(themeBtn){themeBtn.textContent=isDark?'☀️':'🌙';themeBtn.title=T('titleTheme');}
-  if(langBtn){langBtn.innerHTML=(currentLang==='en'?FLAG_IT:FLAG_GB)+T('langToggle');langBtn.title=T('titleLang');}
+  if(langBtn){langBtn.innerHTML=(currentLang==='en'?FLAG_GB:FLAG_IT)+T('langToggle');langBtn.title=T('titleLang');}
   const tabChar=document.getElementById('hdr-tab-char');
   const tabAI=document.getElementById('hdr-tab-ai');
   if(tabChar) tabChar.textContent=T('hdrCharacter');
@@ -2352,7 +2378,7 @@ function updateFixedControls(){
   const ob=document.getElementById('overflow-theme');
   if(ob) ob.textContent=(isDark?'☀️':'🌙')+' '+T('overflowTheme');
   const ol=document.getElementById('overflow-lang');
-  if(ol) ol.innerHTML=(currentLang==='en'?FLAG_IT:FLAG_GB)+T('langToggle')+' '+T('overflowLang');
+  if(ol) ol.innerHTML=(currentLang==='en'?FLAG_GB:FLAG_IT)+T('langToggle')+' '+T('overflowLang');
   renderFAB();
 }
 function renderFAB(){
@@ -3877,7 +3903,7 @@ function longRest(){
     });
   });
   (C.spellSlots||[]).forEach(sl=>{if(S.spellSlots[sl.level])S.spellSlots[sl.level].used=0;});
-  S.round=1; S.concentration=''; S.conditions=[];
+  S.round=1; S.initiative=''; S.concentration=''; S.conditions=[];
   if((S.exhaustion||0)>0) S.exhaustion=Math.max(0,(S.exhaustion||0)-1);
   document.querySelectorAll('.death-pip').forEach(p=>p.classList.remove('used'));
   S.deathSucc=0; S.deathFail=0;
@@ -3954,6 +3980,8 @@ function applyHDResult(){
 function closeHDDialog(skipped=false){
   SESSION.hdDialog=false;
   delete SESSION._shortRestSummary;
+  SESSION.initiative=''; SESSION.round=1; SESSION.concentration=''; SESSION.conditions=[];
+  SESSION.deathSucc=0; SESSION.deathFail=0;
   renderPanel(); updateHPDisplay(); saveAll();
   if(skipped) showToast(T('toastShortRestSkipped'),'info');
 }
@@ -4417,7 +4445,7 @@ function renderContentBlockEditor(){
     const label=dndTr('blockTypes',k)||enV;
     return `<button class="cb-type-pill" onclick="addBlock('${k}')" data-tip="${T(tipKey[k])||label}">${icons[k]||'+'} ${label}</button>`;
   }).join('');
-  return `<div class="wiz-field"><label class="wiz-label">${T('contentBlocks')}</label>
+  return `<div class="wiz-field"><label class="wiz-label">${T('contentBlocks')} <span class="help-icon" data-tip="${T('hint_contentBlocks').replace(/"/g,'&quot;')}">?</span></label>
     <p class="wiz-step-desc">${T('hint_contentBlocks')}</p>
     <div id="cb-list">${rows}</div>
     <div id="cb-add-controls" class="cb-type-pills">${typePills}</div></div>`;
@@ -4667,25 +4695,31 @@ function editWizTracker(i){
   const body=document.getElementById('wiz-body'); if(!body) return;
   const recOpts=recoveryOpts().map(o=>`<option value="${o.v}"${o.v===t.recovery?' selected':''}>${o.l}</option>`).join('');
   body.innerHTML=`<div class="wiz-field"><label class="wiz-label">${T('tracker')}</label>
-    <div style="display:flex;gap:6px;margin-bottom:6px;">
+    <label class="wiz-label" style="font-size:.7em;margin-bottom:4px;display:block;">${T('trkHdr_name')} <span class="help-icon" data-tip="${T('trkHdr_nameHint')}">?</span></label>
+    <div style="display:flex;gap:6px;margin-bottom:12px;">
       <input id="wte-label" class="wiz-input" style="flex:2" placeholder="${T('wiz_f_trackerLabel')}" value="${(t.label||'').replace(/"/g,'&quot;')}">
       <input id="wte-emoji" class="wiz-input" style="width:3em" placeholder="●" value="${t.emoji||''}">
     </div>
-    <div style="display:flex;gap:6px;margin-bottom:6px;">
+    <label class="wiz-label" style="font-size:.7em;margin-bottom:4px;display:block;">${T('trkHdr_usesRec')} <span class="help-icon" data-tip="${T('trkHdr_usesRecHint')}">?</span></label>
+    <div style="display:flex;gap:6px;margin-bottom:12px;">
       <input id="wte-total" class="wiz-input" type="number" min="1" style="width:70px" placeholder="${t.isPool?T('poolMax'):T('wiz_f_totalUses')}" value="${t.total||1}">
       <select id="wte-recovery" class="wiz-input" style="flex:1">${recOpts}</select>
     </div>
-    <div id="wte-die-row" style="display:flex;gap:6px;margin-bottom:6px;align-items:center;${t.isPool?'display:none':''}">
-      <input id="wte-die" class="wiz-input" style="width:60px" placeholder="${T('f_die')}" value="${t.die||''}">
-      <label style="display:flex;align-items:center;gap:4px;"><input type="checkbox" id="wte-showdie" ${t.showDie?'checked':''}> ${T('f_showDie')}</label>
+    <div id="wte-die-row" style="${t.isPool?'display:none':''}">
+      <label class="wiz-label" style="font-size:.7em;margin-bottom:4px;display:block;">${T('trkHdr_die')} <span class="help-icon" data-tip="${T('trkHdr_dieHint')}">?</span></label>
+      <div style="display:flex;gap:6px;margin-bottom:12px;align-items:center;">
+        <input id="wte-die" class="wiz-input" style="width:60px" placeholder="${T('f_die')}" value="${t.die||''}">
+        <label style="display:flex;align-items:center;gap:4px;"><input type="checkbox" id="wte-showdie" ${t.showDie?'checked':''}> ${T('f_showDie')}</label>
+      </div>
     </div>
+    <label class="wiz-label" style="font-size:.7em;margin-bottom:4px;display:block;">${T('trkHdr_mode')} <span class="help-icon" data-tip="${T('poolModeHint')}">?</span></label>
     <div style="margin-bottom:6px;">
       <label style="display:flex;align-items:center;gap:6px;">
         <input type="checkbox" id="wte-ispool" ${t.isPool?'checked':''}>
-        <span style="font-size:.85em;">${T('poolMode')} <span class="help-icon" data-tip="${T('poolModeHint')}">?</span></span>
+        <span style="font-size:.85em;">${T('poolMode')}</span>
       </label>
     </div>
-    <div id="wte-unit-row" style="margin-bottom:6px;${t.isPool?'':'display:none'}">
+    <div id="wte-unit-row" style="margin-bottom:12px;${t.isPool?'':'display:none'}">
       <input id="wte-unit" class="wiz-input" placeholder="${T('poolUnit')}" value="${(t.unit||'').replace(/"/g,'&quot;')}">
     </div>
     <div style="display:flex;gap:6px;">
@@ -4699,7 +4733,7 @@ function editWizTracker(i){
   if(poolCb){poolCb.addEventListener('change',()=>{
     const on=poolCb.checked;
     if(unitRow) unitRow.style.display=on?'':'none';
-    if(dieRow) dieRow.style.display=on?'none':'flex';
+    if(dieRow) dieRow.style.display=on?'none':'';
     if(totalInput) totalInput.placeholder=on?T('poolMax'):T('wiz_f_totalUses');
   });}
 }
@@ -4773,17 +4807,20 @@ function editWizAction(i){
   const hasCostOverride=a.trackerCost&&a.trackerCost>1;
   const trackerOpts=allOpts.length?allOpts.join(''):`<option disabled>${T('actionTrackerNoTrackers')}</option>`;
   body.innerHTML=`<div class="wiz-field"><label class="wiz-label">${T('action')}</label>
-    <div style="display:flex;gap:6px;margin-bottom:6px;">
+    <label class="wiz-label" style="font-size:.7em;margin-bottom:4px;display:block;">${T('actHdr_name')} <span class="help-icon" data-tip="${T('actHdr_nameHint')}">?</span></label>
+    <div style="display:flex;gap:6px;margin-bottom:12px;">
       <input id="wae-label" class="wiz-input" style="flex:2" placeholder="${T('wiz_f_actionLabel')}" value="${(a.label||'').replace(/"/g,'&quot;')}">
       <input id="wae-emoji" class="wiz-input" style="width:3em" placeholder="⚡" value="${a.emoji||''}">
     </div>
-    <div style="display:flex;gap:6px;margin-bottom:6px;">
+    <label class="wiz-label" style="font-size:.7em;margin-bottom:4px;display:block;">${T('actHdr_type')} <span class="help-icon" data-tip="${T('actHdr_typeHint')}">?</span></label>
+    <div style="display:flex;gap:6px;margin-bottom:12px;">
       <select id="wae-type" class="wiz-input" style="flex:1">${typeOpts}</select>
     </div>
-    <textarea id="wae-desc" class="wiz-input" rows="2" placeholder="${T('wiz_f_actionDesc')}">${a.description||''}</textarea>
-    <div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--border-light);">
-      <div style="display:flex;align-items:center;gap:5px;margin-bottom:4px;">
-        <span style="font-size:.82em;font-weight:600;color:var(--text-muted);">${T('actionTrackerLink')}</span>
+    <label class="wiz-label" style="font-size:.7em;margin-bottom:4px;display:block;">${T('actHdr_desc')} <span class="help-icon" data-tip="${T('actHdr_descHint')}">?</span></label>
+    <textarea id="wae-desc" class="wiz-input" rows="2" placeholder="${T('wiz_f_actionDesc')}" style="margin-bottom:12px;">${a.description||''}</textarea>
+    <div style="padding-top:10px;border-top:1px solid var(--border-light);">
+      <div style="display:flex;align-items:center;gap:5px;margin-bottom:6px;">
+        <span class="wiz-label" style="font-size:.7em;margin:0;">${T('actionTrackerLink')}</span>
         <span class="help-icon" data-tip="${T('actionTrackerLinkHint')}">?</span>
       </div>
       <select id="wae-tracker-link" class="wiz-input">

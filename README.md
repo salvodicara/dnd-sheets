@@ -80,6 +80,16 @@ A companion chat page that connects to the character sheet via localStorage.
 - **Campaign query mode (📖)** — toggle button in the chat bar switches context from the character sheet to the loaded campaign chronicle; AI answers lore/story questions instead of character questions. Uses keyword-based section selection to fit the most relevant chronicle sections within the context budget. For free-tier (Pollinations), a structured AI-generated summary is cached and used alongside keyword snippets
 - Fully bilingual (English / Italian)
 
+### Campaign Chronicles (`chronicles.html`)
+A standalone markdown journal viewer and editor for campaign notes, shared with the AI assistant via localStorage.
+
+- Load a `.md` or `.txt` campaign file from disk
+- Reader view renders headings, with a collapsible sidebar table of contents built from `#` / `##` headings — click any entry to smooth-scroll to it
+- Editor view (toggle in sidebar) lets you edit the chronicle directly in the browser; auto-saves to localStorage on every keystroke
+- Export to `.md` file at any time
+- The AI assistant's campaign query mode (📖) reads from the same localStorage key, so notes load into the AI context automatically
+- Fully bilingual (English / Italian), shared theme with the other pages
+
 ## Project Structure
 
 ```

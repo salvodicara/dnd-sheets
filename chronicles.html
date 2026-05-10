@@ -314,9 +314,9 @@ function applyLang(){
   Object.keys(ids).forEach(function(id){
     var el=document.getElementById(id);if(el)el.textContent=S(ids[id]);
   });
-  document.getElementById('btn-lang').innerHTML=(currentLang==='en'?FLAG_IT:FLAG_GB)+(currentLang==='en'?'IT':'EN');
+  document.getElementById('btn-lang').innerHTML=(currentLang==='en'?FLAG_GB:FLAG_IT)+(currentLang==='en'?'EN':'IT');
   var ovl=document.getElementById('overflow-lang');
-  if(ovl)ovl.innerHTML=(currentLang==='en'?FLAG_IT:FLAG_GB)+(currentLang==='en'?'IT Language':'EN Language');
+  if(ovl)ovl.innerHTML=(currentLang==='en'?FLAG_GB:FLAG_IT)+(currentLang==='en'?'EN Language':'IT Language');
 }
 
 // ── Sidebar ──────────────────────────────────────────────────────────────

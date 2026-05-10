@@ -488,7 +488,7 @@ const STRINGS={
     charHint:'If you opened the main app in this browser, your character is already loaded automatically.',
     inputPlaceholder:'Ask anything — rules, what to pick, what to add…',
     freeStatus:'✓ free', keySavedStatus:'✓ key saved',
-    langToggle:'IT', titleTheme:'Toggle theme', titleLang:'Passa all\'italiano',
+    langToggle:'EN', titleTheme:'Toggle theme', titleLang:'Passa all\'italiano',
     keySavedMsg:'Key saved! Ask a question or describe what to add to your character.',
     charError:'Not a valid character file. Export from the app\'s Save button.',
     sendError:'No API key. Open Settings or switch to the free provider.',
@@ -527,7 +527,7 @@ const STRINGS={
     charHint:'Se hai aperto l\'app principale in questo browser, il tuo personaggio è già caricato automaticamente.',
     inputPlaceholder:'Chiedi qualcosa — regole, cosa scegliere, cosa aggiungere…',
     freeStatus:'✓ gratuito', keySavedStatus:'✓ chiave salvata',
-    langToggle:'EN', titleTheme:'Cambia tema', titleLang:'Switch to English',
+     langToggle:'IT', titleTheme:'Cambia tema', titleLang:'Switch to English',
     keySavedMsg:'Chiave salvata! Fai una domanda o descrivi cosa aggiungere al tuo personaggio.',
     charError:'File non valido. Esportalo dall\'app con il pulsante Salva.',
     sendError:'Nessuna chiave API. Apri Impostazioni o passa al provider gratuito.',
@@ -602,7 +602,7 @@ function applyLang(){
   const tBtn=document.getElementById('btn-theme');
   const clearBtn=document.getElementById('btn-clear');
   const disc=document.getElementById('ai-disclaimer-text');
-  if(lBtn){lBtn.innerHTML=(currentLang==='en'?FLAG_IT:FLAG_GB)+UI('langToggle');lBtn.title=UI('titleLang');}
+  if(lBtn){lBtn.innerHTML=(currentLang==='en'?FLAG_GB:FLAG_IT)+UI('langToggle');lBtn.title=UI('titleLang');}
   if(tBtn) tBtn.title=UI('titleTheme');
   if(clearBtn) clearBtn.title=UI('clearChat');
   const campBtn=document.getElementById('btn-campaign');
@@ -622,7 +622,7 @@ function applyLang(){
   const oc=document.getElementById('overflow-char');
   if(oc) oc.textContent=UI('hdrCharacter');
   const ol=document.getElementById('overflow-lang');
-  if(ol) ol.innerHTML=(currentLang==='en'?FLAG_IT:FLAG_GB)+UI('langToggle')+' '+UI('overflowLang');
+  if(ol) ol.innerHTML=(currentLang==='en'?FLAG_GB:FLAG_IT)+UI('langToggle')+' '+UI('overflowLang');
 }
 function toggleOverflowMenu(e){
   e.stopPropagation();

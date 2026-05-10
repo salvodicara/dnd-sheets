@@ -27,7 +27,7 @@
 19. **Grill before building.** Before implementing any new feature or meaningfully modifying an existing one, always load the `grill-me` skill and interview the user to resolve all design decisions. Do this implicitly — the user does not need to ask for it.
 20. **Cancel = discard for new items.** Inline sub-editors (tracker, action, content block, algo step) push a new empty item into their array *before* opening the editor. If the user cancels or presses ✕ on a *newly-added* item (one that has never been saved), that item must be spliced out entirely — not left as an empty placeholder. Implement with an `IS_NEW` flag (e.g. `WIZ.trkIsNew`, `WIZ.cbIsNew`, `ALGO_IS_NEW`): set `true` on add, clear on save; cancel branch checks the flag and splices if true.
 21. **Wizard visual consistency.** All wizards must look and feel as if designed together. Use `.wiz-field` (wrapper, `margin-bottom:20px`), `.wiz-label` (uppercase, 0.75em, 700 weight), and `.wiz-input` (padded input/textarea/select) throughout every wizard and sub-editor. Never use ad-hoc inline styles for layout inside wizard bodies. Treat wizard UI as the primary interaction surface of the app.
-22. **UI consistency across pages.** `index.html` and `assistant.html` must feel like a single app. Any CSS rule that affects shared UI (header, tabs, ctrl-btns, theme variables, scrollbars) **must be applied identically in both files**. Checklist when touching shared UI: (a) mirror the change in the other file, (b) ensure `--sidebar-bg`, `--accent`, and other theme variables resolve to the same values in both files, (c) both files must have a flash-prevention `<script>` in `<head>` that reads `dnd-theme` from localStorage before first paint, (d) tab layout must never shift between pages — use `border-bottom:2px solid transparent` on inactive tabs so the active underline slot is always reserved.
+22. **UI consistency across pages.** `index.html`, `assistant.html`, and `chronicles.html` must feel like a single app. Any CSS rule that affects shared UI (header, tabs, ctrl-btns, theme variables, scrollbars) **must be applied identically in all three files**. Checklist when touching shared UI: (a) mirror the change in the other files, (b) ensure `--sidebar-bg`, `--accent`, and other theme variables resolve to the same values in all files, (c) all files must have a flash-prevention `<script>` in `<head>` that reads `dnd-theme` from localStorage before first paint, (d) tab layout must never shift between pages — use `border-bottom:2px solid transparent` on inactive tabs so the active underline slot is always reserved.
 
 ## Architecture
 
@@ -364,6 +364,47 @@ This app is designed for **hours-long D&D sessions**. Every visual choice priori
 9. Action badges must use `--badge-*` variables for theme-adaptive coloring.
 10. The sidebar adapts per theme (dark in dark mode, light in light mode). Use `--sidebar-*` variables, never hardcode `#fff` or `#eee` for hover text -- use `var(--text)`.
 11. Element IDs: buttons use `btn-theme`, `btn-lang`, `btn-edit`, `btn-logout`. Always match these exactly in `getElementById()` calls.
+
+## Campaign Chronicles (`chronicles.html`)
+
+A standalone ~560-line HTML file (same zero-dependency constraint). Provides a markdown campaign journal viewer and editor, shared with `assistant.html` via the `dnd_campaign_v1` localStorage key.
+
+### Purpose
+- Load, view, and edit a campaign chronicle (`.md` or `.txt` file).
+- Parsed markdown headings (`#`, `##`) build a sidebar table of contents with smooth-scroll navigation.
+- The editor auto-saves to localStorage on every keystroke (`autoSaveCampaign()`).
+- Export to `.md` file via `exportCampaign()`.
+
+### State
+```
+CAMPAIGN    -- {name, text, loadedAt} loaded from dnd_campaign_v1; null if none loaded
+EDIT_MODE   -- boolean; toggled by the sidebar edit button
+```
+localStorage keys:
+- `dnd_campaign_v1` — campaign data `{name, text, loadedAt}` (shared with `assistant.html`)
+- `dnd-lang` — shared language preference
+- `dnd-theme` — shared theme preference
+- `chrSidebarWidth` — sidebar width in px
+- `chrSidebarCollapsed` — sidebar collapsed state
+
+### i18n (`STRINGS` + `S()`)
+Same pattern as the other files but independent. `STRINGS.en` and `STRINGS.it` hold all user-visible strings. `S(key)` resolves with fallback to English. `FLAG_IT` and `FLAG_GB` SVG constants follow the same pattern as the other files. `applyLang()` must show the **current** language flag (not the target), consistent with `index.html` and `assistant.html`.
+
+### Key Functions
+| Function | Purpose |
+|---|---|
+| `renderContent()` | Re-render the main view (reader or editor) |
+| `renderSidebar()` | Build TOC from headings and footer buttons |
+| `buildToc(text)` | Parse `#`/`##` headings into `{level, text, slug}` items |
+| `tocJump(slug)` | Smooth-scroll to a heading by its slug ID |
+| `saveCampaign(name, text)` | Save loaded campaign to state + localStorage |
+| `clearCampaign()` | Remove campaign from state + localStorage |
+| `exportCampaign()` | Download campaign as `.md` file |
+| `autoSaveCampaign()` | Called on editor `input` to persist changes |
+| `toggleEditMode()` | Switch between reader and editor views |
+| `applyLang()` | Apply translations and update lang button |
+| `applyTheme()` | Sync theme button icon |
+| `S(key)` | Translated string lookup with en fallback |
 
 ## D&D Rules Reference
 
