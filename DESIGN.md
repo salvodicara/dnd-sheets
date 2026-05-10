@@ -383,13 +383,16 @@ Done:
 - `catalion.json` updated: full Italian backstory + physical stats for Catalion.
 
 ### Phase 30: Unarmed Strike
-**Status:** ✅ COMPLETE
+**Status:** ✅ COMPLETE → ♻️ REVERTED
 **Goal:** Auto-derive unarmed strike from STR mod and display it in weapons section.
 
 Done:
 - Unarmed strike auto-rendered as a derived row in the weapons table (not stored in `CHAR.weapons`).
 - Damage: `1 + STR mod` (minimum 1) bludgeoning; attack bonus: `PB + STR mod`.
 - Not editable — it's always auto-computed. Consistent with the override pattern.
+
+Reverted:
+- The auto-derived card was removed. It cluttered the weapons section for all characters regardless of class, and caused confusion for Monks and other characters with non-standard unarmed rules. Players who need it can add it as a regular weapon.
 
 ### Phase 31: UI Redesign — Gold/Navy Palette
 **Status:** ✅ COMPLETE
@@ -702,7 +705,7 @@ Done:
 | 86 | Spell filter | Sticky bar in Spells section; text search + prepared toggle; scroll/focus preserved on re-render |
 | 87 | Weapon/armor proficiencies | Free-text fields in char-create wizard (Combat step); displayed in base-data section |
 | 88 | Character lore | CHAR.lore object; dedicated section + wizard (Physical + Personality & Backstory steps) |
-| 89 | Unarmed strike | Auto-derived row in weapons table; not stored; damage = 1+STR mod, attack = PB+STR mod |
+| 89 | Unarmed strike | ~~Auto-derived row in weapons table~~ — reverted; players add it manually as a weapon if needed |
 | 90 | Schema version | Single source of truth: SCHEMA_VERSION = '3.0' in index.html; all exports and Catalion JSON use "3.0" |
 | 91 | Accent palette | Gold/navy replaces blue/purple: dark `#c9a227`, light `#8a6800`; warm cream/grey backgrounds |
 | 92 | Header height | 50px (up from 48px) for visual breathing room; all dependent offsets updated in both files |

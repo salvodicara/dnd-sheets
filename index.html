@@ -1663,8 +1663,6 @@ const BASE = {
   // Passive scores
   passiveScores:'Passive Scores', passivePerception:'Passive Perception',
   passiveInvestigation:'Passive Investigation', passiveInsight:'Passive Insight',
-  // Unarmed strike
-  unarmedStrike:'Unarmed Strike',
   // Mastery
   wiz_f_mastery:'Weapon Mastery', masteryLabel:'Mastery',
   hint_mastery:'D&D 2024 mastery (granted by class). E.g. Cleave, Nick, Push.',
@@ -2122,8 +2120,6 @@ const TRANSLATIONS = {
     // Passive scores
     passiveScores:'Punteggi Passivi', passivePerception:'Percezione Passiva',
     passiveInvestigation:'Investigazione Passiva', passiveInsight:'Intuizione Passiva',
-    // Unarmed strike
-    unarmedStrike:'Attacco Senz\'Armi',
     // Mastery
     wiz_f_mastery:'Maestria Arma', masteryLabel:'Maestria',
     hint_mastery:'Maestria D&D 2024 (concessa dalla classe). Es. Falciata, Intralciare.',
@@ -3385,20 +3381,9 @@ function renderWeapons(){
     </table>
     ${w.notes?`<p class="note" style="margin-top:6px;">${md(pinNotes(w.notes))}</p>`:''}
   </div>`).join('');
-  // Unarmed strike derived row
-  const strMod=abilityMod(scores['STR']||10);
-  const unarmedAtk=modStr(pb+strMod);
-  const unarmedDmg=`1${strMod>=0?'+'+strMod:strMod}`;
-  const unarmedCard=`<div class="weapon-card" style="opacity:.75;border-style:dashed;">
-    <h3 style="margin:0;font-size:.95em;">👊 ${T('unarmedStrike')}</h3>
-    <table style="margin-top:6px;font-size:.9em;">
-      <tr><td><strong>${T('attackCol')}</strong></td><td>${unarmedAtk} (STR)</td></tr>
-      <tr><td><strong>${T('damageCol')}</strong></td><td>${unarmedDmg} Bludgeoning</td></tr>
-    </table>
-  </div>`;
   return `${sectionHeader('weapons',EDIT_MODE?`<button class="btn-edit-sm edit-only" style="margin-left:auto" onclick="addWeapon()">＋</button>`:'')}
     <div class="section-header-line"></div>
-    ${unarmedCard}${cards||`<p class="empty-state">${T('noWeapons')}</p>${EDIT_MODE?`<div style="display:flex;justify-content:center;margin:12px 0;"><button class="add-btn edit-only" onclick="addWeapon()">${T('addWeapon')}</button></div>`:''}`}
+    ${cards||`<p class="empty-state">${T('noWeapons')}</p>${EDIT_MODE?`<div style="display:flex;justify-content:center;margin:12px 0;"><button class="add-btn edit-only" onclick="addWeapon()">${T('addWeapon')}</button></div>`:''}`}
     ${EDIT_MODE?`<button class="add-btn edit-only" onclick="addWeapon()">${T('addWeapon')}</button>`:''}
     <hr>`;
 }

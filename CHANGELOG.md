@@ -5,7 +5,15 @@ Entries are in reverse-chronological order. Uncommitted work appears under `[Unr
 
 ---
 
-## [Unreleased] — Wizard Save-on-Dismiss, Inline Editor Auto-Save, Cross-Platform Flags
+## [Unreleased] — Remove automatic Unarmed Strike
+
+### Removed (`index.html`)
+- **Auto-derived Unarmed Strike card removed from the Weapons section.** It was always visible regardless of character class, causing confusion (especially for Monks and other characters with class-specific unarmed rules). Players who need it can add it explicitly as a regular weapon via the weapon wizard.
+- Cleaned up dead i18n keys `unarmedStrike` from `BASE` and `TRANSLATIONS.it`.
+
+---
+
+## [ffa281e] — Wizard Save-on-Dismiss, Inline Editor Auto-Save, Cross-Platform Flags
 
 ### Fixed (`index.html`)
 - **Clicking outside a wizard no longer discards data.** `onOverlayClick` now follows a 3-branch save policy: editing wizards save immediately on a single click; creation wizards require a second click to save (info toast on first click); `char-create` with no character name retains the old double-click-to-discard guard as the one intentional discard path. Cancel/✕ buttons remain the only explicit discard path for all other wizards.
