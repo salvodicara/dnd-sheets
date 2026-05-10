@@ -5,7 +5,7 @@ Entries are in reverse-chronological order. Uncommitted work appears under `[Unr
 
 ---
 
-## [Unreleased] — Phase 42+43: Wizard UX Polish, Cancel/Discard Discipline & Bug Fixes
+## [7053c39] — Phase 42+43: Wizard UX Polish, Cancel/Discard Discipline & Bug Fixes
 
 ### Changed (`index.html`)
 - **Wizard CSS overhaul** — added full CSS for `.wiz-field`, `.wiz-label`, `.wiz-input`, `textarea.wiz-input`, checkbox rows, `.wiz-section` / `.wiz-section-label` dividers, `.cb-type-pills` / `.cb-type-pill` block-type picker; all wizard and sub-editor HTML now uses these classes consistently
