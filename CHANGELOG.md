@@ -5,7 +5,7 @@ Entries are in reverse-chronological order. Uncommitted work appears under `[Unr
 
 ---
 
-## [Unreleased] — Mobile Tooltip Fix & Tooltip Copy Trim
+## [bc1cd45] — Mobile Tooltip Fix & Tooltip Copy Trim
 
 ### Fixed (`index.html`)
 - **Mobile tooltip persists on tap** — floating tooltip now auto-dismisses on touch devices; `touchstart` sets a `touchPending` flag and clears any lingering tip immediately; `mouseover` schedules auto-hide with a delay proportional to text length (50 ms/char, clamped 1.5 s – 5 s); desktop `mouseover`/`mouseout` flow is completely unchanged
