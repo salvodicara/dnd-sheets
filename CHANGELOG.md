@@ -5,18 +5,32 @@ Entries are in reverse-chronological order. Uncommitted work appears under `[Unr
 
 ---
 
-## [Unreleased] — AI Chat Navigation Persistence
+## [Unreleased] — CHANGELOG completion
+
+---
+
+## [e731df4] — AI Chat Navigation Persistence, System Prompt Sync & Refactors
 
 ### Fixed (`assistant.html`)
 - **Navigating away mid-response no longer loses the conversation** — `saveHistory()` is now called immediately after the user message is pushed to `HISTORY` (before `dispatchToProvider()` is awaited) in all three send modes (normal, document, campaign). Previously it was only called after a successful round-trip, so any navigation that killed the in-flight request would wipe the pending question from localStorage.
 - **Campaign mode user message timing** — the `{role:'user', _campaign:true}` entry was previously pushed to `HISTORY` only after the API response arrived. It is now pushed before the call, matching normal/document mode behaviour and ensuring the question survives navigation.
-- **`restoreHistory()` detects interrupted responses** — after replaying history into the DOM, the function now checks whether the last visible message (excluding synthetic character-injection turns) is from the user with no paired assistant reply. If so, a warning assistant bubble is rendered: *"⚠ The response was interrupted — you navigated away while waiting. Please send your message again."*
+- **`restoreHistory()` detects interrupted responses** — after replaying history into the DOM, the function now checks whether the last visible message (excluding synthetic turns) is from the user with no paired assistant reply. If so, a warning assistant bubble is rendered: *"⚠ The response was interrupted — you navigated away while waiting. Please send your message again."*
+- **`restoreHistory()` uses `_synthetic` flag** — previously identified invisible character-injection turns by matching raw string content (`msg.content.startsWith('Here is my full character JSON:')`). Now uses a `_synthetic: true` property on the message object — robust, readable, not fragile to content changes.
+- **`applyPatch` / `importChar` errors use `toast()` not `alert()`** — replaced blocking system `alert()` dialogs with the in-app toast notification used everywhere else.
+- **`dismissDisclaimer()` uses CSS class** — was setting `element.style.display='none'` inline; now adds `disclaimer-dismissed` to `<html>`, consistent with the existing CSS rule and flash-prevention pattern.
 
 ### Added (`assistant.html`)
-- **`beforeunload` leave-guard** — `IS_FETCHING` global flag is set `true` the moment the thinking dots appear and reset via `finally` when the call ends (success, error, or exception). A `window.addEventListener('beforeunload', …)` listener raises the browser's native *"Leave site?"* dialog whenever `IS_FETCHING` is true, giving the user a chance to cancel navigation and wait for the response. Normal navigation (no request in flight) is completely unaffected.
-- **`pagehide` safety net** — `saveHistory()` is also called on `pagehide` as a backstop for any edge case not covered by the pre-call saves.
-- **`responseInterrupted` i18n key** — added to both `STRINGS.en` and `STRINGS.it` for the interrupted-response warning bubble.
-- **Campaign mode persisted across reloads** — `CAMPAIGN_MODE` is now saved to `aiCampaignMode` in localStorage whenever it changes (toggle, or force-reset on missing campaign). On page load, the flag and the `📖` button's `.active` class are restored — but only if a campaign is still present in `dnd_campaign_v1`; if the campaign was removed, the stored flag is silently cleared. The campaign welcome banner is re-shown on restore (it is never stored in `HISTORY` and would otherwise be absent after a reload). The banner is given a stable DOM id `campaign-banner`; toggling campaign mode off removes it from the DOM immediately so it disappears without a reload.
+- **`beforeunload` leave-guard** — `IS_FETCHING` global flag is set `true` the moment the thinking dots appear and reset via `finally` when the call ends (success, error, or exception). A `window.addEventListener('beforeunload', …)` listener raises the browser's native *"Leave site?"* dialog whenever `IS_FETCHING` is true. Normal navigation is completely unaffected.
+- **`pagehide` safety net** — `saveHistory()` also called on `pagehide` as a backstop.
+- **`dispatchToProvider(p, key, info, sys, messages, onChunk)`** — extracted helper that centralises the Gemini vs OAI-compat vs streaming branching logic, which was previously duplicated across all three send paths (document, campaign, normal).
+- **Campaign mode persisted across reloads** — `CAMPAIGN_MODE` saved to `aiCampaignMode` in localStorage on every change. Restored on page load with button state and welcome banner. If the campaign was removed, the flag is silently cleared. Banner given stable DOM id `campaign-banner`; toggling campaign mode off removes it from the DOM immediately.
+- **`responseInterrupted` i18n key** — added to `STRINGS.en` and `STRINGS.it`.
+
+### Changed (`assistant.html`)
+- **AI system prompt (`getSys()`) synced with data model** — the following fields were missing from the prompt and are now documented so the AI knows about them: `humanOriginFeat` (character), `ritual: boolean` (spells), `magicBonus: number` (weapons), `attuned: boolean` (equipment), `isPool / unit` (equipment and feature trackers), `subtitle` (features), `header` content block type, `subfeature` description, `trackerLink / trackerCost` (feature actions), `bardicInspiration / bardicInspirationDie` (session). Compact schema string at end of `getSys()` updated to match.
+- **`mergeSession()` accepts object instead of JSON string** — previously parsed a JSON string internally; now takes an already-parsed object. `applyPatch()` and `importChar()` both call it instead of duplicating the portrait/logEntries re-injection logic inline.
+- **`CAMPAIGN_CHAR_LIMIT` renamed to `DEFAULT_CAMPAIGN_CHAR_LIMIT`** — clarifies it is the fallback default, not an absolute cap.
+- **Synthetic history messages carry `_synthetic: true` flag** — the character JSON injection turns now have this property, used consistently by `restoreHistory()`, the normal-mode `hist` filter, and `applyPatch()` when re-syncing `HISTORY[0]` after a patch.
 
 ---
 
