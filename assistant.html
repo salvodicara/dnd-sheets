@@ -644,6 +644,7 @@ function toggleLang(){
   const chips=document.getElementById('chips');
   if(chips&&chips.style.display!=='none') showChips();
   applyLang();
+  applyTheme(localStorage.getItem('dnd-theme')||'dark');
 }
 function clearChat(){
   HISTORY=[]; CHAR_DONE=false;

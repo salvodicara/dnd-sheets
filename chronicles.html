@@ -243,22 +243,24 @@ var STRINGS={
     welcomeDesc:'Load a .md or .txt file, or open the example campaign.',
     loadedFrom:'Loaded:',changeCampaign:'× Change',
     fetchErr:'Could not load example. Open this page via GitHub Pages or a local server.',
-    tocTitle:'📖 TOC',editCampaign:'Edit',editDone:'Done',
-    exportCampaign:'Export',noHeadings:'No headings found'
-  },
-  it:{
-    pageTitle:'Cronache — D&D Sheets',
-    hdrChar:'📜 Personaggio',hdrAI:'✨ AI',hdrChr:'📖 Cronache',
-    btnLoad:'Carica file',btnExample:'Carica esempio',
-    btnLoadDesc:'Carica il tuo file campagna .md o .txt',
-    btnExampleDesc:'Prova la campagna di esempio',
-    welcomeTitle:'Nessuna campagna caricata',
-    welcomeDesc:'Carica un file .md o .txt, oppure apri la campagna di esempio.',
-    loadedFrom:'Caricato:',changeCampaign:'× Cambia',
-    fetchErr:'Impossibile caricare l\'esempio. Apri la pagina da GitHub Pages o un server locale.',
-    tocTitle:'📖 Indice',editCampaign:'Modifica',editDone:'Fine',
-    exportCampaign:'Esporta',noHeadings:'Nessun titolo trovato'
-  }
+     tocTitle:'📖 TOC',editCampaign:'Edit',editDone:'Done',
+     exportCampaign:'Export',noHeadings:'No headings found',
+     overflowTheme:'Theme',overflowLang:'Language'
+   },
+   it:{
+     pageTitle:'Cronache — D&D Sheets',
+     hdrChar:'📜 Personaggio',hdrAI:'✨ AI',hdrChr:'📖 Cronache',
+     btnLoad:'Carica file',btnExample:'Carica esempio',
+     btnLoadDesc:'Carica il tuo file campagna .md o .txt',
+     btnExampleDesc:'Prova la campagna di esempio',
+     welcomeTitle:'Nessuna campagna caricata',
+     welcomeDesc:'Carica un file .md o .txt, oppure apri la campagna di esempio.',
+     loadedFrom:'Caricato:',changeCampaign:'× Cambia',
+     fetchErr:'Impossibile caricare l\'esempio. Apri la pagina da GitHub Pages o un server locale.',
+     tocTitle:'📖 Indice',editCampaign:'Modifica',editDone:'Fine',
+     exportCampaign:'Esporta',noHeadings:'Nessun titolo trovato',
+     overflowTheme:'Tema',overflowLang:'Lingua'
+   }
 };
 var currentLang=localStorage.getItem('dnd-lang')||'en';
 function S(k){return(STRINGS[currentLang]||STRINGS.en)[k]||STRINGS.en[k]||k;}
@@ -283,12 +285,12 @@ function applyTheme(){
   var icon=dark?'☀️':'🌙';
   document.getElementById('btn-theme').textContent=icon;
   var ot=document.getElementById('overflow-theme');
-  if(ot)ot.textContent=icon+' Theme';
+  if(ot)ot.textContent=icon+' '+S('overflowTheme');
 }
 function toggleLang(){
   currentLang=currentLang==='en'?'it':'en';
   localStorage.setItem('dnd-lang',currentLang);
-  applyLang();renderContent();
+  applyLang();applyTheme();renderContent();
 }
 function toggleOverflowMenu(e){
   e.stopPropagation();
@@ -316,7 +318,7 @@ function applyLang(){
   });
   document.getElementById('btn-lang').innerHTML=(currentLang==='en'?FLAG_GB:FLAG_IT)+(currentLang==='en'?'EN':'IT');
   var ovl=document.getElementById('overflow-lang');
-  if(ovl)ovl.innerHTML=(currentLang==='en'?FLAG_GB:FLAG_IT)+(currentLang==='en'?'EN Language':'IT Language');
+  if(ovl)ovl.innerHTML=(currentLang==='en'?FLAG_GB:FLAG_IT)+(currentLang==='en'?'EN':'IT')+' '+S('overflowLang');
 }
 
 // ── Sidebar ──────────────────────────────────────────────────────────────
