@@ -5,7 +5,22 @@ Entries are in reverse-chronological order. Uncommitted work appears under `[Unr
 
 ---
 
-## [Unreleased] — Pointer-Events Drag, Wizard Headers, Advanced Group Polish
+## [Unreleased] — AI Chat Navigation Persistence
+
+### Fixed (`assistant.html`)
+- **Navigating away mid-response no longer loses the conversation** — `saveHistory()` is now called immediately after the user message is pushed to `HISTORY` (before `dispatchToProvider()` is awaited) in all three send modes (normal, document, campaign). Previously it was only called after a successful round-trip, so any navigation that killed the in-flight request would wipe the pending question from localStorage.
+- **Campaign mode user message timing** — the `{role:'user', _campaign:true}` entry was previously pushed to `HISTORY` only after the API response arrived. It is now pushed before the call, matching normal/document mode behaviour and ensuring the question survives navigation.
+- **`restoreHistory()` detects interrupted responses** — after replaying history into the DOM, the function now checks whether the last visible message (excluding synthetic character-injection turns) is from the user with no paired assistant reply. If so, a warning assistant bubble is rendered: *"⚠ The response was interrupted — you navigated away while waiting. Please send your message again."*
+
+### Added (`assistant.html`)
+- **`beforeunload` leave-guard** — `IS_FETCHING` global flag is set `true` the moment the thinking dots appear and reset via `finally` when the call ends (success, error, or exception). A `window.addEventListener('beforeunload', …)` listener raises the browser's native *"Leave site?"* dialog whenever `IS_FETCHING` is true, giving the user a chance to cancel navigation and wait for the response. Normal navigation (no request in flight) is completely unaffected.
+- **`pagehide` safety net** — `saveHistory()` is also called on `pagehide` as a backstop for any edge case not covered by the pre-call saves.
+- **`responseInterrupted` i18n key** — added to both `STRINGS.en` and `STRINGS.it` for the interrupted-response warning bubble.
+- **Campaign mode persisted across reloads** — `CAMPAIGN_MODE` is now saved to `aiCampaignMode` in localStorage whenever it changes (toggle, or force-reset on missing campaign). On page load, the flag and the `📖` button's `.active` class are restored — but only if a campaign is still present in `dnd_campaign_v1`; if the campaign was removed, the stored flag is silently cleared. The campaign welcome banner is re-shown on restore (it is never stored in `HISTORY` and would otherwise be absent after a reload). The banner is given a stable DOM id `campaign-banner`; toggling campaign mode off removes it from the DOM immediately so it disappears without a reload.
+
+---
+
+## [be4e6c7] — Pointer-Events Drag, Wizard Headers, Advanced Group Polish
 
 ### Fixed (`index.html`)
 - **Sidebar drag-and-drop completely rewritten with Pointer Events** — HTML5 DnD API and the separate touch-drag system (`sbTouchStart/Move/End`) removed entirely. A single `SB_DRAG` state object and three functions (`sbPointerDown`, `sbPointerMove`, `sbPointerUp`) handle mouse, touch, and pen uniformly via `setPointerCapture`. No browser drag state machine → no re-render corruption → no "must scroll to resume drag" bug. `deleteSidebarItem` is called directly in `sbPointerUp` with zero deferral; the previous `SB_PENDING_DELETE` + `setTimeout` workarounds are gone.
